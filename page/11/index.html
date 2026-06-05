@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/11/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/11/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/04/17/EDA%E6%95%B0%E6%8D%AE%E6%8E%A2%E7%B4%A2%E6%80%A7%E5%88%86%E6%9E%90/" title="地理空间数据EDA数据探索性分析">地理空间数据EDA数据探索性分析</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-04-16T16:00:00.000Z" title="发表于 2021-04-17 00:00:00">2021-04-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content">EDA——数据探索性分析，是通过了解数据集的基本情况、变量间的相互关系以及变量与预测值之间的关系，为后期特征工程和建立模型做铺垫。本文以智慧海洋建设竞赛为例进行演示。 1. 总体了解数据1.1 查看样本个数和原始特征维度        1 data_train.shape           1 data_test.shape           1 data_train.columns	#查看列名           1 2 3 pd.set_option(&#39;display.max_info_rows&#39;,2699639)	#提高非缺失值检查的行数上线 #pd.options.display.max_info_rows = 2699639 data_train.info()           1 2 #查看count 非空值数、std 标准差、（25%、50%、75%）分位数等基本情况 data_train.describe([0.01,0.025,0.05,0.5,0.75,0.9,0.99])	   1.2 查看缺失值和唯一值等        1 data_...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/04/15/%E5%9C%B0%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" title="地理数据分析常用工具">地理数据分析常用工具</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-04-14T16:00:00.000Z" title="发表于 2021-04-15 00:00:00">2021-04-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content">在地理空间数据分析中，常用一些模块进行地理数据分析、特征提取及可视化，包括shapely、geopandas、folium、kepler.gl、geohash等工具。 1. shapelyshapely是基于笛卡尔坐标的几何对象操作和分析Python库，底层基于GEOS和JTS拓扑运算库。 1.1 Point对象        1 2 3 4 5 6 7 8 9 10 11 from shapely.geometry import Point  point1 = Point(1, 1) point2 = Point(5, 5) point3 = Point(10, 10)  #点的可视化 geo.GeometryCollection([point1,point2,point3])  #Point转为numpy数组 print(np.array(point))   1.2 LineString对象        1 2 3 # 创建LineString对象 line1 = geo.LineString([(0,0),(2,-2.2),(3,3.3),(4,-4.4),(5,-5.5...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/03/26/lightGBM%E8%B0%83%E5%8F%82/" title="LightGBM调参_1">LightGBM调参_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-03-25T16:00:00.000Z" title="发表于 2021-03-26 00:00:00">2021-03-26</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/">Machine Learning</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/21-categories/">21 categories</a></span></div><div class="content">#1简单列举一下日常调参过程中常用的几种方法，具体的原理下次补上。 1. 经验法: 往两个方向调： 1.提高准确率：max_depth, num_leaves, learning_rate 2.降低过拟合：max_bin, min_data_in_leaf；L1, L2正则化；数据抽样, 列采样  1.使用较小的num_leaves，max_depth和max_bin，降低复杂度。 2.使用min_data_in_leaf和min_sum_hessian_in_leaf，该值越大，模型的学习越保守。 3.设置bagging_freq和bagging_fraction使用bagging。 4.设置feature_fraction进行特征采样。 5.使用lambda_l1,lambda_l2和min_gain_to_split正则化。 2. 贪心调参:先调整对模型影响最大的参数，再调整对模型影响次大的参数，缺点是容易调成局部最优，需要多次调试。日常调参顺序如下: ① num_leaves, max_depth ② min_data_in_leaf, min_child_weight ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/03/25/tsfresh/" title="Tsfresh——自动化特征工程工具">Tsfresh——自动化特征工程工具</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-03-24T16:00:00.000Z" title="发表于 2021-03-25 00:00:00">2021-03-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content"> 改进模型的潜在途径之一是：生成更多的潜在特征，输入更多的样本。  Tsfresh是处理时间序列数据的特征工程工具，能够自动计算大量时间序列特征，如平均值、最大值、峰度等。之后，可以使用这些特征集构建机器学习模型。 本文以天池-心跳信号分类预测为例，演示tsfresh工具的用法。 使用示例1. 合并train和test数据合并数据集，对整体数据做统一的特征工程。(注意需要为test数据添加label列，值为-1，方便后续操作)         1 2 data_test[&#39;label&#39;] = -1 all_data = pd.concat((data_train, data_test)).reset_index(drop = True)   2. 对原特征一列拆成多列，并为每条数据添加时间特征time        1 all_heatbeat_df = all_data[&#39;heartbeat_signals&#39;].str.split(&#39;,&#39;, expand = True).stack()   3. Index处理        1 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/03/20/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9_1/" title="特征选择_1">特征选择_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-03-19T16:00:00.000Z" title="发表于 2021-03-20 00:00:00">2021-03-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/">Machine Learning</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/21-categories/">21 categories</a></span></div><div class="content">在数据预处理过程中，特征选择是一个重要的过程，选择出重要的特征可以加快模型训练速度。通常可以从以下两方面来选择特征：  1.特征是否发散（对于样本区分作用的大小）2.特征与标签的相关性  特征选择的方法主要有3种：  1.Filter Method：先根据统计量设置阈值选择特征，之后再训练模型。2.Wrapper Method：把最终将要使用的模型的性能作为特征子集的评价标准，多次训练模型选择有利于模型性能的特征子集。3.Embedding Method：将特征选择过程与模型训练过程融为一体，在模型训练的过程中自动进行特征选择。  常用sklearn中的feature_selection库来进行特征选择。 1. Fliter 过滤法: Fliter的优点在于只训练一次模型，速度快。但是选择与标签相关性最强的特征子集不一定是最佳特征，甚至可能对结果负优化。  1.1 方差选择法计算各个特征的方差，设置阈值，选择方差大于阈值的特征。         1 2 3 from sklearn.feature_selection import VarianceThreshold #参数thr...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/03/15/%E6%A8%A1%E5%9E%8B%E8%9E%8D%E5%90%88_1/" title="模型融合_1">模型融合_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-03-14T16:00:00.000Z" title="发表于 2021-03-15 00:00:00">2021-03-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/">Machine Learning</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Machine-Learning/21-categories/">21 categories</a></span></div><div class="content">Kaggle和天池比赛中常用提高成绩的三种方法：  1.特征工程2.模型调参3.模型融合模型融合主要有以下几种方式：  简单加权融合: ①回归（分类概率）：算术平均融合（Arithmetic mean），几何平均融合（Geometric mean）；②分类：投票（Voting)③综合：排序融合(Rank averaging)，log融合  stacking&#x2F;blending: 构建多层模型，把初级学习器的输出当作下一层的输入。  boosting&#x2F;bagging（在xgboost,Adaboost,GBDT中已经用到）: 多个分类器的整合  部分代码案例:1.简单加权平均        1 2 3 4 5 def Weighted_method(test_pre1,test_pre2,test_pre3,w=[1/3,1/3,1/3]):     Weighted_result = w[0]*pd.Series(test_pre1)+w[1]*pd.Series(test_pre2)+w[2]*pd.Series(test_pre3)     return W...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/02/21/pandas_2/" title="Pandas的一些常用操作_2">Pandas的一些常用操作_2</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-02-20T16:00:00.000Z" title="发表于 2021-02-21 00:00:00">2021-02-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content"> 今天继续介绍几个常用的Pandas操作。          1 2 3 import numpy as np import pandas as pd df = pd.read_csv(&#39;./economics.csv&#39;)   1.DataFrame的apply方法        1 df[[&#39;psavert&#39;,&#39;uempmed&#39;]].apply(lambda x:x.max()-x.min(), axis=1)#axis=1 将函数应用到列           1 df.applymap(lambda x:x*10)#applymap 将函数应用到每个元素   2.DataFrame的分组        1 df.groupby(&#39;unemploy&#39;)[&#39;psavert&#39;].median()#样例:df.groupby(分组依据)[数据来源].使用操作           1 2 condition = df.unemploy &gt; df.unemploy.mean()#使用condition定...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/02/21/pandas_1/" title="Pandas的一些常用操作_1">Pandas的一些常用操作_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-02-20T16:00:00.000Z" title="发表于 2021-02-21 00:00:00">2021-02-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content"> 今天介绍几个常用的Pandas操作。          1 2 3 import numpy as np import pandas as pd df = pd.read_csv(&#39;./economics.csv&#39;)   1.DataFrame to markdown&#x2F;latexdataframe可以转换为许多常用格式，如csv,excel,sql,json,html,latex等等，这里以markdown和latex为例。         1 2 print(df.to_markdown()) print(df.to_latex())   or         1 2 df.to_markdown(&#39;table.md&#39;) df.to_latex(&#39;table.tex&#39;)   也可以自定义输出latex格式，如表格宽度。         1 df.to_latex(&#39;tb.tex&#39;,column_format=&#39;lp{1.8cm}p{1.8cm}p{1.8cm}p{1.8cm}p{1.8cm}p{...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/02/21/pandas_3/" title="Pandas的一些常用操作_3">Pandas的一些常用操作_3</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-02-20T16:00:00.000Z" title="发表于 2021-02-21 00:00:00">2021-02-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/">Python</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Python/21-categories/">21 categories</a></span></div><div class="content"> 今天介绍Pandas对一些常见数据的处理方法。          1 2 3 import numpy as np import pandas as pd df = pd.read_csv(&#39;./economics.csv&#39;)   1.缺失数据处理        1 df.isna()#是否有缺失值           1 df.isna().mean()#缺失的比例           1 df[df.psavert.isna()]#查看某列是否有缺失值           1 df[df[[&#39;psavert&#39;,&#39;pop&#39;,&#39;uempmed&#39;]].isna().any(1)]#查看所有列至少有一个缺失值的行“any()至少有一个为空,all()都为空”           1 2 df[df[[&#39;psavert&#39;,&#39;pop&#39;,&#39;uempmed&#39;]].notna().all(1)]#查看所有没有缺失值的行 df.loc[df[[&#39;psavert&#39;,&#...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/10/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#content-inner">10</a><span class="page-number current">11</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/"><span class="card-category-list-name">Categories</span><span class="card-category-list-count">109</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Algorithm/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">20</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Big-Data/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">2</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/C-C/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">2</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/102-tags/" style="font-size: 1.1em; color: #999">102 tags</a> <a href="/tags/Tags/" style="font-size: 1.1em; color: #999">Tags</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/06/">
+            <span class="card-archive-list-date">
+              六月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/05/">
+            <span class="card-archive-list-date">
+              五月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/04/">
+            <span class="card-archive-list-date">
+              四月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/03/">
+            <span class="card-archive-list-date">
+              三月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/02/">
+            <span class="card-archive-list-date">
+              二月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/01/">
+            <span class="card-archive-list-date">
+              一月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/12/">
+            <span class="card-archive-list-date">
+              十二月 2023
+            </span>
+            <span class="card-archive-list-count">4</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/11/">
+            <span class="card-archive-list-date">
+              十一月 2023
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">109</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-05T09:26:58.821Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

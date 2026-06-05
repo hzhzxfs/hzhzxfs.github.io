@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java内存分配策略 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java 内存分配策略  Java 内存分配策略 优先在 Eden 区分配 大对象直接进入老年代 长期存活的对象将进入老年代 空间分配担保     新生代和老年代的 GC 操作  新生代 GC 操作：Minor GC 发生的非常频繁，速度较块。   老年代 GC 操作：Full GC &#x2F; Major GC 经常伴随着至少一次的 Minor GC； 速度一般比 Minor GC 慢上 10">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存分配策略">
+<meta property="og:url" content="https://hzhzxfs.github.io/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Java 内存分配策略  Java 内存分配策略 优先在 Eden 区分配 大对象直接进入老年代 长期存活的对象将进入老年代 空间分配担保     新生代和老年代的 GC 操作  新生代 GC 操作：Minor GC 发生的非常频繁，速度较块。   老年代 GC 操作：Full GC &#x2F; Major GC 经常伴随着至少一次的 Minor GC； 速度一般比 Minor GC 慢上 10">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2023-02-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:06.280Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java内存分配策略",
+  "url": "https://hzhzxfs.github.io/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2023-02-25T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:06.280Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java内存分配策略',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Java内存分配策略</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java内存分配策略</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-25T16:00:00.000Z" title="发表于 2023-02-26 00:00:00">2023-02-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:06.280Z" title="更新于 2026-06-05 16:26:06">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/">JVM</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Java-内存分配策略"><a href="#Java-内存分配策略" class="headerlink" title="Java 内存分配策略"></a>Java 内存分配策略</h1><p><img src="/./pic/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5.png" alt="内存分配与回收策略.png"></p>
+<ul>
+<li><a href="#java-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5">Java 内存分配策略</a><ul>
+<li><a href="#%E4%BC%98%E5%85%88%E5%9C%A8-eden-%E5%8C%BA%E5%88%86%E9%85%8D">优先在 Eden 区分配</a></li>
+<li><a href="#%E5%A4%A7%E5%AF%B9%E8%B1%A1%E7%9B%B4%E6%8E%A5%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3">大对象直接进入老年代</a></li>
+<li><a href="#%E9%95%BF%E6%9C%9F%E5%AD%98%E6%B4%BB%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%B0%86%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3">长期存活的对象将进入老年代</a></li>
+<li><a href="#%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D">空间分配担保</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>新生代和老年代的 GC 操作</strong></p>
+<ul>
+<li>新生代 GC 操作：Minor GC<ul>
+<li>发生的非常频繁，速度较块。</li>
+</ul>
+</li>
+<li>老年代 GC 操作：Full GC &#x2F; Major GC<ul>
+<li>经常伴随着至少一次的 Minor GC；</li>
+<li>速度一般比 Minor GC 慢上 10 倍以上。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="优先在-Eden-区分配"><a href="#优先在-Eden-区分配" class="headerlink" title="优先在 Eden 区分配"></a>优先在 Eden 区分配</h2><ul>
+<li>Eden 空间不够将会触发一次 Minor GC；</li>
+<li>虚拟机参数：<ul>
+<li><code>-Xmx</code>：Java 堆的最大值；</li>
+<li><code>-Xms</code>：Java 堆的最小值；</li>
+<li><code>-Xmn</code>：新生代大小；</li>
+<li><code>-XX:SurvivorRatio=8</code>：Eden 区 &#x2F; Survivor 区 &#x3D; 8 : 1</li>
+</ul>
+</li>
+</ul>
+<h2 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h2><ul>
+<li><strong>大对象定义：</strong> 需要大量连续内存空间的 Java 对象。例如那种很长的字符串或者数组。</li>
+<li><strong>设置对象直接进入老年代大小限制：</strong><ul>
+<li><code>-XX:PretenureSizeThreshold</code>：单位是字节；<ul>
+<li>只对 Serial 和 ParNew 两款收集器有效。</li>
+</ul>
+</li>
+<li><strong>目的：</strong> 因为新生代采用的是复制算法收集垃圾，大对象直接进入老年代可以避免在 Eden 区和 Survivor 区发生大量的内存复制。</li>
+</ul>
+</li>
+</ul>
+<h2 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h2><ul>
+<li><strong>固定对象年龄判定：</strong> 虚拟机给每个对象定义一个年龄计数器，对象每在 Survivor 中熬过一次 Minor GC，年龄 +1，达到 <code>-XX:MaxTenuringThreshold</code> 设定值后，会被晋升到老年代，<code>-XX:MaxTenuringThreshold</code> 默认为 15；</li>
+<li><strong>动态对象年龄判定：</strong> Survivor 中有相同年龄的对象的空间总和大于 Survivor 空间的一半，那么，年龄大于或等于该年龄的对象直接晋升到老年代。</li>
+</ul>
+<h2 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h2><p>我们知道，新生代采用的是复制算法清理内存，每一次 Minor GC，虚拟机会将 Eden 区和其中一块 Survivor 区的存活对象复制到另一块 Survivor 区，但 <strong>当出现大量对象在一次 Minor GC 后仍然存活的情况时，Survivor 区可能容纳不下这么多对象，此时，就需要老年代进行分配担保，即将 Survivor 无法容纳的对象直接进入老年代。</strong></p>
+<p>这么做有一个前提，就是老年代得装得下这么多对象。可是在一次 GC 操作前，虚拟机并不知道到底会有多少对象存活，所以空间分配担保有这样一个判断流程：</p>
+<ul>
+<li>发生 Minor GC 前，虚拟机先检查老年代的最大可用连续空间是否大于新生代所有对象的总空间；<ul>
+<li>如果大于，Minor GC 一定是安全的；</li>
+<li>如果小于，虚拟机会查看 HandlePromotionFailure 参数，看看是否允许担保失败；<ul>
+<li>允许失败：尝试着进行一次 Minor GC；</li>
+<li>不允许失败：进行一次 Full GC；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>不过 JDK 6 Update 24 后，HandlePromotionFailure 参数就没有用了，规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行 Minor GC，否则将进行 Full GC。</li>
+</ul>
+<h2 id="Metaspace-元空间与-PermGen-永久代"><a href="#Metaspace-元空间与-PermGen-永久代" class="headerlink" title="Metaspace 元空间与 PermGen 永久代"></a>Metaspace 元空间与 PermGen 永久代</h2><p>Java 8 彻底将永久代 (PermGen) 移除出了 HotSpot JVM，将其原有的数据迁移至 Java Heap 或 Metaspace。</p>
+<p><strong>移除 PermGen 的原因：</strong></p>
+<ul>
+<li>PermGen 内存经常会溢出，引发恼人的 java.lang.OutOfMemoryError: PermGen，因此 JVM 的开发者希望这一块内存可以更灵活地被管理，不要再经常出现这样的 OOM；</li>
+<li>移除 PermGen 可以促进 HotSpot JVM 与 JRockit VM 的融合，因为 JRockit 没有永久代。</li>
+</ul>
+<p><strong>移除 PermGen 后，方法区和字符串常量的位置：</strong></p>
+<ul>
+<li>方法区：移至 Metaspace；</li>
+<li>字符串常量：移至 Java Heap。</li>
+</ul>
+<p><strong>Metaspace 的位置：</strong> 本地堆内存(native heap)。</p>
+<p><strong>Metaspace 的优点：</strong> 永久代 OOM 问题将不复存在，因为默认的类的元数据分配只受本地内存大小的限制，也就是说本地内存剩余多少，理论上 Metaspace 就可以有多大；</p>
+<p><strong>JVM参数：</strong></p>
+<ul>
+<li><code>-XX:MetaspaceSize</code>：分配给类元数据空间（以字节计）的初始大小，为估计值。MetaspaceSize的值设置的过大会延长垃圾回收时间。垃圾回收过后，引起下一次垃圾回收的类元数据空间的大小可能会变大。</li>
+<li><code>-XX:MaxMetaspaceSize</code>：分配给类元数据空间的最大值，超过此值就会触发Full GC，取决于系统内存的大小。JVM会动态地改变此值。</li>
+<li><code>-XX:MinMetaspaceFreeRatio</code>：一次GC以后，为了避免增加元数据空间的大小，空闲的类元数据的容量的最小比例，不够就会导致垃圾回收。</li>
+<li><code>-XX:MaxMetaspaceFreeRatio</code>：一次GC以后，为了避免增加元数据空间的大小，空闲的类元数据的容量的最大比例，不够就会导致垃圾回收。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">https://hzhzxfs.github.io/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/03/01/Class%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84/" title="Class文件的组成结构"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Class文件的组成结构</div></div><div class="info-2"><div class="info-item-1">Class 文件的组成结构Class 文件是一组以 8 位字节为基础单位的二进制流，各个数据项目严格按照顺序紧凑地排列在 Class 文件中，中间没有任何分隔符。Java 虚拟机规范规定 Class 文件采用一种类似 C 语言结构体的伪结构来存储数据，这种伪结构中只有两种数据类型：无符号数和表，我们之后也主要对这两种类型的数据类型进行解析。  无符号数： 无符号数属于基本数据类型，以 u1、u2、u4、u8 分别代表 1 个字节、2 个字节、4 个字节和 8 个字节的无符号数，可以用它来描述数字、索引引用、数量值或 utf-8 编码的字符串值。 表： 表是由多个无符号数或其他表为数据项构成的复合数据类型，名称上都以 _info 结尾。  Class 文件的头 8 个字节Class 文件的头 8 个字节是魔数和版本号，其中头 4 个字节是魔数，也就是 0xCAFEBABE，它可以用来确定这个文件是否为一个能被虚拟机接受的 Class 文件（这通过扩展名来识别文件类型要安全，毕竟扩展名是可以随便修改的）。 后 4 个字节则是当前 Class 文件的版本号，其中第 5、6 个字节是次版...</div></div></div></a><a class="pagination-related" href="/2023/02/15/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC)/" title="垃圾收集 (GC)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">垃圾收集 (GC)</div></div><div class="info-2"><div class="info-item-1">垃圾收集 (GC)垃圾收集（Garbage Collection，GC），它的任务是解决以下 3 件问题：  哪些内存需要回收？ 什么时候回收？ 如何回收？  其中第一个问题很好回答，在 Java 中，GC 主要发生在 Java 堆和方法区中，对于后两个问题，我们将在之后的内容中进行讨论，并介绍 HotSpot 的 7 个垃圾收集器。  垃圾收集 (GC) 判断对象的生死 判断对象是否可用的算法 引用计数算法 可达性分析算法（主流）   四种引用类型 宣告对象死亡的两次标记过程 方法区的回收   垃圾收集算法 基础：标记 - 清除算法 解决效率问题：复制算法 解决空间碎片问题：标记 - 整理算法 进化：分代收集算法   HotSpot 中 GC 算法的实现 7 个垃圾收集器 Serial &#x2F; ParNew 搭配 Serial Old 收集器 Parallel 搭配 Parallel Scavenge 收集器 CMS 收集器 G1 收集器   GC 日志解读    判断对象的生死 什么时候回收对象？当然是这个对象再也不会被用到的时候回收。所以要想解决 “什么时候回收？” ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/01/31/Redis-%E4%B8%8A%E5%8D%B7/" title="Redis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-31</div><div class="info-item-2">Redis</div></div><div class="info-2"><div class="info-item-1">Redis1.Redis是什么?Redis是一个开放源代码（BSD许可）的内存中数据结构存储，可用作数据库，缓存和消息代理，是一个基于键值对的NoSQl数据库。 2.Redis特性? 速度快 基于键值对的数据结构服务器 丰富的功能、丰富的数据结构 简单稳定 客户端语言多 持久化 主从复制 高可以 &amp; 分布式  3.Redis合适的应用场景？ 缓存 排行榜 计数器 分布式会话 分布式锁 社交网络 最新列表 消息系统  4.除了Redis你还知道哪些NoSQL数据库？MongoDB、MemcacheDB、Cassandra、CouchDB、Hypertable、Leveldb。 5.Redis和Memcache区别？支持的存储类型不同，memcached只支持简单的k&#x2F;v结构。redis支持更多类型的存储结构类型(详见问题6)。 memcached数据不可恢复，redis则可以把数据持久化到磁盘上。 新版本的redis直接自己构建了VM 机制 ，一般的系统调用系统函数的话，会浪费一定的时间去移动和请求。 redis当物理内存用完时，可以将很久没用到的value交换到...</div></div></div></a><a class="pagination-related" href="/2023/06/18/JDBC%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/" title="JDBC核心技术"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-18</div><div class="info-item-2">JDBC核心技术</div></div><div class="info-2"><div class="info-item-1">[TOC] JDBC核心技术 第1章：JDBC概述1.1 数据的持久化 持久化(persistence)：把数据保存到可掉电式存储设备中以供之后使用。大多数情况下，特别是企业级应用，数据持久化意味着将内存中的数据保存到硬盘上加以”固化”，而持久化的实现过程大多通过各种关系数据库来完成。  持久化的主要应用是将内存中的数据存储在关系型数据库中，当然也可以存储在磁盘文件、XML数据文件中。    1.2 Java中的数据存储技术 在Java中，数据库存取技术可分为如下几类：  JDBC直接访问数据库 JDO (Java Data Object )技术 第三方O&#x2F;R工具，如Hibernate, Mybatis 等   JDBC是java访问数据库的基石，JDO、Hibernate、MyBatis等只是更好的封装了JDBC。   1.3 JDBC介绍 JDBC(Java Database Connectivity)是一个独立于特定数据库管理系统、通用的SQL数据库存取和操作的公共接口（一组API），定义了用来访问数据库的标准Java类库，（java.sql,javax.sql）...</div></div></div></a><a class="pagination-related" href="/2023/12/05/docker%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/" title="docker必知必会"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-05</div><div class="info-item-2">docker必知必会</div></div><div class="info-2"><div class="info-item-1">docker心得体会&#x3D;&#x3D;并不是笔记，而是针对自己需要记忆的东西，留下痕迹。一定要学会 好好用&#x3D;&#x3D;  docker所解决的问题如下  docker火的原因是十分的轻巧 docker是容器化技术  docker是基于go语言开发的  Docker Documentation | Docker Documentation docker的文档非常详细Docker Hub docker的仓库地址  Docker如果是安在阿里云服务器上的话 还可以配置镜像加速  Docker Run的原理示意图  启动Docker指令 systemctl start docker 运行Docker指令 docker run XXX  底层原理  &#x3D;&#x3D;Docker常用的命令（其余不多记 直接看笔记）&#x3D;&#x3D;                   打包后的就是类似于这样，类似虚拟机的快照    docker images -q显示镜像id dockers images -aq 显示所有镜像id 有些隐藏的镜像也可以显示  Docker下载...</div></div></div></a><a class="pagination-related" href="/2021/05/23/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E6%96%B9%E6%B3%95/" title="异常检测——集成方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-23</div><div class="info-item-2">异常检测——集成方法</div></div><div class="info-2"><div class="info-item-1"> 一般情况下，可以把异常检测看成是数据不平衡下的分类问题，如果数据条件允许，优先使用有监督异常检测如XGBOOST；仅有少量标签时，可以用无监督学习作为一种特征抽取方式，最后喂给有监督的分类模型。之前介绍的统计与概率模型、线性模型、基于相似度的模型，和今天要介绍的集成学习都是无监督模型。  为什么要使用集成学习？——①适合高维度数据(空间稀疏)，②提高模型鲁棒性。值得注意的时，异常检测没有标签，所以feature bagging、bagging比boosting多。而使用boosting进行异常检测，需要生成伪标签。 1. Feature BaggingFeature Bagging，基本思想与bagging相似，只是对象是feature。基本检测器可以彼此完全不同，或不同的参数设置，或使用不同采样的子数据集。Feature bagging常用lof算法为基算法。 1.1 算法原理 1.2 不同检测器的分数标准化不同检测器可能会在不同的尺度上产生分数。例如，平均k近邻检测器会输出原始距离分数，而LOF算法会输出归一化值。另外，检测器输出的异常值分数大小不一，因此需要归一化，常见方...</div></div></div></a><a class="pagination-related" href="/2021/06/15/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E5%9B%BE%E8%AE%BA%E4%B8%8EPyG%E5%BA%93/" title="图神经网络——基本图论与PyG库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-15</div><div class="info-item-2">图神经网络——基本图论与PyG库</div></div><div class="info-2"><div class="info-item-1">在以往的深度学习中，主要的数据形式包括矩阵、张量、序列(sequence)和时间序列(time series)，然而还有许多数据是图的结构，如社交网络、知识图谱等。图结构数据具有以下特点：  任意的大小和复杂的拓扑结构；没有固定的节点排序或参考点；通常是动态的，并具有多模态的特征；图的信息包括节点信息、边信息和拓扑结构信息。  1. 图结构数据1.1 图(Graphs)· 一个图记作$\mathcal{G}&#x3D;{\mathcal{V}, \mathcal{E}}$，其中 $\mathcal{V}&#x3D;\left{v_{1}, \ldots, v_{N}\right}$是数量为$N&#x3D;|\mathcal{V}|$ 的节点的集合， $\mathcal{E}&#x3D;\left{e_{1}, \ldots, e_{M}\right}$ 是数量为 $M$ 的边的集合。· 节点表示实体(entities)，边表示实体间的关系(relations)；节点和边的信息可以是类别型或数值型的。· 只有一种类型的节点和一种类型的边的图称为同质图(Homogeneous Gra...</div></div></div></a><a class="pagination-related" href="/2022/10/05/%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%BB%E6%9C%80%E5%B0%8F%E5%80%BC%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim%20%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%E6%95%B0%E9%87%8F(%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97(%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8C%E6%9C%80%E5%B0%8F%E5%80%BC%E6%9B%B4%E6%96%B0%E7%BB%93%E6%9E%84))/" title="最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-05</div><div class="info-item-2">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))</div></div><div class="info-2"><div class="info-item-1">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构)) 注意: 子数组必须是下标连续的，而且i ~ i自己也算一个子数组。 解析这个题目也是使用单调队列(窗口内更新最大值和最小值)的结构来做，如果不懂单调队列先看这个博客。 先准备两个双端队列，分别是最大值更新结构和最小值更新结构：  先生成两个双端队列qmax和qmin，当子数组为arr[L...R]时，qmax维护了窗口子数组arr[L...R]的最大值更新结构，qmin维护了窗口子数组arr[L....R]的最小值更新结构； 当子数组arr[L....R]向右扩一个位置变成arr[L....R+1]时，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值； 当子数组arr[L....R]左边缩一个位置变成arr[L+1....R]是，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值；  然后，我们需要证明两个结论:  下面看具体过程: 找到一个L，此时令R不断向右移动，表示arr[L...R]一直向右扩大，并...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">Java 内存分配策略</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E5%9C%A8-Eden-%E5%8C%BA%E5%88%86%E9%85%8D"><span class="toc-number">1.1.</span> <span class="toc-text">优先在 Eden 区分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E5%AF%B9%E8%B1%A1%E7%9B%B4%E6%8E%A5%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3"><span class="toc-number">1.2.</span> <span class="toc-text">大对象直接进入老年代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%BF%E6%9C%9F%E5%AD%98%E6%B4%BB%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%B0%86%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3"><span class="toc-number">1.3.</span> <span class="toc-text">长期存活的对象将进入老年代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D"><span class="toc-number">1.4.</span> <span class="toc-text">空间分配担保</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Metaspace-%E5%85%83%E7%A9%BA%E9%97%B4%E4%B8%8E-PermGen-%E6%B0%B8%E4%B9%85%E4%BB%A3"><span class="toc-number">1.5.</span> <span class="toc-text">Metaspace 元空间与 PermGen 永久代</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

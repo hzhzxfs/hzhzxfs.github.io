@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>最短路dijkstra模板 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="## 最短路dijkstra模板  dijkstra算法总结 常用模板解决 其他写法   题目链接 http:&#x2F;&#x2F;acm.hdu.edu.cn&#x2F;showproblem.php?pid&#x3D;1874  题目 dijkstra算法总结总结一下dijkstra算法大致的流程:  一开始有一个dist[]数组(也可以是map)来保存从start(起点)到每个点的最短路径(一开始的话，如果start和某个点没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最短路dijkstra模板">
+<meta property="og:url" content="https://hzhzxfs.github.io/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="## 最短路dijkstra模板  dijkstra算法总结 常用模板解决 其他写法   题目链接 http:&#x2F;&#x2F;acm.hdu.edu.cn&#x2F;showproblem.php?pid&#x3D;1874  题目 dijkstra算法总结总结一下dijkstra算法大致的流程:  一开始有一个dist[]数组(也可以是map)来保存从start(起点)到每个点的最短路径(一开始的话，如果start和某个点没">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2022-03-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:01.695Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "最短路dijkstra模板",
+  "url": "https://hzhzxfs.github.io/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2022-03-08T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:01.695Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '最短路dijkstra模板',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">最短路dijkstra模板</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">最短路dijkstra模板</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-08T16:00:00.000Z" title="发表于 2022-03-09 00:00:00">2022-03-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:01.695Z" title="更新于 2026-06-05 16:26:01">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>﻿## 最短路dijkstra模板</p>
+<ul>
+<li><code>dijkstra</code>算法总结</li>
+<li>常用模板解决</li>
+<li>其他写法</li>
+</ul>
+<hr>
+<h4 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1874">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1874">http://acm.hdu.edu.cn/showproblem.php?pid=1874</a></p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/path1.png"></p>
+<h3 id="dijkstra算法总结"><a href="#dijkstra算法总结" class="headerlink" title="dijkstra算法总结"></a><code>dijkstra</code>算法总结</h3><p>总结一下<code>dijkstra</code>算法大致的流程:</p>
+<ul>
+<li>一开始有一个<code>dist[]</code>数组(也可以是<code>map</code>)来保存从<code>start</code>(起点)到每个点的最短路径(一开始的话，如果<code>start</code>和某个点没有边，就为<code>INF</code>(或者为<code>null</code>)，如果有连线的话就是边的权值)；</li>
+<li>然后每次从<code>dist</code>数组中取出一个<code>dist[i]</code>最小的<code>i</code>(不能取已经用过的顶点(<code>vis</code>数组标记))，也就是<strong>start距离某个结点</strong>最近的一个；</li>
+<li>取出这个结点之后，用这个结点更新和<strong>它相连的边的<code>dist</code>数组</strong>；</li>
+<li>直到把所有的<code>dist</code>数组都更新一遍；</li>
+</ul>
+<p><img src="/images/path2.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>注意: <code>dijkstra</code>为什么不能有负权边? 因为如果有的话，我们找最小的那个结构的时候，没准它还能通过松弛变得更短，例如上面我们一开始选出<code>0~2</code>这条边的时候，试想如果<code>2~1</code>的那条边权值为<code>-4</code>，那一开始我们找的<code>0~2</code>这条边就是错的，所以不能有负权边。</p>
+</blockquote>
+<hr>
+<h3 id="常用模板解决"><a href="#常用模板解决" class="headerlink" title="常用模板解决"></a>常用模板解决</h3><p><strong>推荐的写法</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  public class Main {      static int n;     static int m;     static boolean[] vis;     static ArrayList&lt;Edge&gt; G[];       static class Edge implements Comparable&lt;Edge&gt; {         public int to;         public int w;          public Edge(int to, int w) {             this.to = to;             this.w = w;         }          @Override         public int compareTo(Edge o) {             return w - o.w;         }     }      static int[] dijkstra(int start) {         PriorityQueue&lt;Edge&gt; pq = new PriorityQueue&lt;&gt;();         int[] dis = new int[n];         for (int i = 0; i &lt; n; i++) dis[i] = Integer.MAX_VALUE; //初始标记（不是-1(因为是求最小的)）         dis[start] = 0; //        G.vis[start] = true;  //第一个访问 start, 不能将start标记为true         pq.add(new Edge(start, 0)); //将第一条边加入 pq, 自环边         while (!pq.isEmpty()) {             Edge curEdge = pq.poll();             int to = curEdge.to;             if (vis[to])                 continue;             vis[to] = true;             for (int i = 0; i &lt; G[to].size(); i++) { //更新相邻的边                 int nxtNode = G[to].get(i).to;                 int nxtW = G[to].get(i).w;                 if (!vis[nxtNode] &amp;&amp; dis[nxtNode] &gt; dis[to] + nxtW) {                     dis[nxtNode] = dis[to] + nxtW;                     pq.add(new Edge(nxtNode, dis[nxtNode])); //将这个新的dis[nxtNode]加入优先队列，没准它是下一个(很小)                 }             }         }         return dis;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while (cin.hasNext()) {             n = cin.nextInt();             m = cin.nextInt();             G = new ArrayList[n]; // 0~n-1             vis = new boolean[n];             for (int i = 0; i &lt; n; i++) {                 G[i] = new ArrayList&lt;&gt;();                 vis[i] = false;             }             for (int i = 0; i &lt; m; i++) {                 int from = cin.nextInt();                 int to = cin.nextInt();                 int w = cin.nextInt();                 G[from].add(new Edge(to, w));                 G[to].add(new Edge(from, w));             }             int s = cin.nextInt();             int e = cin.nextInt();             int[] dis = dijkstra(s);             System.out.println(dis[e] == Integer.MAX_VALUE ? -1 : dis[e]);         }     } }</code></td>
+</tr>
+</tbody></table>
+<h3 id="其他写法"><a href="#其他写法" class="headerlink" title="其他写法"></a>其他写法</h3><p>没有使用堆优化，也就是说找出当前最小的<code>dist</code>所在的结构的时候，遍历了一遍当前的<code>dist</code>。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.ArrayList; import java.util.HashMap; import java.util.HashSet; import java.util.Map.Entry; import java.util.Scanner;  public class Main {      private static class Node{         public int value;         public ArrayList&lt;Edge&gt;edges;          public Node(int value) {             this.value = value;             edges = new ArrayList&lt;&gt;();         }     }      private static class Edge{         public int weight;         public Node from;         public Node to;          public Edge( Node from, Node to,int weight) {             this.from = from;             this.to = to;             this.weight = weight;         }     }      private static class Graph{         public HashMap&lt;Integer,Node&gt;nodes;          public Graph() {             nodes = new HashMap&lt;&gt;();         }     }      //没有使用堆优化的 O(n^2)     public static HashMap&lt;Node,Integer&gt; dijkstra(Node head){         HashMap&lt;Node,Integer&gt;dist = new HashMap&lt;&gt;();         dist.put(head,0);         for(Edge edge : head.edges){             dist.put(edge.to,edge.weight);         }          HashSet&lt;Node&gt;set = new HashSet&lt;&gt;();         for(Node minNode = getMinAndUnSelect(dist,set); minNode != null ; minNode = getMinAndUnSelect(dist,set)){             int distance = dist.get(minNode);             for(Edge edge : minNode.edges){                 Node toNode = edge.to;                 if(set.contains(toNode))continue;                 if(!dist.containsKey(toNode)){                     dist.put(toNode,distance + edge.weight);                 }                 dist.put(toNode,Math.min(dist.get(toNode),distance + edge.weight));             }             set.add(minNode); //使用过这个之后就标记         }         return dist;     }      //找出dist中最小且没有选择的结点     private static Node getMinAndUnSelect(HashMap&lt;Node, Integer&gt; dist, HashSet&lt;Node&gt; set) {         Node minNode = null;         int minDistance = Integer.MAX_VALUE;         for(Entry&lt;Node,Integer&gt; entry : dist.entrySet()){ // map遍历方式 https://www.cnblogs.com/fqfanqi/p/6187085.html             Node node = entry.getKey();             int distance = entry.getValue();             if(!set.contains(node) &amp;&amp; distance &lt; minDistance){                 minDistance = distance;                 minNode = node;             }         }         return minNode;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while(cin.hasNext()){             int n = cin.nextInt();             int m = cin.nextInt();             Graph G = new Graph();             for(int i = 0; i &lt; n; i++)G.nodes.put(i,new Node(i));             for(int i = 0; i &lt; m; i++){                 int a = cin.nextInt();                 int b = cin.nextInt();                 int w = cin.nextInt();                 Node from = G.nodes.get(a);                 Node to = G.nodes.get(b);                 from.edges.add(new Edge(from,to,w));                 to.edges.add(new Edge(to,from,w));             }             int start = cin.nextInt();             int end = cin.nextInt();             HashMap&lt;Node, Integer&gt; dist = dijkstra(G.nodes.get(start));//从start开始             Integer res = dist.get(G.nodes.get(end));             System.out.println((res == null) ? -1 : res);         }     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<p>堆优化，其他写法(建图稍有不同):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*; import java.util.Map.Entry;  public class Main {      static class Node{         public int value;         public ArrayList&lt;Edge&gt;edges;          public Node(int value) {             this.value = value;             edges = new ArrayList&lt;&gt;();         }     }      static class Edge{         public int weight;         public Node from;         public Node to;          public Edge( Node from, Node to,int weight) {             this.from = from;             this.to = to;             this.weight = weight;         }     }      static class Graph{         public HashMap&lt;Integer,Node&gt;nodes;          public Graph() {             nodes = new HashMap&lt;&gt;();         }     }      static class NodeRecord {         public Node node;         public int distance;          public NodeRecord(Node node, int distance) {             this.node = node;             this.distance = distance;         }     }      static class EdgeComparator implements Comparator&lt;NodeRecord&gt;{          @Override         public int compare(NodeRecord o1, NodeRecord o2) {             return o1.distance - o2.distance;         }     }      static HashMap&lt;Node, Integer&gt; dijkstra(Node head){         HashMap&lt;Node,Integer&gt;dist = new HashMap&lt;&gt;();         dist.put(head,0);         for(Edge edge : head.edges){//这个不能少             dist.put(edge.to,edge.weight);         }         PriorityQueue&lt;NodeRecord&gt;priorityQueue = new PriorityQueue&lt;&gt;(new EdgeComparator());         priorityQueue.add(new NodeRecord(head,0));         HashSet&lt;Node&gt;set = new HashSet&lt;&gt;();         while(!priorityQueue.isEmpty()){             NodeRecord poll = priorityQueue.poll();             Node cur = poll.node;             int distance = poll.distance;             if(set.contains(cur))continue;             set.add(cur);             for(Edge edge : cur.edges){                 int w = edge.weight;                 Node toNode = edge.to;                 if(set.contains(toNode))continue;                 if(!dist.containsKey(toNode))dist.put(toNode,distance + w);                 dist.put(toNode,Math.min(dist.get(toNode),distance + w));                 priorityQueue.add(new NodeRecord(toNode,dist.get(toNode)));             }         }         return dist;     }       public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while(cin.hasNext()){             int n = cin.nextInt();             int m = cin.nextInt();             Graph G = new Graph();             for(int i = 0; i &lt; n; i++)G.nodes.put(i,new Node(i));             for(int i = 0; i &lt; m; i++){                 int a = cin.nextInt();                 int b = cin.nextInt();                 int w = cin.nextInt();                 Node from = G.nodes.get(a);                 Node to = G.nodes.get(b);                 from.edges.add(new Edge(from,to,w));                 to.edges.add(new Edge(to,from,w)); //注意无向图             }             int start = cin.nextInt();             int end = cin.nextInt();             HashMap&lt;Node, Integer&gt; dist = dijkstra(G.nodes.get(start));//从start开始             Integer res = dist.get(G.nodes.get(end));             System.out.println((res == null) ? -1 : res);         }     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<p>手写堆解决写法。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  public class Main {     static class Node{         public int value;         public ArrayList&lt;Edge&gt; edges;          public Node(int value) {             this.value = value;             edges = new ArrayList&lt;&gt;();         }     }      static class Edge{         public int weight;         public Node from;         public Node to;          public Edge( Node from, Node to,int weight) {             this.from = from;             this.to = to;             this.weight = weight;         }     }      static class Graph{         public HashMap&lt;Integer,Node&gt; nodes;          public Graph() {             nodes = new HashMap&lt;&gt;();         }     }      static class NodeRecord {         public Node node;         public int distance;          public NodeRecord(Node node, int distance) {             this.node = node;             this.distance = distance;         }     }      static class NodeHeap {         private Node[] nodes;         private HashMap&lt;Node, Integer&gt; indexMap;//堆的下标         private HashMap&lt;Node, Integer&gt; distMap; //堆里面Node对应的distance         private int size;          public NodeHeap(int size) {             nodes = new Node[size];             indexMap = new HashMap&lt;&gt;();             distMap = new HashMap&lt;&gt;();             this.size = 0;         }          public boolean isEmpty() {//堆是否为空             return size == 0;         }          public void addOrUpdateOrIgnore(Node node, int distance) {             //如果在堆中已经有了这个结点，就要更新   -1表示的是被访问过了             if (indexMap.containsKey(node) &amp;&amp; indexMap.get(node) != -1) { //update contain and index != -1                 distMap.put(node, Math.min(distMap.get(node), distance));                 insertHeapify(node, indexMap.get(node));             }              //如果 堆中没有这个结点 就创建一个             if (!indexMap.containsKey(node)) {//if isEntered --&gt; ignore                 nodes[size] = node;                 indexMap.put(node, size);                 distMap.put(node, distance);                 insertHeapify(node, size++);             }         }          //从堆中取一个         public NodeRecord poll() {             NodeRecord top = new NodeRecord(nodes[0], distMap.get(nodes[0]));//取出堆顶             swap(0, size - 1); //和最后一个交换             indexMap.put(nodes[size - 1], -1); //标记已经用过，相当于　Hashset作用             distMap.remove(nodes[size - 1]);  //距离数组中李处             nodes[size - 1] = null;  //结点数组中设置为null             heapify(0, --size);             return top;         }          private void insertHeapify(Node node, int index) { //插入并调整             while (distMap.get(nodes[index]) &lt; distMap.get(nodes[(index - 1) / 2])) {                 swap(index, (index - 1) / 2);                 index = (index - 1) / 2;             }         }          private void heapify(int index, int size) {             int left = index * 2 + 1;             while (left &lt; size) {                 int minIndex = left + 1 &lt; size &amp;&amp; distMap.get(nodes[left + 1]) &lt; distMap.get(nodes[left])                         ? left + 1 : left;                 minIndex = distMap.get(nodes[minIndex]) &lt; distMap.get(nodes[index]) ? minIndex : index;                 if (minIndex == index) break;                 swap(minIndex, index);                 index = minIndex;                 left = index * 2 + 1;             }         }          private void swap(int a, int b) {             indexMap.put(nodes[a], b);//交换各自的下标             indexMap.put(nodes[b], a);             Node tmp = nodes[a];             nodes[a] = nodes[b];             nodes[b] = tmp;         }     }      static HashMap&lt;Node,Integer&gt; dijkstra(Graph G,int start){         NodeHeap heap = new NodeHeap(G.nodes.size());         heap.addOrUpdateOrIgnore(G.nodes.get(start),0);         HashMap&lt;Node,Integer&gt;dist = new HashMap&lt;&gt;();         while(!heap.isEmpty()){             NodeRecord poll = heap.poll();             Node cur = poll.node;             int distance = poll.distance;             for(Edge edge : cur.edges){                 heap.addOrUpdateOrIgnore(edge.to, distance + edge.weight);             }             dist.put(cur,distance);         }         return dist;     }       static Graph createGraph(Scanner cin,int n,int m){         Graph G = new Graph();         for(int i = 0; i &lt; n; i++)G.nodes.put(i,new Node(i));         for(int i = 0; i &lt; m; i++){             int a = cin.nextInt();             int b = cin.nextInt();             int w = cin.nextInt();             Node from = G.nodes.get(a);             Node to = G.nodes.get(b);             from.edges.add(new Edge(from,to,w));             to.edges.add(new Edge(to,from,w));         }         return G;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while(cin.hasNext()){             int n = cin.nextInt();             int m = cin.nextInt();             Graph G = createGraph(cin,n,m);             int start = cin.nextInt();             int end = cin.nextInt();             HashMap&lt;Node, Integer&gt; dist = dijkstra(G,start);//从start开始             Integer res = dist.get(G.nodes.get(end));             System.out.println((res == null) ? -1 : res);         }     } }</code></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/">https://hzhzxfs.github.io/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/" title="最小生成树模板题(Kruskal算法和Prim算法实现)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">最小生成树模板题(Kruskal算法和Prim算法实现)</div></div><div class="info-2"><div class="info-item-1">最小生成树模板题(Kruskal算法和Prim算法实现) Kruskal算法思想及流程 Prim算法思想及流程:  题目链接 http://acm.hdu.edu.cn/showproblem.php?pid=1863  题目 题意就是一个求最小生成树的模板题(一般是无向图)。  Kruskal算法思想及流程 首先各个顶点看成一个集合，每个顶点的根就是自己； 从整个图中边的集合中取出最小的一条(一开始对边的集合排序)，判断该边的两个定点是不是同一个集合，如果不是，合并两个集合； 如果是同一个集合，舍弃，继续取下一条边； 直到集合中有n - 1条边为止；  时间复杂度为为O(e2), 使用并查集优化后复杂度为 O（eloge），与网中的边数有关，适用于求边稀疏的网的最小生成树  推荐写法  建图和上面稍有不同，kruskal的特性只需要用到Edge这个类即可，对边集排序然后不断合并两个顶点即可；  这里并查集使用的数组，和上面有点不同，但是原理都是一样的；         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 2...</div></div></div></a><a class="pagination-related" href="/2022/02/25/Ordering%20Tasks%20_%20LeetCode%20-%20207.%20Course%20Schedule%20(%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F)/" title="Instrction Arrangement以及关键路径详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Instrction Arrangement以及关键路径详解</div></div><div class="info-2"><div class="info-item-1">Ordering Tasks | LeetCode - 207. Course Schedule (拓扑排序) Uva - 10305. Ordering Tasks LeetCode - 207. Course Schedule   Uva - 10305. Ordering Tasks题目链接 https://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=1246  题意 给你n、m，n代表点的个数，m代表边的条数，然后下面给出m条边，都是有向的(有向图)，要你建出一个图，并且找出一种序列，这种序列即拓扑序列 。  拓扑排序 是对有向无环图（DAG)进行的一种操作，这种操作是将DAG中的所有顶点排成一个线性序列，使得图中的任意一对顶点u,v满足如下条件：若边(u,v) ∈ E(G)，则u在最终的线性序列中出现在v的前面;拓扑排序的应用常常和AOV网相联系，在一个大型的工程中，某些项目不是独立于其他项目的，这意味着这种非独立的...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/03/15/Tomcat/" title="Tomcat"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-15</div><div class="info-item-2">Tomcat</div></div><div class="info-2"><div class="info-item-1">Tomcat1.Tomcat的缺省端口是多少，怎么修改？1）找到Tomcat目录下的conf文件夹 2）进入conf文件夹里面找到server.xml文件 3）打开server.xml文件 4）在server.xml文件里面找到下列信息 port&#x3D;”8080”改成你想要的端口 2.tomcat 有哪几种Connector 运行模式(优化)？bio：传统的Java I&#x2F;O操作，同步且阻塞IO。maxThreads&#x3D;”150”&#x2F;&#x2F;Tomcat使用线程来处理接收的每个请求。这个值表示Tomcat可创建的最大的线程数。默认值200。可以根据机器的时期性能和内存大小调整，一般可以在400-500。最大可以在800左右。minSpareThreads&#x3D;”25”—Tomcat初始化时创建的线程数。默认值4。如果当前没有空闲线程，且没有超过maxThreads，一次性创建的空闲线程数量。Tomcat初始化时创建的线程数量也由此值设置。maxSpareThreads&#x3D;”75”–一旦创建的线程超过这个值，Tomcat就会关闭不再需...</div></div></div></a><a class="pagination-related" href="/2021/03/25/tsfresh/" title="Tsfresh——自动化特征工程工具"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-25</div><div class="info-item-2">Tsfresh——自动化特征工程工具</div></div><div class="info-2"><div class="info-item-1"> 改进模型的潜在途径之一是：生成更多的潜在特征，输入更多的样本。  Tsfresh是处理时间序列数据的特征工程工具，能够自动计算大量时间序列特征，如平均值、最大值、峰度等。之后，可以使用这些特征集构建机器学习模型。 本文以天池-心跳信号分类预测为例，演示tsfresh工具的用法。 使用示例1. 合并train和test数据合并数据集，对整体数据做统一的特征工程。(注意需要为test数据添加label列，值为-1，方便后续操作)         1 2 data_test[&#39;label&#39;] = -1 all_data = pd.concat((data_train, data_test)).reset_index(drop = True)   2. 对原特征一列拆成多列，并为每条数据添加时间特征time        1 all_heatbeat_df = all_data[&#39;heartbeat_signals&#39;].str.split(&#39;,&#39;, expand = True).stack()   3. Index处理        1 ...</div></div></div></a><a class="pagination-related" href="/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/" title="Java内存区域详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-31</div><div class="info-item-2">Java内存区域详解</div></div><div class="info-2"><div class="info-item-1">Java 内存区域详解 Java 内存区域详解 JVM 运行时的数据区域 程序计数器 Java 虚拟机栈 本地方法栈 Java 堆 方法区 直接内存   HotSpot 虚拟机堆中的对象 对象的创建（遇到一条 new 指令时） 对象的内存布局 对象的访问 句柄访问 直接指针访问        JVM 运行时的数据区域首先获取一个直观的认识：  总共也就这么 5 个区（直接内存不属于 JVM 运行时数据区的一部分），除了程序计数器其他的地方都有可能出现 OOM (OutOfMemoryError)，其中像是程序计数器和两个栈（Java 虚拟机栈 &amp; 本地方法栈）都是每个线程要有一个的，所以肯定是线程隔离的。而其他 2 个区就是线程共享的了，也就是说，如果有多个线程要同时访问这两个区的数据，是会出现线程安全问题的。接下来，我们将对这些区域进行详细的介绍。 程序计数器 当前线程所执行的字节码的行号指示器，字节码解释器工作时就是通过改变这个计数器的值来确定下一条要执行的字节码指令的位置 执行 Java 方法和 native 方法时的区别： 执行 Java 方法时：记录虚拟机正在执...</div></div></div></a><a class="pagination-related" href="/2023/06/01/Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96/" title="Java运行期优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-01</div><div class="info-item-2">Java运行期优化</div></div><div class="info-2"><div class="info-item-1">运行期优化 我们知道，Java 是解释执行的，可是解释执行毕竟还是有点慢的，这也使得 Java 一直被认为是效率低下的语言……，不过随着即时编译技术的发展，Java 的运行速度得到了很大的提升，在本篇文章中，我们将会对 Java 的运行期优化，也就是即时编译 (Just In Time, JIT) 时进行的优化进行详细的讲解，我们先来看看什么是即时编译。  运行期优化 即时编译 HotSpot 虚拟机内的即时编译器运作过程 为什么要使用解释器与编译器并存的架构？ 为什么虚拟机要实现两个不同的 JIT 编译器？ 什么是虚拟机的分层编译？ 如何判断热点代码，触发编译？ 什么是热点代码？ 什么是 “多次” 执行？ HotSpot 中每个方法的 2 个计数器 HotSpot 热点代码探测流程   热点代码编译的过程？   经典优化技术介绍 公共子表达式消除【语言无关】 数组范围检查消除【语言相关】 方法内联【最重要】 逃逸分析【最前沿】 基本行为 对于不会逃逸到方法或线程外的对象能进行优化 虚拟机参数   一个优化的例子      即时编译什么是即时编译？  当虚拟机发现某个方法或某段代...</div></div></div></a><a class="pagination-related" href="/2024/03/27/Zookeeper/" title="Zookeeper"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-27</div><div class="info-item-2">Zookeeper</div></div><div class="info-2"><div class="info-item-1">Zookeeper1.ZooKeeper 是什么？ZooKeeper 是一个开源的分布式协调服务。它是一个为分布式应用提供一致性服务的软件，分布式应用程序可以基于 Zookeeper 实现诸如数据发布&#x2F;订阅、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master 选举、分布式锁和分布式队列等功能。 ZooKeeper 的目标就是封装好复杂易出错的关键服务，将简单易用的接口和性能高效、功能稳定的系统提供给用户。 Zookeeper 保证了如下分布式一致性特性： （1）顺序一致性 （2）原子性 （3）单一视图 （4）可靠性 （5）实时性（最终一致性） 客户端的读请求可以被集群中的任意一台机器处理，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 zookeeper 机器来处理。对于写请求，这些请求会同时发给其他 zookeeper 机器并且达成一致后，请求才会返回成功。因此，随着 zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。 有序性是 zookeeper 中非常重要的一个特性，所有的更新都是全局有序的，每个更新都有一...</div></div></div></a><a class="pagination-related" href="/2021/11/05/Http%E5%8D%8F%E8%AE%AE/" title="Http协议"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-05</div><div class="info-item-2">Http协议</div></div><div class="info-2"><div class="info-item-1">Http协议 一、Web和网络基础  一、Web和网络基础1、使用HTTP协议访问Web 客户端: 通过发送请求获取服务器资源的 Web 浏览器等，都可称为客户端（ client ）。 Web 使用一种名为 HTTP （ HyperText Transfer Protocol ，超文本传输协议）的协议作为规范，完成从客户端到服务器端等一系列运作流程。而协议是指规则的约定。Web是建立在Http协议上通信的；   2、TCP&#x2F;IPTCP&#x2F;IP 协议族按层次分别分为以下 4 层：应用层、传输层、网络层和数据链路层；  应用层: TCP&#x2F;IP 协议族内预存了各类通用的应用服务。比如， FTP （ File Transfer Protocol ，文件传输协议）和 DNS （ Domain Name System ，域名系统）服务就是其中两类。HTTP 协议也处于该层。 传输层: 传输层对上层应用层，提供处于网络连接中的两台计算机之间的数据传输。在传输层有两个性质不同的协议： TCP （ Transmission Control Protocol ，传输控制协...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-number">1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dijkstra%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">dijkstra算法总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%A8%A1%E6%9D%BF%E8%A7%A3%E5%86%B3"><span class="toc-number">4.</span> <span class="toc-text">常用模板解决</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%86%99%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">其他写法</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

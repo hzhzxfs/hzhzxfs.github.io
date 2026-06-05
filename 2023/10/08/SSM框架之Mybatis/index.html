@@ -1,0 +1,606 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SSM框架之Mybatis | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0. ssm框架大纲   1. Mybatis    2. 第一个Mybatis程序mybatis-01 搭建环境          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 CREATE DATABASE &#96;mybatis&#96;;  USE &#96;mybatis&#96;;  CREATE TABLE &#96;user&#96; ( &#96;id&#96; INT(20) NOT NULL PRIMARY K">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSM框架之Mybatis">
+<meta property="og:url" content="https://hzhzxfs.github.io/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="0. ssm框架大纲   1. Mybatis    2. 第一个Mybatis程序mybatis-01 搭建环境          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 CREATE DATABASE &#96;mybatis&#96;;  USE &#96;mybatis&#96;;  CREATE TABLE &#96;user&#96; ( &#96;id&#96; INT(20) NOT NULL PRIMARY K">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2023-10-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:09.301Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SSM框架之Mybatis",
+  "url": "https://hzhzxfs.github.io/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2023-10-07T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:09.301Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SSM框架之Mybatis',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">SSM框架之Mybatis</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">SSM框架之Mybatis</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-07T16:00:00.000Z" title="发表于 2023-10-08 00:00:00">2023-10-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:09.301Z" title="更新于 2026-06-05 16:26:09">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JavaWeb/">JavaWeb</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JavaWeb/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="0-ssm框架大纲"><a href="#0-ssm框架大纲" class="headerlink" title="0. ssm框架大纲"></a>0. ssm框架大纲</h1><p><img src="https://img-blog.csdnimg.cn/20201216113448264.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2020121611573756.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201216120216116.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="1-Mybatis"><a href="#1-Mybatis" class="headerlink" title="1. Mybatis"></a>1. Mybatis</h1><p><img src="https://img-blog.csdnimg.cn/2020121615053085.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/2020121615120223.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201216160829574.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201216160720478.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="2-第一个Mybatis程序mybatis-01"><a href="#2-第一个Mybatis程序mybatis-01" class="headerlink" title="2. 第一个Mybatis程序mybatis-01"></a>2. 第一个Mybatis程序<code>mybatis-01</code></h1><ul>
+<li>搭建环境</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</code></td>
+<td><code>CREATE DATABASE `mybatis`;  USE `mybatis`;  CREATE TABLE `user` ( `id` INT(20) NOT NULL PRIMARY KEY, `name` VARCHAR(30) DEFAULT NULL, `pwd` VARCHAR(30) DEFAULT NULL ) ENGINE=INNODB DEFAULT CHARSET=utf8;   INSERT INTO `user` (`id`,`name`,`pwd`) VALUES (1, &#39;狂神&#39;, &#39;123456&#39;), (2, &#39;李四&#39;, &#39;123456&#39;), (3, &#39;张三&#39;, &#39;123890&#39;)</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>新建项目(创建子模块)</p>
+<ul>
+<li>配置mybatis的核心配置文件</li>
+<li>编写mybatis工具类</li>
+</ul>
+</li>
+<li><p>编写实体类</p>
+<ul>
+<li>实体类</li>
+<li>Dao接口</li>
+<li>接口实现类</li>
+</ul>
+</li>
+<li><p>测试</p>
+<ul>
+<li>junit测试</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35</code></td>
+<td><code># 错误1 org.apache.ibatis.binding.BindingException: Type interface com.xiaofan.dao.UserDao is not known to the MapperRegistry.  # 解决方案 &lt;mappers&gt; 	&lt;mapper resource=&quot;com/xiaofan/dao/UserMapper.xml&quot;/&gt; &lt;/mappers&gt;  # 错误2 Cause: org.apache.ibatis.builder.BuilderException: Error parsing SQL Mapper Configuration. Cause: java.io.IOException: Could not find resource com/xiaofan/dao/UserMapper.xml  # 解决方案     &lt;build&gt;         &lt;resources&gt;             &lt;resource&gt;                 &lt;directory&gt;src/main/resources&lt;/directory&gt;                 &lt;includes&gt;                     &lt;include&gt;**/*.properties&lt;/include&gt;                     &lt;include&gt;**/*.xml&lt;/include&gt;                     &lt;include&gt;**/*.tld&lt;/include&gt;                 &lt;/includes&gt;                 &lt;filtering&gt;true&lt;/filtering&gt;             &lt;/resource&gt;             &lt;resource&gt;                 &lt;directory&gt;src/main/java&lt;/directory&gt;                 &lt;includes&gt;                     &lt;include&gt;**/*.properties&lt;/include&gt;                     &lt;include&gt;**/*.xml&lt;/include&gt;                     &lt;include&gt;**/*.tld&lt;/include&gt;                 &lt;/includes&gt;                 &lt;filtering&gt;true&lt;/filtering&gt;             &lt;/resource&gt;         &lt;/resources&gt;     &lt;/build&gt;</code></td>
+</tr>
+</tbody></table>
+<p><img src="https://img-blog.csdnimg.cn/20201216210136539.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>传递Map的情况</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>int addUser1(Map&lt;String, Object&gt; map);</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>&lt;!-- map只要和键值保持一致即可 --&gt; &lt;insert id=&quot;addUser1&quot; parameterType=&quot;map&quot;&gt;     insert into mybatis.user (id, name, pwd) values(#{userId}, #{userName}, #{password}) &lt;/insert&gt;</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</code></td>
+<td><code>@Test public void testAddUser1() {     SqlSession sqlSession = MybatisUtils.getSqlSession();      UserMapper mapper = sqlSession.getMapper(UserMapper.class);     Map&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();     map.put(&quot;userId&quot;, 5);     map.put(&quot;userName&quot;, &quot;胡一刀&quot;);     map.put(&quot;password&quot;, &quot;123456&quot;);      mapper.addUser1(map);     // 增删改必须提交事务     sqlSession.commit();     sqlSession.close(); }</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>模糊查询</p>
+<ul>
+<li>Java代码执行的时候，传递通配符%%</li>
+<li>在拼接sql中拼接通配符！</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>List&lt;User&gt; getUserLike(String value);</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>&lt;select id=&quot;getUserLike&quot; resultType=&quot;com.xiaofan.pojo.User&quot;&gt;     select * from mybatis.user where name like #{value} &lt;/select&gt;</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23</code></td>
+<td><code>@Test public void testGetUserLike() {      SqlSession sqlSession = null;      try {         sqlSession = MybatisUtils.getSqlSession();          UserMapper mapper = sqlSession.getMapper(UserMapper.class);         List&lt;User&gt; userList = mapper.getUserLike(&quot;%胡%&quot;);          for (User user : userList) {             System.out.println(user);         }      } catch (Exception e) {         e.printStackTrace();     } finally {         if (sqlSession != null) {             sqlSession.close();         }     } }</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h1 id="3-mybatis配置解析mybatis-02"><a href="#3-mybatis配置解析mybatis-02" class="headerlink" title="3. mybatis配置解析mybatis-02"></a>3. mybatis配置解析<code>mybatis-02</code></h1><p><img src="https://img-blog.csdnimg.cn/20201216220303741.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201216225245392.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201216234043102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>import org.apache.ibatis.type.Alias;  @Alias(value = &quot;hello&quot;) public class User {</code></td>
+</tr>
+</tbody></table>
+<p><img src="https://img-blog.csdnimg.cn/20201217104645535.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201217104715614.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="4-结果集映射（解决属性名和字段名不一致的情况）mybatis-03"><a href="#4-结果集映射（解决属性名和字段名不一致的情况）mybatis-03" class="headerlink" title="4. 结果集映射（解决属性名和字段名不一致的情况）mybatis-03"></a>4. 结果集映射（解决属性名和字段名不一致的情况）<code>mybatis-03</code></h1><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20</code></td>
+<td><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt; &lt;!DOCTYPE mapper         PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;         &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;  &lt;mapper namespace=&quot;com.xiaofan.dao.UserMapper&quot;&gt;      &lt;resultMap id=&quot;UserMap&quot; type=&quot;User&quot;&gt;         &lt;!--column: 数据库中的字段 property: 实体字段--&gt;         &lt;!--数据库字段和实体字段一样的就不用做处理--&gt;         &lt;!--&lt;result column=&quot;id&quot; property=&quot;id&quot; /&gt;         &lt;result column=&quot;name&quot; property=&quot;name&quot; /&gt;--&gt;         &lt;result column=&quot;pwd&quot; property=&quot;password&quot; /&gt;     &lt;/resultMap&gt;          &lt;select id=&quot;getUserById&quot; resultMap=&quot;UserMap&quot;&gt;         select * from mybatis.user where id = #{id}     &lt;/select&gt;  &lt;/mapper&gt;</code></td>
+</tr>
+</tbody></table>
+<h1 id="5-日志mybatis-04"><a href="#5-日志mybatis-04" class="headerlink" title="5. 日志mybatis-04"></a>5. 日志<code>mybatis-04</code></h1><p><img src="https://img-blog.csdnimg.cn/20201217132840333.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>STDOUT_LOGGING标准日志</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20201217133509697.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>LOG4J</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20201217143920764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39</code></td>
+<td><code># 将等级为DEBUG的日志信息输出到console和file这两个目的地，console和file的定义在下面的代码 log4j.rootLogger=DEBUG,console,file  # 配置CONSOLE输出到控制台 log4j.appender.console=org.apache.log4j.ConsoleAppender log4j.appender.console.layout=org.apache.log4j.PatternLayout  # 配置CONSOLE日志的输出格式  [frame] 2019-08-22 22:52:12,000  %r耗费毫秒数 %p日志的优先级 %t线程名 %C所属类名通常为全类名 %L代码中的行号 %x线程相关联的NDC %m日志 %n换行 log4j.appender.console.layout.ConversionPattern=[frame] %d{yyyy-MM-dd HH:mm:ss,SSS} - %-4r %-5p [%t] %C:%L %x - %m%n  # 输出到日志文件中 log4j.appender.file=org.apache.log4j.RollingFileAppender # 保存编码格式 log4j.appender.file.Encoding=UTF-8 # 输出文件位置此为项目根目录下的logs文件夹中 log4j.appender.file.File=logs/root.log # 后缀可以是KB,MB,GB达到该大小后创建新的日志文件 log4j.appender.file.MaxFileSize=10MB # 设置滚定文件的最大值3 指可以产生root.log.1、root.log.2、root.log.3和root.log四个日志文件 log4j.appender.file.MaxBackupIndex=3   # 配置logfile为自定义布局模式 log4j.appender.file.layout=org.apache.log4j.PatternLayout log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %F %p %m%n  # 输出日志级别(设置mybatis的日志级别) log4j.logger.org.mybatis=DEBUG  # 对不同的类输出不同的日志文件 # com.xiaofan.dao包下的日志单独输出到xiaofan.log log4j.logger.com.xiaofan.dao=DEBUG,xiaofan # 设置为false该日志信息就不会加入到rootLogger中了 log4j.additivity.com.xiaofan.dao=false # 下面就和上面配置一样了 log4j.appender.xiaofan=org.apache.log4j.RollingFileAppender log4j.appender.xiaofan.Encoding=UTF-8 log4j.appender.xiaofan.File=logs/xiaofan.log log4j.appender.xiaofan.MaxFileSize=10MB log4j.appender.xiaofan.MaxBackupIndex=3 log4j.appender.xiaofan.layout=org.apache.log4j.PatternLayout log4j.appender.xiaofan.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %F %p %m%n</code></td>
+</tr>
+</tbody></table>
+<p>测试通过！</p>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhangguangxiang/p/12007924.html">https://www.cnblogs.com/zhangguangxiang/p/12007924.html</a></p>
+<p>​ <a target="_blank" rel="noopener" href="https://www.cnblogs.com/yidaxia/p/5820036.html">https://www.cnblogs.com/yidaxia/p/5820036.html</a></p>
+<h1 id="6-分页-mybatis-04"><a href="#6-分页-mybatis-04" class="headerlink" title="6. 分页 mybatis-04"></a>6. 分页 <code>mybatis-04</code></h1><h1 id="7-Mybatis执行流程"><a href="#7-Mybatis执行流程" class="headerlink" title="7. Mybatis执行流程"></a>7. Mybatis执行流程</h1><p><img src="https://img-blog.csdnimg.cn/20201217172214786.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201217172401673.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201217172435544.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="8-Lombok的使用-真正开发项目中不用"><a href="#8-Lombok的使用-真正开发项目中不用" class="headerlink" title="8. Lombok的使用(真正开发项目中不用)"></a>8. Lombok的使用(真正开发项目中不用)</h1><ul>
+<li>idea 安装Lombok插件</li>
+<li>导包</li>
+<li>用法</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>package com.xiaofan.pojo;  import lombok.AllArgsConstructor; import lombok.Data; import lombok.NoArgsConstructor;  @Data @AllArgsConstructor @NoArgsConstructor public class Student {     private String id;     private String name;     private int age; }</code></td>
+</tr>
+</tbody></table>
+<h1 id="9-复杂查询环境搭建"><a href="#9-复杂查询环境搭建" class="headerlink" title="9 复杂查询环境搭建"></a>9 复杂查询环境搭建</h1><p><strong>注解和xml配合使用，对于简单的可以使用注解，复杂的使用xml</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21</code></td>
+<td><code>CREATE TABLE `teacher` (   `id` INT(10) NOT NULL PRIMARY KEY,   `name` VARCHAR(30) DEFAULT NULL ) ENGINE=INNODB DEFAULT CHARSET=utf8;  INSERT INTO teacher (`id`, `name`) VALUES (1, &#39;秦老师&#39;);  CREATE TABLE `student` (   `id` INT(10) NOT NULL,   `name` VARCHAR(30) DEFAULT NULL,   `tid` INT(10) DEFAULT NULL,    PRIMARY KEY(`id`),    KEY `fktid` (`tid`),    CONSTRAINT `fktid` FOREIGN KEY (`tid`) REFERENCES `teacher`(`id`) ) ENGINE=INNODB DEFAULT CHARSET=utf8;  INSERT INTO `student` (`id`, `name`, `tid`) VALUES(1, &#39;小明&#39;, 1); INSERT INTO `s`student`tudent` (`id`, `name`, `tid`) VALUES(2, &#39;小红&#39;, 1); INSERT INTO `student` (`id`, `name`, `tid`) VALUES(3, &#39;小张&#39;, 1); INSERT INTO `student` (`id`, `name`, `tid`) VALUES(4, &#39;小李&#39;, 1); INSERT INTO `student` (`id`, `name`, `tid`) VALUES(5, &#39;小王&#39;, 1);</code></td>
+</tr>
+</tbody></table>
+<h2 id="9-1-多对一mybatis-05"><a href="#9-1-多对一mybatis-05" class="headerlink" title="9.1. 多对一mybatis-05"></a>9.1. 多对一<code>mybatis-05</code></h2><ul>
+<li>按照嵌套查询进行处理（子查询）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>&lt;select id=&quot;getStudent1&quot; resultMap=&quot;StudentTeacher1&quot;&gt;     select * from mybatis.student; &lt;/select&gt;  &lt;resultMap id=&quot;StudentTeacher1&quot; type=&quot;Student&quot;&gt;     &lt;result property=&quot;id&quot; column=&quot;id&quot;/&gt;     &lt;result property=&quot;name&quot; column=&quot;name&quot;/&gt;     &lt;!--复杂的属性需要单独处理 对象：association 集合：collection--&gt;     &lt;association property=&quot;teacher&quot; column=&quot;tid&quot; javaType=&quot;Teacher&quot; select=&quot;getTeacherById&quot;/&gt; &lt;/resultMap&gt;  &lt;select id=&quot;getTeacherById&quot; resultType=&quot;Teacher&quot;&gt;     select * from mybatis.teacher where id = #{id} &lt;/select&gt;</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>按照结果嵌套处理（多表关联）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>&lt;select id=&quot;getStudent2&quot; resultMap=&quot;StudentTeacher2&quot;&gt;     select s.id sid, s.name sname, t.name tname from student s, teacher t where s.tid = t.id &lt;/select&gt; &lt;!-- 注意别名问题 --&gt; &lt;resultMap id=&quot;StudentTeacher2&quot; type=&quot;Student&quot;&gt;     &lt;result property=&quot;id&quot; column=&quot;sid&quot;/&gt;     &lt;!-- 学生的名字 --&gt;     &lt;result property=&quot;name&quot; column=&quot;sname&quot;/&gt;      &lt;association property=&quot;teacher&quot; javaType=&quot;Teacher&quot;&gt;         &lt;!-- 老师的名字--&gt;         &lt;result property=&quot;name&quot; column=&quot;tname&quot;/&gt;     &lt;/association&gt; &lt;/resultMap&gt;</code></td>
+</tr>
+</tbody></table>
+<h2 id="9-2-一对多mybatis-06"><a href="#9-2-一对多mybatis-06" class="headerlink" title="9.2. 一对多mybatis-06"></a>9.2. 一对多<code>mybatis-06</code></h2><ul>
+<li>按照嵌套查询进行处理（子查询）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>package com.xiaofan.dao;  import com.xiaofan.pojo.Teacher; import org.apache.ibatis.annotations.Param; import org.apache.ibatis.annotations.Select;  public interface TeacherMapper {      @Select(&quot;select * from mybatis.teacher where id = #{id}&quot;)     Teacher getTeacherById(@Param(&quot;id&quot;) int id);      Teacher getTeacher1(@Param(&quot;tid&quot;) int id); }</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11</code></td>
+<td><code>&lt;select id=&quot;getTeacher1&quot; resultMap=&quot;TeacherStudent1&quot;&gt;     select * from mybatis.teacher where id = #{tid} &lt;/select&gt;  &lt;resultMap id=&quot;TeacherStudent1&quot; type=&quot;Teacher&quot;&gt;     &lt;collection property=&quot;students&quot; ofType=&quot;Student&quot; javaType=&quot;ArrayList&quot; select=&quot;getStudentByTeacherId&quot; column=&quot;id&quot;/&gt; &lt;/resultMap&gt;  &lt;select id=&quot;getStudentByTeacherId&quot; resultType=&quot;Student&quot;&gt;     select * from mybatis.student where tid = #{tid} &lt;/select&gt;</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>按照结果嵌套处理（多表关联）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</code></td>
+<td><code>&lt;select id=&quot;getTeacher2&quot; resultMap=&quot;TeacherStudent&quot;&gt;     select s.id sid, s.name sname, t.id tid, t.name tname     from student s, teacher t     where s.tid = t.id and t.id = #{tid}; &lt;/select&gt;  &lt;resultMap id=&quot;TeacherStudent&quot; type=&quot;Teacher&quot;&gt;     &lt;result property=&quot;id&quot; column=&quot;tid&quot;/&gt;     &lt;result property=&quot;name&quot; column=&quot;tname&quot;/&gt;      &lt;collection property=&quot;students&quot; ofType=&quot;Student&quot;&gt;         &lt;result property=&quot;id&quot; column=&quot;sid&quot;/&gt;         &lt;result property=&quot;name&quot; column=&quot;sname&quot; /&gt;         &lt;result property=&quot;tid&quot; column=&quot;tid&quot;/&gt;     &lt;/collection&gt; &lt;/resultMap&gt;</code></td>
+</tr>
+</tbody></table>
+<h1 id="10-动态Sqlmybatis-07"><a href="#10-动态Sqlmybatis-07" class="headerlink" title="10. 动态Sqlmybatis-07"></a>10. 动态Sql<code>mybatis-07</code></h1><p><code>动态SQL就是指根据不同的条件生成不同的SQL语句</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7</code></td>
+<td><code>create table blog ( 	id varchar(50) not null comment &#39;博客id&#39;,     title varchar(100) not null comment &#39;博客标题&#39;,     author varchar(30) not null comment &#39;博客作者&#39;,     create_time datetime not null comment &#39;创建时间&#39;,     views int(30) not null comment &#39;浏览量&#39; ) ENGINE=InnoDB DEFAULT charset=utf8;</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>if</li>
+<li>choose (when, otherwise)</li>
+<li>trim (where, set)</li>
+<li>foreach</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20</code></td>
+<td><code>package com.xiaofan.dao;  import com.xiaofan.pojo.Blog;  import java.util.List; import java.util.Map;  public interface BlogMapper {      int addBlog(Blog blog);      List&lt;Blog&gt; queryBlogIF(Map map);      List&lt;Blog&gt; queryBlogChoose(Map map);      int updateBlog(Map map);      List&lt;Blog&gt; queryBlogForeach(Map map); }</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65</code></td>
+<td><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt; &lt;!DOCTYPE mapper         PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;         &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;  &lt;mapper namespace=&quot;com.xiaofan.dao.BlogMapper&quot;&gt;      &lt;insert id=&quot;addBlog&quot; parameterType=&quot;blog&quot;&gt;         insert into mybatis.blog (id, title, author, create_time, views)         values (#{id}, #{title}, #{author}, #{createTime}, #{views});     &lt;/insert&gt;      &lt;select id=&quot;queryBlogIF&quot; parameterType=&quot;map&quot; resultType=&quot;blog&quot;&gt;         select * from mybatis.blog         &lt;where&gt;             &lt;if test=&quot;title != null&quot;&gt;                 title = #{title}             &lt;/if&gt;             &lt;if test=&quot;author != null&quot;&gt;                 and author = #{author}             &lt;/if&gt;         &lt;/where&gt;     &lt;/select&gt;      &lt;select id=&quot;queryBlogChoose&quot; parameterType=&quot;map&quot; resultType=&quot;blog&quot;&gt;         select * from mybatis.blog         &lt;where&gt;             &lt;choose&gt;                 &lt;when test=&quot;title != null&quot;&gt;                     title = #{title}                 &lt;/when&gt;                 &lt;when test=&quot;author != null&quot;&gt;                     and author = #{author}                 &lt;/when&gt;                 &lt;otherwise&gt;                     and views = #{views}                 &lt;/otherwise&gt;             &lt;/choose&gt;          &lt;/where&gt;     &lt;/select&gt;      &lt;update id=&quot;updateBlog&quot; parameterType=&quot;map&quot;&gt;         update mybatis.blog         &lt;set&gt;             &lt;if test=&quot;title != null&quot;&gt;                 title = #{title},             &lt;/if&gt;             &lt;if test=&quot;author != null&quot;&gt;                 author = #{author}             &lt;/if&gt;         &lt;/set&gt;         where id = #{id}     &lt;/update&gt;      &lt;!-- select * from mybatis.blog where 1=1 and (id=1 or id=2 or id=3) --&gt;     &lt;select id=&quot;queryBlogForeach&quot; parameterType=&quot;map&quot; resultType=&quot;blog&quot;&gt;         select * from mybatis.blog         &lt;where&gt;             &lt;foreach collection=&quot;ids&quot; item=&quot;id&quot; open=&quot;and (&quot; close=&quot;)&quot; separator=&quot;or&quot;&gt;                 id = #{id}             &lt;/foreach&gt;         &lt;/where&gt;     &lt;/select&gt; &lt;/mapper&gt;</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94</code></td>
+<td><code>package com.xiaofan.dao;  import com.xiaofan.pojo.Blog; import com.xiaofan.utils.IDUtils; import com.xiaofan.utils.MybatisUtils; import org.apache.ibatis.session.SqlSession; import org.apache.ibatis.session.SqlSessionFactory; import org.junit.Test;  import java.util.*;  public class MyTest {      @Test     public void testAddBlog() {         SqlSession sqlSession = MybatisUtils.getSqlSession();         BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);          Blog blog = new Blog(IDUtils.getId(), &quot;Mybatis如此简单&quot;, &quot;狂神说&quot;, new Date(), 9999);         mapper.addBlog(blog);          blog.setId(IDUtils.getId());         blog.setTitle(&quot;Java如此简单&quot;);         mapper.addBlog(blog);          blog.setId(IDUtils.getId());         blog.setTitle(&quot;Spring如此简单&quot;);         mapper.addBlog(blog);          blog.setId(IDUtils.getId());         blog.setTitle(&quot;微服务如此简单&quot;);         mapper.addBlog(blog);         sqlSession.close();     }      @Test     public void queryBlogIF() {         SqlSession sqlSession = MybatisUtils.getSqlSession();         BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);          Map&lt;String, Object&gt; map = new HashMap();         map.put(&quot;title&quot;, &quot;Mybatis如此简单&quot;);         map.put(&quot;author&quot;, &quot;狂神说&quot;);         mapper.queryBlogIF(map);         sqlSession.close();     }      @Test     public void queryBlogChoose() {         SqlSession sqlSession = MybatisUtils.getSqlSession();         BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);          Map&lt;String, Object&gt; map = new HashMap();         map.put(&quot;title&quot;, &quot;Mybatis如此简单&quot;);         map.put(&quot;author&quot;, &quot;狂神说&quot;);         map.put(&quot;views&quot;, 1000);         mapper.queryBlogChoose(map);         sqlSession.close();     }      @Test     public void updateBlog() {         SqlSession sqlSession = MybatisUtils.getSqlSession();         BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);          Map&lt;String, Object&gt; map = new HashMap();         map.put(&quot;title&quot;, &quot;Mybatis如此简单2&quot;); //        map.put(&quot;author&quot;, &quot;狂神说&quot;);         map.put(&quot;id&quot;, &quot;0d15b0c288514e39a8f757030a5708a9&quot;);         mapper.updateBlog(map);         sqlSession.close();     }      @Test     public void queryBlogForeach() {         SqlSession sqlSession = MybatisUtils.getSqlSession();         BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);          Map&lt;String, Object&gt; map = new HashMap();         List&lt;Integer&gt; ids = new ArrayList&lt;Integer&gt;();         ids.add(1);         ids.add(2);         ids.add(3);          map.put(&quot;ids&quot;, ids);          List&lt;Blog&gt; blogs = mapper.queryBlogForeach(map);         for (Blog blog : blogs) {             System.out.println(blog);         }         sqlSession.close();     }  }</code></td>
+</tr>
+</tbody></table>
+<h1 id="11-SQL片段"><a href="#11-SQL片段" class="headerlink" title="11. SQL片段"></a>11. SQL片段</h1><p>有的时候，我们可能会将一些功能的部分抽取出来，方便复用！</p>
+<ol>
+<li>使用sql标签抽取公共部分</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8</code></td>
+<td><code>&lt;sql id=&quot;if-title_author&quot;&gt;     &lt;if test=&quot;title != null&quot;&gt;         title = #{title}     &lt;/if&gt;     &lt;if test=&quot;author != null&quot;&gt;         and author = #{author}     &lt;/if&gt; &lt;/sql&gt;</code></td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li>在需要使用的地方使用include标签应用即可</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>&lt;select id=&quot;queryBlogIF&quot; parameterType=&quot;map&quot; resultType=&quot;com.xiaofan.pojo.Blog&quot;&gt;     select * from mybatis.blog     &lt;where&gt;         &lt;include refid=&quot;if-title_author&quot;/&gt;     &lt;/where&gt; &lt;/select&gt;</code></td>
+</tr>
+</tbody></table>
+<p>注意事项：</p>
+<ol>
+<li>最好基于单标来定义sql片段</li>
+<li>不要存在where标签</li>
+</ol>
+<h1 id="12-缓存mybatis-08"><a href="#12-缓存mybatis-08" class="headerlink" title="12. 缓存mybatis-08"></a>12. 缓存<code>mybatis-08</code></h1><ul>
+<li><p>一级缓存（默认开启）</p>
+<ul>
+<li><p>开启日志</p>
+</li>
+<li><p>测试在一个Session中查询两次相同的记录</p>
+</li>
+<li><p>查看日志输出</p>
+</li>
+<li><p>缓存失效的情况</p>
+<ul>
+<li>查询不同的东西</li>
+<li>增删改查操作，可能会改变原来的数据，所以必定会刷新缓存！</li>
+<li>查询不同的Mapper.xml</li>
+<li>手动清除缓存</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>二级缓存</p>
+<p><img src="https://img-blog.csdnimg.cn/20201218163259540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>开启全局缓存</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>在当前Mapper中使用缓存</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>&lt;!-- 开启二级缓存 --&gt; &lt;cache /&gt;</code></td>
+</tr>
+</tbody></table>
+<p>注意事项：实体需要序列化哦！</p>
+<p><img src="https://img-blog.csdnimg.cn/2020082416365829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ZhbmppYW5oYWk=,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+</li>
+</ul>
+<p><img src="https://images2017.cnblogs.com/blog/1254583/201710/1254583-20171029185910164-1823278112.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/">https://hzhzxfs.github.io/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/10/15/SpringMVC/" title="SSM框架之Mybatis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">SSM框架之Mybatis</div></div><div class="info-2"><div class="info-item-1">0. 老版本Spring官方文档 https://docs.spring.io/spring-framework/docs/4.3.24.RELEASE/spring-framework-reference/html/1. SpringMVC   2. HelloSpringMVC 配置版本springmvc-02-mymvc 2.1. 新建一个module，添加web支持！ 2.2. 确定导入了SpringMVC的依赖！          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;          xmlns:xsi=&qu...</div></div></div></a><a class="pagination-related" href="/2023/09/27/%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" title="Linux网络配置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Linux网络配置</div></div><div class="info-2"><div class="info-item-1">[TOC] 网络配置1 Linux网络配置原理 虚拟机NAT网络配置原理   2 查看网络IP和网关2.1 虚拟机网络编辑器 2.2 修改IP地址 2.3 查看网关 2.4 查看windows中的虚拟网卡的ip地址 windows中使用ipconfig查看ip配置  3. ping测试 基本语法: ping [主机地址]   例如： ping www.baidu.com  4. Linux网络环境配置4.1 自动抓取 缺点： 每次自动获取的ip地址可能不一样，不适用于做服务器 4.2 指定ip地址 直接修改配置文件来指定IP，并可以连接到外网，编辑：vim &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-eth0  重启网络服务：service network restart 重启系统：reboot  </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/08/02/%E5%9C%A8%E4%B8%80%E9%A2%97%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%AF%BB%E6%89%BE%E4%B8%80%E4%B8%AA%E7%BB%93%E7%82%B9%E7%9A%84%E5%90%8E%E7%BB%A7%E7%BB%93%E7%82%B9(%E5%89%8D%E9%A9%B1%E7%BB%93%E7%82%B9)/" title="在一颗二叉树中寻找一个结点的后继结点(前驱结点)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-02</div><div class="info-item-2">在一颗二叉树中寻找一个结点的后继结点(前驱结点)</div></div><div class="info-2"><div class="info-item-1">在一颗二叉树中寻找一个结点的后继结点(前驱结点) 找后继结点 找前驱结点   找后继结点首先知道什么是后继结点，就是二叉树中序遍历的序列中，某个结点紧随的那个结点比如下面的二叉树以及对应的中序遍历顺序。  则4的后继是2 ，2的后继是5，7的后继是null。 在树的结构中，每个结点有一个指向父亲的域parent，看如下结构         1 2 3 4 5 6 7 8 9 10 11 static class Node{     public int value;     public Node left;     public Node right;     public Node parent;      public Node(int value) {         this.value = value;     } }   那么如何快速的寻找当前结点node后继结点呢? 其实只需要分为两种情况  第一，如果node结点有右子树，那么就是右子树上最左的结点，例如上图的２的右子树上的最左结点是5，5的右子树上最左的结点是8，1的右子树上最左的结点是9，3的右子树上最左的结...</div></div></div></a><a class="pagination-related" href="/2021/07/05/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%9B%BE%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/" title="图神经网络——基本图论与PyG库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-05</div><div class="info-item-2">图神经网络——基本图论与PyG库</div></div><div class="info-2"><div class="info-item-1">图神经网络——基于图神经网络的图表征学习方法图表征学习要求在输入节点属性、边和边的属性（如果有的话）得到一个向量作为图的表征，基于图表征进一步的我们可以做图的预测，而图同构网络（Graph Isomorphism Network, GIN）的图表征网络是当前最经典的图表征学习网络。 1.GNN的邻域聚合(消息传递)GNN的目标是以图结构数据和节点特征作为输入，以学习到节点（或图）的embedding，用于分类任务。基于邻域聚合的GNN可以拆分为以下三个模块：  Aggregate：聚合一阶邻域特征。 Combine：将邻居聚合的特征 与 当前节点特征合并， 以更新当前节点特征。 Readout（可选）：如果是对graph分类，需要将graph中所有节点特征转变成graph特征。  但是Aggregate的三种方式sum、mean、max的表征能力不够强大。 如上图，节点v和v’为中心节点，通过聚合邻居特征生成embedding来分析不同aggregate设置下是否能区分不同的结构。设红绿蓝色节点特征值分别为r,g,b，不考虑combine。  图a中：mean：左$\frac{1...</div></div></div></a><a class="pagination-related" href="/2023/09/27/%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/" title="Linux网络配置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-27</div><div class="info-item-2">Linux网络配置</div></div><div class="info-2"><div class="info-item-1">[TOC] 网络配置1 Linux网络配置原理 虚拟机NAT网络配置原理   2 查看网络IP和网关2.1 虚拟机网络编辑器 2.2 修改IP地址 2.3 查看网关 2.4 查看windows中的虚拟网卡的ip地址 windows中使用ipconfig查看ip配置  3. ping测试 基本语法: ping [主机地址]   例如： ping www.baidu.com  4. Linux网络环境配置4.1 自动抓取 缺点： 每次自动获取的ip地址可能不一样，不适用于做服务器 4.2 指定ip地址 直接修改配置文件来指定IP，并可以连接到外网，编辑：vim &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-eth0  重启网络服务：service network restart 重启系统：reboot  </div></div></div></a><a class="pagination-related" href="/2023/05/17/%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/" title="虚拟机调优案例分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-17</div><div class="info-item-2">虚拟机调优案例分析</div></div><div class="info-2"><div class="info-item-1">虚拟机调优案例分析 虚拟机调优案例分析 高性能硬件上的程序部署策略 服务系统经常出现卡顿（Full GC 时间太长） 除了 Java 堆和永久代之外，会占用较多内存的区域 从 GC 调优角度解决新生代存活大量对象问题（Minor GC 时间太长）    高性能硬件上的程序部署策略  补充：64 位虚拟机 在 Java EE 方面，企业级应用经常需要使用超过 4GB 的内存，此时，32 位虚拟机将无法满足需求，可是 64 位虚拟机虽然可以设置更大的内存，却存在以下缺点：  内存问题： 由于指针膨胀和各种数据类型对齐补白的原因，运行于 64 位系统上的 Java 应用程序需要消耗更多的内存，通常要比 32 位系统额外增加 10% ~ 30% 的内存消耗。 性能问题： 64 位虚拟机的运行速度在各个测试项中几乎全面落后于 32 位虚拟机，两者大概有 15% 左右的性能差距。   服务系统经常出现卡顿（Full GC 时间太长）首先 jstat -gcutil 观察 GC 的耗时，jstat -gccapacity 检查内存用量（也可以加上 -verbose:gc 参数获取 GC 的详细...</div></div></div></a><a class="pagination-related" href="/2023/10/15/SpringMVC/" title="SSM框架之Mybatis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-15</div><div class="info-item-2">SSM框架之Mybatis</div></div><div class="info-2"><div class="info-item-1">0. 老版本Spring官方文档 https://docs.spring.io/spring-framework/docs/4.3.24.RELEASE/spring-framework-reference/html/1. SpringMVC   2. HelloSpringMVC 配置版本springmvc-02-mymvc 2.1. 新建一个module，添加web支持！ 2.2. 确定导入了SpringMVC的依赖！          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;          xmlns:xsi=&qu...</div></div></div></a><a class="pagination-related" href="/2021/08/01/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%80%BB%E7%BB%93/" title="Java8 Lambda表达式总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-01</div><div class="info-item-2">Java8 Lambda表达式总结</div></div><div class="info-2"><div class="info-item-1">Lambda表达式总结 一、使用范例以及例子 1、原始方法 2、优化方式一-使用策略模式来优化 3、优化方式二-使用匿名内部类优化 4、优化方式三-使用Lambda表达式 5、优化方式四-使用Stream-API   二、Lambda表达式基础语法 三、函数式接口 四、Lambda练习 1、练习一-Employee类中先按年龄比，年龄相同按照姓名比-都是升序 2、练习二-声明一个带两个泛型的接口，并且对两个Long型数值计算   五、Java8四大内置函数式接口 六、方法引用和构造器引用 1、方法引用 2、构造器引用     一、使用范例以及例子使用匿名内部类:         1 2 3 4 5 6 Comparator&lt;Integer&gt;com = new Comparator&lt;Integer&gt;() {     @Override     public int compare(Integer o1, Integer o2) {  //降序排列         return Integer.compare(o2,o1);     } };   使用Lamb...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-ssm%E6%A1%86%E6%9E%B6%E5%A4%A7%E7%BA%B2"><span class="toc-number">1.</span> <span class="toc-text">0. ssm框架大纲</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Mybatis"><span class="toc-number">2.</span> <span class="toc-text">1. Mybatis</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E7%AC%AC%E4%B8%80%E4%B8%AAMybatis%E7%A8%8B%E5%BA%8Fmybatis-01"><span class="toc-number">3.</span> <span class="toc-text">2. 第一个Mybatis程序mybatis-01</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-mybatis%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90mybatis-02"><span class="toc-number">4.</span> <span class="toc-text">3. mybatis配置解析mybatis-02</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E7%BB%93%E6%9E%9C%E9%9B%86%E6%98%A0%E5%B0%84%EF%BC%88%E8%A7%A3%E5%86%B3%E5%B1%9E%E6%80%A7%E5%90%8D%E5%92%8C%E5%AD%97%E6%AE%B5%E5%90%8D%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E6%83%85%E5%86%B5%EF%BC%89mybatis-03"><span class="toc-number">5.</span> <span class="toc-text">4. 结果集映射（解决属性名和字段名不一致的情况）mybatis-03</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E6%97%A5%E5%BF%97mybatis-04"><span class="toc-number">6.</span> <span class="toc-text">5. 日志mybatis-04</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E5%88%86%E9%A1%B5-mybatis-04"><span class="toc-number">7.</span> <span class="toc-text">6. 分页 mybatis-04</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-Mybatis%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">8.</span> <span class="toc-text">7. Mybatis执行流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-Lombok%E7%9A%84%E4%BD%BF%E7%94%A8-%E7%9C%9F%E6%AD%A3%E5%BC%80%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%B8%8D%E7%94%A8"><span class="toc-number">9.</span> <span class="toc-text">8. Lombok的使用(真正开发项目中不用)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#9-%E5%A4%8D%E6%9D%82%E6%9F%A5%E8%AF%A2%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">10.</span> <span class="toc-text">9 复杂查询环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#9-1-%E5%A4%9A%E5%AF%B9%E4%B8%80mybatis-05"><span class="toc-number">10.1.</span> <span class="toc-text">9.1. 多对一mybatis-05</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-2-%E4%B8%80%E5%AF%B9%E5%A4%9Amybatis-06"><span class="toc-number">10.2.</span> <span class="toc-text">9.2. 一对多mybatis-06</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#10-%E5%8A%A8%E6%80%81Sqlmybatis-07"><span class="toc-number">11.</span> <span class="toc-text">10. 动态Sqlmybatis-07</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#11-SQL%E7%89%87%E6%AE%B5"><span class="toc-number">12.</span> <span class="toc-text">11. SQL片段</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#12-%E7%BC%93%E5%AD%98mybatis-08"><span class="toc-number">13.</span> <span class="toc-text">12. 缓存mybatis-08</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

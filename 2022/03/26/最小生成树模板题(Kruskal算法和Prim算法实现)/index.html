@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>最小生成树模板题(Kruskal算法和Prim算法实现) | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最小生成树模板题(Kruskal算法和Prim算法实现) Kruskal算法思想及流程 Prim算法思想及流程:  题目链接 http:&#x2F;&#x2F;acm.hdu.edu.cn&#x2F;showproblem.php?pid&#x3D;1863  题目 题意就是一个求最小生成树的模板题(一般是无向图)。  Kruskal算法思想及流程 首先各个顶点看成一个集合，每个顶点的根就是自己； 从整个图中边的集合中取出最小的一条(一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最小生成树模板题(Kruskal算法和Prim算法实现)">
+<meta property="og:url" content="https://hzhzxfs.github.io/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="最小生成树模板题(Kruskal算法和Prim算法实现) Kruskal算法思想及流程 Prim算法思想及流程:  题目链接 http:&#x2F;&#x2F;acm.hdu.edu.cn&#x2F;showproblem.php?pid&#x3D;1863  题目 题意就是一个求最小生成树的模板题(一般是无向图)。  Kruskal算法思想及流程 首先各个顶点看成一个集合，每个顶点的根就是自己； 从整个图中边的集合中取出最小的一条(一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2022-03-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:02.009Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "最小生成树模板题(Kruskal算法和Prim算法实现)",
+  "url": "https://hzhzxfs.github.io/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2022-03-25T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:02.009Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '最小生成树模板题(Kruskal算法和Prim算法实现)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">最小生成树模板题(Kruskal算法和Prim算法实现)</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">最小生成树模板题(Kruskal算法和Prim算法实现)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-25T16:00:00.000Z" title="发表于 2022-03-26 00:00:00">2022-03-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:02.009Z" title="更新于 2026-06-05 16:26:02">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="最小生成树模板题-Kruskal算法和Prim算法实现"><a href="#最小生成树模板题-Kruskal算法和Prim算法实现" class="headerlink" title="最小生成树模板题(Kruskal算法和Prim算法实现)"></a>最小生成树模板题(Kruskal算法和Prim算法实现)</h2><ul>
+<li><code>Kruskal</code>算法思想及流程</li>
+<li><code>Prim</code>算法思想及流程:</li>
+</ul>
+<h4 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1863">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1863">http://acm.hdu.edu.cn/showproblem.php?pid=1863</a></p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/tree1.png"></p>
+<h4 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h4><p>就是一个求最小生成树的模板题(一般是无向图)。</p>
+<hr>
+<h3 id="Kruskal算法思想及流程"><a href="#Kruskal算法思想及流程" class="headerlink" title="Kruskal算法思想及流程"></a><code>Kruskal</code>算法思想及流程</h3><ul>
+<li>首先各个顶点看成一个集合，每个顶点的根就是自己；</li>
+<li>从整个图中边的集合中取出<strong>最小</strong>的一条(一开始对边的集合排序)，判断该边的两个定点是不是同一个集合，如果不是，<strong>合并两个集合；</strong></li>
+<li>如果是同一个集合，舍弃，继续取下一条边；</li>
+<li>直到集合中有<code>n - 1</code>条边为止；</li>
+</ul>
+<p><strong>时间复杂度为为O(e2), 使用并查集优化后复杂度为 O（eloge），与网中的边数有关，适用于求边稀疏的网的最小生成树</strong></p>
+<p><img src="/images/tree2.png" alt="这里写图片描述"></p>
+<p><strong>推荐写法</strong></p>
+<ul>
+<li><p>建图和上面稍有不同，<code>kruskal</code>的特性只需要用到<code>Edge</code>这个类即可，对边集排序然后不断合并两个顶点即可；</p>
+</li>
+<li><p>这里并查集使用的数组，和上面有点不同，但是原理都是一样的；</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  public class Main {      static int n;     static int m;     static ArrayList&lt;Edge&gt; edges;      static class Edge implements Comparable&lt;Edge&gt; {         public int from;         public int to;         public int w;          public Edge(int from, int to, int w) {             this.from = from;             this.to = to;             this.w = w;         }          @Override         public int compareTo(Edge o) {             return w - o.w;         }     }      static class UnionSet {          private int[] parent;         private int[] rank;          public UnionSet(int n) {             parent = new int[n + 1];             rank = new int[n + 1];             for (int i = 0; i &lt;= n; i++) {                 parent[i] = i;                 rank[i] = 0;             }         }          public boolean isSameSet(int x, int y) {             return find(x) == find(y);         }          public int find(int v) {             while (parent[v] != v) {                 parent[v] = parent[parent[v]];  // 路径压缩优化                 v = parent[v];             }             return v;         }          public void union(int a, int b) {             int aRoot = find(a);             int bRoot = find(b);             if (aRoot == bRoot)                 return;             if (rank[aRoot] &lt; rank[bRoot]) { // a更矮,所以挂到b更好                 parent[aRoot] = bRoot;             } else if (rank[aRoot] &gt; rank[bRoot]) {                 parent[bRoot] = aRoot;             } else {                 parent[aRoot] = bRoot;                 rank[bRoot]++;             }         }     }      static int kruskal() {         Collections.sort(edges);  // 对边集排序         UnionSet uset = new UnionSet(n);         int res = 0;         int count = 0;         for (int i = 0; i &lt; edges.size(); i++) {             int from = edges.get(i).from;             int to = edges.get(i).to;             int w = edges.get(i).w;             if (!uset.isSameSet(from, to)) { //两个顶点不属于同一个集合                 res += w;                 count++;                 if (count == n - 1)                     break;                 uset.union(from, to);             }          }         return count == n - 1 ? res : -1;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while (cin.hasNext()) {             m = cin.nextInt(); // 先输入道路条数             n = cin.nextInt();             if (m == 0)                 break;             edges = new ArrayList&lt;&gt;();             for (int i = 0; i &lt; m; i++) {                 int from = cin.nextInt();                 int to = cin.nextInt();                 int w = cin.nextInt();                 edges.add(new Edge(from, to, w));                 edges.add(new Edge(to, from, w));             }             int res = kruskal();             System.out.println(res == -1 ? &quot;?&quot; : res);         }     } }</code></td>
+</tr>
+</tbody></table>
+<p>其他写法。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144</code></td>
+<td>&#96;&#96;&#96; import java.io.BufferedInputStream; import java.util.*;  public class Main { &#x2F;&#x2F;提交时改成Main      static class Node {         public int value;         ArrayList<Node> nexts;          public Node(int value) {             this.value &#x3D; value;             nexts &#x3D; new ArrayList<Node>();         }     }      static class Edge {         public int weight;         public Node from;         public Node to;          public Edge(Node from, Node to, int weight) {             this.from &#x3D; from;             this.to &#x3D; to;             this.weight &#x3D; weight;         }     }      static class Graph {         public HashMap&lt;Integer, Node&gt; nodes;         public HashSet<Edge> edges;          public Graph() {             nodes &#x3D; new HashMap&lt;&gt;();             edges &#x3D; new HashSet&lt;&gt;();         }     }      &#x2F;&#x2F;并查集结构     static class UnionSet {         public HashMap&lt;Node, Node&gt; faMap;         public HashMap&lt;Node, Integer&gt; sizeMap;          public UnionSet() {             faMap &#x3D; new HashMap&lt;&gt;();             sizeMap &#x3D; new HashMap&lt;&gt;();         }          &#x2F;&#x2F;初始化         public void init(Collection<Node> nodes) {             faMap.clear();             sizeMap.clear();             for (Node node : nodes) {                 faMap.put(node, node);                 sizeMap.put(node, 1);             }         }          public Node findHead(Node v) {             Node fa &#x3D; faMap.get(v);             if (fa !&#x3D; v) {                 fa &#x3D; findHead(fa);             }             faMap.put(v, fa); &#x2F;&#x2F;v的父改为根(沿途所有的)             return fa;         }          public boolean isSameSet(Node a, Node b) {             return findHead(a) &#x3D;&#x3D; findHead(b);         }          public void union(Node a, Node b) {             if (a &#x3D;&#x3D; null</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<hr>
+<h3 id="Prim算法思想及流程"><a href="#Prim算法思想及流程" class="headerlink" title="Prim算法思想及流程:"></a><code>Prim</code>算法思想及流程:</h3><ul>
+<li>一开始也有一个集合，和<code>Kruskal</code>算法不同的是，这个不是慢慢的合并(通过并查集)变大，而是一个一个的添加结点；</li>
+<li>一开始选择一个起点，有一个优先队列存放边的集合，<strong>把这个结点相连的边加入优先队列</strong>；</li>
+<li>然后选择一条相连的且<strong>权值最小</strong>的边，<strong>并判断这条边的终点是否已经加入过点的集合(准确的来说是看这两个点相连的边是否已经加入过集合(但是这里是用两个端点都是否进过<code>vis</code>数组替代))，如果没有，就加入，并且把这条边加入到结果集，并且解锁和它相连的边(解锁就是把边加入到优先队列)</strong></li>
+<li>如果出现过，继续从优先队列中拿出最小的边判断；</li>
+<li>直到结果集达到<code>n-1</code>条边，或者图不连通；</li>
+</ul>
+<p><img src="/images/tree3.png" alt="这里写图片描述"></p>
+<p><strong>推荐写法</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  public class Main {      static int n;     static int m;     static boolean[] vis;     static ArrayList&lt;Edge&gt;[] G;       static class Edge implements Comparable&lt;Edge&gt; {         public int to;         public int w;          public Edge(int to, int w) {             this.to = to;             this.w = w;         }          @Override         public int compareTo(Edge o) {             return w - o.w;         }     }      private static int prim(int start) {         PriorityQueue&lt;Edge&gt; pq = new PriorityQueue&lt;&gt;();         for (int i = 0; i &lt; G[start].size(); i++)             pq.add(G[start].get(i));         int count = 0;         int res = 0;         vis[start] = true; // 起始节点已经在集合中         while (!pq.isEmpty()) {             Edge curEdge = pq.poll();             int to = curEdge.to;             if (!vis[to]) {                 vis[to] = true;                 count++;                 res += curEdge.w;                 if (count == n - 1)                     break;                 for (int i = 0; i &lt; G[to].size(); i++) {                     int nxtNode = G[to].get(i).to;                     if (!vis[nxtNode]) // to -&gt; nxtNode 没有加入过                         pq.add(G[to].get(i)); // 将to-&gt; nxtNode的边加入优先队列                 }             }         }         if (count != n - 1)             return -1;         return res;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while (cin.hasNext()) {             m = cin.nextInt(); // 先输入道路条数             n = cin.nextInt();             if (m == 0)                 break;             G = new ArrayList[n + 1];  // 1~n             vis = new boolean[n + 1];             for (int i = 0; i &lt;= n; i++) {                 G[i] = new ArrayList&lt;&gt;();             }             for (int i = 0; i &lt; m; i++) {                 int from = cin.nextInt();                 int to = cin.nextInt();                 int w = cin.nextInt();                 G[from].add(new Edge(to, w));                 G[to].add(new Edge(from, w));             }             int res = prim(1);             System.out.println(res == -1 ? &quot;?&quot; : res);         }     } }</code></td>
+</tr>
+</tbody></table>
+<p>其他写法。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  public class Main {     static class Node {         public int value;         ArrayList&lt;Edge&gt; edges; //以这个点作为起点出发的边          public Node(int value) {             this.value = value;             edges = new ArrayList&lt;&gt;();         }     }      static class Edge {         public int weight;         public Node from;         public Node to;          public Edge(Node from, Node to, int weight) {             this.from = from;             this.to = to;             this.weight = weight;         }     }      static class Graph {         public HashMap&lt;Integer, Node&gt; nodes;         public HashSet&lt;Edge&gt; edges;          public Graph() {             nodes = new HashMap&lt;&gt;();             edges = new HashSet&lt;&gt;();         }     }      static class EdgeComparator implements Comparator&lt;Edge&gt; {         @Override         public int compare(Edge o1, Edge o2) { //按照边的权重升序排列             return o1.weight - o2.weight;         }     }      static Set&lt;Edge&gt; prim(Graph graph) {         PriorityQueue&lt;Edge&gt; priorityQueue = new PriorityQueue&lt;&gt;(new EdgeComparator());         HashSet&lt;Edge&gt; res = new HashSet&lt;&gt;();         HashSet&lt;Node&gt; set = new HashSet&lt;&gt;();         Node start = graph.nodes.get(1); //从第一个点开始         set.add(start);         for (Edge edge : start.edges) {             priorityQueue.add(edge);         }         while (!priorityQueue.isEmpty()) {             Edge poll = priorityQueue.poll();             Node toNode = poll.to;   //这条边的to点             if (!set.contains(toNode)) {                 set.add(toNode);                 res.add(poll);    //注意这个不能放在if的上面                 if (res.size() == graph.nodes.size() - 1) break;                 for (Edge nextEdge : toNode.edges) {                     priorityQueue.add(nextEdge);                 }             }         }         return res;     }      static Graph createGraph(Scanner in, int n, int m) {         Graph G = new Graph();         for (int i = 1; i &lt;= n; i++) G.nodes.put(i, new Node(i));         for (int i = 0; i &lt; m; i++) {             int a = in.nextInt();             int b = in.nextInt();             int w = in.nextInt();             Node from = G.nodes.get(a);             Node to = G.nodes.get(b);             Edge newEdge = new Edge(from, to, w);             G.edges.add(newEdge);             from.edges.add(newEdge);  //记得添加这条边         }         return G;     }      public static void main(String[] args) {         Scanner in = new Scanner(new BufferedInputStream(System.in));         while (in.hasNext()) {             int m = in.nextInt();             int n = in.nextInt();             if (m == 0) break;             Graph G = createGraph(in, n, m);             Set&lt;Edge&gt; set = prim(G);             if (set.size() != n - 1) { //没有n-1条边  不足以保持畅通                 System.out.println(&quot;?&quot;);              } else {                 int sum = 0;                 for (Edge edge : set) {                     sum += edge.weight;                 }                 System.out.println(sum);             }         }     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/">https://hzhzxfs.github.io/2022/03/26/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98(Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/04/08/%E7%B4%A0%E6%95%B0%E5%9B%9E%E6%96%87%E4%BB%A5%E5%8F%8A%E7%B4%A0%E6%95%B0%E7%9B%B8%E5%85%B3%E6%80%BB%E7%BB%93/" title="素数回文以及素数相关总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">素数回文以及素数相关总结</div></div><div class="info-2"><div class="info-item-1">素数回文以及素数相关总结 普通筛素数法 埃式筛法 优化筛法 整数分解(唯一分解定理) 约数枚举 Hdu - 1431. 素数回文   普通筛素数法这个也是普通的素数判定的方法，这个方法判定素数时间复杂度为O (sqrt(n))。          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 static ArrayList&lt;Integer&gt; sieve(boolean[] is_prime, int MAX) {     ArrayList&lt;Integer&gt; prime = new ArrayList&lt;&gt;();     is_prime[0] = is_prime[1] = false; // 01 不是素数     boolean flag;     for (int i = 2; i &lt;= MAX; i++) {         flag = true;         for (int j = 2; j * j &lt;= i; j++) {// 根号i的时间复杂度     ...</div></div></div></a><a class="pagination-related" href="/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/" title="最短路dijkstra模板"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">最短路dijkstra模板</div></div><div class="info-2"><div class="info-item-1">﻿## 最短路dijkstra模板  dijkstra算法总结 常用模板解决 其他写法   题目链接 http://acm.hdu.edu.cn/showproblem.php?pid=1874  题目 dijkstra算法总结总结一下dijkstra算法大致的流程:  一开始有一个dist[]数组(也可以是map)来保存从start(起点)到每个点的最短路径(一开始的话，如果start和某个点没有边，就为INF(或者为null)，如果有连线的话就是边的权值)； 然后每次从dist数组中取出一个dist[i]最小的i(不能取已经用过的顶点(vis数组标记))，也就是start距离某个结点最近的一个； 取出这个结点之后，用这个结点更新和它相连的边的dist数组； 直到把所有的dist数组都更新一遍；    注意: dijkstra为什么不能有负权边? 因为如果有的话，我们找最小的那个结构的时候，没准它还能通过松弛变得更短，例如上面我们一开始选出0~2这条边的时候，试想如果2~1的那条边权值为-4，那一开始我们找的0~2这条边就是错的，所以不能有负权边。   常用模板解决推荐的写法 ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/01/06/Kafka/" title="Kafka必知必会"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-06</div><div class="info-item-2">Kafka必知必会</div></div><div class="info-2"><div class="info-item-1">Kafka1.什么是kafka?Apache Kafka是由Apache开发的一种发布订阅消息系统。 2.kafka的3个关键功能？ 发布和订阅记录流，类似于消息队列或企业消息传递系统。 以容错的持久方式存储记录流。 处理记录流。  3.kafka通常用于两大类应用？ 建立实时流数据管道，以可靠地在系统或应用程序之间获取数据 构建实时流应用程序，以转换或响应数据流  4.kafka特性? 消息持久化 高吞吐量 扩展性 多客户端支持 Kafka Streams 安全机制 数据备份 轻量级 消息压缩  5.kafka的5个核心Api? Producer API Consumer API Streams API Connector API Admin API  6.什么是Broker（代理）?Kafka集群中，一个kafka实例被称为一个代理(Broker)节点。 7.什么是Producer（生产者）?消息的生产者被称为Producer。 Producer将消息发送到集群指定的主题中存储，同时也自定义算法决定将消息记录发送到哪个分区? 8.什么是Consumer（消费者）?消息的消费者...</div></div></div></a><a class="pagination-related" href="/2023/01/12/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Java多线程基础"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-12</div><div class="info-item-2">Java多线程基础</div></div><div class="info-2"><div class="info-item-1">Java多线程基础 一、线程介绍  1、简单案例引入 2、start和run方法区别 3、线程生命周期 4、银行排队业务案例   二、深入理解Thread构造函数 12345- [1、线程的默认命名](#1线程的默认命名)- [2、线程的父子关系](#2线程的父子关系)- [3、Thread和ThreadGroup](#3thread和threadgroup)- [4、Thread和JVM虚拟机栈](#4thread和jvm虚拟机栈)- [5、守护线程](#5守护线程) 三、Thread API的详细内容  1、线程sleep 2、线程yield 3、设置线程的优先级 4、获取线程ID 5、获取当前线程 6、设置线程上下文类加载器 7、线程interrupt 8、线程join 9、关闭线程   四、线程安全与数据同步  五、线程间通信  六、ThreadGroup详细讲解    一、线程介绍1、简单案例引入 模拟同时从数据库中读取数据和写入文件；   模拟同时从数据库中读取数据和写入文件，这两个操作作为两个线程同时进行，不需要相互的等待； 这里使用的是匿名类创建的线程，重写了Th...</div></div></div></a><a class="pagination-related" href="/2023/02/26/Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" title="Java内存分配策略"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-26</div><div class="info-item-2">Java内存分配策略</div></div><div class="info-2"><div class="info-item-1">Java 内存分配策略  Java 内存分配策略 优先在 Eden 区分配 大对象直接进入老年代 长期存活的对象将进入老年代 空间分配担保     新生代和老年代的 GC 操作  新生代 GC 操作：Minor GC 发生的非常频繁，速度较块。   老年代 GC 操作：Full GC &#x2F; Major GC 经常伴随着至少一次的 Minor GC； 速度一般比 Minor GC 慢上 10 倍以上。     优先在 Eden 区分配 Eden 空间不够将会触发一次 Minor GC； 虚拟机参数： -Xmx：Java 堆的最大值； -Xms：Java 堆的最小值； -Xmn：新生代大小； -XX:SurvivorRatio=8：Eden 区 &#x2F; Survivor 区 &#x3D; 8 : 1    大对象直接进入老年代 大对象定义： 需要大量连续内存空间的 Java 对象。例如那种很长的字符串或者数组。 设置对象直接进入老年代大小限制： -XX:PretenureSizeThreshold：单位是字节； 只对 Serial 和 ParNew 两款收集器有效。  ...</div></div></div></a><a class="pagination-related" href="/2021/06/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/" title="图神经网络——基于图神经网络的节点表征学习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-23</div><div class="info-item-2">图神经网络——基于图神经网络的节点表征学习</div></div><div class="info-2"><div class="info-item-1">Graph的特征表示非常复杂：  1.复杂的拓扑结构，较难从图像中的感受野提取有效信息；2.无特定的节点顺序；3.通常graph会是动态变化的， 且使用多模态特征。  高质量的节点表征能够用于衡量节点的相似性，同时高质量的节点表征也是准确分类节点的前提。 本文以Cora论文引用网络数据集为例，对MLP、GCN、GAT三种神经网络的分类性能进行对比。首先载入数据集并定义可视化函数：         1 2 3 4 5 #载入数据集 from torch_geometric.datasets import Planetoid from torch_geometric.transforms import NormalizeFeatures  dataset = Planetoid(root=&#39;dataset&#39;, name=&#39;Cora&#39;, transform=NormalizeFeatures())           1 2 3 4 5 6 7 8 9 10 11 12 13 14 #定义可视化函数，并观察整体数据分布 from sklearn.mani...</div></div></div></a><a class="pagination-related" href="/2021/07/12/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D/" title="李宏毅机器学习——机器学习介绍"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-12</div><div class="info-item-2">李宏毅机器学习——机器学习介绍</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——机器学习介绍1. 机器学习简介机器学习是人工智能的一部分, 研究如何让计算机从数据学习某种规律。机器学习的目的是通过计算机程序根据数据去优化某一个评价指标，自动的从数据发现规律, 使用这些规律做出预测。如图，机器学习可以简化为三个步骤，一、找一个function，二、让machine评价这个function，三、让machine自动地挑出最好的function。 2. 机器学习分类机器学习可大致分为监督学习、无监督学习、半监督学习、迁移学习和强化学习。 2.1 监督学习监督学习是机器学习任务的一种。它从有标签的训练数据中推导出预测函数。有标签的训练数据是指每个训练实例都包括输入和期望的输出。简单来说就是给定数据，预测标签。监督学习包括分类和回归。 2.2 无监督学习无监督学习是机器学习任务的一种。它从无标签的训练数据中推断结论。它可以在探索性数据分析阶段用于发现隐藏的模式或者对数据进行分组。简单来说就是给定数据，寻找隐藏的结构。无监督学习包括聚类和降维。 2.3 半监督学习半监督学习介于监督学习与无监督学习之间。半监督学习的任务与监督学习一致，任务中包含有明确的...</div></div></div></a><a class="pagination-related" href="/2021/04/21/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B_1/" title="特征工程_1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-04-21</div><div class="info-item-2">特征工程_1</div></div><div class="info-2"><div class="info-item-1">特征工程就是将原始数据空间变换到新的特征空间，在新的特征空间中，模型能够更好地学习数据中的规律。特征的选择和构造，就是人为地帮助模型学习到原本很难学好的东西，从而使模型达到更好的效果。 1. 根据现实情况构造特征1.1 各点与特定点的距离        1 2 3 4 5 df[&#39;x_dis&#39;] = (df[&#39;x&#39;] - 6165599).abs() df[&#39;y_dis&#39;] = (df[&#39;y&#39;] - 5202660).abs() df[&#39;base_dis] = (df[&#39;y_dis&#39;]**2))**0.5 + ((df[&#39;x_dis&#39;]**2) del df[&#39;x_dis&#39;],df[&#39;y_dis&#39;]  df[&#39;base_dis_diff&#39;].head()   1.2 将时间划分为白天与黑夜        1 2 3 df[&#39;day_night&#39;] = 0 df.loc[(df[&#39;hour&#39;] &gt...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E6%A8%A1%E6%9D%BF%E9%A2%98-Kruskal%E7%AE%97%E6%B3%95%E5%92%8CPrim%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">最小生成树模板题(Kruskal算法和Prim算法实现)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-number">1.1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">1.2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-number">1.3.</span> <span class="toc-text">题意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kruskal%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3%E5%8F%8A%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">Kruskal算法思想及流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Prim%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3%E5%8F%8A%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">Prim算法思想及流程:</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

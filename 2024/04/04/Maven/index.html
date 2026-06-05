@@ -1,0 +1,323 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Maven | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Maven1.Maven 是什么？Maven 主要服务于基于 Java 平台的项目构建、依赖管理和项目信息管理。 Maven 的主要功能主要分为 5 点：  依赖管理系统 多模块构建 一致的项目结构 一致的构建模型和插件机制  2.什么选用 Maven 进行构建？ 首先，Maven 是一个优秀的项目构建工具。使用 maven，可以很方便的对项目进行分模块构建，这样在开发和测试打包部署时，效率会提高">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/04/04/Maven/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Maven1.Maven 是什么？Maven 主要服务于基于 Java 平台的项目构建、依赖管理和项目信息管理。 Maven 的主要功能主要分为 5 点：  依赖管理系统 多模块构建 一致的项目结构 一致的构建模型和插件机制  2.什么选用 Maven 进行构建？ 首先，Maven 是一个优秀的项目构建工具。使用 maven，可以很方便的对项目进行分模块构建，这样在开发和测试打包部署时，效率会提高">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-04-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:14.084Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Maven",
+  "url": "https://hzhzxfs.github.io/2024/04/04/Maven/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-04-03T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:14.084Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/04/04/Maven/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Maven',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Maven</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Maven</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:14.084Z" title="更新于 2026-06-05 16:26:14">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h2><h4 id="1-Maven-是什么？"><a href="#1-Maven-是什么？" class="headerlink" title="1.Maven 是什么？"></a>1.Maven 是什么？</h4><p>Maven 主要服务于基于 Java 平台的项目构建、依赖管理和项目信息管理。</p>
+<p>Maven 的主要功能主要分为 5 点：</p>
+<ul>
+<li>依赖管理系统</li>
+<li>多模块构建</li>
+<li>一致的项目结构</li>
+<li>一致的构建模型和插件机制</li>
+</ul>
+<h4 id="2-什么选用-Maven-进行构建？"><a href="#2-什么选用-Maven-进行构建？" class="headerlink" title="2.什么选用 Maven 进行构建？"></a>2.什么选用 Maven 进行构建？</h4><ul>
+<li>首先，Maven 是一个优秀的项目构建工具。使用 maven，可以很方便的对项目进行分模块构建，这样在开发和测试打包部署时，效率会提高很多。</li>
+<li>其次，Maven 可以进行依赖的管理。使用 Maven ，可以将不同系统的依赖进行统一管理，并且可以进行依赖之间的传递和继承。</li>
+</ul>
+<h4 id="3-Maven-规约是什么？"><a href="#3-Maven-规约是什么？" class="headerlink" title="3. Maven 规约是什么？"></a>3. Maven 规约是什么？</h4><ul>
+<li><code>/src/main/java/</code> ：Java 源码。</li>
+<li><code>/src/main/resource</code> ：Java 配置文件，资源文件。</li>
+<li><code>/src/test/java/</code> ：Java 测试代码。</li>
+<li><code>/src/test/resource</code> ：Java 测试配置文件，资源文件。</li>
+<li><code>/target</code> ：文件编译过程中生成的 <code>.class</code> 文件、jar、war 等等。</li>
+<li><code>pom.xml</code> ：配置文件</li>
+</ul>
+<p>Maven 要负责项目的自动化构建，以编译为例，Maven 要想自动进行编译，那么它必须知道 Java 的源文件保存在哪里，这样约定之后，不用我们手动指定位置，Maven 能知道位置，从而帮我们完成自动编译。</p>
+<p>遵循 <strong>“约定&gt;&gt;&gt; 配置 &gt;&gt;&gt; 编码”</strong>。即能进行配置的不要去编码指定，能事先约定规则的不要去进行配置。这样既减轻了劳动力，也能防止出错。</p>
+<h4 id="4-Maven-常用命令"><a href="#4-Maven-常用命令" class="headerlink" title="4.Maven 常用命令"></a>4.Maven 常用命令</h4><ul>
+<li><code>mvn archetype：create</code> ：创建 Maven 项目。</li>
+<li><code>mvn compile</code> ：编译源代码。</li>
+<li><code>mvn deploy</code> ：发布项目。</li>
+<li><code>mvn test-compile</code> ：编译测试源代码。</li>
+<li><code>mvn test</code> ：运行应用程序中的单元测试。</li>
+<li><code>mvn site</code> ：生成项目相关信息的网站。</li>
+<li><code>mvn clean</code> ：清除项目目录中的生成结果。</li>
+<li><code>mvn package</code> ：根据项目生成的 jar&#x2F;war 等。</li>
+<li><code>mvn install</code> ：在本地 Repository 中安装 jar 。</li>
+<li><code>mvn eclipse:eclipse</code> ：生成 Eclipse 项目文件。</li>
+<li><code>mvn jetty:run</code> 启动 Jetty 服务。</li>
+<li><code>mvn tomcat:run</code> ：启动 Tomcat 服务。</li>
+<li><code>mvn clean package -Dmaven.test.skip=true</code> ：清除以前的包后重新打包，跳过测试类。</li>
+</ul>
+<p>用到最多的命令</p>
+<ul>
+<li><code>mvn eclipse:clean</code> ：清除 Project 中以前的编译的东西，重新再来。</li>
+<li><code>mvn eclipse:eclipse</code> ：开始编译 Maven 的 Project 。</li>
+<li><code>mvn clean package</code> ：清除以前的包后重新打包。</li>
+</ul>
+<h4 id="5-Maven-有哪些优点和缺点"><a href="#5-Maven-有哪些优点和缺点" class="headerlink" title="5.Maven 有哪些优点和缺点"></a>5.Maven 有哪些优点和缺点</h4><h5 id="1）优点"><a href="#1）优点" class="headerlink" title="1）优点"></a>1）优点</h5><ul>
+<li><p>简化了项目依赖管理。</p>
+<p>当年，多少人被 SSH 整合搞死搞活，很多时候，是因为依赖不完整，或者版本不正确。自从 Maven 出来后，终于可以无痛了~ 当然，也有一部分功劳是 Spring Boot ，这是后话。</p>
+</li>
+<li><p>易于上手，对于新手可能一个 <code>mvn clean package</code> 命令就可能满足我们的工作。</p>
+</li>
+<li><p>便于与持续集成工具 (Jenkins) 整合。</p>
+</li>
+<li><p>便于项目升级，无论是项目本身升级还是项目使用的依赖升级。</p>
+</li>
+<li><p>有助于多模块项目的开发，一个模块开发好后，发布到仓库，依赖该模块时可以直接从仓库更新，而不用自己去编译。</p>
+</li>
+<li><p>Maven 有很多插件，便于功能扩展，比如生产站点，自动发布版本等。</p>
+</li>
+</ul>
+<h5 id="2）缺点"><a href="#2）缺点" class="headerlink" title="2）缺点"></a>2）缺点</h5><ul>
+<li><p>Maven 是一个庞大的构建系统，学习难度大。</p>
+<p>这里的学习，更多指的完整学习。如果基本使用，并不会存在该问题。</p>
+</li>
+<li><p>Maven 采用约定优于配置的策略 (convention over configuration)，虽然上手容易，但是一旦出了问题，难于调试。</p>
+<p>这个确实，略微痛苦。</p>
+</li>
+<li><p>当依赖很多时，m2eclipse 老是搞得 Eclipse 很卡。</p>
+<p>使用 IDEA ，而不是 Eclipse ，完美解决。</p>
+</li>
+<li><p>中国的网络环境差，很多 repository 无法访问，比如 Google Code、 JBoss 仓库无法访问等。</p>
+<p>这个也好解决，在 <code>&lt;mirrors&gt;</code> 中增加阿里巴巴的 Maven 私服，具体可以参见 <a target="_blank" rel="noopener" href="https://my.oschina.net/af8991/blog/833513">《提高 Maven 速度 —— Maven 仓库修改成国内阿里巴巴地址》</a> 文章。</p>
+</li>
+</ul>
+<h4 id="6-什么是Maven的坐标"><a href="#6-什么是Maven的坐标" class="headerlink" title="6.什么是Maven的坐标"></a>6.什么是Maven的坐标</h4><p>Maven的坐标通过groupId，artifactId，version唯一标志一个构件。groupId通常为公司或组织名字，artifactId通常为项目名称，versionId为版本号。</p>
+<h4 id="7-通过坐标如何定位地址"><a href="#7-通过坐标如何定位地址" class="headerlink" title="7.通过坐标如何定位地址"></a>7.通过坐标如何定位地址</h4><p>加上groupId为org.codehaus.mojo,artifactId为myproject，versionId为v1.0.0，则对应地址为：仓库目录（.m2）&#x2F;org&#x2F;codehaus&#x2F;mojo&#x2F;myproject&#x2F;v1.0.0</p>
+<h4 id="8-Maven的依赖范围有哪些（在scope中指定）"><a href="#8-Maven的依赖范围有哪些（在scope中指定）" class="headerlink" title="8.Maven的依赖范围有哪些（在scope中指定）"></a>8.Maven的依赖范围有哪些（在scope中指定）</h4><p>compile：默认范围，如果未指定任何范围，则使用该范围。编译依赖项在所有（编译，测试，运行）类路径中都可用。此外，这些依赖关系会传播到依赖的项目</p>
+<p>provided：这很像compile，但表示您希望JDK或容器在运行时提供它。它只在编译和测试类路径上可用，不可传递。</p>
+<p>runtime：此范围表示编译不需要依赖项，但需要执行依赖项。它在运行时和测试类路径中，但不在编译类路径中。（servlet-api）</p>
+<p>test：表示应用程序的正常使用不需要依赖项，并且仅在测试编译和执行阶段可用。它不是传递的。（jdbc）</p>
+<p>system：系统依赖范围。该依赖与三种classpath的关系和provided依赖范围完全一致。但是，使用system范围的依赖时必须通过systemPath元素显式地指定依赖文件的路径。由于此类依赖不是通过Maven仓库解析的，而且往往与本机系统绑定，可能造成构建的不可移植。</p>
+<h4 id="9-Maven生命周期"><a href="#9-Maven生命周期" class="headerlink" title="9.Maven生命周期"></a>9.Maven生命周期</h4><p>　有三套什么周期，分别为clean，default，site</p>
+<p>　　　clean：</p>
+<p>　　　　此生命周期旨在给工程做清理工作，它主要包含以下阶段：</p>
+<p>　　　　pre-clean - 执行项目清理前所需要的工作。</p>
+<p>　　　　clean - 清理上一次build项目生成的文件。</p>
+<p>　　　　post-clean - 执行完成项目清理所需的工作。</p>
+<p>　　　default：</p>
+<p>　　　　validate - 验证项目是否正确且所有必要的信息都可用。</p>
+<p>　　　　initialize - 初始化构建工作，如：设置参数，创建目录等。</p>
+<p>　　　　generate-sources - 为包含在编译范围内的代码生成源代码.</p>
+<p>　　　　process-sources - 处理源代码, 如过滤值.</p>
+<p>　　　　generate-resources -</p>
+<p>　　　　process-resources - 复制并处理资源文件，至目标目录，准备打包。</p>
+<p>　　　　compile - 编译项目中的源代码.</p>
+<p>　　　　process-classes - 为编译生成的文件做后期工作, 例如做Java类的字节码增强.</p>
+<p>　　　　generate-test-sources - 为编译内容生成测试源代码.</p>
+<p>　　　　process-test-sources - 处理测试源代码。</p>
+<p>　　　　generate-test-resources -</p>
+<p>　　　　process-test-resources - 复制并处理资源文件，至目标测试目录。</p>
+<p>　　　　test-compile - 将需测试源代码编译到路径。一般来说，是编译&#x2F;src&#x2F;test&#x2F;java目录下的java文件至目标输出的测试classpath目录中。</p>
+<p>　　　　process-test-classes -</p>
+<p>　　　　test - 使用合适的单元测试框架运行测试。这些测试代码不会被打包或部署。</p>
+<p>　　　　prepare-package -</p>
+<p>　　　　package - 接受编译好的代码，打包成可发布的格式，如 JAR 。</p>
+<p>　　　　pre-integration-test -</p>
+<p>　　　　integration-test - 按需求将发布包部署到运行环境。</p>
+<p>　　　　post-integration-test -</p>
+<p>　　　　verify -</p>
+<p>　　　　install -将包安装到本地仓库，给其他本地引用提供依赖。</p>
+<p>　　　　deploy -完成集成和发布工作，将最终包复制到远程仓库以便分享给其他开发人员。</p>
+<p>　　　site：</p>
+<p>　　　　pre-site - 执行一些生成项目站点前的准备工作。</p>
+<p>　　　　site - 生成项目站点的文档。</p>
+<p>　　　　post-site - 执行需完成站点生成的工作，如站点部署的准备工作。</p>
+<p>　　　　site-deploy - 向制定的web服务器部署站点生成文件。</p>
+<h4 id="10-Maven命令"><a href="#10-Maven命令" class="headerlink" title="10.Maven命令"></a>10.Maven命令</h4><p>　mvn archetype:generate 创建Maven项目</p>
+<p>　　　mvn compile 编译源代码</p>
+<p>　　　mvn deploy 发布项目</p>
+<p>　　　mvn test-compile 编译测试源代码</p>
+<p>　　　mvn test 运行应用程序中的单元测试</p>
+<p>　　　mvn site 生成项目相关信息的网站</p>
+<p>　　　mvn clean 清除项目目录中的生成结果</p>
+<p>　　　mvn package 根据项目生成的jar</p>
+<p>　　　mvn install 在本地Repository中安装jar</p>
+<p>　　　mvn eclipse:eclipse 生成eclipse项目文件</p>
+<p>　　　mvn<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/jetty">jetty</a>:run 启动jetty服务</p>
+<p>　　　mvn<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/tomcat">tomcat</a>:run 启动tomcat服务</p>
+<p>　　　mvn clean package -Dmaven.test.skip&#x3D;true:清除以前的包后重新打包，跳过测试</p>
+<h4 id="11-依赖的解析机制"><a href="#11-依赖的解析机制" class="headerlink" title="11.依赖的解析机制"></a>11.依赖的解析机制</h4><p>当依赖的范围是 system 的时候，Maven 直接从本地文件系统中解析构件。</p>
+<p>根据依赖坐标计算仓库路径，尝试直接从本地仓库寻找构件，如果发现对应的构件，就解析成功。</p>
+<p>如果在本地仓库不存在相应的构件，就遍历所有的远程仓库，发现后，下载并解析使用。</p>
+<p>如果依赖的版本是 RELEASE 或 LATEST，就基于更新策略读取所有远程仓库的元数据文件（groupId&#x2F;artifactId&#x2F;maven-metadata.xml），将其与本地仓库的对应元合并后，计算出 RELEASE 或者 LATEST 真实的值，然后基于该值检查本地仓库，或者从远程仓库下载。</p>
+<p>如果依赖的版本是 SNAPSHOT，就基于更新策略读取所有远程仓库的元数据文件，将它与本地仓库对应的元数据合并，得到最新快照版本的值，然后根据该值检查本地仓库，或从远程仓库下载。</p>
+<p>如果最后解析得到的构件版本包含有时间戳，先将该文件下载下来，再将文件名中时间戳信息删除，剩下 SNAPSHOT 并使用（以非时间戳的形式使用）。</p>
+<h4 id="12-创建Maven的普通Java项目"><a href="#12-创建Maven的普通Java项目" class="headerlink" title="12.创建Maven的普通Java项目"></a>12.创建Maven的普通Java项目</h4><p>mvn archetype:create -DgroupId&#x3D;packageName -DartifactId&#x3D;projectName</p>
+<h4 id="13-创建-Maven-的-Web-项目"><a href="#13-创建-Maven-的-Web-项目" class="headerlink" title="13.创建 Maven 的 Web 项目"></a>13.创建 Maven 的 Web 项目</h4><p>mvn archetype:create -DgroupId&#x3D;packageName -DartifactId&#x3D;webappName -DarchetypeArtifactId&#x3D;maven-archetype-webapp</p>
+<h4 id="14-反向生成-maven-项目的骨架"><a href="#14-反向生成-maven-项目的骨架" class="headerlink" title="14.反向生成 maven 项目的骨架"></a>14.反向生成 maven 项目的骨架</h4><p>mvn artifacttype:generate</p>
+<h4 id="15-编译源代码"><a href="#15-编译源代码" class="headerlink" title="15.编译源代码"></a>15.编译源代码</h4><p>mvn compile</p>
+<h4 id="16-编译测试代码"><a href="#16-编译测试代码" class="headerlink" title="16.编译测试代码"></a>16.编译测试代码</h4><p>mvn test-compile</p>
+<h4 id="17-运行测试"><a href="#17-运行测试" class="headerlink" title="17.运行测试"></a>17.运行测试</h4><p>mvn test</p>
+<h4 id="18-产生-site"><a href="#18-产生-site" class="headerlink" title="18.产生 site"></a>18.产生 site</h4><p>mvn site</p>
+<h4 id="19-打包"><a href="#19-打包" class="headerlink" title="19.打包"></a>19.打包</h4><p>mvn package</p>
+<h4 id="20-在本地-Repository-中安装-jar"><a href="#20-在本地-Repository-中安装-jar" class="headerlink" title="20.在本地 Repository 中安装 jar"></a>20.在本地 Repository 中安装 jar</h4><p>mvn install（例：installing D:\xxx\xx.jar to D:\xx\xxxx）</p>
+<h4 id="21-清除产生的项目"><a href="#21-清除产生的项目" class="headerlink" title="21.清除产生的项目"></a>21.清除产生的项目</h4><p>mvn clean</p>
+<h4 id="22-生成-Eclipse-项目-idea项目"><a href="#22-生成-Eclipse-项目-idea项目" class="headerlink" title="22.生成 Eclipse 项目&#x2F;idea项目"></a>22.生成 Eclipse 项目&#x2F;idea项目</h4><p>eclipse项目</p>
+<p>mvn eclipse:eclipse</p>
+<p>idea 项目</p>
+<p>mvn idea:idea</p>
+<h4 id="23-组合使用-goal-命令，如只打包不测试"><a href="#23-组合使用-goal-命令，如只打包不测试" class="headerlink" title="23.组合使用 goal 命令，如只打包不测试"></a>23.组合使用 goal 命令，如只打包不测试</h4><p>mvn -Dtest package</p>
+<h4 id="24-编译测试的内容"><a href="#24-编译测试的内容" class="headerlink" title="24.编译测试的内容"></a>24.编译测试的内容</h4><p>mvn test-compile</p>
+<h4 id="25-只打-jar-包"><a href="#25-只打-jar-包" class="headerlink" title="25.只打 jar 包"></a>25.只打 jar 包</h4><p>mvn jar:jar</p>
+<h4 id="26-只测试而不编译，也不测试编译"><a href="#26-只测试而不编译，也不测试编译" class="headerlink" title="26.只测试而不编译，也不测试编译"></a>26.只测试而不编译，也不测试编译</h4><p>mvn test -skipping compile -skipping test-compile</p>
+<h4 id="27-清除-eclipse-的一些系统设置"><a href="#27-清除-eclipse-的一些系统设置" class="headerlink" title="27.清除 eclipse 的一些系统设置"></a>27.清除 eclipse 的一些系统设置</h4><p>mvn eclipse:clean</p>
+<h4 id="28-查找当前项目已被解析的依赖"><a href="#28-查找当前项目已被解析的依赖" class="headerlink" title="28.查找当前项目已被解析的依赖"></a>28.查找当前项目已被解析的依赖</h4><p>mvn dependency:list</p>
+<h4 id="29-上传到私服"><a href="#29-上传到私服" class="headerlink" title="29.上传到私服"></a>29.上传到私服</h4><p>mvn deploy</p>
+<h4 id="30-强制检查更新，由于快照版本的更新策略（一天更新几次、隔断时间更新一次）存在，如果想强制更新就会用到此命令"><a href="#30-强制检查更新，由于快照版本的更新策略（一天更新几次、隔断时间更新一次）存在，如果想强制更新就会用到此命令" class="headerlink" title="30.强制检查更新，由于快照版本的更新策略（一天更新几次、隔断时间更新一次）存在，如果想强制更新就会用到此命令"></a>30.强制检查更新，由于快照版本的更新策略（一天更新几次、隔断时间更新一次）存在，如果想强制更新就会用到此命令</h4><p>mvn clean install-U</p>
+<h4 id="31-源码打包"><a href="#31-源码打包" class="headerlink" title="31.源码打包"></a>31.源码打包</h4><p>mvn source:jar</p>
+<p>或</p>
+<p>mvn source:jar-no-fork</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a303549861/article/details/93752178">https://blog.csdn.net/a303549861/article/details/93752178</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lin0/p/14153982.html">https://www.cnblogs.com/lin0/p/14153982.html</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/04/04/Maven/">https://hzhzxfs.github.io/2024/04/04/Maven/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MySQL基础与高级</div></div><div class="info-2"><div class="info-item-1">目录[TOC] Mysql基础数据库相关概念数据库的好处 持久化数据到本地 可以实现结构化查询，方便管理  数据库常见名词解释 DB：数据库，保存一组有组织的数据的容器 DBMS：数据库管理系统，又称为数据库软件（产品），用于管理DB中的数据 SQL:结构化查询语言，用于和DBMS通信的语言，不是某个数据库软件特有的，而是几乎所有的主流数据库软件通用的语言  数据库存储数据的特点 将数据放到表中，表再放到库中 一个数据库中可以有多个表，每个表都有一个的名字，用来标识自己。表名具有唯一性。 表具有一些特性，这些特性定义了数据在表中如何存储，类似java中 “类”的设计。 表由列组成，我们也称为字段。所有表都是由一个或多个列组成的，每一列类似java 中的”属性” 表中的数据是按行存储的，每一行类似于java中的“对象”。  常见数据库mysql、oracle、db2、sqlserver MySQL产品的介绍和安装MySQL背景前身属于瑞典的一家公司，MySQL AB08年被sun公司收购09年sun被oracle收购 MySQL的优点1、开源、免费、成本低2、性能高、移植性也好3、...</div></div></div></a><a class="pagination-related" href="/2024/03/27/Zookeeper/" title="Zookeeper"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Zookeeper</div></div><div class="info-2"><div class="info-item-1">Zookeeper1.ZooKeeper 是什么？ZooKeeper 是一个开源的分布式协调服务。它是一个为分布式应用提供一致性服务的软件，分布式应用程序可以基于 Zookeeper 实现诸如数据发布&#x2F;订阅、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master 选举、分布式锁和分布式队列等功能。 ZooKeeper 的目标就是封装好复杂易出错的关键服务，将简单易用的接口和性能高效、功能稳定的系统提供给用户。 Zookeeper 保证了如下分布式一致性特性： （1）顺序一致性 （2）原子性 （3）单一视图 （4）可靠性 （5）实时性（最终一致性） 客户端的读请求可以被集群中的任意一台机器处理，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 zookeeper 机器来处理。对于写请求，这些请求会同时发给其他 zookeeper 机器并且达成一致后，请求才会返回成功。因此，随着 zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。 有序性是 zookeeper 中非常重要的一个特性，所有的更新都是全局有序的，每个更新都有一...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/02/26/Nginx/" title="Nginx"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-26</div><div class="info-item-2">Nginx</div></div><div class="info-2"><div class="info-item-1">Nginx1.什么是Nginx?Nginx是一个高性能的HTTP和反向代理服务器。同时也是一个 IMAP&#x2F;POP3&#x2F;SMTP 代理服务器。 官方网站:http://nginx.org。 2.Nginx主要特征？处理静态文件，索引文件以及自动索引;打开文件描述符缓冲. 无缓存的反向代理加速，简单的负载均衡和容错. FastCGI，简单的负载均衡和容错.模块化的结构。包括 gzipping, byte ranges, chunked responses,以及 SSI-filter 等filter。如果由 FastCGI 或其它代理服务器处理单页中存在的多个 SSI，则这项处理可以并行 运行，而不需要相互等待。 支持 SSL 和 TLSSNI. Nginx 它支持内核 Poll 模型，能经受高负载的考验,有报告表明能支持高达 50,000 个并发连接数。 Nginx 具有很高的稳定性。 例如当前 apache 一旦上到 200 个以上进程，web 响应速度就明显非常缓慢了。而 Nginx 采取了分阶段资源分配技术，使得它的 CPU 与内存占用率非常低。nginx 官...</div></div></div></a><a class="pagination-related" href="/2023/08/04/Thymeleaf/" title="Thymeleaf"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-04</div><div class="info-item-2">Thymeleaf</div></div><div class="info-2"><div class="info-item-1">Thymeleaf笔记从三层架构到MVC MVC理念和三层架构并不矛盾，反而是三层架构的延伸 MVC专指表述层的设计理念 MVC理念的核心思想：解耦   从业务功能和三层架构角度看项目网格 Thymeleaf搭建环境导入jar包 attoparser-2.0.5.RELEASE.jar javassist-3.20.0-GA.jar log4j-1.2.15.jar ognl-3.1.26.jar slf4j-api-1.7.25.jar slf4j-log4j12-1.7.25.jar thymeleaf-3.0.12.RELEASE.jar unbescape-1.1.6.RELEASE.jar  配置web.xml        1 2 3 4 5 6 7 8 9 &lt;!-- 在上下文参数中配置视图前缀和视图后缀 --&gt; &lt;context-param&gt;     &lt;param-name&gt;view-prefix&lt;/param-name&gt;     &lt;param-value&gt;/WEB-INF/view/&lt;/param-...</div></div></div></a><a class="pagination-related" href="/2023/02/15/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC)/" title="垃圾收集 (GC)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-15</div><div class="info-item-2">垃圾收集 (GC)</div></div><div class="info-2"><div class="info-item-1">垃圾收集 (GC)垃圾收集（Garbage Collection，GC），它的任务是解决以下 3 件问题：  哪些内存需要回收？ 什么时候回收？ 如何回收？  其中第一个问题很好回答，在 Java 中，GC 主要发生在 Java 堆和方法区中，对于后两个问题，我们将在之后的内容中进行讨论，并介绍 HotSpot 的 7 个垃圾收集器。  垃圾收集 (GC) 判断对象的生死 判断对象是否可用的算法 引用计数算法 可达性分析算法（主流）   四种引用类型 宣告对象死亡的两次标记过程 方法区的回收   垃圾收集算法 基础：标记 - 清除算法 解决效率问题：复制算法 解决空间碎片问题：标记 - 整理算法 进化：分代收集算法   HotSpot 中 GC 算法的实现 7 个垃圾收集器 Serial &#x2F; ParNew 搭配 Serial Old 收集器 Parallel 搭配 Parallel Scavenge 收集器 CMS 收集器 G1 收集器   GC 日志解读    判断对象的生死 什么时候回收对象？当然是这个对象再也不会被用到的时候回收。所以要想解决 “什么时候回收？” ...</div></div></div></a><a class="pagination-related" href="/2021/07/12/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D/" title="李宏毅机器学习——机器学习介绍"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-12</div><div class="info-item-2">李宏毅机器学习——机器学习介绍</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——机器学习介绍1. 机器学习简介机器学习是人工智能的一部分, 研究如何让计算机从数据学习某种规律。机器学习的目的是通过计算机程序根据数据去优化某一个评价指标，自动的从数据发现规律, 使用这些规律做出预测。如图，机器学习可以简化为三个步骤，一、找一个function，二、让machine评价这个function，三、让machine自动地挑出最好的function。 2. 机器学习分类机器学习可大致分为监督学习、无监督学习、半监督学习、迁移学习和强化学习。 2.1 监督学习监督学习是机器学习任务的一种。它从有标签的训练数据中推导出预测函数。有标签的训练数据是指每个训练实例都包括输入和期望的输出。简单来说就是给定数据，预测标签。监督学习包括分类和回归。 2.2 无监督学习无监督学习是机器学习任务的一种。它从无标签的训练数据中推断结论。它可以在探索性数据分析阶段用于发现隐藏的模式或者对数据进行分组。简单来说就是给定数据，寻找隐藏的结构。无监督学习包括聚类和降维。 2.3 半监督学习半监督学习介于监督学习与无监督学习之间。半监督学习的任务与监督学习一致，任务中包含有明确的...</div></div></div></a><a class="pagination-related" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-16</div><div class="info-item-2">MySQL基础与高级</div></div><div class="info-2"><div class="info-item-1">目录[TOC] Mysql基础数据库相关概念数据库的好处 持久化数据到本地 可以实现结构化查询，方便管理  数据库常见名词解释 DB：数据库，保存一组有组织的数据的容器 DBMS：数据库管理系统，又称为数据库软件（产品），用于管理DB中的数据 SQL:结构化查询语言，用于和DBMS通信的语言，不是某个数据库软件特有的，而是几乎所有的主流数据库软件通用的语言  数据库存储数据的特点 将数据放到表中，表再放到库中 一个数据库中可以有多个表，每个表都有一个的名字，用来标识自己。表名具有唯一性。 表具有一些特性，这些特性定义了数据在表中如何存储，类似java中 “类”的设计。 表由列组成，我们也称为字段。所有表都是由一个或多个列组成的，每一列类似java 中的”属性” 表中的数据是按行存储的，每一行类似于java中的“对象”。  常见数据库mysql、oracle、db2、sqlserver MySQL产品的介绍和安装MySQL背景前身属于瑞典的一家公司，MySQL AB08年被sun公司收购09年sun被oracle收购 MySQL的优点1、开源、免费、成本低2、性能高、移植性也好3、...</div></div></div></a><a class="pagination-related" href="/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/" title="SSM框架之Mybatis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-08</div><div class="info-item-2">SSM框架之Mybatis</div></div><div class="info-2"><div class="info-item-1">0. ssm框架大纲   1. Mybatis    2. 第一个Mybatis程序mybatis-01 搭建环境          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 CREATE DATABASE `mybatis`;  USE `mybatis`;  CREATE TABLE `user` ( `id` INT(20) NOT NULL PRIMARY KEY, `name` VARCHAR(30) DEFAULT NULL, `pwd` VARCHAR(30) DEFAULT NULL ) ENGINE=INNODB DEFAULT CHARSET=utf8;   INSERT INTO `user` (`id`,`name`,`pwd`) VALUES (1, &#39;狂神&#39;, &#39;123456&#39;), (2, &#39;李四&#39;, &#39;123456&#39;), (3, &#39;张三&#39;, &#39;123890&#39;)    新建项目(创建子模块)  配置mybatis的核心配置文件 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Maven"><span class="toc-number">1.</span> <span class="toc-text">Maven</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Maven-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1.Maven 是什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BB%80%E4%B9%88%E9%80%89%E7%94%A8-Maven-%E8%BF%9B%E8%A1%8C%E6%9E%84%E5%BB%BA%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2.什么选用 Maven 进行构建？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Maven-%E8%A7%84%E7%BA%A6%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">3. Maven 规约是什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Maven-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">4.Maven 常用命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Maven-%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">5.Maven 有哪些优点和缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%EF%BC%89%E4%BC%98%E7%82%B9"><span class="toc-number">1.5.1.</span> <span class="toc-text">1）优点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%EF%BC%89%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.2.</span> <span class="toc-text">2）缺点</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E4%BB%80%E4%B9%88%E6%98%AFMaven%E7%9A%84%E5%9D%90%E6%A0%87"><span class="toc-number">1.6.</span> <span class="toc-text">6.什么是Maven的坐标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E9%80%9A%E8%BF%87%E5%9D%90%E6%A0%87%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80"><span class="toc-number">1.7.</span> <span class="toc-text">7.通过坐标如何定位地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%88%E5%9C%A8scope%E4%B8%AD%E6%8C%87%E5%AE%9A%EF%BC%89"><span class="toc-number">1.8.</span> <span class="toc-text">8.Maven的依赖范围有哪些（在scope中指定）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-Maven%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.9.</span> <span class="toc-text">9.Maven生命周期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-Maven%E5%91%BD%E4%BB%A4"><span class="toc-number">1.10.</span> <span class="toc-text">10.Maven命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E4%BE%9D%E8%B5%96%E7%9A%84%E8%A7%A3%E6%9E%90%E6%9C%BA%E5%88%B6"><span class="toc-number">1.11.</span> <span class="toc-text">11.依赖的解析机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E5%88%9B%E5%BB%BAMaven%E7%9A%84%E6%99%AE%E9%80%9AJava%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.12.</span> <span class="toc-text">12.创建Maven的普通Java项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E5%88%9B%E5%BB%BA-Maven-%E7%9A%84-Web-%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.13.</span> <span class="toc-text">13.创建 Maven 的 Web 项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-%E5%8F%8D%E5%90%91%E7%94%9F%E6%88%90-maven-%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%AA%A8%E6%9E%B6"><span class="toc-number">1.14.</span> <span class="toc-text">14.反向生成 maven 项目的骨架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-%E7%BC%96%E8%AF%91%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="toc-number">1.15.</span> <span class="toc-text">15.编译源代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-%E7%BC%96%E8%AF%91%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="toc-number">1.16.</span> <span class="toc-text">16.编译测试代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17-%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="toc-number">1.17.</span> <span class="toc-text">17.运行测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18-%E4%BA%A7%E7%94%9F-site"><span class="toc-number">1.18.</span> <span class="toc-text">18.产生 site</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19-%E6%89%93%E5%8C%85"><span class="toc-number">1.19.</span> <span class="toc-text">19.打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20-%E5%9C%A8%E6%9C%AC%E5%9C%B0-Repository-%E4%B8%AD%E5%AE%89%E8%A3%85-jar"><span class="toc-number">1.20.</span> <span class="toc-text">20.在本地 Repository 中安装 jar</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E6%B8%85%E9%99%A4%E4%BA%A7%E7%94%9F%E7%9A%84%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.21.</span> <span class="toc-text">21.清除产生的项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E7%94%9F%E6%88%90-Eclipse-%E9%A1%B9%E7%9B%AE-idea%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.22.</span> <span class="toc-text">22.生成 Eclipse 项目&#x2F;idea项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-%E7%BB%84%E5%90%88%E4%BD%BF%E7%94%A8-goal-%E5%91%BD%E4%BB%A4%EF%BC%8C%E5%A6%82%E5%8F%AA%E6%89%93%E5%8C%85%E4%B8%8D%E6%B5%8B%E8%AF%95"><span class="toc-number">1.23.</span> <span class="toc-text">23.组合使用 goal 命令，如只打包不测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#24-%E7%BC%96%E8%AF%91%E6%B5%8B%E8%AF%95%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.24.</span> <span class="toc-text">24.编译测试的内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#25-%E5%8F%AA%E6%89%93-jar-%E5%8C%85"><span class="toc-number">1.25.</span> <span class="toc-text">25.只打 jar 包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#26-%E5%8F%AA%E6%B5%8B%E8%AF%95%E8%80%8C%E4%B8%8D%E7%BC%96%E8%AF%91%EF%BC%8C%E4%B9%9F%E4%B8%8D%E6%B5%8B%E8%AF%95%E7%BC%96%E8%AF%91"><span class="toc-number">1.26.</span> <span class="toc-text">26.只测试而不编译，也不测试编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#27-%E6%B8%85%E9%99%A4-eclipse-%E7%9A%84%E4%B8%80%E4%BA%9B%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.27.</span> <span class="toc-text">27.清除 eclipse 的一些系统设置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#28-%E6%9F%A5%E6%89%BE%E5%BD%93%E5%89%8D%E9%A1%B9%E7%9B%AE%E5%B7%B2%E8%A2%AB%E8%A7%A3%E6%9E%90%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-number">1.28.</span> <span class="toc-text">28.查找当前项目已被解析的依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#29-%E4%B8%8A%E4%BC%A0%E5%88%B0%E7%A7%81%E6%9C%8D"><span class="toc-number">1.29.</span> <span class="toc-text">29.上传到私服</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#30-%E5%BC%BA%E5%88%B6%E6%A3%80%E6%9F%A5%E6%9B%B4%E6%96%B0%EF%BC%8C%E7%94%B1%E4%BA%8E%E5%BF%AB%E7%85%A7%E7%89%88%E6%9C%AC%E7%9A%84%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5%EF%BC%88%E4%B8%80%E5%A4%A9%E6%9B%B4%E6%96%B0%E5%87%A0%E6%AC%A1%E3%80%81%E9%9A%94%E6%96%AD%E6%97%B6%E9%97%B4%E6%9B%B4%E6%96%B0%E4%B8%80%E6%AC%A1%EF%BC%89%E5%AD%98%E5%9C%A8%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%83%B3%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0%E5%B0%B1%E4%BC%9A%E7%94%A8%E5%88%B0%E6%AD%A4%E5%91%BD%E4%BB%A4"><span class="toc-number">1.30.</span> <span class="toc-text">30.强制检查更新，由于快照版本的更新策略（一天更新几次、隔断时间更新一次）存在，如果想强制更新就会用到此命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#31-%E6%BA%90%E7%A0%81%E6%89%93%E5%8C%85"><span class="toc-number">1.31.</span> <span class="toc-text">31.源码打包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.32.</span> <span class="toc-text">参考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

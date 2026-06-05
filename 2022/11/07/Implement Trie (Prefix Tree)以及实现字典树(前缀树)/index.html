@@ -1,0 +1,348 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Implement Trie (Prefix Tree)以及实现字典树(前缀树) | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="LeetCode - 208. Implement Trie (Prefix Tree)以及实现字典树(前缀树) 基础知识和结构 字符串的插入 统计某个字符串的数量 || 查询是否有某个字符串 统计以某个字符串为前缀的字符串数量 || 是否有某个前缀 字符串的删除 完整测试代码 题目解析 使用Map来保存next 更多字典树   基础知识和结构Map和Trie的差别，关于映射集合等可以看这篇博客。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Implement Trie (Prefix Tree)以及实现字典树(前缀树)">
+<meta property="og:url" content="https://hzhzxfs.github.io/2022/11/07/Implement%20Trie%20(Prefix%20Tree)%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91(%E5%89%8D%E7%BC%80%E6%A0%91)/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="LeetCode - 208. Implement Trie (Prefix Tree)以及实现字典树(前缀树) 基础知识和结构 字符串的插入 统计某个字符串的数量 || 查询是否有某个字符串 统计以某个字符串为前缀的字符串数量 || 是否有某个前缀 字符串的删除 完整测试代码 题目解析 使用Map来保存next 更多字典树   基础知识和结构Map和Trie的差别，关于映射集合等可以看这篇博客。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2022-11-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:04.739Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Implement Trie (Prefix Tree)以及实现字典树(前缀树)",
+  "url": "https://hzhzxfs.github.io/2022/11/07/Implement%20Trie%20(Prefix%20Tree)%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91(%E5%89%8D%E7%BC%80%E6%A0%91)/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2022-11-06T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:04.739Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2022/11/07/Implement%20Trie%20(Prefix%20Tree)%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91(%E5%89%8D%E7%BC%80%E6%A0%91)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Implement Trie (Prefix Tree)以及实现字典树(前缀树)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Implement Trie (Prefix Tree)以及实现字典树(前缀树)</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Implement Trie (Prefix Tree)以及实现字典树(前缀树)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-06T16:00:00.000Z" title="发表于 2022-11-07 00:00:00">2022-11-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:04.739Z" title="更新于 2026-06-05 16:26:04">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Data-Structure/">Data Structure</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Data-Structure/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="LeetCode-208-Implement-Trie-Prefix-Tree-以及实现字典树-前缀树"><a href="#LeetCode-208-Implement-Trie-Prefix-Tree-以及实现字典树-前缀树" class="headerlink" title="LeetCode - 208. Implement Trie (Prefix Tree)以及实现字典树(前缀树)"></a>LeetCode - 208. Implement Trie (Prefix Tree)以及实现字典树(前缀树)</h2><ul>
+<li>基础知识和结构</li>
+<li>字符串的插入</li>
+<li>统计某个字符串的数量 || 查询是否有某个字符串</li>
+<li>统计以某个字符串为前缀的字符串数量 || 是否有某个前缀</li>
+<li>字符串的删除</li>
+<li>完整测试代码</li>
+<li>题目解析</li>
+<li>使用Map来保存next</li>
+<li>更多字典树</li>
+</ul>
+<hr>
+<h3 id="基础知识和结构"><a href="#基础知识和结构" class="headerlink" title="基础知识和结构"></a>基础知识和结构</h3><p><code>Map</code>和<code>Trie</code>的差别，关于映射集合等可以看<a target="_blank" rel="noopener" href="https://blog.csdn.net/zxzxzx0119/article/details/79891408"><strong>这篇博客</strong></a>。</p>
+<p><img src="/images/t1.png" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>字典树也叫做前缀树，可以存储一组元素(一般是字符串)，可以快速的查找某个字符串在树中的个数以及寻找以某个字符串为前缀的字符串的个数，先看下图为一些字符串插入到字典树中的情形。</strong></li>
+</ul>
+<p>字典树的存储结构:</p>
+<ul>
+<li><strong>首先字母是画在树的边上的；</strong></li>
+<li><strong>而结点中的<code>path</code>代表的是经过这个结点的字母的次数；</strong></li>
+<li><strong>为了方便前缀的计算，而<code>end</code>表示的是以这个结点结尾的字符串的数量，方便统计树中某个字符串的数量。</strong></li>
+<li><strong>而<code>next</code>表示的是多个儿子结点，因为可以有大小写字母，所以我初始化为<code>52</code>(如果是小写字母的就为<code>26</code>)(也可以使用<code>Map</code>来存储)。</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20</code></td>
+<td><code>public class Trie {      private class Node{         public int path;         public int end;         public Node[] next;//使用整数表示字符　c - &#39;a&#39;          public Node() {             path = 0;             end = 0;             next = new Node[26];         }     }      private Node root;      public Trie() {         root = new Node();     } }</code></td>
+</tr>
+</tbody></table>
+<p>例如: 下面的这颗字典树:</p>
+<p><img src="/images/t2.png" alt="这里写图片描述"></p>
+<p>再如: <strong>树中有<code>&quot;abc&quot;,&quot;ab&quot;,&quot;ab&quot;,&quot;abd&quot;,&quot;bc&quot;,&quot;bd&quot;,&quot;cd&quot;,&quot;cde&quot;,&quot;ce&quot;</code>总共<code>9</code>个字符串。如下的结构:</strong></p>
+<p><img src="/images/t3.png" alt="这里写图片描述"></p>
+<hr>
+<h3 id="字符串的插入"><a href="#字符串的插入" class="headerlink" title="字符串的插入"></a>字符串的插入</h3><ul>
+<li>遍历每个字符，算出每个<code>字符-&#39;a&#39;</code>的值，表示的是在结点儿子中的位置；</li>
+<li>一开始结点的儿子都是<code>null</code>(<code>nexts</code>数组结构)，如果对应的位置为<code>null</code>，创建即可，然后走向下一个结点，并维护<code>path</code>。</li>
+<li>记得遍历完之后，最后一个结点的<code>end++</code>。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</code></td>
+<td><code>//插入一个字符 public void insert(String word){     if(word == null)         return ;     Node cur = root;     int index = 0;     for(int i = 0; i &lt; word.length(); i++){         index = word.charAt(i) - &#39;a&#39;;         if(cur.next[index] == null){ //没有就新建             cur.next[index] = new Node();         }         cur = cur.next[index];         cur.path++; //经过这里     }     cur.end++;//以这个结尾 }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="统计某个字符串的数量-查询是否有某个字符串"><a href="#统计某个字符串的数量-查询是否有某个字符串" class="headerlink" title="统计某个字符串的数量 || 查询是否有某个字符串"></a>统计某个字符串的数量 || 查询是否有某个字符串</h3><ul>
+<li>这个很简单，怎么插入的就怎么查找，如果查找到某个结点(数组还没有遍历完)，就找到<code>nexts[index]</code>为空，直接返回<code>0</code>就可以了；</li>
+<li>否则遍历完之后，返回结点的<code>end</code>的值。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18</code></td>
+<td><code>//统计某个字符串的数量    public int count(String word){        if(word == null)            return 0;        Node cur = root;        int index = 0;        for(int i = 0; i &lt; word.length(); i++){            index = word.charAt(i) - &#39;a&#39;;            if(cur.next[index] == null)                return 0;            cur = cur.next[index];        }        return cur.end;    } //查询是否有某个字符串    public boolean search(String word){        return count(word) &gt; 0;    }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="统计以某个字符串为前缀的字符串数量-是否有某个前缀"><a href="#统计以某个字符串为前缀的字符串数量-是否有某个前缀" class="headerlink" title="统计以某个字符串为前缀的字符串数量 || 是否有某个前缀"></a>统计以某个字符串为前缀的字符串数量 || 是否有某个前缀</h3><ul>
+<li>这个和上面都是一个套路，遍历完之后，返回结点的<code>path</code>的值。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17</code></td>
+<td><code>   public int prefixNum(String prefix){        if(prefix == null)            return 0;        Node cur = root;        int index = 0;        for(int i = 0; i &lt; prefix.length(); i++){            index = prefix.charAt(i) - &#39;a&#39;;            if(cur.next[index] == null)                return 0;            cur = cur.next[index];        }        return cur.path; //返回这个经过的　　也就是以这个为前驱的    } //是否有某个前缀(以某个字符串开头)    public boolean startsWith(String prefix){        return prefixNum(prefix) &gt; 0;    }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="字符串的删除"><a href="#字符串的删除" class="headerlink" title="字符串的删除"></a>字符串的删除</h3><p>我们删除某个字符串的时候，不能直接删除，要看某个结点的<code>path</code>的值：</p>
+<ul>
+<li><strong>如果<code>path</code>是<code>1</code>，以后的所有结点都可以删除了(释放后面所有结点)；</strong></li>
+</ul>
+<p><img src="https://img-blog.csdn.net/20180908115347286?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<ul>
+<li><strong>否则只是将结点的<code>path--</code>就可以了。</strong></li>
+</ul>
+<p><img src="https://img-blog.csdn.net/20180908115421994?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18</code></td>
+<td><code>public void remove(String word){       if(word == null)           return;       if(!search(word)) //不包含这个字符串           return;       Node cur = root;       int index = 0;       for(int i = 0; i &lt; word.length(); i++){           index = word.charAt(i) - &#39;a&#39;;           if(--cur.next[index].path == 0){               cur.next[index] = null; //释放掉下面的这棵树               return ;           }           cur = cur.next[index];       }       cur.end--; //最后这个字符串也要--   }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="完整测试代码"><a href="#完整测试代码" class="headerlink" title="完整测试代码"></a>完整测试代码</h3><p>上面图形的例子：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120</code></td>
+<td><code>public class Trie {      private class Node{         public int path;         public int end;         public Node[] next;//使用整数表示字符　c - &#39;a&#39;          public Node() {             path = 0;             end = 0;             next = new Node[26];         }     }      private Node root;      public Trie() {         root = new Node();     }      //插入一个字符     public void insert(String word){         if(word == null)             return ;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; word.length(); i++){             index = word.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null){ //没有就新建                 cur.next[index] = new Node();             }             cur = cur.next[index];             cur.path++; //经过这里         }         cur.end++;     }      //统计某个字符串的数量     public int count(String word){         if(word == null)             return 0;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; word.length(); i++){             index = word.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null)                 return 0;             cur = cur.next[index];         }         return cur.end;     }      public boolean search(String word){         return count(word) &gt; 0;     }      public int prefixNum(String prefix){         if(prefix == null)             return 0;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; prefix.length(); i++){             index = prefix.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null)                 return 0;             cur = cur.next[index];         }         return cur.path; //返回这个经过的　　也就是以这个为前驱的     }      public boolean startsWith(String prefix){         return prefixNum(prefix) &gt; 0;     }      public void remove(String word){         if(word == null)             return;         if(!search(word)) //不包含这个字符串             return;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; word.length(); i++){             index = word.charAt(i) - &#39;a&#39;;             if(--cur.next[index].path == 0){                 cur.next[index] = null; //释放掉下面的这棵树                 return ;             }             cur = cur.next[index];         }         cur.end--; //最后这个字符串也要--     }       public static void main(String[] args) {         Trie trie = new Trie();          trie.insert(&quot;abc&quot;);         trie.insert(&quot;ab&quot;);         trie.insert(&quot;ab&quot;);         trie.insert(&quot;abd&quot;);         trie.insert(&quot;bc&quot;);         trie.insert(&quot;bd&quot;);         trie.insert(&quot;cd&quot;);         trie.insert(&quot;cde&quot;);         trie.insert(&quot;ce&quot;);          System.out.println(trie.count(&quot;ab&quot;));         trie.remove(&quot;ab&quot;);         System.out.println(trie.count(&quot;ab&quot;));          System.out.println(trie.count(&quot;abd&quot;));         trie.remove(&quot;ab&quot;);         System.out.println(trie.count(&quot;ab&quot;));         System.out.println(trie.count(&quot;abd&quot;));          trie.remove(&quot;abd&quot;);         System.out.println(trie.count(&quot;abd&quot;));     } }</code></td>
+</tr>
+</tbody></table>
+<p>测试结果输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>2 1 1 0 1 0</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="题目解析"><a href="#题目解析" class="headerlink" title="题目解析"></a>题目解析</h3><h4 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="https://leetcode.com/problems/implement-trie-prefix-tree/description/">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://leetcode.com/problems/implement-trie-prefix-tree/description/">https://leetcode.com/problems/implement-trie-prefix-tree/description/</a></p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/t4.png" alt="在这里插入图片描述"></p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>运用上面的操作完全能解决这个问题：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73</code></td>
+<td><code>class Trie {     private class Node{         public int path;         public int end;         public Node[] next;//使用整数表示字符　c - &#39;a&#39;          public Node() {             path = 0;             end = 0;             next = new Node[26];         }     }      private Node root;      public Trie() {         root = new Node();     }      //插入一个字符     public void insert(String word){         if(word == null)             return ;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; word.length(); i++){             index = word.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null){ //没有就新建                 cur.next[index] = new Node();             }             cur = cur.next[index];             cur.path++; //经过这里         }         cur.end++;     }      //统计某个字符串的数量     public int count(String word){         if(word == null)             return 0;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; word.length(); i++){             index = word.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null)                 return 0;             cur = cur.next[index];         }         return cur.end;     }      public boolean search(String word){         return count(word) &gt; 0;     }      public int prefixNum(String prefix){         if(prefix == null)             return 0;         Node cur = root;         int index = 0;         for(int i = 0; i &lt; prefix.length(); i++){             index = prefix.charAt(i) - &#39;a&#39;;             if(cur.next[index] == null)                 return 0;             cur = cur.next[index];         }         return cur.path; //返回这个经过的　　也就是以这个为前驱的     }      public boolean startsWith(String prefix){         return prefixNum(prefix) &gt; 0;     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="使用Map来保存next"><a href="#使用Map来保存next" class="headerlink" title="使用Map来保存next"></a>使用Map来保存next</h3><p>还有一种写法就是</p>
+<ul>
+<li>使用<code>Map</code>来保存<code>next</code>数组，这样不只可以存<code>26</code>或者<code>52</code>个孩子:</li>
+</ul>
+<p>还是上面那个题目代码:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89</code></td>
+<td><code>private class Node{      public int path;      public int end;      public HashMap&lt;Character,Node&gt;next;       public Node() {          path = 0;          end = 0;          next = new HashMap&lt;&gt;();      }  }   private Node root;   public Trie() {      root = new Node();  }   //插入一个字符  public void insert(String word){      if(word == null)          return ;      Node cur = root;      char c;      for(int i = 0; i &lt; word.length(); i++){          c = word.charAt(i);          if(cur.next.get(c) == null){ //没有就新建              cur.next.put(c,new Node());          }          cur = cur.next.get(c);          cur.path++; //经过这里      }      cur.end++;  }   //统计某个字符串的数量  public int count(String word){      if(word == null)          return 0;      Node cur = root;      char c;      for(int i = 0; i &lt; word.length(); i++){          c = word.charAt(i);          if(cur.next.get(c) == null)              return 0;          cur = cur.next.get(c);      }      return cur.end;  }   public boolean search(String word){      return count(word) &gt; 0;  }   public int prefixNum(String prefix){      if(prefix == null)          return 0;      Node cur = root;      char c;      for(int i = 0; i &lt; prefix.length(); i++){          c = prefix.charAt(i);          if(cur.next.get(c) == null)              return 0;          cur = cur.next.get(c);      }      return cur.path; //返回这个经过的　　也就是以这个为前驱的  }   public boolean startsWith(String prefix){      return prefixNum(prefix) &gt; 0;  }   public void remove(String word){      if(word == null)          return;      if(!search(word)) //不包含这个字符串          return;      Node cur = root;      char c;      for(int i = 0; i &lt; word.length(); i++){          c = word.charAt(i);          if(--cur.next.get(c).path == 0){              cur.next.remove(c);              return ;          }          cur = cur.next.get(c);      }      cur.end--; //最后这个字符串也要--  }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="更多字典树"><a href="#更多字典树" class="headerlink" title="更多字典树"></a>更多字典树</h3><ul>
+<li><strong>压缩字典树；</strong></li>
+</ul>
+<p><img src="/images/t5.png" alt="这里写图片描述"></p>
+<ul>
+<li><strong>三分搜索树；</strong></li>
+</ul>
+<p><img src="/images/t6.png" alt="这里写图片描述"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2022/11/07/Implement%20Trie%20(Prefix%20Tree)%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91(%E5%89%8D%E7%BC%80%E6%A0%91)/">https://hzhzxfs.github.io/2022/11/07/Implement%20Trie%20(Prefix%20Tree)%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91(%E5%89%8D%E7%BC%80%E6%A0%91)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/11/26/The%20Suspects%E4%BB%A5%E5%8F%8A%E5%B9%B6%E6%9F%A5%E9%9B%86%E6%80%BB%E7%BB%93/" title="The Suspects以及并查集总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">The Suspects以及并查集总结</div></div><div class="info-2"><div class="info-item-1">The Suspects以及并查集总结 题目 基本并查集 Size优化并查集 Rank优化并查集 路径压缩优化一(最好) 路径压缩优化二(递归)  题目链接 http://poj.org/problem?id=1611  题意就是告诉你0号同学被感染了，他还参加了一些社团，给出一些社团以及里面的人，问总共多少人感染。输入给出n表示人数(标号为0~n-1)，m表示社团数目，接下来m行每行第一个数k ，表示该社团有k人，然后是k个人的编号。要你输出有多少个人感染了病毒。  解析题目本身并不难:  把每个社团加入到各自的集合中，然后不断的合并相同的集合，最后看哪些和0号同学在同一个集合中，使用一个变量记录和0号同学在同一个集合中的人数即可； 这里主要是总结并查集几种优化的方式；  基本并查集基本并查集，记录一个每个结点p的父亲结点是parent[p]，然后是一个不断从孩子找父亲的过程:  find()操作， while(p != parent[p])p = parent[p]，一直往上找根的过程； union()操作，就是找到两个结点的根节点，然后将其中一个结点的根节点挂到另一个结点的...</div></div></div></a><a class="pagination-related" href="/2022/10/05/%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%BB%E6%9C%80%E5%B0%8F%E5%80%BC%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim%20%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%E6%95%B0%E9%87%8F(%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97(%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8C%E6%9C%80%E5%B0%8F%E5%80%BC%E6%9B%B4%E6%96%B0%E7%BB%93%E6%9E%84))/" title="最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))</div></div><div class="info-2"><div class="info-item-1">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构)) 注意: 子数组必须是下标连续的，而且i ~ i自己也算一个子数组。 解析这个题目也是使用单调队列(窗口内更新最大值和最小值)的结构来做，如果不懂单调队列先看这个博客。 先准备两个双端队列，分别是最大值更新结构和最小值更新结构：  先生成两个双端队列qmax和qmin，当子数组为arr[L...R]时，qmax维护了窗口子数组arr[L...R]的最大值更新结构，qmin维护了窗口子数组arr[L....R]的最小值更新结构； 当子数组arr[L....R]向右扩一个位置变成arr[L....R+1]时，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值； 当子数组arr[L....R]左边缩一个位置变成arr[L+1....R]是，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值；  然后，我们需要证明两个结论:  下面看具体过程: 找到一个L，此时令R不断向右移动，表示arr[L...R]一直向右扩大，并...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/" title="李宏毅机器学习——回归"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-14</div><div class="info-item-2">李宏毅机器学习——回归</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——回归回归大致可以理解为根据数据集$D$，拟合出近似的曲线，所以回归也常称为拟合（Fit）。按照自变量的数量可以分为一元回归和多元回归，按照自变量与因变量之间的函数表达式可以分为线性回归(Linear Regression)和非线性回归(Non-linear Regression)。 1 模型步骤 Step1：模型假设，选择模型框架（线性模型） Step2：模型评估，如何判断众多模型的好坏（损失函数） Step3：模型优化，如何筛选最优的模型（梯度下降）  1.1 模型假设（多元线性模型）多元线性模型就是特征x的线性组合的函数，可以表示为$y&#x3D;\sum{w_ix_i}+b$，$x_i$为特征，$w_i$为权重，b为偏移量。 1.2 模型评估（损失函数）常用的损失函数是均方误差（mean-square error, MSE），也被称为最小二乘法 (least square method)，其几何意义就是欧氏距离。  不同的loss函数，具有不同的拟合特性：Hinge Loss——SVM；exp-Loss ——Boosting；log-Loss——Logis...</div></div></div></a><a class="pagination-related" href="/2023/05/17/%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90/" title="虚拟机调优案例分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-17</div><div class="info-item-2">虚拟机调优案例分析</div></div><div class="info-2"><div class="info-item-1">虚拟机调优案例分析 虚拟机调优案例分析 高性能硬件上的程序部署策略 服务系统经常出现卡顿（Full GC 时间太长） 除了 Java 堆和永久代之外，会占用较多内存的区域 从 GC 调优角度解决新生代存活大量对象问题（Minor GC 时间太长）    高性能硬件上的程序部署策略  补充：64 位虚拟机 在 Java EE 方面，企业级应用经常需要使用超过 4GB 的内存，此时，32 位虚拟机将无法满足需求，可是 64 位虚拟机虽然可以设置更大的内存，却存在以下缺点：  内存问题： 由于指针膨胀和各种数据类型对齐补白的原因，运行于 64 位系统上的 Java 应用程序需要消耗更多的内存，通常要比 32 位系统额外增加 10% ~ 30% 的内存消耗。 性能问题： 64 位虚拟机的运行速度在各个测试项中几乎全面落后于 32 位虚拟机，两者大概有 15% 左右的性能差距。   服务系统经常出现卡顿（Full GC 时间太长）首先 jstat -gcutil 观察 GC 的耗时，jstat -gccapacity 检查内存用量（也可以加上 -verbose:gc 参数获取 GC 的详细...</div></div></div></a><a class="pagination-related" href="/2022/08/19/%E6%89%BE%E5%88%B0%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E7%9A%84%E6%9C%80%E5%A4%A7%E6%90%9C%E7%B4%A2%E4%BA%8C%E5%8F%89%E5%AD%90%E6%A0%91/" title="找到二叉树中的最大搜索二叉子树"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-19</div><div class="info-item-2">找到二叉树中的最大搜索二叉子树</div></div><div class="info-2"><div class="info-item-1">找到二叉树中的最大搜索二叉子树 递归 技巧的写法 完整测试代码  题目 递归解析:这种题目的解题过程分为三步:  列出所有可能性； **列出结点需要的信息，并整合信息(成一个结构体)**； 改递归 ，先假设左和右都给我信息(黑盒)，然后怎么利用左边和右边的信息组出来我该返回的信息，最后basecase(边界)填什么；  具体到这个题目：第一步，列出所有可能性：  第一种可能性，以node为头的结点的最大二叉搜索子树可能来自它左子树； 第二种可能性，以node为头的结点的最大二叉搜索子树可能来自它右子树； 第三种可能性，左树整体是搜索二叉树，右树整体也是搜索二叉树，而且左树的头是node.left，右树的头是node.right，且左树的最大值&lt; node.value，右树的最小值 &gt; node.value， 那么以我为头的整棵树都是搜索二叉树；  第二步，列出结点需要的信息:  信息一: 左树最大搜索二叉树大小； 信息二: 右树最大搜索二叉树大小； 信息三: 左树上最大搜索二叉树的头部是什么； 信息四: 右树上最大搜索二叉树的头部是什么； 信息五: 左树上的最大值； ...</div></div></div></a><a class="pagination-related" href="/2023/07/15/Listener/" title="Listener"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-15</div><div class="info-item-2">Listener</div></div><div class="info-2"><div class="info-item-1">监听器笔记1、观察者模式  观察者监控被观察者的行为 被观察者做出相应的动作会触发事件 当观察者发现被观察者触发事件，就会调用事先准备好的方法  2、监听器分类 监听域对象本身 ServletContext HttpSession HttpServletRequest   监听域对象的属性域 应用域 会话域 请求域   监听存入Session域的对象本身 对象是否存入会话域 对象是否和Session一起被钝化到了硬盘上    3、后续用到的监听器名称：ServletContextListener 方法：    方法名 作用    contextInitialized(ServletContextEvent sce) ServletContext创建时调用   contextDestroyed(ServletContextEvent sce) ServletContext销毁时调用    将来在SpringMVC中会用到：ContextLoaderListener，这个监听器就是实现了ServletContextListener接口。  </div></div></div></a><a class="pagination-related" href="/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/" title="虚拟机字节码执行引擎_01"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="info-item-2">虚拟机字节码执行引擎_01</div></div><div class="info-2"><div class="info-item-1">方法调用Java 的方法的执行分为两个部分：  方法调用：确定被调用的方法是哪一个； 基于栈的解释执行：真正的执行方法的字节码。  在本节中我们将对方法调用进行详细的讲解，我们知道，一切方法的调用在 Class 文件中存储的都是常量池中的符号引用，而不是方法实际运行时的入口地址（直接引用），直到类加载的时候，甚至是实际运行的时候才回去会去确定要被运行的方法的直接引用，而确定要被运行的方法的直接引用的过程就叫做方法调用。  方法调用 方法调用字节码指令 解析调用 分派调用 静态分派（方法重载） 变量的静态类型和实际类型 重载方法匹配优先级，例如一个字符 ‘a’ 作为入参   动态分派（方法重写） 动态分派的过程 动态分派的实现   单分派与多分派   动态类型语言支持 java.lang.invoke 包 MethodHandle 的使用 MethodHandle 和 Reflection 的区别   invokedynamic 指令      方法调用字节码指令Java 虚拟机提供了 5 个职责不同的方法调用字节码指令：  invokestatic：调用静态方法； invokes...</div></div></div></a><a class="pagination-related" href="/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/" title="图的基本结构以及BFS和DFS(递归和非递归)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-29</div><div class="info-item-2">图的基本结构以及BFS和DFS(递归和非递归)</div></div><div class="info-2"><div class="info-item-1">图的基本结构以及BFS和DFS(递归和非递归) 完整的图结构 有向图建图以及BFS和DFS 无向图建图以及BFS和DFS DFS和BFS常见应用   完整的图结构 图的每个顶点包括顶点的值、入度、出度、和它相邻的点(或者在有向图中就是下一个可以到达的点)的集合、以及以它为起点出发的边的集合； 图的每条边包括边的权值、边的起点、边的终点； 一个图包括点的集合和边的集合；  综上可以得到如下的图结构:         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 //点  (默认我是from的情况下)    static class Node{        public int value;        public int in; //入度        public int out; //出度        public ArrayList&lt;Node&gt;nexts;// 从我出发能到达的下一级结点，...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LeetCode-208-Implement-Trie-Prefix-Tree-%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%AD%97%E5%85%B8%E6%A0%91-%E5%89%8D%E7%BC%80%E6%A0%91"><span class="toc-number">1.</span> <span class="toc-text">LeetCode - 208. Implement Trie (Prefix Tree)以及实现字典树(前缀树)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%92%8C%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">基础知识和结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8F%92%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">字符串的插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E6%9F%90%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%95%B0%E9%87%8F-%E6%9F%A5%E8%AF%A2%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.3.</span> <span class="toc-text">统计某个字符串的数量 || 查询是否有某个字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E4%BB%A5%E6%9F%90%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%BA%E5%89%8D%E7%BC%80%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%95%B0%E9%87%8F-%E6%98%AF%E5%90%A6%E6%9C%89%E6%9F%90%E4%B8%AA%E5%89%8D%E7%BC%80"><span class="toc-number">1.4.</span> <span class="toc-text">统计以某个字符串为前缀的字符串数量 || 是否有某个前缀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%88%A0%E9%99%A4"><span class="toc-number">1.5.</span> <span class="toc-text">字符串的删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="toc-number">1.6.</span> <span class="toc-text">完整测试代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">1.7.</span> <span class="toc-text">题目解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-number">1.7.1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">1.7.2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90"><span class="toc-number">1.7.3.</span> <span class="toc-text">解析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Map%E6%9D%A5%E4%BF%9D%E5%AD%98next"><span class="toc-number">1.8.</span> <span class="toc-text">使用Map来保存next</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E5%AD%97%E5%85%B8%E6%A0%91"><span class="toc-number">1.9.</span> <span class="toc-text">更多字典树</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

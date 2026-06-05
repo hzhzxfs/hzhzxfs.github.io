@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java内存区域详解 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java 内存区域详解 Java 内存区域详解 JVM 运行时的数据区域 程序计数器 Java 虚拟机栈 本地方法栈 Java 堆 方法区 直接内存   HotSpot 虚拟机堆中的对象 对象的创建（遇到一条 new 指令时） 对象的内存布局 对象的访问 句柄访问 直接指针访问        JVM 运行时的数据区域首先获取一个直观的认识：  总共也就这么 5 个区（直接内存不属于 JVM 运行时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存区域详解">
+<meta property="og:url" content="https://hzhzxfs.github.io/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Java 内存区域详解 Java 内存区域详解 JVM 运行时的数据区域 程序计数器 Java 虚拟机栈 本地方法栈 Java 堆 方法区 直接内存   HotSpot 虚拟机堆中的对象 对象的创建（遇到一条 new 指令时） 对象的内存布局 对象的访问 句柄访问 直接指针访问        JVM 运行时的数据区域首先获取一个直观的认识：  总共也就这么 5 个区（直接内存不属于 JVM 运行时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2023-01-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:05.989Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java内存区域详解",
+  "url": "https://hzhzxfs.github.io/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2023-01-30T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:05.989Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java内存区域详解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Java内存区域详解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java内存区域详解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-01-30T16:00:00.000Z" title="发表于 2023-01-31 00:00:00">2023-01-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:05.989Z" title="更新于 2026-06-05 16:26:05">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/">JVM</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Java-内存区域详解"><a href="#Java-内存区域详解" class="headerlink" title="Java 内存区域详解"></a>Java 内存区域详解</h1><ul>
+<li><a href="#java-%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3">Java 内存区域详解</a><ul>
+<li><a href="#jvm-%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F">JVM 运行时的数据区域</a><ul>
+<li><a href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8">程序计数器</a></li>
+<li><a href="#java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88">Java 虚拟机栈</a></li>
+<li><a href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88">本地方法栈</a></li>
+<li><a href="#java-%E5%A0%86">Java 堆</a></li>
+<li><a href="#%E6%96%B9%E6%B3%95%E5%8C%BA">方法区</a></li>
+<li><a href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98">直接内存</a></li>
+</ul>
+</li>
+<li><a href="#hotspot-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%A0%86%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1">HotSpot 虚拟机堆中的对象</a><ul>
+<li><a href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E9%81%87%E5%88%B0%E4%B8%80%E6%9D%A1-new-%E6%8C%87%E4%BB%A4%E6%97%B6">对象的创建（遇到一条 new 指令时）</a></li>
+<li><a href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80">对象的内存布局</a></li>
+<li><a href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE">对象的访问</a><ul>
+<li><a href="#%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE">句柄访问</a></li>
+<li><a href="#%E7%9B%B4%E6%8E%A5%E6%8C%87%E9%92%88%E8%AE%BF%E9%97%AE">直接指针访问</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="JVM-运行时的数据区域"><a href="#JVM-运行时的数据区域" class="headerlink" title="JVM 运行时的数据区域"></a>JVM 运行时的数据区域</h2><p>首先获取一个直观的认识：</p>
+<p><img src="/./pic/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F.png" alt="JVM运行时的数据区域.png"></p>
+<p>总共也就这么 5 个区（直接内存不属于 JVM 运行时数据区的一部分），除了程序计数器其他的地方都有可能出现 OOM (OutOfMemoryError)，其中像是程序计数器和两个栈（Java 虚拟机栈 &amp; 本地方法栈）都是每个线程要有一个的，所以肯定是线程隔离的。而其他 2 个区就是线程共享的了，也就是说，如果有多个线程要同时访问这两个区的数据，是会出现线程安全问题的。接下来，我们将对这些区域进行详细的介绍。</p>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><ul>
+<li>当前线程所执行的字节码的行号指示器，字节码解释器工作时就是通过改变这个计数器的值来确定下一条要执行的字节码指令的位置</li>
+<li>执行 Java 方法和 native 方法时的区别：<ul>
+<li>执行 Java 方法时：记录虚拟机正在执行的字节码指令地址；</li>
+<li>执行 native 方法时：无定义；</li>
+</ul>
+</li>
+<li>是 5 个区域中唯一不会出现 OOM 的区域。</li>
+</ul>
+<h3 id="Java-虚拟机栈"><a href="#Java-虚拟机栈" class="headerlink" title="Java 虚拟机栈"></a>Java 虚拟机栈</h3><ul>
+<li>Java 方法执行的内存模型，每个方法执行的过程，就是它所对应的栈帧在虚拟机栈中入栈到出栈的过程；</li>
+<li>服务于 Java 方法；</li>
+<li>可能抛出的异常：<ul>
+<li>OutOfMemoryError（在虚拟机栈可以动态扩展的情况下，扩展时无法申请到足够的内存）；</li>
+<li>StackOverflowError（线程请求的栈深度 &gt; 虚拟机所允许的深度）；</li>
+</ul>
+</li>
+<li>虚拟机参数设置：<code>-Xss</code>.</li>
+</ul>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><ul>
+<li>服务于 native 方法；</li>
+<li>可能抛出的异常：与 Java 虚拟机栈一样。</li>
+</ul>
+<h3 id="Java-堆"><a href="#Java-堆" class="headerlink" title="Java 堆"></a>Java 堆</h3><ul>
+<li>唯一的目的：存放对象实例；</li>
+<li>垃圾收集器管理的主要区域；</li>
+<li>可以处于物理上不连续的内存空间中；</li>
+<li>可能抛出的异常：<ul>
+<li>OutOfMemoryError（堆中没有内存可以分配给新创建的实例，并且堆也无法再继续扩展了）。</li>
+</ul>
+</li>
+<li>虚拟机参数设置：<ul>
+<li>最大值：<code>-Xmx</code></li>
+<li>最小值：<code>-Xms</code></li>
+<li>两个参数设置成相同的值可避免堆自动扩展。</li>
+</ul>
+</li>
+</ul>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><ul>
+<li>存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据；<ul>
+<li>类信息：即 Class 类，如类名、访问修饰符、常量池、字段描述、方法描述等。</li>
+</ul>
+</li>
+<li>垃圾收集行为在此区域很少发生；<ul>
+<li>不过也不能不清理，对于经常动态生成大量 Class 的应用，如 Spring 等，需要特别注意类的回收状况。</li>
+</ul>
+</li>
+<li>运行时常量池也是方法区的一部分；<ul>
+<li>Class 文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项是常量池，用于存放编译器生成的各种字面量（就是代码中定义的 static final 常量）和符号引用，这部分信息就存储在运行时常量池中。</li>
+</ul>
+</li>
+<li>可能抛出的异常：<ul>
+<li>OutOfMemoryError（方法区无法满足内存分配需求时）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="直接内存"><a href="#直接内存" class="headerlink" title="直接内存"></a>直接内存</h3><ul>
+<li>JDK 1.4 的 NIO 类可以使用 native 函数库直接分配堆外内存，这是一种基于通道与缓冲区的 I&#x2F;O 方式，它在 Java 堆中存储一个 DirectByteBuffer 对象作为堆外内存的引用，这样就可以对堆外内存进行操作了。因为可以避免 Java 堆和 Native 堆之间来回复制数据，在一些场景可以带来显著的性能提高。</li>
+<li>虚拟机参数设置：<code>-XX:MaxDirectMemorySize</code><ul>
+<li>默认等于 Java 堆最大值，即 <code>-Xmx</code> 指定的值。</li>
+</ul>
+</li>
+<li>将直接内存放在这里讲解的原因是它也可能会出现 OutOfMemoryError；<ul>
+<li>服务器管理员在配置 JVM 参数时，会根据机器的实际内存设置 <code>-Xmx</code> 等信息，但经常会忽略直接内存（默认等于 <code>-Xmx</code> 设置值），这可能会使得各个内存区域的总和大于物理内存限制，从而导致动态扩展时出现 OOM。</li>
+</ul>
+</li>
+</ul>
+<h2 id="HotSpot-虚拟机堆中的对象"><a href="#HotSpot-虚拟机堆中的对象" class="headerlink" title="HotSpot 虚拟机堆中的对象"></a>HotSpot 虚拟机堆中的对象</h2><p>这一小节将对 JVM 对 Java 堆中的对象的创建、布局和访问的全过程进行讲解。</p>
+<h3 id="对象的创建（遇到一条-new-指令时）"><a href="#对象的创建（遇到一条-new-指令时）" class="headerlink" title="对象的创建（遇到一条 new 指令时）"></a>对象的创建（遇到一条 new 指令时）</h3><ol>
+<li>检查这个指令的参数能否在常量池中定位到一个类的符号引用，并检查这个符号引用代表的类是否已被加载、解析和初始化过。如果没有，先把这个类加载进内存；</li>
+<li>类加载检查通过后，虚拟机将为新对象分配内存，此时已经可以确定存储这个对象所需的内存大小；</li>
+<li>在堆中为新对象分配可用内存；</li>
+<li>将分配到的内存初始化；</li>
+<li>设置对象头中的数据；</li>
+<li>此时，从虚拟机的角度看，对象已经创建好了，但从 Java 程序的角度看，对象创建才刚刚开始，构造函数还没有执行。</li>
+</ol>
+<p>第 3 步，在堆中为新对象分配可用内存时，会涉及到以下两个问题：</p>
+<p><strong>如何在堆中为新对象划分可用的内存？</strong></p>
+<ul>
+<li>指针碰撞（内存分配规整）<ul>
+<li>用过的内存放一边，没用过的内存放一边，中间用一个指针分隔；</li>
+<li>分配内存的过程就是将指针向没用过的内存那边移动所需的长度；</li>
+</ul>
+</li>
+<li>空闲列表（内存分配不规整）<ul>
+<li>维护一个列表，记录哪些内存块是可用的；</li>
+<li>分配内存时，从列表上选取一块足够大的空间分给对象，并更新列表上的记录；</li>
+</ul>
+</li>
+</ul>
+<p><strong>如何处理多线程创建对象时，划分内存的指针的同步问题？</strong></p>
+<ul>
+<li>对分配内存空间的动作进行同步处理（CAS）；</li>
+<li>把内存分配动作按照线程划分在不同的空间之中进行；<ul>
+<li>每个线程在 Java 堆中预先分配一小块内存，称为本地线程分配缓冲（Thread Local Allocation Buffer，TLAB）；</li>
+<li>哪个线程要分配内存就在哪个线程的 TLAB 上分配，TLAB 用完需要分配新的 TLAB 时，才需要同步锁定；</li>
+<li>通过 <code>-XX:+/-UseTLAB</code> 参数设定是否使用 TLAB。</li>
+</ul>
+</li>
+</ul>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><ul>
+<li>对象头：<ul>
+<li>第一部分：存储对象自身运行时的数据，HashCode、GC分代年龄等（Mark Word）；</li>
+<li>第二部分：类型指针，指向它的类元数据的指针，虚拟机通过这个指针来判断这个对象是哪个类的实例（HotSpot 采用的是直接指针的方式访问对象的）；</li>
+<li>如果是个数组对象，对象头中还有一块用于记录数组长度的数据。</li>
+</ul>
+</li>
+<li>实例数据：<ul>
+<li>默认分配顺序：longs&#x2F;doubles、ints、shorts&#x2F;chars、bytes&#x2F;booleans、oops (Ordinary Object Pointers)，相同宽度的字段会被分配在一起，除了 oops，其他的长度由长到短；</li>
+<li>默认分配顺序下，父类字段会被分配在子类字段前面。</li>
+</ul>
+</li>
+</ul>
+<p><em>注：HotSpot VM要求对象的起始地址必须是8字节的整数倍，所以不够要补齐。</em></p>
+<h3 id="对象的访问"><a href="#对象的访问" class="headerlink" title="对象的访问"></a>对象的访问</h3><p>Java 程序需要通过虚拟机栈上的 reference 数据来操作堆上的具体对象，reference 数据是一个指向对象的引用，不过如何通过这个引用定位到具体的对象，目前主要有以下两种访问方式：句柄访问和直接指针访问。</p>
+<h4 id="句柄访问"><a href="#句柄访问" class="headerlink" title="句柄访问"></a>句柄访问</h4><p>句柄访问会在 Java 堆中划分一块内存作为句柄池，每一个句柄存放着到对象实例数据和对象类型数据的指针。</p>
+<p>优势：对象移动的时候（这在垃圾回收时十分常见）只需改变句柄池中对象实例数据的指针，不需要修改reference本身。</p>
+<p><img src="/./pic/%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D_%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE.png" alt="对象的访问定位_句柄访问.png"></p>
+<h4 id="直接指针访问"><a href="#直接指针访问" class="headerlink" title="直接指针访问"></a>直接指针访问</h4><p>直接指针访问方式在 Java 堆对象的实例数据中存放了一个指向对象类型数据的指针，在 HotSpot 中，这个指针会被存放在对象头中。</p>
+<p>优势：减少了一次指针定位对象实例数据的开销，速度更快。</p>
+<p><img src="/./pic/%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D_%E7%9B%B4%E6%8E%A5%E6%8C%87%E9%92%88%E8%AE%BF%E9%97%AE.png" alt="对象的访问定位_直接指针访问.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/">https://hzhzxfs.github.io/2023/01/31/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/02/05/OOM%E5%BC%82%E5%B8%B8/" title="OOM异常"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">OOM异常</div></div><div class="info-2"><div class="info-item-1">OOM 异常 (OutOfMemoryError) OOM 异常 (OutOfMemoryError) Java 堆溢出 Java 虚拟机栈和本地方法栈溢出 方法区和运行时常量池溢出 直接内存溢出    Java 堆溢出 出现标志：java.lang.OutOfMemoryError: Java heap space 解决方法： 先通过内存映像分析工具分析 Dump 出来的堆转储快照，确认内存中的对象是否是必要的，即分清楚是出现了内存泄漏还是内存溢出； 如果是内存泄漏，通过工具查看泄漏对象到 GC Root 的引用链，定位出泄漏的位置； 如果不存在泄漏，检查虚拟机堆参数（-Xmx 和 -Xms）是否可以调大，检查代码中是否有哪些对象的生命周期过长，尝试减少程序运行期的内存消耗。   虚拟机参数： -XX:HeapDumpOnOutOfMemoryError：让虚拟机在出现内存泄漏异常时 Dump 出当前的内存堆转储快照用于事后分析。    Java 虚拟机栈和本地方法栈溢出 单线程下，栈帧过大、虚拟机容量过小都不会导致 OutOfMemoryError，只会导致 StackOve...</div></div></div></a><a class="pagination-related" href="/2023/01/12/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Java多线程基础"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java多线程基础</div></div><div class="info-2"><div class="info-item-1">Java多线程基础 一、线程介绍  1、简单案例引入 2、start和run方法区别 3、线程生命周期 4、银行排队业务案例   二、深入理解Thread构造函数 12345- [1、线程的默认命名](#1线程的默认命名)- [2、线程的父子关系](#2线程的父子关系)- [3、Thread和ThreadGroup](#3thread和threadgroup)- [4、Thread和JVM虚拟机栈](#4thread和jvm虚拟机栈)- [5、守护线程](#5守护线程) 三、Thread API的详细内容  1、线程sleep 2、线程yield 3、设置线程的优先级 4、获取线程ID 5、获取当前线程 6、设置线程上下文类加载器 7、线程interrupt 8、线程join 9、关闭线程   四、线程安全与数据同步  五、线程间通信  六、ThreadGroup详细讲解    一、线程介绍1、简单案例引入 模拟同时从数据库中读取数据和写入文件；   模拟同时从数据库中读取数据和写入文件，这两个操作作为两个线程同时进行，不需要相互的等待； 这里使用的是匿名类创建的线程，重写了Th...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2021/04/21/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B_1/" title="特征工程_1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-04-21</div><div class="info-item-2">特征工程_1</div></div><div class="info-2"><div class="info-item-1">特征工程就是将原始数据空间变换到新的特征空间，在新的特征空间中，模型能够更好地学习数据中的规律。特征的选择和构造，就是人为地帮助模型学习到原本很难学好的东西，从而使模型达到更好的效果。 1. 根据现实情况构造特征1.1 各点与特定点的距离        1 2 3 4 5 df[&#39;x_dis&#39;] = (df[&#39;x&#39;] - 6165599).abs() df[&#39;y_dis&#39;] = (df[&#39;y&#39;] - 5202660).abs() df[&#39;base_dis] = (df[&#39;y_dis&#39;]**2))**0.5 + ((df[&#39;x_dis&#39;]**2) del df[&#39;x_dis&#39;],df[&#39;y_dis&#39;]  df[&#39;base_dis_diff&#39;].head()   1.2 将时间划分为白天与黑夜        1 2 3 df[&#39;day_night&#39;] = 0 df.loc[(df[&#39;hour&#39;] &gt...</div></div></div></a><a class="pagination-related" href="/2021/05/23/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E6%96%B9%E6%B3%95/" title="异常检测——集成方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-23</div><div class="info-item-2">异常检测——集成方法</div></div><div class="info-2"><div class="info-item-1"> 一般情况下，可以把异常检测看成是数据不平衡下的分类问题，如果数据条件允许，优先使用有监督异常检测如XGBOOST；仅有少量标签时，可以用无监督学习作为一种特征抽取方式，最后喂给有监督的分类模型。之前介绍的统计与概率模型、线性模型、基于相似度的模型，和今天要介绍的集成学习都是无监督模型。  为什么要使用集成学习？——①适合高维度数据(空间稀疏)，②提高模型鲁棒性。值得注意的时，异常检测没有标签，所以feature bagging、bagging比boosting多。而使用boosting进行异常检测，需要生成伪标签。 1. Feature BaggingFeature Bagging，基本思想与bagging相似，只是对象是feature。基本检测器可以彼此完全不同，或不同的参数设置，或使用不同采样的子数据集。Feature bagging常用lof算法为基算法。 1.1 算法原理 1.2 不同检测器的分数标准化不同检测器可能会在不同的尺度上产生分数。例如，平均k近邻检测器会输出原始距离分数，而LOF算法会输出归一化值。另外，检测器输出的异常值分数大小不一，因此需要归一化，常见方...</div></div></div></a><a class="pagination-related" href="/2021/06/15/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E5%9B%BE%E8%AE%BA%E4%B8%8EPyG%E5%BA%93/" title="图神经网络——基本图论与PyG库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-15</div><div class="info-item-2">图神经网络——基本图论与PyG库</div></div><div class="info-2"><div class="info-item-1">在以往的深度学习中，主要的数据形式包括矩阵、张量、序列(sequence)和时间序列(time series)，然而还有许多数据是图的结构，如社交网络、知识图谱等。图结构数据具有以下特点：  任意的大小和复杂的拓扑结构；没有固定的节点排序或参考点；通常是动态的，并具有多模态的特征；图的信息包括节点信息、边信息和拓扑结构信息。  1. 图结构数据1.1 图(Graphs)· 一个图记作$\mathcal{G}&#x3D;{\mathcal{V}, \mathcal{E}}$，其中 $\mathcal{V}&#x3D;\left{v_{1}, \ldots, v_{N}\right}$是数量为$N&#x3D;|\mathcal{V}|$ 的节点的集合， $\mathcal{E}&#x3D;\left{e_{1}, \ldots, e_{M}\right}$ 是数量为 $M$ 的边的集合。· 节点表示实体(entities)，边表示实体间的关系(relations)；节点和边的信息可以是类别型或数值型的。· 只有一种类型的节点和一种类型的边的图称为同质图(Homogeneous Gra...</div></div></div></a><a class="pagination-related" href="/2023/09/19/Linux%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E3%80%81%E6%8C%82%E8%BD%BD%E5%BA%A6/" title="Linux磁盘分区、挂载度"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="info-item-2">Linux磁盘分区、挂载度</div></div><div class="info-2"><div class="info-item-1">[TOC] Linux磁盘分区、挂载度1. 分区方式 MBR分区 最多支持四个主分区 系统只能安装在主分区 扩展分区要占一个主分区 MBR最大只支持2TB，但拥有最好的兼容性   GPT分区 支持无限多个主分区（但操作系统可能限制，比如windows下最多128个分区） 最大支持18EB的大容量（1EB&#x3D;1024PB，PB&#x3D;1024TB） windows7 64位以后支持gpt    2. Linux分区2.1 分区原理 Linux来说无论有几个分区，分给哪一个目录使用，它归根结底就只有一个根目录，一个独立且唯一的文件结构，Linux中每个分区都是用来组成整个文件系统的一部分。 Linux采用了一种叫做“载入”的处理方法，它的整个文件系统中包含了一整套的文件和目录，且将一个分区和一个目录联系起来。这时要载入的一个分区将使它的存储空间在一个目录下获得。  2.2 硬盘说明 Linux硬盘分IDE硬盘和SCSI硬盘，目前基本上是SCSI硬盘 lsblk [-f]：查看当前系统的分区和挂载情况。（list block）  3. 挂载硬盘 需求是给我们的Linux系统...</div></div></div></a><a class="pagination-related" href="/2022/10/05/%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%BB%E6%9C%80%E5%B0%8F%E5%80%BC%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim%20%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%E6%95%B0%E9%87%8F(%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97(%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8C%E6%9C%80%E5%B0%8F%E5%80%BC%E6%9B%B4%E6%96%B0%E7%BB%93%E6%9E%84))/" title="最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-05</div><div class="info-item-2">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))</div></div><div class="info-2"><div class="info-item-1">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构)) 注意: 子数组必须是下标连续的，而且i ~ i自己也算一个子数组。 解析这个题目也是使用单调队列(窗口内更新最大值和最小值)的结构来做，如果不懂单调队列先看这个博客。 先准备两个双端队列，分别是最大值更新结构和最小值更新结构：  先生成两个双端队列qmax和qmin，当子数组为arr[L...R]时，qmax维护了窗口子数组arr[L...R]的最大值更新结构，qmin维护了窗口子数组arr[L....R]的最小值更新结构； 当子数组arr[L....R]向右扩一个位置变成arr[L....R+1]时，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值； 当子数组arr[L....R]左边缩一个位置变成arr[L+1....R]是，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值；  然后，我们需要证明两个结论:  下面看具体过程: 找到一个L，此时令R不断向右移动，表示arr[L...R]一直向右扩大，并...</div></div></div></a><a class="pagination-related" href="/2023/12/30/Elasticsearch/" title="Elasticsearch必知必会"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-30</div><div class="info-item-2">Elasticsearch必知必会</div></div><div class="info-2"><div class="info-item-1">Elasticsearch1.简单介绍下ES？ES是一种存储和管理基于文档和半结构化数据的数据库（搜索引擎）。它提供实时搜索（ES最近几个版本才提供实时搜索，以前都是准实时）和分析结构化、半结构化文档、数据和地理空间信息数据。 2.简单介绍当前可以下载的ES稳定版本？最新的稳定版本是7.10.0 3.安装ES前需要安装哪种软件？JDK 8或者 Java 1.8.0 4.请介绍启动ES服务的步骤？**A：**启动步骤如下 Windows下进入ES文件夹的bin目录下，点击ElasticSearch.bat开始运行 打开本地9200端口http://localhost:9200, 就可以使用ES了 5.ES中的倒排索引是什么？传统的检索方式是通过文章，逐个遍历找到对应关键词的位置。倒排索引，是通过分词策略，形成了词和文章的映射关系表，也称倒排表，这种词典 + 映射表即为倒排索引。 其中词典中存储词元，倒排表中存储该词元在哪些文中出现的位置。有了倒排索引，就能实现 O(1) 时间复杂度的效率检索文章了，极大的提高了检索效率。 加分项：倒排索引的底层实现是基于：FST（Finite St...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">Java 内存区域详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM-%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.1.</span> <span class="toc-text">JVM 运行时的数据区域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">程序计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">Java 虚拟机栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-number">1.1.3.</span> <span class="toc-text">本地方法栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E5%A0%86"><span class="toc-number">1.1.4.</span> <span class="toc-text">Java 堆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-number">1.1.5.</span> <span class="toc-text">方法区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98"><span class="toc-number">1.1.6.</span> <span class="toc-text">直接内存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HotSpot-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%A0%86%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.</span> <span class="toc-text">HotSpot 虚拟机堆中的对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%EF%BC%88%E9%81%87%E5%88%B0%E4%B8%80%E6%9D%A1-new-%E6%8C%87%E4%BB%A4%E6%97%B6%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">对象的创建（遇到一条 new 指令时）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-number">1.2.2.</span> <span class="toc-text">对象的内存布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">对象的访问</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">句柄访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%8C%87%E9%92%88%E8%AE%BF%E9%97%AE"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">直接指针访问</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

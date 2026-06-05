@@ -1,0 +1,425 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>虚拟机字节码执行引擎_01 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="方法调用Java 的方法的执行分为两个部分：  方法调用：确定被调用的方法是哪一个； 基于栈的解释执行：真正的执行方法的字节码。  在本节中我们将对方法调用进行详细的讲解，我们知道，一切方法的调用在 Class 文件中存储的都是常量池中的符号引用，而不是方法实际运行时的入口地址（直接引用），直到类加载的时候，甚至是实际运行的时候才回去会去确定要被运行的方法的直接引用，而确定要被运行的方法的直接引用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟机字节码执行引擎_01">
+<meta property="og:url" content="https://hzhzxfs.github.io/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="方法调用Java 的方法的执行分为两个部分：  方法调用：确定被调用的方法是哪一个； 基于栈的解释执行：真正的执行方法的字节码。  在本节中我们将对方法调用进行详细的讲解，我们知道，一切方法的调用在 Class 文件中存储的都是常量池中的符号引用，而不是方法实际运行时的入口地址（直接引用），直到类加载的时候，甚至是实际运行的时候才回去会去确定要被运行的方法的直接引用，而确定要被运行的方法的直接引用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2023-03-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:06.754Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "虚拟机字节码执行引擎_01",
+  "url": "https://hzhzxfs.github.io/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2023-03-31T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:06.754Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '虚拟机字节码执行引擎_01',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">虚拟机字节码执行引擎_01</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">虚拟机字节码执行引擎_01</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-31T16:00:00.000Z" title="发表于 2023-04-01 00:00:00">2023-04-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:06.754Z" title="更新于 2026-06-05 16:26:06">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/">JVM</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Java/JVM/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="方法调用"><a href="#方法调用" class="headerlink" title="方法调用"></a>方法调用</h1><p>Java 的方法的执行分为两个部分：</p>
+<ul>
+<li>方法调用：确定被调用的方法是哪一个；</li>
+<li>基于栈的解释执行：真正的执行方法的字节码。</li>
+</ul>
+<p>在本节中我们将对方法调用进行详细的讲解，我们知道，一切方法的调用在 Class 文件中存储的都是常量池中的符号引用，而不是方法实际运行时的入口地址（直接引用），直到类加载的时候，甚至是实际运行的时候才回去会去确定要被运行的方法的直接引用，而确定要被运行的方法的直接引用的过程就叫做方法调用。</p>
+<ul>
+<li><a href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8">方法调用</a><ul>
+<li><a href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4">方法调用字节码指令</a></li>
+<li><a href="#%E8%A7%A3%E6%9E%90%E8%B0%83%E7%94%A8">解析调用</a></li>
+<li><a href="#%E5%88%86%E6%B4%BE%E8%B0%83%E7%94%A8">分派调用</a><ul>
+<li><a href="#%E9%9D%99%E6%80%81%E5%88%86%E6%B4%BE%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD">静态分派（方法重载）</a><ul>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%9A%84%E9%9D%99%E6%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%99%85%E7%B1%BB%E5%9E%8B">变量的静态类型和实际类型</a></li>
+<li><a href="#%E9%87%8D%E8%BD%BD%E6%96%B9%E6%B3%95%E5%8C%B9%E9%85%8D%E4%BC%98%E5%85%88%E7%BA%A7%E4%BE%8B%E5%A6%82%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6-a-%E4%BD%9C%E4%B8%BA%E5%85%A5%E5%8F%82">重载方法匹配优先级，例如一个字符 ‘a’ 作为入参</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E6%96%B9%E6%B3%95%E9%87%8D%E5%86%99">动态分派（方法重写）</a><ul>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E7%9A%84%E8%BF%87%E7%A8%8B">动态分派的过程</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E7%9A%84%E5%AE%9E%E7%8E%B0">动态分派的实现</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8D%95%E5%88%86%E6%B4%BE%E4%B8%8E%E5%A4%9A%E5%88%86%E6%B4%BE">单分派与多分派</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81">动态类型语言支持</a><ul>
+<li><a href="#javalanginvoke-%E5%8C%85">java.lang.invoke 包</a><ul>
+<li><a href="#methodhandle-%E7%9A%84%E4%BD%BF%E7%94%A8">MethodHandle 的使用</a></li>
+<li><a href="#methodhandle-%E5%92%8C-reflection-%E7%9A%84%E5%8C%BA%E5%88%AB">MethodHandle 和 Reflection 的区别</a></li>
+</ul>
+</li>
+<li><a href="#invokedynamic-%E6%8C%87%E4%BB%A4"><code>invokedynamic</code> 指令</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="方法调用字节码指令"><a href="#方法调用字节码指令" class="headerlink" title="方法调用字节码指令"></a>方法调用字节码指令</h2><p>Java 虚拟机提供了 5 个职责不同的方法调用字节码指令：</p>
+<ul>
+<li><code>invokestatic</code>：调用静态方法；</li>
+<li><code>invokespecial</code>：调用构造器方法、私有方法、父类方法；</li>
+<li><code>invokevirtual</code>：调用所有虚方法，除了静态方法、构造器方法、私有方法、父类方法、final 方法的其他方法叫虚方法；</li>
+<li><code>invokeinterface</code>：调用接口方法，会在运行时确定一个该接口的实现对象；</li>
+<li><code>invokedynamic</code>：在运行时动态解析出调用点限定符引用的方法，再执行该方法。</li>
+</ul>
+<p>除了 <code>invokedynamic</code>，其他 4 种方法的第一个参数都是被调用的方法的符号引用，是在编译时确定的，所以它们缺乏动态类型语言支持，因为动态类型语言只有在运行期才能确定接收者的类型，即变量的类型检查的主体过程在运行期，而非编译期。</p>
+<blockquote>
+<p>final 方法虽然是通过 <code>invokevirtual</code> 调用的，但是其无法被覆盖，没有其他版本，无需对接收者进行多态选择，或者说多态选择的结果是唯一的，所以属于非虚方法。</p>
+</blockquote>
+<h2 id="解析调用"><a href="#解析调用" class="headerlink" title="解析调用"></a>解析调用</h2><p>解析调用，正如其名，就是 <strong>在类加载的解析阶段，就确定了方法的调用版本</strong> 。我们知道类加载的解析阶段会将一部分符号引用转化为直接引用，这一过程就叫做解析调用。因为是在程序真正运行前就确定了要调用哪一个方法，所以 <strong>解析调用能成立的前提就是：方法在程序真正运行前就有一个明确的调用版本了，并且这个调用版本不会在运行期发生改变。</strong></p>
+<p>符合这两个要求的只有以下两类方法：</p>
+<ul>
+<li>通过 <code>invokestatic</code> 调用的方法：静态方法；</li>
+<li>通过 <code>invokespecial</code> 调用的方法：私有方法、构造器方法、父类方法；</li>
+</ul>
+<p>这两类方法根本不可能通过继承或者别的方式重写出来其他版本，也就是说，在运行前就可以确定调用版本了，十分适合在类加载阶段就解析好。它们会在类加载的解析阶被解析为直接引用，即确定调用版本。</p>
+<h2 id="分派调用"><a href="#分派调用" class="headerlink" title="分派调用"></a>分派调用</h2><p>在介绍分派调用前，我们先来介绍一下 Java 所具备的面向对象的 3 个基本特征：封装，继承，多态。</p>
+<p>其中多态最基本的体现就是重载和重写了，重载和重写的一个重要特征就是方法名相同，其他各种不同：</p>
+<ul>
+<li>重载：发生在同一个类中，入参必须不同，返回类型、访问修饰符、抛出的异常都可以不同；</li>
+<li>重写：发生在子父类中，入参和返回类型必须相同，访问修饰符大于等于被重写的方法，不能抛出新的异常。</li>
+</ul>
+<p>相同的方法名实际上给虚拟机的调用带来了困惑，因为虚拟机需要判断，它到底应该调用哪个方法，而这个过程会在分派调用中体现出来。其中：</p>
+<ul>
+<li>方法重载 —— 静态分派</li>
+<li>方法重写 —— 动态分派</li>
+</ul>
+<h3 id="静态分派（方法重载）"><a href="#静态分派（方法重载）" class="headerlink" title="静态分派（方法重载）"></a>静态分派（方法重载）</h3><p>在介绍静态分派前，我们先来介绍一下什么是变量的静态类型和实际类型。</p>
+<h4 id="变量的静态类型和实际类型"><a href="#变量的静态类型和实际类型" class="headerlink" title="变量的静态类型和实际类型"></a>变量的静态类型和实际类型</h4><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48</code></td>
+<td><code>public class StaticDispatch {     static abstract class Human {     }      static class Man extends Human {     }      static class Woman extends Human {     }      public void sayHello(Human guy) {     	System.out.println(&quot;Hello guy!&quot;);     }      public void sayHello(Man man) {     	System.out.println(&quot;Hello man!&quot;);     }      public void sayHello(Woman woman) {     	System.out.println(&quot;Hello woman!&quot;);     }      public static void main(String[] args) {         Human man = new Man();         Human woman = new Woman();         StaticDispatch sr = new StaticDispatch();         sr.sayHello(man);         sr.sayHello(woman);         /* 输出：         Hello guy!         Hello guy!         因为是根据变量的静态类型，也就是左面的类型：Human 来判断调用哪个方法，         所以调用的都是 public void sayHello(Human guy)         */     } }  /* 简单讲解 */ // 使用 Human man = new Man();  // 实际类型发生变化 Human man = new Man(); man = new Woman();  // 静态类型发生变化 sr.sayHello((Man) man);   // 输出：Hello man! sr.sayHello((Woman) man); // 输出：Hello woman!</code></td>
+</tr>
+</tbody></table>
+<p>其中 <code>Human</code> 称为变量的静态类型，<code>Man</code> 称为变量的实际类型。</p>
+<p>在重载时，编译器是通过方法参数的静态类型，而不是实际类型，来判断应该调用哪个方法的。</p>
+<p><strong>通俗的讲，静态分派就是通过方法的参数（类型 &amp; 个数 &amp; 顺序）这种静态的东西来判断到底调用哪个方法的过程。</strong></p>
+<h4 id="重载方法匹配优先级，例如一个字符-‘a’-作为入参"><a href="#重载方法匹配优先级，例如一个字符-‘a’-作为入参" class="headerlink" title="重载方法匹配优先级，例如一个字符 ‘a’ 作为入参"></a>重载方法匹配优先级，例如一个字符 ‘a’ 作为入参</h4><ul>
+<li>基本类型<ul>
+<li>char</li>
+<li>int</li>
+<li>long</li>
+<li>float</li>
+<li>double</li>
+</ul>
+</li>
+<li>Character</li>
+<li>Serializable（Character 实现的接口）<ul>
+<li>同时出现两个优先级相同的接口，如 Serializable 和 Comparable，会提示类型模糊，拒绝编译。</li>
+</ul>
+</li>
+<li>Object</li>
+<li>char…（变长参数优先级最低）</li>
+</ul>
+<h3 id="动态分派（方法重写）"><a href="#动态分派（方法重写）" class="headerlink" title="动态分派（方法重写）"></a>动态分派（方法重写）</h3><p>动态分派就是在运行时，根据实际类型确定方法执行版本的分派过程。</p>
+<h4 id="动态分派的过程"><a href="#动态分派的过程" class="headerlink" title="动态分派的过程"></a>动态分派的过程</h4><p>我们先来看一个例子：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31</code></td>
+<td><code>public class DynamicDispatch {     static abstract class Human {   	  protected abstract void sayHello();     }      static class Man extends Human {         protected void sayHello() {         	System.out.println(&quot;Hello man&quot;);         }     }      static class Woman extends Human {         protected void sayHello() {         	System.out.println(&quot;Hello woman&quot;);         }     }      public static void main(String[] args) {         Human man = new Man();         Human woman = new Woman();         man.sayHello();         woman.sayHello();         man = woman;         man.sayHello();         /* 输出         Hello man         Hello woman         Hello woman         */     } }</code></td>
+</tr>
+</tbody></table>
+<p>字节码分析：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</code></td>
+<td><code>public static void main(java.lang.String[]);     descriptor: ([Ljava/lang/String;)V     flags: ACC_PUBLIC, ACC_STATIC     Code:         stack=2, locals=3, args_size=1         0: new           #2      // class com/jvm/ch8/DynamicDispatch$Man         3: dup         4: invokespecial #3      // Method com/jvm/ch8/DynamicDispatch$Man.&quot;&lt;init&gt;&quot;:()V         7: astore_1         8: new           #4      // class com/jvm/ch8/DynamicDispatch$Woman         11: dup         12: invokespecial #5     // Method com/jvm/ch8/DynamicDispatch$Woman.&quot;&lt;init&gt;&quot;:()V         15: astore_2         16: aload_1		        // 把刚创建的对象的引用压到操作数栈顶，         					   // 供之后执行sayHello时确定是执行哪个对象的sayHello         17: invokevirtual #6    // 方法调用         20: aload_2             // 把刚创建的对象的引用压到操作数栈顶，                                 // 供之后执行sayHello时确定是执行哪个对象的sayHello         21: invokevirtual #6    // 方法调用         24: aload_2         25: astore_1         26: aload_1         27: invokevirtual #6    // Method com/jvm/ch8/DynamicDispatch$Human.sayHello:()V         30: return</code></td>
+</tr>
+</tbody></table>
+<p>通过字节码分析可以看出，<code>invokevirtual</code> 指令的运行过程大致为：</p>
+<ul>
+<li>去操作数栈顶取出将要执行的方法的所有者，记作 C；</li>
+<li>查找此方法：<ul>
+<li>在 C 中查找此方法；</li>
+<li>在 C 的各个父类中查找；</li>
+<li>查找过程：<ul>
+<li>查找与常量的描述符和简单名称都相同的方法；</li>
+<li>进行访问权限验证，不通过抛出：IllegalAccessError 异常；</li>
+<li>通过访问权限验证则返回直接引用；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>没找到则抛出：AbstractMethodError 异常，即该方法没被实现。</li>
+</ul>
+<h4 id="动态分派的实现"><a href="#动态分派的实现" class="headerlink" title="动态分派的实现"></a>动态分派的实现</h4><p>动态分派在虚拟机种执行的非常频繁，而且方法查找的过程要在类的方法元数据中搜索合适的目标，从性能上考虑，不太可能进行如此频繁的搜索，需要进行性能上的优化。</p>
+<p><strong>常用优化手段：</strong> 在类的方法区中建立一个虚方法表。</p>
+<ul>
+<li>虚方法表中存放着各个方法的实际入口地址，如果某个方法没有被子类方法重写，那子类方法表中该方法的入口地址 &#x3D; 父类方法表中该方法的入口地址；</li>
+<li>使用这个方法表索引代替在元数据中查找；</li>
+<li>该方法表会在类加载的连接阶段初始化好。</li>
+</ul>
+<p><strong>通俗的讲，动态分派就是通过方法的接收者这种动态的东西来判断到底调用哪个方法的过程。</strong></p>
+<blockquote>
+<p>总结一下：静态分派看左面，动态分派看右面。</p>
+</blockquote>
+<h3 id="单分派与多分派"><a href="#单分派与多分派" class="headerlink" title="单分派与多分派"></a>单分派与多分派</h3><p>除了静态分派和动态分派这种分派分类方式，还有一种根据宗量分类的方式，可以将方法分派分为单分派和多分派。</p>
+<blockquote>
+<p>宗量：方法的接收者 &amp; 方法的参数。</p>
+</blockquote>
+<p>Java 语言的静态分派属于多分派，根据 <strong>方法接收者的静态类型</strong> 和 <strong>方法参数类型</strong> 两个宗量进行选择。</p>
+<p>Java 语言的动态分派属于单分派，只根据 <strong>方法接收者的实际类型</strong> 一个宗量进行选择。</p>
+<h2 id="动态类型语言支持"><a href="#动态类型语言支持" class="headerlink" title="动态类型语言支持"></a>动态类型语言支持</h2><p><strong>什么是动态类型语言？</strong></p>
+<p>就是类型检查的主体过程在运行期，而非编译期的编程语言。</p>
+<p><strong>动&#x2F;静态类型语言各自的优点？</strong></p>
+<ul>
+<li>动态类型语言：灵活性高，开发效率高。</li>
+<li>静态类型语言：编译器提供了严谨的类型检查，类型相关的问题能在编码的时候就发现。</li>
+</ul>
+<p><strong>Java虚拟机层面提供的动态类型支持：</strong></p>
+<ul>
+<li><code>invokedynamic</code> 指令</li>
+<li>java.lang.invoke 包</li>
+</ul>
+<h3 id="java-lang-invoke-包"><a href="#java-lang-invoke-包" class="headerlink" title="java.lang.invoke 包"></a>java.lang.invoke 包</h3><p><strong>目的：</strong> 在之前的依靠符号引用确定调用的目标方法的方式之外，提供了 MethodHandle 这种动态确定目标方法的调用机制。</p>
+<h4 id="MethodHandle-的使用"><a href="#MethodHandle-的使用" class="headerlink" title="MethodHandle 的使用"></a>MethodHandle 的使用</h4><ul>
+<li><p>获得方法的参数描述，第一个参数是方法返回值的类型，之后的参数是方法的入参：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>MethodType mt = MethodType.methodType(void.class, String.class);</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>获取一个普通方法的调用：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8</code></td>
+<td><code>/**  * 需要的参数：  * 1. 被调用方法所属类的类对象  * 2. 方法名  * 3. MethodType 对象 mt  * 4. 调用该方法的对象  */ MethodHandle.lookup().findVirtual(receiver.getClass(), &quot;方法名&quot;, mt).bindTo(receiver);</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>获取一个父类方法的调用：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8</code></td>
+<td><code>/**  * 需要的参数：  * 1. 被调用方法所属类的类对象  * 2. 方法名  * 3. MethodType 对象 mt  * 4. 调用这个方法的类的类对象  */ MethodHandle.lookup().findSpecial(GrandFather.class, &quot;方法名&quot;, mt, getClass());</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>通过 <code>MethodHandle mh</code> 执行方法：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7</code></td>
+<td><code>/*  invoke() 和 invokeExact() 的区别： - invokeExact() 要求更严格，要求严格的类型匹配，方法的返回值类型也在考虑范围之内 - invoke() 允许更加松散的调用方式 */ mh.invoke(&quot;Hello world&quot;); mh.invokeExact(&quot;Hello world&quot;);</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>使用示例：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38</code></td>
+<td><code>public class MethodHandleTest {     static class ClassA {         public void println(String s) {             System.out.println(s);         }     }      public static void main(String[] args) throws Throwable {         /*         obj的静态类型是Object，是没有println方法的，所以尽管obj的实际类型都包含println方法，         它还是不能调用println方法          */         Object obj = System.currentTimeMillis() % 2 == 0 ? System.out : new ClassA();         /*         invoke()和invokeExact()的区别：         - invokeExact()要求更严格，要求严格的类型匹配，方法的返回值类型也在考虑范围之内         - invoke()允许更加松散的调用方式          */         getPrintlnMH(obj).invoke(&quot;Hello world&quot;);         getPrintlnMH(obj).invokeExact(&quot;Hello world&quot;);     }      private static MethodHandle getPrintlnMH(Object receiver)          	throws NoSuchMethodException, IllegalAccessException {         /* MethodType代表方法类型，第一个参数是方法返回值的类型，之后的参数是方法的入参 */         MethodType mt = MethodType.methodType(void.class, String.class);         /*         lookup()方法来自于MethodHandles.lookup，         这句的作用是在指定类中查找符合给定的方法名称、方法类型，并且符合调用权限的方法句柄         */         /*         因为这里调用的是一个虚方法，按照Java语言的规则，方法第一个参数是隐式的，代表该方法的接收者，         也即是this指向的对象，这个参数以前是放在参数列表中进行传递，现在提供了bindTo()方法来完成这件事情         */         return MethodHandles.lookup().findVirtual(receiver.getClass(), &quot;println&quot;, mt).bindTo(receiver);     } }</code></td>
+</tr>
+</tbody></table>
+<p><strong>MethodHandles.lookup 中 3 个方法对应的字节码指令：</strong></p>
+<ul>
+<li><code>findStatic()</code>：对应 invokestatic</li>
+<li><code>findVirtual()</code>：对应 invokevirtual &amp; invokeinterface</li>
+<li><code>findSpecial()</code>：对应 invokespecial</li>
+</ul>
+<h4 id="MethodHandle-和-Reflection-的区别"><a href="#MethodHandle-和-Reflection-的区别" class="headerlink" title="MethodHandle 和 Reflection 的区别"></a>MethodHandle 和 Reflection 的区别</h4><ul>
+<li><strong>本质区别：</strong> 它们都在模拟方法调用，但是<ul>
+<li>Reflection 模拟的是 Java 代码层次的调用；</li>
+<li>MethodHandle 模拟的是字节码层次的调用。</li>
+</ul>
+</li>
+<li><strong>包含信息的区别：</strong><ul>
+<li>Reflection 的 Method 对象包含的信息多，包括：方法签名、方法描述符、方法的各种属性的Java端表达方式、方法执行权限等；</li>
+<li>MethodHandle 对象包含的信息比较少，既包含与执行该方法相关的信息。</li>
+</ul>
+</li>
+</ul>
+<h3 id="invokedynamic-指令"><a href="#invokedynamic-指令" class="headerlink" title="invokedynamic 指令"></a><code>invokedynamic</code> 指令</h3><p>Lambda 表达式就是通过 <code>invokedynamic</code> 指令实现的。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/">https://hzhzxfs.github.io/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/04/15/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_02-%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" title="虚拟机字节码执行引擎_02"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">虚拟机字节码执行引擎_02</div></div><div class="info-2"><div class="info-item-1">基于栈的字节码解释执行引擎这个栈，就是栈帧中的操作数栈。 解释执行先通过 javac 将代码编译成字节码，虚拟机再通过加载字节码文件，解释执行字节码文件生成机器码，解释执行的流程如下：         1 词法分析 -&gt; 语法分析 -&gt; 形成抽象语法树 -&gt; 遍历语法树生成线性字节码指令流   指令集分类基于栈的指令集 优点：  可移植：寄存器由硬件直接提供，程序如果直接依赖这些硬件寄存器，会不可避免的受到硬件的约束； 代码更紧凑：字节码中每个字节对应一条指令，多地址指令集中还需要存放参数； 编译器实现更简单：不需要考虑空间分配问题，所需的空间都在栈上操作。   缺点： 执行速度稍慢  完成相同的功能，需要更多的指令，因为出入栈本身就产生相当多的指令； 频繁的栈访问导致频繁的内存访问，对于处理器而言，内存是执行速度的瓶颈。   示例： 两数相加         1 2 3 4 iconst_1  // 把常量1入栈 iconst_1 iadd      // 把栈顶两元素出栈相加，结果入栈 istore_0  // 把栈顶值存入第0个Slot中     基于寄存...</div></div></div></a><a class="pagination-related" href="/2023/03/24/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84/" title="虚拟机字节码执行引擎_00"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">虚拟机字节码执行引擎_00</div></div><div class="info-2"><div class="info-item-1">虚拟机栈栈帧结构  虚拟机栈栈帧结构 局部变量表 局部变量表的空间分配 Slot 的复用   操作数栈 动态连接 方法返回地址    局部变量表 存放方法参数和方法内部定义的局部变量； Java 程序编译为 class 文件时，就确定了每个方法需要分配的局部变量表的最大容量。   最小单位：Slot； 一个 Slot 中可以存放：boolean，byte，char，short，int，float，reference，returnAddress (少见)； 虚拟机可通过局部变量表中的 reference 做到： 查找 Java 堆中的实例对象的起始地址； 查找方法区中的 Class 对象。      局部变量表的空间分配 Slot 的复用定义： 如果当前位置已经超过某个变量的作用域时，例如出了定义这个变量的代码块，这个变量对应的 Slot 就可以给其他变量使用了。但同时也说明，只要其他变量没有使用这部分 Slot 区域，这个变量就还保存在那里，这会对 GC 操作产生影响。 对 GC 操作的影响：         1 2 3 4 5 6 public static void main...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/03/27/Zookeeper/" title="Zookeeper"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-27</div><div class="info-item-2">Zookeeper</div></div><div class="info-2"><div class="info-item-1">Zookeeper1.ZooKeeper 是什么？ZooKeeper 是一个开源的分布式协调服务。它是一个为分布式应用提供一致性服务的软件，分布式应用程序可以基于 Zookeeper 实现诸如数据发布&#x2F;订阅、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master 选举、分布式锁和分布式队列等功能。 ZooKeeper 的目标就是封装好复杂易出错的关键服务，将简单易用的接口和性能高效、功能稳定的系统提供给用户。 Zookeeper 保证了如下分布式一致性特性： （1）顺序一致性 （2）原子性 （3）单一视图 （4）可靠性 （5）实时性（最终一致性） 客户端的读请求可以被集群中的任意一台机器处理，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 zookeeper 机器来处理。对于写请求，这些请求会同时发给其他 zookeeper 机器并且达成一致后，请求才会返回成功。因此，随着 zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。 有序性是 zookeeper 中非常重要的一个特性，所有的更新都是全局有序的，每个更新都有一...</div></div></div></a><a class="pagination-related" href="/2021/08/01/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%80%BB%E7%BB%93/" title="Java8 Lambda表达式总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-01</div><div class="info-item-2">Java8 Lambda表达式总结</div></div><div class="info-2"><div class="info-item-1">Lambda表达式总结 一、使用范例以及例子 1、原始方法 2、优化方式一-使用策略模式来优化 3、优化方式二-使用匿名内部类优化 4、优化方式三-使用Lambda表达式 5、优化方式四-使用Stream-API   二、Lambda表达式基础语法 三、函数式接口 四、Lambda练习 1、练习一-Employee类中先按年龄比，年龄相同按照姓名比-都是升序 2、练习二-声明一个带两个泛型的接口，并且对两个Long型数值计算   五、Java8四大内置函数式接口 六、方法引用和构造器引用 1、方法引用 2、构造器引用     一、使用范例以及例子使用匿名内部类:         1 2 3 4 5 6 Comparator&lt;Integer&gt;com = new Comparator&lt;Integer&gt;() {     @Override     public int compare(Integer o1, Integer o2) {  //降序排列         return Integer.compare(o2,o1);     } };   使用Lamb...</div></div></div></a><a class="pagination-related" href="/2021/06/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/" title="图神经网络——基于图神经网络的节点表征学习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-23</div><div class="info-item-2">图神经网络——基于图神经网络的节点表征学习</div></div><div class="info-2"><div class="info-item-1">Graph的特征表示非常复杂：  1.复杂的拓扑结构，较难从图像中的感受野提取有效信息；2.无特定的节点顺序；3.通常graph会是动态变化的， 且使用多模态特征。  高质量的节点表征能够用于衡量节点的相似性，同时高质量的节点表征也是准确分类节点的前提。 本文以Cora论文引用网络数据集为例，对MLP、GCN、GAT三种神经网络的分类性能进行对比。首先载入数据集并定义可视化函数：         1 2 3 4 5 #载入数据集 from torch_geometric.datasets import Planetoid from torch_geometric.transforms import NormalizeFeatures  dataset = Planetoid(root=&#39;dataset&#39;, name=&#39;Cora&#39;, transform=NormalizeFeatures())           1 2 3 4 5 6 7 8 9 10 11 12 13 14 #定义可视化函数，并观察整体数据分布 from sklearn.mani...</div></div></div></a><a class="pagination-related" href="/2021/07/16/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" title="李宏毅机器学习——梯度下降"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-16</div><div class="info-item-2">李宏毅机器学习——梯度下降</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——梯度下降1 偏差与方差使用样本数据拟合函数，由于样本数据使采样而并非真实值本身，采样本身会带来误差。经过研究发现，其误差的期望值可以分解为三个部分：样本噪音、模型预测值的方差、预测值相对真实值的偏差，公式为：$$E\left((y-\hat{f}(x))^{2}\right)&#x3D;\sigma^{2}+\operatorname{Var}[\hat{f}(x)]+(\operatorname{Bias}[\hat{f}(x)])^{2}$$其中$Bias[\hat{f}(x)] &#x3D; E[\hat{f}(x) - f(x)]$，即误差的期望值 &#x3D; 噪音的方差 + 模型预测值的方差 + 预测值相对真实值的偏差的平方，如下图所示。  靶心（红点）是测试样本的真实值，测试样本的y（橙色点）是真实值加上噪音，特定模型重复多次训练会得到多个具体的模型，每一个具体模型对测试样本进行一次预测，就在靶上打出一个预测值（图上蓝色的点）。所有预测值的平均就是预测值的期望（较大的浅蓝色点），浅蓝色的圆圈表示预测值的离散程度，即预测值的方差。 2 调整梯度下降的...</div></div></div></a><a class="pagination-related" href="/2021/05/20/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E7%9B%B8%E4%BC%BC%E5%BA%A6%E7%9A%84%E6%96%B9%E6%B3%95/" title="异常检测——基于相似度的方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-20</div><div class="info-item-2">异常检测——基于相似度的方法</div></div><div class="info-2"><div class="info-item-1">异常值通常具有更高的离群程度分数值，同时也更具有可解释性。在基于相似度的异常检测方法中，主要思想是异常点的表示与正常点不同。 1. 基于距离的度量基于距离的异常检测有这样一个前提假设，即异常点的k近邻距离要远大于正常点。常见的方法是嵌套循环，第一层循环遍历每个数据，第二层循环进行异常判断计算当前点与其他点的距离，一旦发现多于k个数据点与当前点的距离在D之内，则将该点标记为非异常值。 此法计算的时间复杂度为O(N2)，当数据量比较大时需要修剪方法以加快距离计算。 1.1 基于单元的方法在基于单元格的技术中，数据空间被划分为单元格，单元格的宽度是阈值D和数据维数d的函数。L1邻居表示通过最多1个单元间的边界可从该单元到达的单元格的集合，L2邻居表示通过跨越2个或3个边界而获得的那些单元格。以二维数据为例，网格间的距离为D&#x2F;2√d，其具有以下性质：①单元格中两点之间的距离最多为D&#x2F;2 。②一个点与L1邻接点之间的距离最大为D。③一个点与它的Lr邻居(其中r&gt;2)中的一个点之间的距离至少为D。 但是L2中并不能直接得出结论，需要另外定义规则，如：①如果一个单元格...</div></div></div></a><a class="pagination-related" href="/2023/12/15/Git/" title="Git必知必会"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-15</div><div class="info-item-2">Git必知必会</div></div><div class="info-2"><div class="info-item-1">Git1.什么是Git？我建议你先通过了解 git 的架构再来回答这个问题，如下图所示，试着解释一下这个图：  Git 是分布式版本控制系统（DVCS）。它可以跟踪文件的更改，并允许你恢复到任何特定版本的更改。 与 SVN 等其他版本控制系统（VCS）相比，其分布式架构具有许多优势，一个主要优点是它不依赖于中央服务器来存储项目文件的所有版本。 每个开发人员都可以“克隆”我在图中用“Local repository”标注的存储库的副本，并且在他的硬盘驱动器上具有项目的完整历史记录，因此当服务器中断时，你需要的所有恢复数据都在你队友的本地 Git 存储库中。 还有一个中央云存储库，开发人员可以向其提交更改，并与其他团队成员进行共享，如图所示，所有协作者都在提交更改“远程存储库”。  2.Git 工作流程本章节我们将为大家介绍 Git 的工作流程。 一般工作流程如下：  克隆 Git 资源作为工作目录。 在克隆的资源上添加或修改文件。 如果其他人修改了，你可以更新资源。 在提交前查看修改。 提交修改。 在修改完成后，如果发现错误，可以撤回提交并再次修改并提交。  下图展示了 Git 的...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">方法调用字节码指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E8%B0%83%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">解析调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%B4%BE%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">分派调用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%B4%BE%EF%BC%88%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">静态分派（方法重载）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E9%9D%99%E6%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%99%85%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">变量的静态类型和实际类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E8%BD%BD%E6%96%B9%E6%B3%95%E5%8C%B9%E9%85%8D%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%8C%E4%BE%8B%E5%A6%82%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6-%E2%80%98a%E2%80%99-%E4%BD%9C%E4%B8%BA%E5%85%A5%E5%8F%82"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">重载方法匹配优先级，例如一个字符 ‘a’ 作为入参</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%EF%BC%88%E6%96%B9%E6%B3%95%E9%87%8D%E5%86%99%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">动态分派（方法重写）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">动态分派的过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">动态分派的实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E5%88%86%E6%B4%BE%E4%B8%8E%E5%A4%9A%E5%88%86%E6%B4%BE"><span class="toc-number">1.3.3.</span> <span class="toc-text">单分派与多分派</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81"><span class="toc-number">1.4.</span> <span class="toc-text">动态类型语言支持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java-lang-invoke-%E5%8C%85"><span class="toc-number">1.4.1.</span> <span class="toc-text">java.lang.invoke 包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MethodHandle-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">MethodHandle 的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MethodHandle-%E5%92%8C-Reflection-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">MethodHandle 和 Reflection 的区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#invokedynamic-%E6%8C%87%E4%BB%A4"><span class="toc-number">1.4.2.</span> <span class="toc-text">invokedynamic 指令</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

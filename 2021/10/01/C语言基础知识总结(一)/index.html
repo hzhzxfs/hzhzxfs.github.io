@@ -1,0 +1,1179 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>C语言基础知识总结(一) | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C语言基础知识总结(一) 编译、运行 编译格式 C语言编译过程 CPU、寄存器 关于VS的C4996错误   进制，原、反、补码 进制相关 原码、反码、补码 原码和补码互换 有符号和无符号的区别 数据类型取值分析 越界问题   数据类型、运算符等基础 C语言数据类型 sizeof关键字 char数据类型-char的本质就是一个1字节大小的整型 浮点数不准确、类型限定符 字符的输入问题 运算符以及优">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言基础知识总结(一)">
+<meta property="og:url" content="https://hzhzxfs.github.io/2021/10/01/C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="C语言基础知识总结(一) 编译、运行 编译格式 C语言编译过程 CPU、寄存器 关于VS的C4996错误   进制，原、反、补码 进制相关 原码、反码、补码 原码和补码互换 有符号和无符号的区别 数据类型取值分析 越界问题   数据类型、运算符等基础 C语言数据类型 sizeof关键字 char数据类型-char的本质就是一个1字节大小的整型 浮点数不准确、类型限定符 字符的输入问题 运算符以及优">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2021-09-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:25:58.923Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "C语言基础知识总结(一)",
+  "url": "https://hzhzxfs.github.io/2021/10/01/C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2021-09-30T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:25:58.923Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2021/10/01/C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'C语言基础知识总结(一)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">C语言基础知识总结(一)</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">C语言基础知识总结(一)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-30T16:00:00.000Z" title="发表于 2021-10-01 00:00:00">2021-10-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:25:58.923Z" title="更新于 2026-06-05 16:25:58">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/C-C/">C/C++</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/C-C/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="C语言基础知识总结-一"><a href="#C语言基础知识总结-一" class="headerlink" title="C语言基础知识总结(一)"></a>C语言基础知识总结(一)</h2><ul>
+<li><a href="#%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C">编译、运行</a><ul>
+<li><a href="#%E7%BC%96%E8%AF%91%E6%A0%BC%E5%BC%8F">编译格式</a></li>
+<li><a href="#c%E8%AF%AD%E8%A8%80%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B">C语言编译过程</a></li>
+<li><a href="#cpu%E5%AF%84%E5%AD%98%E5%99%A8">CPU、寄存器</a></li>
+<li><a href="#%E5%85%B3%E4%BA%8Evs%E7%9A%84c4996%E9%94%99%E8%AF%AF">关于VS的C4996错误</a></li>
+</ul>
+</li>
+<li><a href="#%E8%BF%9B%E5%88%B6%E5%8E%9F%E5%8F%8D%E8%A1%A5%E7%A0%81">进制，原、反、补码</a><ul>
+<li><a href="#%E8%BF%9B%E5%88%B6%E7%9B%B8%E5%85%B3">进制相关</a></li>
+<li><a href="#%E5%8E%9F%E7%A0%81%E5%8F%8D%E7%A0%81%E8%A1%A5%E7%A0%81">原码、反码、补码</a></li>
+<li><a href="#%E5%8E%9F%E7%A0%81%E5%92%8C%E8%A1%A5%E7%A0%81%E4%BA%92%E6%8D%A2">原码和补码互换</a></li>
+<li><a href="#%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%9A%84%E5%8C%BA%E5%88%AB">有符号和无符号的区别</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%96%E5%80%BC%E5%88%86%E6%9E%90">数据类型取值分析</a></li>
+<li><a href="#%E8%B6%8A%E7%95%8C%E9%97%AE%E9%A2%98">越界问题</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BF%90%E7%AE%97%E7%AC%A6%E7%AD%89%E5%9F%BA%E7%A1%80">数据类型、运算符等基础</a><ul>
+<li><a href="#c%E8%AF%AD%E8%A8%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">C语言数据类型</a></li>
+<li><a href="#sizeof%E5%85%B3%E9%94%AE%E5%AD%97">sizeof关键字</a></li>
+<li><a href="#char%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-char%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA1%E5%AD%97%E8%8A%82%E5%A4%A7%E5%B0%8F%E7%9A%84%E6%95%B4%E5%9E%8B">char数据类型-char的本质就是一个1字节大小的整型</a></li>
+<li><a href="#%E6%B5%AE%E7%82%B9%E6%95%B0%E4%B8%8D%E5%87%86%E7%A1%AE%E7%B1%BB%E5%9E%8B%E9%99%90%E5%AE%9A%E7%AC%A6">浮点数不准确、类型限定符</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E7%9A%84%E8%BE%93%E5%85%A5%E9%97%AE%E9%A2%98">字符的输入问题</a></li>
+<li><a href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%85%88%E7%BA%A7">运算符以及优先级</a></li>
+<li><a href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">类型转换</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E7%BB%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0">数组、字符串、函数</a><ul>
+<li><a href="#%E6%95%B0%E7%BB%84%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F">数组初始化的几种方式</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2">字符数组与字符串</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BE%93%E5%87%BA%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E4%B8%80%E7%B3%BB%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98">字符串输出乱码问题以及一系列字符串要注意的问题</a></li>
+<li><a href="#%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90">随机数生成</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0">字符串相关函数</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0">函数</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="编译、运行"><a href="#编译、运行" class="headerlink" title="编译、运行"></a>编译、运行</h3><h5 id="编译格式"><a href="#编译格式" class="headerlink" title="编译格式"></a>编译格式</h5><p><code>gcc -o main main.cpp</code>生成<code>main</code>可执行文件，可以有两种运行方式:</p>
+<ul>
+<li>当前目录运行<code>./main</code>；</li>
+<li>绝对路径运行，例如<code>/home/zxzxin/C/main</code>，要注意的是绝对路 径没有<code>.</code>，因为<code>.</code>代表的是当前路径，也就是说我们只需要写上完整路径即可；</li>
+</ul>
+<p>编译命令格式</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>gcc [-option] ... &lt;filename&gt;   //c语言编译 g++ [-option] ... &lt;filename&gt;   //c++编译</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>gcc、g++编译常用选项说明：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-o file</td>
+<td>指定生成的输出文件名为file</td>
+</tr>
+<tr>
+<td>-E</td>
+<td>只进行预处理</td>
+</tr>
+<tr>
+<td>-S(大写)</td>
+<td>只进行预处理和编译</td>
+</tr>
+<tr>
+<td>-c(小写)</td>
+<td>只进行预处理、编译和汇编</td>
+</tr>
+</tbody></table>
+<ul>
+<li>注意下面的两种方式生成可执行文件的效果是一样的:</li>
+</ul>
+<p><img src="/images/c1.png" alt="在这里插入图片描述"><br><strong>平台问题:</strong><br>① Linux编译后的可执行程序只能在Linux运行，Windows编译后的程序只能在Windows下运行；<br>②64位的Linux编译后的程序只能在64位Linux下运行，32位Linux编译后的程序只能在32位的Linux运行；<br>③64位的Windows编译后的程序只能在64位Windows下运行，32位Windows编译后的程序可以在64位的Windows运行；</p>
+<p><strong>可以在程序中嵌套<code>Linux</code>的命令，会在可执行文件的对应目录执行相应的命令；</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;stdlib.h&gt;  int main(int argc, char const *argv[]) {     printf(&quot;before\n&quot;);     system(&quot;ls -alh&quot;); // system内放置 linux的命令  甚至也可以在&quot;&quot;内放 ./a.out这种，也可以调用     printf(&quot;after\n&quot;);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>运行:</p>
+<p><img src="/images/c2.png" alt="在这里插入图片描述"></p>
+<ul>
+<li><code>#include&lt; &gt;</code> 与 <code>#include &quot;&quot;</code>的区别：<br>①<code>&lt; &gt;</code> 表示系统直接按系统指定的目录检索；<br>② <code>&quot;&quot;</code> 表示系统先在 <code>&quot;&quot;</code> 指定的路径(没写路径代表当前路径)查找头文件，如果找不到，再按系统指定的目录检索；</li>
+</ul>
+<h5 id="C语言编译过程"><a href="#C语言编译过程" class="headerlink" title="C语言编译过程"></a>C语言编译过程</h5><p>C代码编译成可执行程序经过4步：</p>
+<ul>
+<li>1）预处理：宏定义展开、头文件展开、条件编译等，同时将代码中的注释删除，这里并不会检查语法；</li>
+<li>2）编译：检查语法，将预处理后文件编译生成汇编文件；</li>
+<li>3）汇编：将汇编文件生成目标文件(二进制文件)；</li>
+<li>4）链接：C语言写的程序是需要依赖各种库的，所以编译之后还需要把库链接到最终的可执行程序中去；</li>
+</ul>
+<p><img src="/images/c3.png" alt="在这里插入图片描述"></p>
+<p><img src="/images/c4.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20181106195818281.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>然而一般编译的时候都是使用的一步编译。 (但是这样还是经过：预处理、编译、汇编、链接的过程。)</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>gcc hello.c -o hello</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>Linux</code>下查找程序所依赖的动态库</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>ldd hello</code></td>
+</tr>
+</tbody></table>
+<h5 id="CPU、寄存器"><a href="#CPU、寄存器" class="headerlink" title="CPU、寄存器"></a>CPU、寄存器</h5><ul>
+<li>寄存器是CPU内部最基本的存储单元；</li>
+<li>CPU对外是通过总线(地址、控制、数据)来和外部设备交互的，总线的宽度是8位，同时CPU的寄存器也是8位，那么这个CPU就叫8位CPU</li>
+<li>CPU计算时，先预先把要用的数据从硬盘读到内存，然后再把即将要用的数据读到寄存器。于是 <code>CPU&lt;---&gt;寄存器&lt;---&gt;内存</code>，这就是它们之间的信息交换，看下面的图片说明:</li>
+</ul>
+<p>寄存器、缓存、内存三者关系:</p>
+<p><img src="/images/c5.png" alt="在这里插入图片描述"></p>
+<h5 id="关于VS的C4996错误"><a href="#关于VS的C4996错误" class="headerlink" title="关于VS的C4996错误"></a>关于VS的C4996错误</h5><ul>
+<li><p>由于微软在VS2013中不建议再使用C的传统库函数scanf,strcpy,sprintf等，所以直接使用这些库函数会提示C4996错误。VS建议采用带<code>_s</code>的函数，如<code>scanf_s</code>、<code>strcpy_s</code>，但这些并不是标准C函数。</p>
+</li>
+<li><p>要想继续使用此函数，需要在源文件中添加以下两个指令中的一个就可以避免这个错误提示：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>#define _CRT_SECURE_NO_WARNINGS     //这个宏定义最好要放到.c文件的第一行 #pragma warning(disable:4996)    //或者使用这个</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<hr>
+<h3 id="进制，原、反、补码"><a href="#进制，原、反、补码" class="headerlink" title="进制，原、反、补码"></a>进制，原、反、补码</h3><h5 id="进制相关"><a href="#进制相关" class="headerlink" title="进制相关"></a>进制相关</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      int a = 123;		//十进制方式赋     int b = 0123;		//八进制方式赋值， 以数字0开     int c = 0xABC;	//十六进制方式赋值          //如果在printf中输出一个十进制数那么用%d，八进制用%o，十六进制是%x     printf(&quot;十进制：%d\n&quot;,a );     printf(&quot;八进制：%o\n&quot;, b);	// %o,为字母o,不是数字     printf(&quot;十六进制：%x\n&quot;, c);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>十进制：123 八进制：123 十六进制：abc</code></td>
+</tr>
+</tbody></table>
+<h5 id="原码、反码、补码"><a href="#原码、反码、补码" class="headerlink" title="原码、反码、补码"></a>原码、反码、补码</h5><h6 id="原码"><a href="#原码" class="headerlink" title="原码"></a>原码</h6><p>一个数的原码(原始的二进制码)有如下特点：</p>
+<ul>
+<li>最高位做为符号位，0表示正,为1表示负；</li>
+<li>其它数值部分就是数值本身绝对值的二进制数；</li>
+<li>负数的原码是在其绝对值(相反数)的基础上，最高位变为1；</li>
+</ul>
+<p>例如：(以一个字节(8bit)来看)　<br>|十进制数|原码|<br>|–|–|<br>|+15|0000 1111|<br>|-15|1000 1111|<br>|+0|0000 0000|<br>|-0|1000 0000|</p>
+<p>原码存储导致2个问题：</p>
+<ul>
+<li>0有两种存储方式；</li>
+<li>正数和负数相加，结果不正确（计算机只会加不会减）；</li>
+</ul>
+<p>例如:<br>以原码来算不同符号的数:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>1-1 = 1 + -1   1： 0000 0001  -1： 1000 0001       1000 0010 = -2   //答案错误</code></td>
+</tr>
+</tbody></table>
+<h6 id="反码"><a href="#反码" class="headerlink" title="反码"></a>反码</h6><ul>
+<li>正数的原码和反码是一样；</li>
+<li>对于负数，先求原码，在原码基础上，符号位不变，其它位取反（0为1， 1变0）；</li>
+</ul>
+<p>例如：(以一个字节(8bit)来看)</p>
+<table>
+<thead>
+<tr>
+<th>十进制数</th>
+<th>原码</th>
+<th>反码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+15</td>
+<td>0000 1111</td>
+<td>0000 1111</td>
+</tr>
+<tr>
+<td>-15</td>
+<td>1000 1111</td>
+<td>1111 0000</td>
+</tr>
+<tr>
+<td>+0</td>
+<td>0000 0000</td>
+<td>0000 0000</td>
+</tr>
+<tr>
+<td>-0</td>
+<td>1000 0000</td>
+<td>1111 1111</td>
+</tr>
+</tbody></table>
+<p>反码计算两个符号不同的数:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>1-1 = 1 + -1  1：0000 0001 -1：1111 1110     1111 1111 = -0   //答案是对的</code></td>
+</tr>
+</tbody></table>
+<p>但是反码还是没有解决0有两种存储方式的问题。</p>
+<h6 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h6><p>综上，计算机存储数字以补码方式存储（为了解决负数的存储）；</p>
+<p>补码特点:</p>
+<ul>
+<li>对于正数，原码、反码、补码相同；</li>
+<li>对于负数，其补码为它的反码加1；</li>
+</ul>
+<p>例如：(以一个字节(8bit)来看)</p>
+<table>
+<thead>
+<tr>
+<th>十进制数</th>
+<th>原码</th>
+<th>反码</th>
+<th>补码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+15</td>
+<td>0000 1111</td>
+<td>0000 1111</td>
+<td>0000 1111</td>
+</tr>
+<tr>
+<td>-15</td>
+<td>1000 1111</td>
+<td>1111 0000</td>
+<td>1111 0001</td>
+</tr>
+<tr>
+<td>+0</td>
+<td>0000 0000</td>
+<td>0000 0000</td>
+<td>0000 0000</td>
+</tr>
+<tr>
+<td>-0</td>
+<td>1000 0000</td>
+<td>1111 1111</td>
+<td>0000 0000</td>
+</tr>
+</tbody></table>
+<p>补码计算:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>1-1 = 1 + -1  1：0000 0001 -1：1111 1111    10000 0000（最高位丢弃） = 0000 0000  //注意1字节，所以丢弃最高位</code></td>
+</tr>
+</tbody></table>
+<p>记得一个原则:</p>
+<ul>
+<li>十进制数 –&gt; 站在用户的角度 –&gt; 原码；</li>
+<li>二进制、八进制、十六进制 –&gt; 站在计算机角度 –&gt; 补码；</li>
+</ul>
+<h5 id="原码和补码互换"><a href="#原码和补码互换" class="headerlink" title="原码和补码互换"></a>原码和补码互换</h5><p>原码求补码：</p>
+<ul>
+<li>①. 先求原码: 最高位符号位，其它位就是二进制；</li>
+<li>②. 在①基础上，符号位不变，其它位取反；</li>
+<li>③. 在②基础上加1；</li>
+</ul>
+<p>补码求原码：</p>
+<ul>
+<li>①. 先得到补码；</li>
+<li>②. 求补码的反码，符号位不变，其它位取反；</li>
+<li>③. 在②基础上加1(注意不要人为的相乘相反是减)</li>
+</ul>
+<p>综上，在计算机系统中，数值一律用补码来存储，主要原因是：</p>
+<ul>
+<li>统一了零的编码；</li>
+<li>将符号位和其它位统一处理；</li>
+<li>将减法运算转变为加法运算；</li>
+<li>两个用补码表示的数相加时，如果最高位(符号位)有进位，则进位被舍弃；</li>
+</ul>
+<p>相关案例计算转换:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     char a = 0x81; // 计算机的角度(补码)     printf(&quot;a = %d\n&quot;,a);      char b = 0xe5;//计算机的角度(补码)     printf(&quot;b = %d\n&quot;,b);      char c = 0x6f; //计算机的角度(补码)     printf(&quot;c = %d\n&quot;,c);      char d = -123; //人类的角度 --&gt; 看成原码     printf(&quot;d = %x\n&quot;,d);//输出16进制(计算机的角度)     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>a = -127 b = -27 c = 111 d = ffffff85</code></td>
+</tr>
+</tbody></table>
+<p>对于上面程序的分析:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34</code></td>
+<td><code>//二进制、八进制、十六进制，站在计算机角度，补码 //0x81转为为二进制位1000 0001，最高位为1，说明是负数 char a = 0x81; 补码：1000 0001 反码：1111 1110 原码：1111 1111 = -127  //10进制数，站在用户的角度，原码 printf(&quot;%d\n&quot;, a); //-127   //二进制、八进制、十六进制，站在计算机角度，补码 //0xe5二进制为1110 0101，最高位为1，说明是负数，它是负数的补码 char b = 0xe5; 补码：1110 0101 反码：1001 1010 原码：1001 1011 = -27 //10进制数，站在用户的角度，原码 printf(&quot;%d\n&quot;, b);// -27   0x6f的二级制为0110 1111，最高位为0，它是正数 char c = 0x6f; printf(&quot;%d\n&quot;, c);// 111 原码、反码、补码都相同   //10进制数，站在用户的角度，原码 int a = -123;//注意这个是十进制，所以直接就是原码 原码：1000 0000 0000 0000 0000 0000 0111 1011 反码：1111 1111 1111 1111 1111 1111 1000 0100 补码：1111 1111 1111 1111 1111 1111 1000 0101 	   f     f   f    f     f   f    8     5 %x，默认以4个字节(32位)大小打印 //二进制、八进制、十六进制，站在计算机角度，补码 printf(&quot;%x\n&quot;, a);// 16进制打印 ffffff85</code></td>
+</tr>
+</tbody></table>
+<h5 id="有符号和无符号的区别"><a href="#有符号和无符号的区别" class="headerlink" title="有符号和无符号的区别"></a>有符号和无符号的区别</h5><ul>
+<li>有符号，最高位是符号位，如果是1代表为负数，如果为0代表为正数；</li>
+<li>无符号，最高位不是符号位，是数的一部分，无符号不可能是负数；</li>
+</ul>
+<p>测试:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     // 1000 0000 0000 0000 0000 0000 0111 1011     // 8000007b     // %d按照有符号数来打印       printf(&quot;%d\n&quot;, 0x8000007b);     // %u按照无符号数打印     printf(&quot;%u\n&quot;, 0x8000007b);      // signed 和 unsigned     signed int a = 10;     unsigned int b = -10;      //注意输出结果　以%d 为准，%d表示按照有符号数来输出         unsigned int c = 0x8000007b;     printf(&quot;c[有符号] = %d\n&quot;,c);     printf(&quot;c[无符号] = %u\n&quot;,c);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>-2147483525 2147483771 c[有符号] = -2147483525 c[无符号] = 2147483771</code></td>
+</tr>
+</tbody></table>
+<p>分析:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</code></td>
+<td><code>1000 0000 0000 0000 0000 0000 0111 1011   //二进制 8000007b   //16进制    //有符号   ---&gt;   %d, 默认以有符号的方式打印 补码：1000 0000 0000 0000 0000 0000 0111 1011 反码：1111 1111 1111 1111 1111 1111 1000 0100 原码：1111 1111 1111 1111 1111 1111 1000 0101      - 7   f    f    f    f    f    8    5 = -2147483525 										     -2147483525 printf(&quot;%d\n&quot;, 0x8000007b); //-2147483525  //无符号(最高位看做是数的一部分)  ---&gt;    %u, 以无符号的方式打印 1000 0000 0000 0000 0000 0000 0111 1011 8000007b = 2147483771 		   2147483771 printf(&quot;%u\n&quot;, 0x8000007b); //2147483771</code></td>
+</tr>
+</tbody></table>
+<h5 id="数据类型取值分析"><a href="#数据类型取值分析" class="headerlink" title="数据类型取值分析"></a>数据类型取值分析</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22</code></td>
+<td><code>数据类型范围（站在10进制角度，原码）： char 1个字节（8位，8bit） 有符号的范围： 正数： 0000 0000 ~ 0111 1111 0             127  负数： 1000 0000 ~ 1111 1111 -0 ~ -127  注意这里比较特使： -0 当做 -128使用 -128： 原码：  1 1000 0000  反码：  1 0111 1111 补码：  1 1000 0000 这个很特别: -128的原码和补码是一样的，发现和0 (1000 0000)也是一样的。  无符号范围： 0000 0000 ~ 1111 1111 0 ~ 255</code></td>
+</tr>
+</tbody></table>
+<p>综上，char:</p>
+<ul>
+<li><p>有符号：-128 ~ 127；</p>
+</li>
+<li><p>无符号：0 ~ 255；</p>
+<h5 id="越界问题"><a href="#越界问题" class="headerlink" title="越界问题"></a>越界问题</h5><p>赋值或者运算，记得不要越界，下面展示了越界的情况: </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     //有符号越界     char a = 127 + 2;     printf(&quot;a = %d\n&quot;,a);  //-127      //无符号越界     unsigned char b = 255 + 2;     printf(&quot;b = %u\n&quot;,b);  //1     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出: </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>-127 1</code></td>
+</tr>
+</tbody></table>
+<p>分析: </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10</code></td>
+<td><code>char a = 127 + 2; 129转换为二进制：1000 0001，这是负数补码(计算机角度) 补码：1000 0001  反码：1111 1110 原码：1111 1111(最高位是符号位) = -127 printf(&quot;%d\n&quot;, a);//-127  unsigned char b = 255 + 2;  257转化为二进制 ：0001 0000 0001 （只取后8位） printf(&quot;%u\n&quot;, b);// 1</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<hr>
+<h3 id="数据类型、运算符等基础"><a href="#数据类型、运算符等基础" class="headerlink" title="数据类型、运算符等基础"></a>数据类型、运算符等基础</h3><h5 id="C语言数据类型"><a href="#C语言数据类型" class="headerlink" title="C语言数据类型"></a>C语言数据类型</h5><ul>
+<li><p>数据类型的作用：编译器预算对象（变量）分配的内存空间大小。</p>
+<p><img src="/images/c6.png" alt="在这里插入图片描述"></p>
+</li>
+</ul>
+<p><strong>变量特点:</strong></p>
+<ul>
+<li><p>变量在编译时为其分配相应的内存空间；</p>
+</li>
+<li><p>可以通过其名字和地址访问相应内存；</p>
+<p><img src="/images/c7.png" alt="在这里插入图片描述"></p>
+</li>
+</ul>
+<p><strong>声明和定义的区别:</strong></p>
+<ul>
+<li>声明变量不需要建立存储空间，如：<code>extern int a</code>; (使用<code>extern</code>关键字)</li>
+<li>定义变量需要建立存储空间，如：<code>int b</code>;</li>
+<li>从广义的角度来讲声明中包含着定义，即定义是声明的一个特例，所以并非所有的声明都是定义：<br> ① <code>int b</code> 它既是声明，同时又是定义；<br> ②对于<code>extern int b</code>来讲它只是声明不是定义；</li>
+<li>一般的情况下，把建立存储空间的声明称之为“定义”，而把不需要建立存储空间的声明称之为“声明”。</li>
+</ul>
+<h5 id="sizeof关键字"><a href="#sizeof关键字" class="headerlink" title="sizeof关键字"></a>sizeof关键字</h5><ul>
+<li><code>sizeof</code>不是函数，所以不需要包含任何头文件，它的功能是计算一个数据类型的大小，单位为字节；</li>
+<li><code>sizeof</code>的返回值为<code>size_t</code>；</li>
+<li><code>size_t</code>类型在32位操作系统下是<code>unsigned int</code>，是一个无符号的整数；</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      //数据类型的作用: 告诉编译器，分配此类型的变量需要多大的空间     printf(&quot;sizeof(char) = %u\n&quot;,sizeof(char));      int a;     printf(&quot;sizeof(a) = %d\n&quot;,sizeof(a));          size_t len = sizeof(long);     printf(&quot;sizeof(long) = %u\n&quot;,len);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>sizeof(char) = 1 sizeof(a) = 4 sizeof(long) = 8</code></td>
+</tr>
+</tbody></table>
+<h5 id="char数据类型-char的本质就是一个1字节大小的整型"><a href="#char数据类型-char的本质就是一个1字节大小的整型" class="headerlink" title="char数据类型-char的本质就是一个1字节大小的整型"></a>char数据类型-char的本质就是一个1字节大小的整型</h5><ul>
+<li>内存中没有字符，只有数字；</li>
+<li>一个数字，对应一个字符，这种规则就是<code>ascii</code>；</li>
+<li>使用字符或数字给字符变量赋值是等价的；</li>
+<li>字符类型本质就是1个字节大小的整形；</li>
+<li>字符变量实际上并不是把该字符本身放到变量的内存单元中去，而是将该字符对应的 ASCII 编码放到变量的存储单元中。</li>
+</ul>
+<p>测试:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     char ch = &#39;a&#39;;     printf(&quot;ch[c] = %c, ch[d] = %d\n&quot;,ch, ch);      char ch2 = 97;     printf(&quot;ch2[c] = %c\n&quot;, ch2);      printf(&quot;ch2 - 32 = %c\n&quot;,ch2 - 32);     return 0;  }</code></td>
+</tr>
+</tbody></table>
+<p>输出：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>ch[c] = a, ch[d] = 97 ch2[c] = a ch2 - 32 = A</code></td>
+</tr>
+</tbody></table>
+<p>以及注意转义字符:</p>
+<p><img src="/images/c8.png" alt="在这里插入图片描述"></p>
+<p>转义字符简单测试:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      char ch = &#39;\r&#39;;     printf(&quot;abcdddd%cefg\n&quot;,ch);      ch = &#39;\b&#39;;     printf(&quot;12%c345\n&quot;,ch);      ch = &#39; &#39;;     printf(&quot;%d\n&quot;,ch); // 打印&#39; &#39;的对应数字      // 8进制转义字符     printf(&quot;%d\n&quot;, &#39;\123&#39;); //8进制123 --&gt;　对应10进制83     printf(&quot;%d\n&quot;, &#39;\x23&#39;); //16进制23 --&gt; 对应10进制35      // &#39;\0&#39;和0等价     printf(&quot;%d,%d\n&quot;,&#39;\0&#39;,0);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>efgdddd 1345 32 83 35 0,0</code></td>
+</tr>
+</tbody></table>
+<h5 id="浮点数不准确、类型限定符"><a href="#浮点数不准确、类型限定符" class="headerlink" title="浮点数不准确、类型限定符"></a>浮点数不准确、类型限定符</h5><ul>
+<li>浮点数不准确:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      float a = 100.9;     printf(&quot;a = %f\n&quot;,a);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>a = 100.900002</code></td>
+</tr>
+</tbody></table>
+<p>原因还是计算机按照<code>二进制</code>存储。</p>
+<ul>
+<li>类型限定符:</li>
+</ul>
+<p><img src="/images/c9.png" alt="在这里插入图片描述"></p>
+<h5 id="字符的输入问题"><a href="#字符的输入问题" class="headerlink" title="字符的输入问题"></a>字符的输入问题</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      char ch1;     printf(&quot;请输入字符:&quot;);     scanf(&quot;%c&quot;,&amp;ch1);     printf(&quot;ch1 = %c\n&quot;,ch1);      char ch2;     printf(&quot;请输入字符:&quot;);     scanf(&quot;%c&quot;,&amp;ch2);     printf(&quot;ch2 = %c\n&quot;,ch2);     //输出ch2的ascii码     printf(&quot;ch2[d] = %d\n&quot;,ch2);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输入输出演示:</p>
+<p><img src="/images/c10.png" alt="在这里插入图片描述"></p>
+<p>这个程序要特别注意:</p>
+<ul>
+<li>当我们输入完一个字符时，按下回车，会直接结束程序；</li>
+<li>因为第二个字符在按下回车的时候已经输入完成了，也就是<code>ch2 = &#39;\n&#39;</code>；而<code>&#39;\n&#39;</code>的<code>ascii</code>码为10；</li>
+</ul>
+<p><img src="/images/c11.png" alt="在这里插入图片描述"></p>
+<p>处理上面的问题，可以使用另一个字符变量过滤掉<code>\n</code>，也可以使用<code>getchar()</code>来过滤一个字符:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      char ch1;     printf(&quot;请输入字符:&quot;);     scanf(&quot;%c&quot;,&amp;ch1);     printf(&quot;ch1 = %c\n&quot;,ch1);      //为了处理上面的问题，可以自己用scanf处理这个回车     char tmp;     //scanf(&quot;%c&quot;,&amp;tmp); //或者使用下面的方法输入一个字符     // tmp = getchar(); //或者也可以直接调用getchar()即可     getchar();      char ch2;     printf(&quot;请输入字符:&quot;);     scanf(&quot;%c&quot;,&amp;ch2);     printf(&quot;ch2 = %c\n&quot;,ch2);     //输出ch2的ascii码     printf(&quot;ch2[d] = %d\n&quot;,ch2);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<h5 id="运算符以及优先级"><a href="#运算符以及优先级" class="headerlink" title="运算符以及优先级"></a>运算符以及优先级</h5><p><strong>运算符优先级:</strong></p>
+<p><img src="/images/c12.png" alt="在这里插入图片描述"></p>
+<p><img src="/images/c13.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<ul>
+<li>另外，注意 逻辑判断中的 短路原则。</li>
+</ul>
+</blockquote>
+<h5 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h5><ul>
+<li><p>隐式转换: 编译器内部自动转换；</p>
+</li>
+<li><p>强制类型转换：把表达式的运算结果强制转换成所需的数据类型。</p>
+</li>
+<li><p>浮点型打印说明: 不要以为指定了打印的类型就会自动转换，必须要强制转换；</p>
+</li>
+<li><p>转换原则: 数据类型小的往大的转换；</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {      printf(&quot;------------隐式转换-----------\n&quot;);     //隐式转换     double a;     int b = 10;     //编译器内部自动转换，在第10行自动转换，其他地方b还是int     a = b;     printf(&quot;a = %lf\n&quot;,a);       printf(&quot;------------强制类型转换-----------\n&quot;);     //强制类型转换     double c = (double)1/2; //强制将1转换成double     printf(&quot;c = %lf\n&quot;,c);     printf(&quot;sizeof(int) = %u\n&quot;,(unsigned int)sizeof(int));       printf(&quot;------------浮点型打印说明-----------\n&quot;);     //浮点型打印说明     int d = 11;     printf(&quot;d[wrong] = %lf\n&quot;,d); //以为指定了%lf就会转换成浮点数，其实是错的     printf(&quot;d[right] = %lf\n&quot;,(double)d); // 正确的打印是要强制类型转换的     double e = 88.14;     printf(&quot;e[wrong] = %d\n&quot;,e);     printf(&quot;e[right] = %d\n&quot;,int(e));      printf(&quot;-------------转换原则----------\n&quot;);     //转换原则: 数据类型　小的往大的　转换     int g = 129;     char h = 111;     //g = (int)h; // 这个是可以转换的     //printf(&quot;g = %d\n&quot;,g);     h = (char)g; //这个转换是出错的，h会变成一个负数     printf(&quot;h = %d\n&quot;,h);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出：</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12</code></td>
+<td><code>------------隐式转换----------- a = 10.000000 ------------强制类型转换----------- c = 0.500000 sizeof(int) = 4 ------------浮点型打印说明----------- d[wrong] = 0.000000 d[right] = 11.000000 e[wrong] = 1519177328 e[right] = 88 -------------转换原则---------- h = -127</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="数组、字符串、函数"><a href="#数组、字符串、函数" class="headerlink" title="数组、字符串、函数"></a>数组、字符串、函数</h3><h5 id="数组初始化的几种方式"><a href="#数组初始化的几种方式" class="headerlink" title="数组初始化的几种方式"></a>数组初始化的几种方式</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     int arr1[5] = {1,2,3,4,5}; //数组的定义需要{}，只有在定义的时候才能初始化     int arr2[5];     //arr2 = {1,2,3,4,5}; //err 这个是错误的      //数组全部元素初始化为 某个值     int arr3[5] = {0};      //如果定义的同时 初始化，第一个[]内可以不写内容     int arr4[] = {1,2,3,4,5}; //编译器会根据用户初始化的元素来确定数组的大小     //int arr4[]; //err //必须初始化的时候才能省略     int arr5[][4] = {0,1,2,3,4,5,6,7,8,9,10,11}; //第一个可以省略     return 0; }</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>数组的名字代表着数组的首地址，以及使用<code>sizeof</code>来求数组长度的方法；</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     printf(&quot;------------一维数组------------\n&quot;);          int arr[10];     //1. 数组名是数组首元素地址     printf(&quot;arr = %p, &amp;arr[0] = %p\n&quot;, arr, &amp;arr[0]); //两个是一样的      //2. 测试数组总的字节大小 : sizeof(数组名) 10 * 4 = 40     printf(&quot;sizeof(arr) = %u\n&quot;,sizeof(arr));      //3. 得到数组长度 数组总大小/每个元素大小 (常用)     int len = sizeof(arr)/sizeof(arr[0]);     printf(&quot;len(arr) = %d\n&quot;,len);       printf(&quot;------------二维数组------------\n&quot;);      int arr2[5][10];     // 1. 数组名是常量，不能修改     // a = 10; //err     //2. sizeof(数组名),测数组的总大小 5*int[10] = 5*4*10     printf(&quot;sizeof(arr2) = %u\n&quot;,sizeof(arr2));          //3. 求行数     int n = sizeof(arr2)/sizeof(arr2[0]);     printf(&quot;行数 = %d\n&quot;,n);      //4. 求列数     int m = sizeof(arr2[0])/sizeof(arr2[0][0]);     printf(&quot;列数 = %d\n&quot;,m);      //5. 总个数     printf(&quot;总个数 = %d\n&quot;,sizeof(arr2)/sizeof(arr2[0][0]));     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9</code></td>
+<td><code>------------一维数组------------ arr = 0x7ffc86eac190, &amp;arr[0] = 0x7ffc86eac190 sizeof(arr) = 40 len(arr) = 10 ------------二维数组------------ sizeof(arr2) = 200 行数 = 5 列数 = 10 总个数 = 50</code></td>
+</tr>
+</tbody></table>
+<p>可以看出<code>arr</code>和<code>arr[0]</code>的地址是一样的。</p>
+<h5 id="字符数组与字符串"><a href="#字符数组与字符串" class="headerlink" title="字符数组与字符串"></a>字符数组与字符串</h5><ul>
+<li><p>C语言中没有字符串这种数据类型，可以通过<code>char</code>的数组来替代；</p>
+</li>
+<li><p>字符串一定是一个<code>char</code>的数组，但<code>char</code>的数组未必是字符串；</p>
+</li>
+<li><p>数字<code>0</code>(和字符<code>‘\0’</code>等价)结尾的<code>char</code>数组就是一个字符串，但如果<code>char</code>数组没有以数字<code>0</code>结尾，那么就不是一个字符串，只是普通字符数组，所以字符串是一种特殊的<code>char</code>的数组。 </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     // 1. c语言没有字符串类型，用字符数组模拟     char str[10];      // 2. 字符串一定是字符数组，字符数组不一定是字符串     // 3. 如果字符数组以&#39;\0&#39;(0)结尾，就是字符串      char str2[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;};//字符数组 --&gt; 注意这里[]内没有指定数字     char str3[10] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;\0&#39;}; //字符串     char str4[10] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, 0};    //字符串     return 0; }</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h5 id="字符串输出乱码问题以及一系列字符串要注意的问题"><a href="#字符串输出乱码问题以及一系列字符串要注意的问题" class="headerlink" title="字符串输出乱码问题以及一系列字符串要注意的问题"></a>字符串输出乱码问题以及一系列字符串要注意的问题</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     // 1. 字符数组打印乱码问题     char a1[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;}; //字符数组     printf(&quot;a1 = %s\n&quot;,a1); //这个是乱码，因为字符数组后面没有&#39;\0&#39;      // 2. 正确的字符串     char a2[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;\0&#39;};     //char a2[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, 0}; // 0也可以      // 3. 遇到&#39;\0&#39;提前截断     char a3[] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;\0&#39;, &#39;h&#39;, &#39;e&#39;, &#39;\0&#39;}; 	printf(&quot;a3 = %s\n&quot;, a3);//&quot;abc&quot;      // 4. 前3个字符赋值为a, b, c, 后面自动赋值为0     char a4[10] = {&#39;a&#39;, &#39;b&#39;, &#39;c&#39;}; 	printf(&quot;a4 = %s\n&quot;, a4);      // 5. 常用的初始化方法  --&gt; 使用字符串初始化，在字符串结尾自动加结束符数字0     //    这个结束符，用户看不到（隐藏），但是是存在的     char a5[10] = &quot;abc&quot;;     printf(&quot;a5 = %s\n&quot;, a5);      // 6. 使用sizeof()测试隐藏的那个&#39;\0&#39;     char a6[] = &quot;abc&quot;;     printf(&quot;sizeof(a6) = %d\n&quot;, sizeof(a6));      // 7. \0 后面最好别跟数字，不然有可能变成转义字符 例如\012 就是&#39;\n&#39;     char a7[] = &quot;\012abc&quot;;     printf(&quot;a7 = %s\n&quot;, a7);      // 8. 最多写9个字符，留一个位置放结束符     char a8[10] = &quot;123456789&quot;;       // 9. sizeof()测数据类型大小，不会因为结束符提前结束  sizeof(&quot;123\045&quot;) = 5     char a9[] = &quot;abc\0de&quot;;     printf(&quot;%u\n&quot;, sizeof(a9));  // 7 --&gt; a b c \0 d e \0  不要忘记最后还有一个\0      // 10. scanf(&quot;%s&quot;, a); //a没有&amp;，原因数组名是首元素地址，本来就是地址     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出结果:</p>
+<p><img src="/images/c14.png" alt="在这里插入图片描述"></p>
+<h5 id="随机数生成"><a href="#随机数生成" class="headerlink" title="随机数生成"></a>随机数生成</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;time.h&gt;  int main(int argc, char const *argv[]) {     // 1. 先设置种子，种子设置一次即可 	// 2. 如果srand()参数一样，随机数就一样 	//srand(100);      // 由于希望产生的随机数不同，所以要使用系统时间作为随机数       srand( (unsigned int)time(NULL) ); // 返回的是time_t类型 相当于long，单位为毫秒，注意强制转换一下      for(int i = 0; i &lt; 3; i++){         printf(&quot;the rand number is = %d\n&quot;, rand());     }     return 0; }</code></td>
+</tr>
+</tbody></table>
+<h5 id="字符串相关函数"><a href="#字符串相关函数" class="headerlink" title="字符串相关函数"></a>字符串相关函数</h5><h6 id="输入函数"><a href="#输入函数" class="headerlink" title="输入函数"></a>输入函数</h6><p>① <code>gets(str)</code>与<code>scanf(“%s”,str)</code>的区别：</p>
+<ul>
+<li><code>gets(str)</code>允许输入的字符串含有空格；</li>
+<li><code>scanf(“%s”,str)</code>不允许含有空格；</li>
+</ul>
+<blockquote>
+<ul>
+<li>注意：由于<code>scanf()</code>和<code>gets()</code>无法知道字符串s大小，必须遇到换行符或读到文件结尾为止才接收输入，因此容易导致字符数组越界(缓冲区溢出)的情况。</li>
+</ul>
+</blockquote>
+<p>② <code>fgets函数</code>相关：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>char *fgets(char *s, int size, FILE *stream);</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>功能：从stream指定的文件内读入字符，保存到s所指定的内存空间，直到出现换行字符、读到文件结尾或是已读了size - 1个字符为止，最后会自动加上字符 ‘\0’ 作为字符串结束；</li>
+<li>参数 :<br> s：字符串；<br> size：指定最大读取字符串的长度（size - 1）(大于这个长度就舍弃)；<br> stream：文件指针，如果读键盘输入的字符串，固定写为stdin；</li>
+<li>返回值：<br> 成功：成功读取的字符串；<br> 读到文件尾或出错： NULL；</li>
+<li>注意，<code>fgets()</code>在读取一个用户通过键盘输入的字符串的时候，同时把用户输入的回车(‘\n’)也做为字符串的一部分。通过scanf和gets输入一个字符串的时候，不包含结尾的“\n”，但通过fgets结尾多了“\n”。</li>
+<li>fgets()函数是安全的，不存在缓冲区溢出的问题。</li>
+</ul>
+<p>简单测试：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     // 1. scanf()输入字符串 不做越界检查，此函数不安全      // 2. gets(已抛弃，不安全)      char buf[10];     // gets(buf);  //不安全 已废弃     // printf(&quot;buf = %s\n&quot;, buf);      // 3. fgets(安全，可以指定大小)     fgets(buf,sizeof(buf),stdin);     printf(&quot;buf = &#39;%s&#39;\n&quot;, buf);      // 4. 测试读入了　最后的换行     fgets(buf,sizeof(buf),stdin); // 注意虽然这里从键盘读入，但是如果缓冲区还有内容就不会读这里的     printf(&quot;buf2 = &#39;%s&#39;\n&quot;, buf);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输入输出结果:</p>
+<p><img src="/images/c15.png" alt="在这里插入图片描述"></p>
+<h6 id="输出函数"><a href="#输出函数" class="headerlink" title="输出函数"></a>输出函数</h6><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>int puts(const char *s); 功能：标准设备输出s字符串，在输出完成后自动输出一个&#39;\n&#39;。 int fputs(const char * str, FILE * stream);  //文件操作 功能： 将str所指定的字符串写入到stream指定的文件中， 字符串结束符 &#39;\0&#39;  不写入文件。</code></td>
+</tr>
+</tbody></table>
+<p>简单测试:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     char str[] = &quot;hello world!&quot;;     puts(str); //会自动加上一个 &#39;\n&#39;      fputs(str,stdout); // 不会自动加上 &#39;\n&#39;     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+<p><img src="/images/c16.png" alt="在这里插入图片描述"></p>
+<h6 id="sizeof-和strlen-的区别"><a href="#sizeof-和strlen-的区别" class="headerlink" title="sizeof()和strlen()的区别"></a>sizeof()和strlen()的区别</h6><p>注意:</p>
+<ul>
+<li><p><code>strlen()</code> 从首元素开始，到结束符为止的长度，结束符不算(遇到’\0’结束)；</p>
+</li>
+<li><p>而<code>sizeof()</code>则不管遇不遇到<code>&#39;\0&#39;</code>都会计算整个数据类型大小；</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;string.h&gt;  int main(int argc, char const *argv[]) {      char buf[] = &quot;hello&quot;;      // strlen 从首元素开始，到结束符为止的长度，结束符不算(遇到&#39;\0&#39;结束)     int len = strlen(buf);     printf(&quot;strlen(buf) = %d\n&quot;, len);   //5     printf(&quot;sizeof(buf) = %d\n&quot;, sizeof(buf)); // 6 这个还包括 &#39;\0&#39;      char buf2[] = &quot;\0hello&quot;;     printf(&quot;strlen(buf2) = %d\n&quot;, strlen(buf2)); // 0     printf(&quot;sizeof(buf2) = %d\n&quot;, sizeof(buf2)); // 7  注意不要忘记最后还有一个 &#39;\0&#39;       char buf3[100] = &quot;zxzxin&quot;;     printf(&quot;strlen(buf3) = %d\n&quot;, strlen(buf3)); //6     printf(&quot;sizeof(buf3) = %d\n&quot;, sizeof(buf3));  //100      return 0; }</code></td>
+</tr>
+</tbody></table>
+<h6 id="字符串拷贝strcpy-和strncpy"><a href="#字符串拷贝strcpy-和strncpy" class="headerlink" title="字符串拷贝strcpy()和strncpy()"></a>字符串拷贝strcpy()和strncpy()</h6><p>注意两者区别:</p>
+</li>
+<li><p><code>char *strcpy(char *dest, const char *src)</code> ：把src所指向的字符串复制到dest所指向的空间中，’\0’也会拷贝过去。(如果参数dest所指的内存空间不够大，可能会造成缓冲溢出的错误情况。)</p>
+</li>
+<li><p><code>char *strncpy(char *dest, const char *src, size_t n)</code>：把src指向字符串的前n个字符复制到dest所指向的空间中，是否拷贝结束符看指定的长度是否包含’\0’。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;string.h&gt;  int main(int argc, char const *argv[]) {       //strcpy:  把src所指向的字符串复制到dest所指向的空间中，&#39;\0&#39;也会拷贝过去     char src[] = &quot;hello world!&quot;;      char dest[100] = &quot;aaaaaaaaaaaaaaaaaaaaaaa&quot;;     strcpy(dest,src);     printf(&quot;dest = %s\n&quot;, dest);// hello world!  不会输出后面的aaaa， 因为&#39;\0&#39;也拷贝在后面了      // strncpy : 把src指向字符串的前n个字符复制到dest所指向的空间中，是否拷贝结束符看指定的长度是否包含&#39;\0&#39;。     char dest2[100] = &quot;aaaaaaaaaaaaaaaaaaaaaaa&quot;;     strncpy(dest2, src, strlen(src));     printf(&quot;dest2 = %s\n&quot;, dest2); //hello world!aaaaaaaaaaa      //但是如果拷贝的长度大于strlen(src)     char dest3[100] = &quot;aaaaaaaaaaaaaaaaaaaaaaa&quot;;     strncpy(dest3, src, strlen(src)+1);     printf(&quot;dest3 = %s\n&quot;, dest3); //hello world!     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出：</p>
+</li>
+</ul>
+<p><img src="/images/c17.png" alt="在这里插入图片描述"></p>
+<h6 id="strcat-、strncat-、-strcmp-、strncmp"><a href="#strcat-、strncat-、-strcmp-、strncmp" class="headerlink" title="strcat()、strncat()、 strcmp()、strncmp()"></a>strcat()、strncat()、 strcmp()、strncmp()</h6><ul>
+<li><code>char *strcat(char *dest, const char *src);</code>: 将src字符串连接到dest的尾部，<code>‘\0’</code>也会追加过去；</li>
+<li><code>char *strncat(char *dest, const char *src, size_t n);</code>: 将src字符串前n个字符连接到dest的尾部，<code>‘\0’</code>也会追加过去；</li>
+<li><code>int strcmp(const char *s1, const char *s2);</code>: 比较 s1 和 s2 的大小，比较的是字符ASCII码大小；</li>
+<li><code>int strncmp(const char *s1, const char *s2, size_t n);</code>：比较 s1 和 s2 前n个字符的大小，比较的是字符ASCII码大小；</li>
+</ul>
+<p>测试:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;string.h&gt;  int main(int argc, char const *argv[]) {     char s1[] = &quot;abc&quot;;     char s2[] = &quot;abcd&quot;;     int flag = strcmp(s1, s2);     printf(&quot;flag = %d\n&quot;,flag);// &lt;0      char s3[] = &quot;abc&quot;;     char s4[] = &quot;Abcd&quot;;     int flag2 = strncmp(s3, s4, 3); //指定比较前3个字符     printf(&quot;flag2 = %d\n&quot;,flag2);// &gt;0s      printf(&quot;-------------strcat和strncat------------\n&quot;);     char src[] = &quot; hello mike&quot;;     char dst[100] = &quot;abc&quot;;     //把src的内容追加到dst的后面     //strcat(dst, src); //dst = &quot;abc  hello mike&quot;     strncat(dst, src, strlen(&quot; hello&quot;)); //指定长度追加 dst = &quot;abc  hello&quot;     printf(&quot;dst = %s\n&quot;, dst);     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>flag = -100 flag2 = 32 -------------strcat和strncat------------ dst = abc hello</code></td>
+</tr>
+</tbody></table>
+<h6 id="sprintf-、sscanf"><a href="#sprintf-、sscanf" class="headerlink" title="sprintf()、sscanf()"></a>sprintf()、sscanf()</h6><ul>
+<li><p><code>int sprintf(char *str, const char *format, ...);</code>: 根据参数format字符串来转换并格式化数据，然后将结果输出到str指定的空间中，直到出现字符串结束符 ‘\0’ 为止。</p>
+</li>
+<li><p><code>int sscanf(const char *str, const char *format, ...);</code>: 从str指定的字符串读取数据，并根据参数format字符串来转换并格式化数据。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37</code></td>
+<td><code>#include &lt;stdio.h&gt;  int main(int argc, char const *argv[]) {     printf(&quot;--------------sprintf-------------------\n&quot;);     int n = 10;     char ch = &#39;a&#39;;     char buf[10] = &quot;hello&quot;;     char dest[30];     sprintf(dest,&quot;n = %d, ch = %c, buf = %s\n&quot;, n, ch, buf);     printf(&quot;dest: %s&quot;, dest);  // 注意这里没有加上 &#39;\n&#39; 但是之前里面有      printf(&quot;--------------sscanf-------------------\n&quot;);     // sscanf和spirnf相反  这里从dest中读取     int n2;     char ch2;     char buf2[10];     sscanf(dest, &quot;n = %d, ch = %c, buf = %s\n&quot;, &amp;n2, &amp;ch2, &amp;buf2); //记得加上 &amp;     printf(&quot;n2 = %d\n&quot;, n2);     printf(&quot;ch2 = %c\n&quot;, ch2);     printf(&quot;buf2 = %s\n&quot;, buf2);      printf(&quot;-----------字符串提取注意的地方--------------\n&quot;);     // 从字符串中提取 内容最好按照空格进行分割 ，不然有可能提取不出来     // 1. 按照空格分割 --&gt; 正确     char buf3[] = &quot;aaa bbb ccc&quot;;     char a[10],b[10],c[10];     sscanf(buf3, &quot;%s %s %s&quot;, a,b,c); //注意没有&amp;     printf(&quot;a = %s, b = %s, c = %s\n&quot;, a, b, c);     // 2. 按照逗号分割 --&gt; 错误     char buf4[] = &quot;aaa,bbb,ccc&quot;;     char a2[10],b2[10],c2[10];     sscanf(buf4, &quot;%s,%s,%s&quot;, a2,b2,c2); //注意没有&amp;     printf(&quot;a2 = %s, b2 = %s, c2 = %s\n&quot;, a2, b2, c2);      return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>结果:</p>
+</li>
+</ul>
+<p><img src="/images/c18.png" alt="在这里插入图片描述"></p>
+<h6 id="strchr-、strstr-、strtok"><a href="#strchr-、strstr-、strtok" class="headerlink" title="strchr()、strstr()、strtok()"></a>strchr()、strstr()、strtok()</h6><ul>
+<li><p><code>char *strchr(const char *s, char c);</code>: 在字符串s中查找字母c出现的位置；</p>
+</li>
+<li><p><code>char *strstr(const char *haystack, const char *needle);</code>: 在字符串haystack中查找字符串needle出现的位置；</p>
+</li>
+<li><p><code>char *strtok(char *str, const char *delim);</code><br>①来将字符串分割成一个个片段。当strtok()在参数s的字符串中发现参数delim中包含的分割字符时, 则会将该字符改为\0 字符，当连续出现多个时只替换第一个为\0；<br>②在第一次调用时：strtok()必需给予参数s字符串；<br>③往后的调用则将参数s设置成NULL，每次调用成功则返回指向被分割出片段的指针；</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</code></td>
+<td><code>#include &lt;stdio.h&gt; #include &lt;string.h&gt;  int main(int argc, char const *argv[]) {     printf(&quot;-------------strchr------------\n&quot;);     char str1[] = &quot;aaabbbccc&quot;;     char *p = strchr(str1, &#39;b&#39;);     printf(&quot;p = %s\n&quot;, p);      printf(&quot;-------------strstr------------\n&quot;);     char str2[] = &quot;ddddabcd123abcd333abcd&quot;;     char *p2 = strstr(str2, &quot;abcd&quot;);     printf(&quot;p2 = %s\n&quot;, p2);      printf(&quot;-------------strtok------------\n&quot;);     char str3[100] = &quot;adc*fvcv*ebcy*hghbdfg*casdert&quot;;     char *s = strtok(str3, &quot;*&quot;);   //将&quot;*&quot;分割的子串取出     while (s != NULL){         printf(&quot;%s\n&quot;, s);         s = strtok(NULL, &quot;*&quot;);//往后的调用则将参数s设置成NULL，每次调用成功则返回指向被分割出片段的指针     }     return 0; }</code></td>
+</tr>
+</tbody></table>
+<p>输出:</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10</code></td>
+<td><code>-------------strchr------------ p = bbbccc -------------strstr------------ p2 = abcd123abcd333abcd -------------strtok------------ adc fvcv ebcy hghbdfg casdert</code></td>
+</tr>
+</tbody></table>
+<h5 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h5><ul>
+<li>函数内部，包括()内部的形参变量，只有在调用时分配空间，调用完毕自动释放；</li>
+<li><code>return</code>和<code>exit()</code>函数区别，只要一调用 <code>exit()</code>函数(不管在什么地方)，整个程序就结束，但是只有在<code>main</code>函数中调用<code>return</code>才会结束程序；</li>
+<li>声明函数加不加 <code>extern</code>关键字都一样， 声明函数可以不指定形参名称，只指定形参形参类型，但是定义不可以。</li>
+<li>头文件一般是放函数声明；</li>
+</ul>
+<p>看下面两张图解释<code>.h</code>文件的作用:</p>
+<p><img src="/images/c19.png" alt="在这里插入图片描述"></p>
+<p>解决办法:</p>
+<p><img src="/images/c20.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>多个文件中(同一项目)，不能出现同名函数(static除外)。这就是为什么 <code>.h</code>文件只放函数的声明，不放函数的定义；</li>
+<li>防止头文件重复包含: 当一个项目比较大时，往往都是分文件，这时候有可能不小心把同一个头文件 <code>include</code> 多次，或者头文件嵌套包含。</li>
+</ul>
+<p>防止办法:<br>①<code>#ifndef</code> 方式；</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>#ifndef __SOMEFILE_H__ #define __SOMEFILE_H__  // 声明语句  #endif</code></td>
+</tr>
+</tbody></table>
+<p>②<code>#pragma once</code> 方式。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2021/10/01/C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/">https://hzhzxfs.github.io/2021/10/01/C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2021/10/26/C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93(%E4%B8%80)/" title="C语言基础知识总结(一)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">C语言基础知识总结(一)</div></div><div class="info-2"><div class="info-item-1">C++基础知识总结(一) C++对C语言的提高 命令空间简单使用 const关键字的加强 引用-重点 指针引用 没有引用指针 const引用 默认参数函数重载作用域运算符 new、delete的使用   C++面向对象基础 一个简单案例 构造函数和析构函数 深拷贝和浅拷贝 指向对象成员函数的指针 常对象 常对象成员-常数据成员&amp;常成员函数 指向对象的常指针 指向常变量、对象的指针 静态成员 友元   C++重载运算符 重载基本运算符 重载=号操作符 重载流插入运算符和流提取运算符 综合案例-矩阵加法以及输入输出   函数模板、类模板 案例-简单实现的Vector类模板中的push_back   文件操作 输入输出流 文件读写     C++对C语言的提高命令空间简单使用引用命令空间的三种方式:  直接指定标识符。例如std::cout&lt;&lt;&quot;hello&quot;&lt;&lt;std::endl;； 使用using关键字。例如using std::cout; ；  导入整个命令空间。例如using namespace std; 导入std命名空间； ...</div></div></div></a><a class="pagination-related" href="/2021/09/05/JVM%E6%80%BB%E7%BB%93(%E4%BA%8C)%20-%20%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" title="JVM总结(二)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">JVM总结(二)</div></div><div class="info-2"><div class="info-item-1">JVM总结(二) - 垃圾收集器与内存分配策略 一、垃圾回收概述 二、如何判定对象为垃圾对象 1、引用计数法 2、可达性分析算法 3、引用分类 4、生存还是死亡-finalize()方法 5、回收方法区   三、垃圾回收算法 1、标记清除算法 2、复制算法 3、标记整理算法 4、分代收集算法   四、垃圾收集器 1、各个垃圾收集器的联系 2、Serial收集器 3、ParNew收集器 4、Parallel Scavenge收集器 5、Serial Old收集器 6、Paralell Old收集器 7、CMS收集器 8、G1收集器 9、各种垃圾收集算法的对比   五、内存分配与回收策略 1、对象优先在Eden分配 2、大对象直接进入老年代 3、长期存活对象将进入老年代 4、空间分配担保 5、动态对象年龄判定 6、关于逃逸分析以及栈上分配     一、垃圾回收概述关于垃圾回收，主要探讨下面四个问题。  1、回收区域  程序计数器、虚拟机栈和本地方法栈这三个区域属于线程私有的，只存在于线程的生命周期内，线程结束之后也会消失，因此不需要对这三个区域进行垃圾回收； 垃圾回收主要是针对 Ja...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/08/16/%E4%BC%9A%E8%AF%9D%E6%8E%A7%E5%88%B6/" title="会话控制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-16</div><div class="info-item-2">会话控制</div></div><div class="info-2"><div class="info-item-1">会话控制笔记1、核心代码        1 2 HttpSession session = request.getSession(); session.setAttribute(&quot;属性名&quot;,&quot;属性值&quot;);   2、Cookie的工作机制 Cookie信息是在服务器创建的 Cookie在服务器端被放在响应数据中返回给浏览器 浏览器接收到Cookie后，会把Cookie保存起来 浏览器保存了Cookie后每一个请求都会把路径匹配的Cookie带上  3、Cookie的时效性 会话级Cookie：默认情况 保存在浏览器的内存里，在浏览器关闭时会被释放   持久化Cookie： 服务器端调用Cookie的setMaxAge(以秒为单位的存活时间)方法 存活时间正数：还能够存活的秒数 存活时间为零：告诉浏览器立即删除这个Cookie 存活时间为负：告诉浏览器这个Cookie是一个会话级Cookie   服务器把这个Cookie返回给浏览器时就等于通知浏览器：这个Cookie还能存在多长时间    4、Cookie的路径 每个Cookie都有domai...</div></div></div></a><a class="pagination-related" href="/2021/11/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E4%B8%80%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%92%8C%E5%8D%8F%E8%AE%AE(%E4%B8%80)/" title="计算机网络知识总结一计算机网络和协议(一)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-21</div><div class="info-item-2">计算机网络知识总结一计算机网络和协议(一)</div></div><div class="info-2"><div class="info-item-1">计算机网络知识总结一计算机网络和协议(一) 互联网概述 互联网组成 计算机网络的性能指标 OSI参考模型以及TCP&#x2F;IP四层模型、五层协议 通信过程、数据传输、网络设备 小结   互联网概述 计算机网络: 由若干节点和连接这些节点的链路组成，网络中的节点可以是计算机、集线器、交换机、或路由器等； 网络之间可以通过路由器相互连接，这就构成了一个更大范围的计算机网路，这样的网路称为互连网，因此互连网是网路的网路； 因特网(互联网): 全球最大的特定互连网；  注意以下两个意思相差很大的名词 internet 和 Internet [RFC 1208]:  以小写字母 i 开始的 internet (互连网) 是一个通用名词，它泛指由多个计算机网络互连而成的计算机网络。在这些网络之间的通信协议〈即通信规则) 可以任意选择，不一定非要使用TCP/IP 协议； 以大写字母 I 开始的 Internet 〈互联网或因特网) 则是一个专用名词，它指当前全球最大的、开放的、由众多网络相互连接而成的特定互连网，它采用 TCP/IP 协议族作为通信的规则，且其前身是美国的 ARPANET；...</div></div></div></a><a class="pagination-related" href="/2023/09/19/Linux%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E3%80%81%E6%8C%82%E8%BD%BD%E5%BA%A6/" title="Linux磁盘分区、挂载度"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="info-item-2">Linux磁盘分区、挂载度</div></div><div class="info-2"><div class="info-item-1">[TOC] Linux磁盘分区、挂载度1. 分区方式 MBR分区 最多支持四个主分区 系统只能安装在主分区 扩展分区要占一个主分区 MBR最大只支持2TB，但拥有最好的兼容性   GPT分区 支持无限多个主分区（但操作系统可能限制，比如windows下最多128个分区） 最大支持18EB的大容量（1EB&#x3D;1024PB，PB&#x3D;1024TB） windows7 64位以后支持gpt    2. Linux分区2.1 分区原理 Linux来说无论有几个分区，分给哪一个目录使用，它归根结底就只有一个根目录，一个独立且唯一的文件结构，Linux中每个分区都是用来组成整个文件系统的一部分。 Linux采用了一种叫做“载入”的处理方法，它的整个文件系统中包含了一整套的文件和目录，且将一个分区和一个目录联系起来。这时要载入的一个分区将使它的存储空间在一个目录下获得。  2.2 硬盘说明 Linux硬盘分IDE硬盘和SCSI硬盘，目前基本上是SCSI硬盘 lsblk [-f]：查看当前系统的分区和挂载情况。（list block）  3. 挂载硬盘 需求是给我们的Linux系统...</div></div></div></a><a class="pagination-related" href="/2023/02/15/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC)/" title="垃圾收集 (GC)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-15</div><div class="info-item-2">垃圾收集 (GC)</div></div><div class="info-2"><div class="info-item-1">垃圾收集 (GC)垃圾收集（Garbage Collection，GC），它的任务是解决以下 3 件问题：  哪些内存需要回收？ 什么时候回收？ 如何回收？  其中第一个问题很好回答，在 Java 中，GC 主要发生在 Java 堆和方法区中，对于后两个问题，我们将在之后的内容中进行讨论，并介绍 HotSpot 的 7 个垃圾收集器。  垃圾收集 (GC) 判断对象的生死 判断对象是否可用的算法 引用计数算法 可达性分析算法（主流）   四种引用类型 宣告对象死亡的两次标记过程 方法区的回收   垃圾收集算法 基础：标记 - 清除算法 解决效率问题：复制算法 解决空间碎片问题：标记 - 整理算法 进化：分代收集算法   HotSpot 中 GC 算法的实现 7 个垃圾收集器 Serial &#x2F; ParNew 搭配 Serial Old 收集器 Parallel 搭配 Parallel Scavenge 收集器 CMS 收集器 G1 收集器   GC 日志解读    判断对象的生死 什么时候回收对象？当然是这个对象再也不会被用到的时候回收。所以要想解决 “什么时候回收？” ...</div></div></div></a><a class="pagination-related" href="/2021/09/05/JVM%E6%80%BB%E7%BB%93(%E4%BA%8C)%20-%20%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" title="JVM总结(二)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-05</div><div class="info-item-2">JVM总结(二)</div></div><div class="info-2"><div class="info-item-1">JVM总结(二) - 垃圾收集器与内存分配策略 一、垃圾回收概述 二、如何判定对象为垃圾对象 1、引用计数法 2、可达性分析算法 3、引用分类 4、生存还是死亡-finalize()方法 5、回收方法区   三、垃圾回收算法 1、标记清除算法 2、复制算法 3、标记整理算法 4、分代收集算法   四、垃圾收集器 1、各个垃圾收集器的联系 2、Serial收集器 3、ParNew收集器 4、Parallel Scavenge收集器 5、Serial Old收集器 6、Paralell Old收集器 7、CMS收集器 8、G1收集器 9、各种垃圾收集算法的对比   五、内存分配与回收策略 1、对象优先在Eden分配 2、大对象直接进入老年代 3、长期存活对象将进入老年代 4、空间分配担保 5、动态对象年龄判定 6、关于逃逸分析以及栈上分配     一、垃圾回收概述关于垃圾回收，主要探讨下面四个问题。  1、回收区域  程序计数器、虚拟机栈和本地方法栈这三个区域属于线程私有的，只存在于线程的生命周期内，线程结束之后也会消失，因此不需要对这三个区域进行垃圾回收； 垃圾回收主要是针对 Ja...</div></div></div></a><a class="pagination-related" href="/2021/08/10/Stream/" title="Java8 Stream"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-10</div><div class="info-item-2">Java8 Stream</div></div><div class="info-2"><div class="info-item-1">Stream 一、引入流 二、使用流 三、Optional取代null 四、用流收集数据(collect)  一、引入流1、一个案例引入看一个使用Stream(Java8)和不使用Stream(Java7)代码量的区别。 这里需要筛选出一份菜单中卡路里&lt;400的菜的名字。         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 public class Code_01_Java7AndJava8Compare {      public static void main(String[] args) {         // 返回 热量&lt;400 的菜肴 的 名称, 返回结果按照从低到高排序， Java7的写法         System.out.println(java7());         System.out.println(java8());     }      static List&lt;...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93-%E4%B8%80"><span class="toc-number">1.</span> <span class="toc-text">C语言基础知识总结(一)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E3%80%81%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">编译、运行</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.1.1.</span> <span class="toc-text">编译格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.2.</span> <span class="toc-text">C语言编译过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CPU%E3%80%81%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.1.3.</span> <span class="toc-text">CPU、寄存器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EVS%E7%9A%84C4996%E9%94%99%E8%AF%AF"><span class="toc-number">1.1.4.</span> <span class="toc-text">关于VS的C4996错误</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E5%88%B6%EF%BC%8C%E5%8E%9F%E3%80%81%E5%8F%8D%E3%80%81%E8%A1%A5%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text">进制，原、反、补码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9B%E5%88%B6%E7%9B%B8%E5%85%B3"><span class="toc-number">1.2.1.</span> <span class="toc-text">进制相关</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81"><span class="toc-number">1.2.2.</span> <span class="toc-text">原码、反码、补码</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8E%9F%E7%A0%81"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">原码</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8F%8D%E7%A0%81"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">反码</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%A1%A5%E7%A0%81"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">补码</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E7%A0%81%E5%92%8C%E8%A1%A5%E7%A0%81%E4%BA%92%E6%8D%A2"><span class="toc-number">1.2.3.</span> <span class="toc-text">原码和补码互换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.4.</span> <span class="toc-text">有符号和无符号的区别</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%96%E5%80%BC%E5%88%86%E6%9E%90"><span class="toc-number">1.2.5.</span> <span class="toc-text">数据类型取值分析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B6%8A%E7%95%8C%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.6.</span> <span class="toc-text">越界问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E3%80%81%E8%BF%90%E7%AE%97%E7%AC%A6%E7%AD%89%E5%9F%BA%E7%A1%80"><span class="toc-number">1.3.</span> <span class="toc-text">数据类型、运算符等基础</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">C语言数据类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#sizeof%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">1.3.2.</span> <span class="toc-text">sizeof关键字</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#char%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-char%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA1%E5%AD%97%E8%8A%82%E5%A4%A7%E5%B0%8F%E7%9A%84%E6%95%B4%E5%9E%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">char数据类型-char的本质就是一个1字节大小的整型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B5%AE%E7%82%B9%E6%95%B0%E4%B8%8D%E5%87%86%E7%A1%AE%E3%80%81%E7%B1%BB%E5%9E%8B%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="toc-number">1.3.4.</span> <span class="toc-text">浮点数不准确、类型限定符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E7%9A%84%E8%BE%93%E5%85%A5%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.5.</span> <span class="toc-text">字符的输入问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.3.6.</span> <span class="toc-text">运算符以及优先级</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.3.7.</span> <span class="toc-text">类型转换</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.</span> <span class="toc-text">数组、字符串、函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.4.1.</span> <span class="toc-text">数组初始化的几种方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.4.2.</span> <span class="toc-text">字符数组与字符串</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BE%93%E5%87%BA%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E4%B8%80%E7%B3%BB%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.3.</span> <span class="toc-text">字符串输出乱码问题以及一系列字符串要注意的问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90"><span class="toc-number">1.4.4.</span> <span class="toc-text">随机数生成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.5.</span> <span class="toc-text">字符串相关函数</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">输入函数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.5.2.</span> <span class="toc-text">输出函数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#sizeof-%E5%92%8Cstrlen-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.5.3.</span> <span class="toc-text">sizeof()和strlen()的区别</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%B7%E8%B4%9Dstrcpy-%E5%92%8Cstrncpy"><span class="toc-number">1.4.5.4.</span> <span class="toc-text">字符串拷贝strcpy()和strncpy()</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#strcat-%E3%80%81strncat-%E3%80%81-strcmp-%E3%80%81strncmp"><span class="toc-number">1.4.5.5.</span> <span class="toc-text">strcat()、strncat()、 strcmp()、strncmp()</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#sprintf-%E3%80%81sscanf"><span class="toc-number">1.4.5.6.</span> <span class="toc-text">sprintf()、sscanf()</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#strchr-%E3%80%81strstr-%E3%80%81strtok"><span class="toc-number">1.4.5.7.</span> <span class="toc-text">strchr()、strstr()、strtok()</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.6.</span> <span class="toc-text">函数</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

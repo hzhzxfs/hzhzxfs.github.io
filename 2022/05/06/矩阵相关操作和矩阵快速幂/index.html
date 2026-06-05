@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>矩阵相关操作和矩阵快速幂 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="矩阵相关操作和矩阵快速幂 矩阵基本运算以及快速幂模板 POJ - 3070. Fibonacci Hdu - 1757A. Simple Math Problem Codeforces - 185A. Plant   矩阵基本运算以及快速幂模板先看一下矩阵的乘法规则:  直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。题目来源: XYNU OJ题目 注意:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="矩阵相关操作和矩阵快速幂">
+<meta property="og:url" content="https://hzhzxfs.github.io/2022/05/06/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="矩阵相关操作和矩阵快速幂 矩阵基本运算以及快速幂模板 POJ - 3070. Fibonacci Hdu - 1757A. Simple Math Problem Codeforces - 185A. Plant   矩阵基本运算以及快速幂模板先看一下矩阵的乘法规则:  直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。题目来源: XYNU OJ题目 注意:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2022-05-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:02.669Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "矩阵相关操作和矩阵快速幂",
+  "url": "https://hzhzxfs.github.io/2022/05/06/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2022-05-05T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:02.669Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2022/05/06/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '矩阵相关操作和矩阵快速幂',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">矩阵相关操作和矩阵快速幂</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">矩阵相关操作和矩阵快速幂</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-05T16:00:00.000Z" title="发表于 2022-05-06 00:00:00">2022-05-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:02.669Z" title="更新于 2026-06-05 16:26:02">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="矩阵相关操作和矩阵快速幂"><a href="#矩阵相关操作和矩阵快速幂" class="headerlink" title="矩阵相关操作和矩阵快速幂"></a>矩阵相关操作和矩阵快速幂</h2><ul>
+<li>矩阵基本运算以及快速幂模板</li>
+<li>POJ - 3070. Fibonacci</li>
+<li>Hdu - 1757A. Simple Math Problem</li>
+<li>Codeforces - 185A. Plant</li>
+</ul>
+<hr>
+<h3 id="矩阵基本运算以及快速幂模板"><a href="#矩阵基本运算以及快速幂模板" class="headerlink" title="矩阵基本运算以及快速幂模板"></a>矩阵基本运算以及快速幂模板</h3><p>先看一下矩阵的乘法规则:</p>
+<p><img src="/images/m1.png" alt="在这里插入图片描述"></p>
+<h5 id="直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。"><a href="#直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。" class="headerlink" title="直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。"></a>直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇<a target="_blank" rel="noopener" href="https://blog.csdn.net/zxzxzx0119/article/details/82816131">乘法快速幂</a>。</h5><h4 id="题目来源-XYNU-OJ"><a href="#题目来源-XYNU-OJ" class="headerlink" title="题目来源: XYNU OJ"></a>题目来源: XYNU OJ</h4><h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/m2.png" alt="在这里插入图片描述"></p>
+<p>注意:</p>
+<ul>
+<li>矩阵的乘法必须满足第一个矩阵的列 &#x3D; 第二个矩阵的行；</li>
+<li>矩阵的求幂必须满足矩阵是一个方阵；</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.Scanner;  public class Main {      static class Matrix {         public int row;         public int col;         public int[][] m;          public Matrix(int row, int col) {             this.row = row;             this.col = col;             m = new int[row][col];         }     }      // 两个矩阵相加  --&gt;  a,b必须为 同型矩阵     static Matrix add(Matrix a, Matrix b) {         Matrix c = new Matrix(a.row, a.col);         for (int i = 0; i &lt; a.row; i++) {             for (int j = 0; j &lt; a.col; j++) {                 c.m[i][j] = a.m[i][j] + b.m[i][j]; // sub 减法换成-             }         }         return c;     }      // 必须满足a.col = b.row  才能相乘     static Matrix mul(Matrix a, Matrix b) {         Matrix c = new Matrix(a.row, b.col); //注意这里          for (int i = 0; i &lt; a.row; i++) {             for (int j = 0; j &lt; b.col; j++) {                 for (int k = 0; k &lt; a.col; k++)                     c.m[i][j] = c.m[i][j] + a.m[i][k] * b.m[k][j];             }         }         return c;     }      // 必须为 方阵才能 求幂     static Matrix pow(Matrix a, int k) { // 矩阵 a 的 k次幂         Matrix res = new Matrix(a.row, a.col);  //求幂必须满足 a.row = a.col(也就是方阵)         for (int i = 0; i &lt; a.row; i++)             res.m[i][i] = 1;          // 真正的快速幂         while (k &gt; 0) {             if ((k &amp; 1) != 0)                 res = mul(res, a);             a = mul(a, a);             k &gt;&gt;= 1;         }         return res;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));          int n = cin.nextInt();         int k = cin.nextInt();          Matrix a = new Matrix(n, n);         for (int i = 0; i &lt; n; i++) {             for (int j = 0; j &lt; n; j++) {                 a.m[i][j] = cin.nextInt();             }         }          Matrix res = pow(a, k);         for (int i = 0; i &lt; n; i++) {             for (int j = 0; j &lt; n; j++) {                 if (j == n - 1) {                     System.out.println(res.m[i][j]);                 } else {                     System.out.print(res.m[i][j] + &quot; &quot;);                 }             }         }     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="POJ-3070-Fibonacci"><a href="#POJ-3070-Fibonacci" class="headerlink" title="POJ - 3070. Fibonacci"></a>POJ - 3070. Fibonacci</h3><h4 id="题目链接"><a href="#题目链接" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="http://poj.org/problem?id=3070">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://poj.org/problem?id=3070">http://poj.org/problem?id=3070</a></p>
+</blockquote>
+<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/m3.png" alt="在这里插入图片描述"></p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>关键在于推导出递推式，也就是左边是一个<code>A</code>矩阵，<code>B</code>一般是一个列向量；<br><img src="/images/m4.png" alt="在这里插入图片描述"></p>
+<p>类似的规律:</p>
+<p><img src="/images/m5.png" alt="在这里插入图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.Scanner;  public class Main {      static class Matrix{         public int row;         public int col;         public int[][] m;          public Matrix(int row, int col) {             this.row = row;             this.col = col;             m = new int[row][col];         }     }      static final int mod = 10000;       static Matrix mul(Matrix a,Matrix b){         Matrix c = new Matrix(a.row,b.col); //注意这里          for(int i = 0; i &lt; a.row; i++){             for(int j = 0; j &lt; b.col; j++){                 for(int k = 0; k &lt; a.col; k++)                     c.m[i][j] = (c.m[i][j] + a.m[i][k]*b.m[k][j]) % mod;             }         }         return c;     }      static Matrix pow(Matrix a,int k){         Matrix res = new Matrix(a.row,a.col); // 方阵         for(int i = 0; i &lt; a.row; i++)             res.m[i][i] = 1;         while(k &gt; 0){             if( (k&amp;1) != 0)                 res = mul(res,a);             a = mul(a,a);             k &gt;&gt;= 1;         }         return res;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));          while(cin.hasNext()){             int n = cin.nextInt();             if( n == -1)break;             if(n == 0){                 System.out.println(0);                 continue;             }              Matrix a = new Matrix(2,2);             a.m[0][0] = a.m[0][1] = a.m[1][0] = 1;             a.m[1][1] = 0;              Matrix res = pow(a,n-1);              System.out.println(res.m[0][0] % mod);         }     }  }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Hdu-1757A-Simple-Math-Problem"><a href="#Hdu-1757A-Simple-Math-Problem" class="headerlink" title="Hdu - 1757A. Simple Math Problem"></a>Hdu - 1757A. Simple Math Problem</h3><h4 id="题目链接-1"><a href="#题目链接-1" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1757">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://acm.hdu.edu.cn/showproblem.php?pid=1757">http://acm.hdu.edu.cn/showproblem.php?pid=1757</a></p>
+</blockquote>
+<h4 id="题目-2"><a href="#题目-2" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/m6.png" alt="在这里插入图片描述"></p>
+<h4 id="解析-1"><a href="#解析-1" class="headerlink" title="解析"></a>解析</h4><p><img src="/images/m7.png" alt="在这里插入图片描述"><br>继续递推:</p>
+<p><img src="/images/m8.png" alt="这里写图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.Scanner;  public class Main {      static class Matrix{         public int row;         public int col;         public int[][] m;          public Matrix(int row, int col) {             this.row = row;             this.col = col;             m = new int[row][col];         }     }      static Matrix mul(Matrix a,Matrix b,int mod){         Matrix c = new Matrix(a.row,b.col); //注意这里          for(int i = 0; i &lt; a.row; i++){             for(int j = 0; j &lt; b.col; j++){                 for(int k = 0; k &lt; a.col; k++)                     c.m[i][j] = (c.m[i][j] + a.m[i][k]*b.m[k][j]) % mod;             }         }         return c;     }      static Matrix pow(Matrix a,int k,int mod){         Matrix res = new Matrix(a.row,a.col); // 方阵         for(int i = 0; i &lt; a.row; i++)             res.m[i][i] = 1;         while(k &gt; 0){             if( (k&amp;1) != 0)                 res = mul(res,a,mod);             a = mul(a,a,mod);             k &gt;&gt;= 1;         }         return res;     }       public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));          while(cin.hasNext()){             int k = cin.nextInt();             int mod = cin.nextInt();              if(k &lt; 10){                 System.out.println(k);                 continue;             }             Matrix a = new Matrix(10,10);             // init             for(int i = 0; i &lt; 10; i++)                 a.m[0][i] = cin.nextInt();             for(int i = 1; i &lt; 10; i++)                 a.m[i][i-1] = 1;              // computer  matrix ^ (k-9)             Matrix res = pow(a,k-9,mod);              int sum = 0;             for(int i = 0; i &lt; 10; i++)                 sum += (res.m[0][i] * (9 - i)) % mod;              System.out.println(sum % mod); // also should mod         }     } }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Codeforces-185A-Plant"><a href="#Codeforces-185A-Plant" class="headerlink" title="Codeforces - 185A. Plant"></a>Codeforces - 185A. Plant</h3><h4 id="题目链接-2"><a href="#题目链接-2" class="headerlink" title="题目链接"></a><a target="_blank" rel="noopener" href="http://codeforces.com/problemset/problem/185/A">题目链接</a></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="http://codeforces.com/problemset/problem/185/A">http://codeforces.com/problemset/problem/185/A</a></p>
+</blockquote>
+<h4 id="题目-3"><a href="#题目-3" class="headerlink" title="题目"></a>题目</h4><p><img src="/images/m9.png" alt="在这里插入图片描述"></p>
+<p><img src="/images/m10.png" alt="在这里插入图片描述"></p>
+<h4 id="解析-2"><a href="#解析-2" class="headerlink" title="解析"></a>解析</h4><p><img src="/images/m11.png" alt="在这里插入图片描述"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.Scanner;  public class Main {      static class Matrix {         public int row;         public int col;         public long[][] m;          public Matrix(int row, int col) {             this.row = row;             this.col = col;             m = new long[row][col];         }     }      static final int mod = 1000000007;      static Matrix mul(Matrix a, Matrix b) {         Matrix c = new Matrix(a.row, b.col); //注意这里          for (int i = 0; i &lt; a.row; i++) {             for (int j = 0; j &lt; b.col; j++) {                 for (int k = 0; k &lt; a.col; k++)                     c.m[i][j] = (c.m[i][j] + a.m[i][k] * b.m[k][j]) % mod;             }         }         return c;     }      static Matrix pow(Matrix a, long k) {         Matrix res = new Matrix(a.row, a.col); // 方阵         for (int i = 0; i &lt; a.row; i++)             res.m[i][i] = 1;         while (k &gt; 0) {             if ((k &amp; 1) != 0)                 res = mul(res, a);             a = mul(a, a);             k &gt;&gt;= 1;         }         return res;     }      public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));          long n = cin.nextLong();          Matrix a = new Matrix(2, 2);         a.m[0][0] = a.m[1][1] = 3;         a.m[0][1] = a.m[1][0] = 1;          Matrix res = pow(a, n);          System.out.println(res.m[0][0] % mod);     } }</code></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2022/05/06/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/">https://hzhzxfs.github.io/2022/05/06/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/05/26/%E5%AD%90%E6%95%B0%E7%BB%84%E7%B4%AF%E5%8A%A0%E5%92%8C%E4%B8%BAaim(%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim)%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" title="子数组累加和为aim(小于等于aim)的三个问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">子数组累加和为aim(小于等于aim)的三个问题</div></div><div class="info-2"><div class="info-item-1">子数组累加和为aim(小于等于aim)的三个问题 累加和 = aim的最长子数组的长度(数组可+,-,0)； 累加和 = aim的最长子数组的长度(数组+)(只有正数)； 累加和 &lt;= aim的最长子数组的长度(数组可+,-,0)；   累加和 = aim的最长子数组的长度(数组可+,-,0)；这个题目使用HashMap来存储前面出现过的累加和的下标，具体过程如下:  使用变量sum表示从0位置开始一直加到i位置所有元素的累加和； HashMap中key表示从arr最左边开始累加过程中出现过的sum值，value表示的是sum值出现最早的位置；、 假设当前元素为arr[i]，则sum += arr[i]，之前所有累加和为sum ，查看map中是否有sum - aim这个值，如果有，且对应value为j，那么就找到一个子数组累加和为aim的，且长度为 i - j + 1； 检查现在的sum 是否在map中出现，如果不存在，说明此时是第一次出现的，把(sum,i)加入到map中； 继续遍历数组；  很重要的一个地方就是一开始map中要存(0,-1)这个值，直观理解是一个数也没有...</div></div></div></a><a class="pagination-related" href="/2022/04/26/%E4%B9%98%E6%B3%95%E5%BF%AB%E9%80%9F%E5%B9%82%E7%9B%B8%E5%85%B3%E6%80%BB%E7%BB%93%20%20&amp;%20LeetCode%20-%2050.%20Pow(x,%20n)/" title="乘法快速幂相关总结 &amp; LeetCode"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">乘法快速幂相关总结 & LeetCode</div></div><div class="info-2"><div class="info-item-1">乘法快速幂相关总结 &amp; LeetCode - 50. Pow(x, n) 递归计算 (a n) % mod 非递归计算 (a n) % mod 计算 ( a * b ) % mod 配合 ( a * b ) % mod和乘法快速幂 XYNUOJ - 1872. 次方求模题解 LeetCode - 50. Pow(x, n)题解   递归计算 (a n) % mod递归计算其实是更容易理解的:  为了求an，我们先递归去求出an&#x2F;2，得到结果记录为halfRes； 然后如果n为偶数，很好办，再乘以一个halfRes就可以了(再取模一下)，也就是可以返回halfRes*halfRes； 但是如果n为奇数的话，就需要再乘以一个a，然后再返回；   代码:         1 2 3 4 5 6 7 8 9 10 11 12 static long pow_mod(long a, long n, long mod) {     if (n == 0)      // a^0 = 1         return 1;     // 先求一半的 --&gt; 你先给我求出...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2021/06/27/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%8A%82%E7%82%B9%E5%88%86%E7%B1%BB%E4%B8%8E%E8%BE%B9%E9%A2%84%E6%B5%8B/" title="图神经网络——节点分类与边预测"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-27</div><div class="info-item-2">图神经网络——节点分类与边预测</div></div><div class="info-2"><div class="info-item-1">1.InMemoryDataset基类在PyG中，可以通过继承InMemoryDataset类来自定义一个数据可全部存储到内存的数据集类。(继承Dataset是分次加载到内存，继承InMemoryDataset是一次性加载所有数据到内存)         1 class InMemoryDataset(root: Optional[str] = None, transform: Optional[Callable] = None, pre_transform: Optional[Callable] = None, pre_filter: Optional[Callable] = None)   参数说明：  transform：数据转换函数，用于转换Data对象，每一次数据获取过程中都会被执行。pre_transform：数据转换函数，用于转换Data对象，在Data对象被保存到文件前调用。pre_filter：检查数据是否要保留的函数，接收一个Data对象，返回此Data对象是否应该被包含在最终的数据集中，在Data对象被保存到文件前调用。  2.Sequential容器nn....</div></div></div></a><a class="pagination-related" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-16</div><div class="info-item-2">MySQL基础与高级</div></div><div class="info-2"><div class="info-item-1">目录[TOC] Mysql基础数据库相关概念数据库的好处 持久化数据到本地 可以实现结构化查询，方便管理  数据库常见名词解释 DB：数据库，保存一组有组织的数据的容器 DBMS：数据库管理系统，又称为数据库软件（产品），用于管理DB中的数据 SQL:结构化查询语言，用于和DBMS通信的语言，不是某个数据库软件特有的，而是几乎所有的主流数据库软件通用的语言  数据库存储数据的特点 将数据放到表中，表再放到库中 一个数据库中可以有多个表，每个表都有一个的名字，用来标识自己。表名具有唯一性。 表具有一些特性，这些特性定义了数据在表中如何存储，类似java中 “类”的设计。 表由列组成，我们也称为字段。所有表都是由一个或多个列组成的，每一列类似java 中的”属性” 表中的数据是按行存储的，每一行类似于java中的“对象”。  常见数据库mysql、oracle、db2、sqlserver MySQL产品的介绍和安装MySQL背景前身属于瑞典的一家公司，MySQL AB08年被sun公司收购09年sun被oracle收购 MySQL的优点1、开源、免费、成本低2、性能高、移植性也好3、...</div></div></div></a><a class="pagination-related" href="/2023/04/15/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_02-%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" title="虚拟机字节码执行引擎_02"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-15</div><div class="info-item-2">虚拟机字节码执行引擎_02</div></div><div class="info-2"><div class="info-item-1">基于栈的字节码解释执行引擎这个栈，就是栈帧中的操作数栈。 解释执行先通过 javac 将代码编译成字节码，虚拟机再通过加载字节码文件，解释执行字节码文件生成机器码，解释执行的流程如下：         1 词法分析 -&gt; 语法分析 -&gt; 形成抽象语法树 -&gt; 遍历语法树生成线性字节码指令流   指令集分类基于栈的指令集 优点：  可移植：寄存器由硬件直接提供，程序如果直接依赖这些硬件寄存器，会不可避免的受到硬件的约束； 代码更紧凑：字节码中每个字节对应一条指令，多地址指令集中还需要存放参数； 编译器实现更简单：不需要考虑空间分配问题，所需的空间都在栈上操作。   缺点： 执行速度稍慢  完成相同的功能，需要更多的指令，因为出入栈本身就产生相当多的指令； 频繁的栈访问导致频繁的内存访问，对于处理器而言，内存是执行速度的瓶颈。   示例： 两数相加         1 2 3 4 iconst_1  // 把常量1入栈 iconst_1 iadd      // 把栈顶两元素出栈相加，结果入栈 istore_0  // 把栈顶值存入第0个Slot中     基于寄存...</div></div></div></a><a class="pagination-related" href="/2021/07/12/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D/" title="李宏毅机器学习——机器学习介绍"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-12</div><div class="info-item-2">李宏毅机器学习——机器学习介绍</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——机器学习介绍1. 机器学习简介机器学习是人工智能的一部分, 研究如何让计算机从数据学习某种规律。机器学习的目的是通过计算机程序根据数据去优化某一个评价指标，自动的从数据发现规律, 使用这些规律做出预测。如图，机器学习可以简化为三个步骤，一、找一个function，二、让machine评价这个function，三、让machine自动地挑出最好的function。 2. 机器学习分类机器学习可大致分为监督学习、无监督学习、半监督学习、迁移学习和强化学习。 2.1 监督学习监督学习是机器学习任务的一种。它从有标签的训练数据中推导出预测函数。有标签的训练数据是指每个训练实例都包括输入和期望的输出。简单来说就是给定数据，预测标签。监督学习包括分类和回归。 2.2 无监督学习无监督学习是机器学习任务的一种。它从无标签的训练数据中推断结论。它可以在探索性数据分析阶段用于发现隐藏的模式或者对数据进行分组。简单来说就是给定数据，寻找隐藏的结构。无监督学习包括聚类和降维。 2.3 半监督学习半监督学习介于监督学习与无监督学习之间。半监督学习的任务与监督学习一致，任务中包含有明确的...</div></div></div></a><a class="pagination-related" href="/2021/02/21/pandas_3/" title="Pandas的一些常用操作_3"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-21</div><div class="info-item-2">Pandas的一些常用操作_3</div></div><div class="info-2"><div class="info-item-1"> 今天介绍Pandas对一些常见数据的处理方法。          1 2 3 import numpy as np import pandas as pd df = pd.read_csv(&#39;./economics.csv&#39;)   1.缺失数据处理        1 df.isna()#是否有缺失值           1 df.isna().mean()#缺失的比例           1 df[df.psavert.isna()]#查看某列是否有缺失值           1 df[df[[&#39;psavert&#39;,&#39;pop&#39;,&#39;uempmed&#39;]].isna().any(1)]#查看所有列至少有一个缺失值的行“any()至少有一个为空,all()都为空”           1 2 df[df[[&#39;psavert&#39;,&#39;pop&#39;,&#39;uempmed&#39;]].notna().all(1)]#查看所有没有缺失值的行 df.loc[df[[&#39;psavert&#39;,&#...</div></div></div></a><a class="pagination-related" href="/2023/03/24/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84/" title="虚拟机字节码执行引擎_00"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-24</div><div class="info-item-2">虚拟机字节码执行引擎_00</div></div><div class="info-2"><div class="info-item-1">虚拟机栈栈帧结构  虚拟机栈栈帧结构 局部变量表 局部变量表的空间分配 Slot 的复用   操作数栈 动态连接 方法返回地址    局部变量表 存放方法参数和方法内部定义的局部变量； Java 程序编译为 class 文件时，就确定了每个方法需要分配的局部变量表的最大容量。   最小单位：Slot； 一个 Slot 中可以存放：boolean，byte，char，short，int，float，reference，returnAddress (少见)； 虚拟机可通过局部变量表中的 reference 做到： 查找 Java 堆中的实例对象的起始地址； 查找方法区中的 Class 对象。      局部变量表的空间分配 Slot 的复用定义： 如果当前位置已经超过某个变量的作用域时，例如出了定义这个变量的代码块，这个变量对应的 Slot 就可以给其他变量使用了。但同时也说明，只要其他变量没有使用这部分 Slot 区域，这个变量就还保存在那里，这会对 GC 操作产生影响。 对 GC 操作的影响：         1 2 3 4 5 6 public static void main...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E5%92%8C%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82"><span class="toc-number">1.</span> <span class="toc-text">矩阵相关操作和矩阵快速幂</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A9%E9%98%B5%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97%E4%BB%A5%E5%8F%8A%E5%BF%AB%E9%80%9F%E5%B9%82%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.1.</span> <span class="toc-text">矩阵基本运算以及快速幂模板</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E7%BB%99%E5%87%BA%E4%B8%80%E4%B8%AA%E6%A8%A1%E6%9D%BF%E9%A2%98%EF%BC%8C%E7%9B%B4%E6%8E%A5%E5%8C%85%E5%90%AB%E4%BA%86%E5%9F%BA%E6%9C%AC%E7%9A%84%E4%B9%98%E6%B3%95%E5%92%8C%E6%B1%82%E5%B9%82%EF%BC%8C%E6%B1%82%E5%B9%82%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E8%BF%99%E7%AF%87%E4%B9%98%E6%B3%95%E5%BF%AB%E9%80%9F%E5%B9%82%E3%80%82"><span class="toc-number">1.1.1.</span> <span class="toc-text">直接给出一个模板题，直接包含了基本的乘法和求幂，求幂的详细解释，可以看这篇乘法快速幂。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%9D%A5%E6%BA%90-XYNU-OJ"><span class="toc-number">1.1.2.</span> <span class="toc-text">题目来源: XYNU OJ</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">1.1.3.</span> <span class="toc-text">题目</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POJ-3070-Fibonacci"><span class="toc-number">1.2.</span> <span class="toc-text">POJ - 3070. Fibonacci</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-number">1.2.1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text">解析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hdu-1757A-Simple-Math-Problem"><span class="toc-number">1.3.</span> <span class="toc-text">Hdu - 1757A. Simple Math Problem</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90-1"><span class="toc-number">1.3.3.</span> <span class="toc-text">解析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Codeforces-185A-Plant"><span class="toc-number">1.4.</span> <span class="toc-text">Codeforces - 185A. Plant</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E9%93%BE%E6%8E%A5-2"><span class="toc-number">1.4.1.</span> <span class="toc-text">题目链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE-3"><span class="toc-number">1.4.2.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90-2"><span class="toc-number">1.4.3.</span> <span class="toc-text">解析</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

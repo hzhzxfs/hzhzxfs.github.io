@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/6/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/10/05/%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%BB%E6%9C%80%E5%B0%8F%E5%80%BC%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim%20%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84%E6%95%B0%E9%87%8F(%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97(%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8C%E6%9C%80%E5%B0%8F%E5%80%BC%E6%9B%B4%E6%96%B0%E7%BB%93%E6%9E%84))/" title="最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构))</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-10-04T16:00:00.000Z" title="发表于 2022-10-05 00:00:00">2022-10-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/">Data Structure</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/21-categories/">21 categories</a></span></div><div class="content">最大值减去最小值小于等于aim的子数组数量(单调队列(最大值和最小值更新结构)) 注意: 子数组必须是下标连续的，而且i ~ i自己也算一个子数组。 解析这个题目也是使用单调队列(窗口内更新最大值和最小值)的结构来做，如果不懂单调队列先看这个博客。 先准备两个双端队列，分别是最大值更新结构和最小值更新结构：  先生成两个双端队列qmax和qmin，当子数组为arr[L...R]时，qmax维护了窗口子数组arr[L...R]的最大值更新结构，qmin维护了窗口子数组arr[L....R]的最小值更新结构； 当子数组arr[L....R]向右扩一个位置变成arr[L....R+1]时，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值； 当子数组arr[L....R]左边缩一个位置变成arr[L+1....R]是，qmax和qmin可以在O(1)时间内完成更新；并且可以在O(1)时间内得到窗口的最大值和最小值；  然后，我们需要证明两个结论:  下面看具体过程: 找到一个L，此时令R不断向右移动，表示arr[L...R]一直向右扩大，并...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/09/29/%E5%8D%95%E8%B0%83%E6%A0%88%E4%BB%8B%E7%BB%8D%E4%BB%A5%E5%8F%8A%E6%9E%84%E9%80%A0%E6%95%B0%E7%BB%84%E7%9A%84MaxTree%E9%97%AE%E9%A2%98/" title="单调栈介绍以及构造数组的MaxTree问题">单调栈介绍以及构造数组的MaxTree问题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-09-28T16:00:00.000Z" title="发表于 2022-09-29 00:00:00">2022-09-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/">Data Structure</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/21-categories/">21 categories</a></span></div><div class="content">单调栈介绍以及构造数组的MaxTree问题 单调栈介绍 单调栈解决构造数组的MaxTree问题 堆解决构造数组的MaxTree问题 完整测试代码   题目(构造数组的MaxTree问题) 单调栈介绍单调栈最初解决的问题就是寻找一个数组中 ，每一个数的左右两边离它最近的数。  遍历一个数组，如果栈为空或者栈顶比当前数大(或者相等，相等的话就多个下标对应一个值)，就把当前数入栈； 如果栈顶比当前数小，那么就处理这个栈顶，即这个栈顶右边第一个比它大的数就是当前数，左边第一个比它大的数就是在栈里面它的下面的那个数，也就是它出栈之后的栈顶； 当遍历完所有的数之后，栈中还有数，这时，逐个判断栈中的数，每一个数，它的右边不存在比它大的，如果这个数在栈里面它的下面还有数，它左边离他最近的大的数就是它下面的数；   单调栈解决构造数组的MaxTree问题按照下面的方法来建树  每一个树的父节点是它左边第一个比它大的数和它右边第一个比它大的数中，比较小的那个； 如果左边没有没有比它大的数，右边也没有。也就是说，这个数是整个数组的最大值，那么这个数是MaxTree的头结点；  按照大根堆和上面的方案放...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/09/16/%E5%B0%86%E5%8D%95%E9%93%BE%E8%A1%A8%E6%8C%89%E6%9F%90%E5%80%BC%E5%88%92%E5%88%86%E6%88%90%E5%B7%A6%E8%BE%B9%E5%B0%8F%EF%BC%8C%E4%B8%AD%E9%97%B4%E7%9B%B8%E7%AD%89%EF%BC%8C%E5%8F%B3%E8%BE%B9%E5%A4%A7%E7%9A%84%E5%BD%A2%E5%BC%8F/" title="将单链表按某值划分成左边小，中间相等，右边大的形式">将单链表按某值划分成左边小，中间相等，右边大的形式</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-09-15T16:00:00.000Z" title="发表于 2022-09-16 00:00:00">2022-09-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/">Data Structure</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Data-Structure/21-categories/">21 categories</a></span></div><div class="content">将单链表按某值划分成左边小，中间相等，右边大的形式 普通方法，将链表节点放到数组然后partition 进阶方法，将链表划分成三个子链表，然后合并   普通方法，将链表节点放到数组然后partition 这个方法比较简单，直接将链表中的值保存到一个数组中，然后按照荷兰国旗的划分方式，将数组划分成左边小于那个数，中间等于那个数，右边大于那个数的形式，(荷兰国旗问题用于快速排序中的partition过程)； 划分完之后，再把数组中的值用链表的形式连接起来。　但是这个方法需要额外的O(n)的空间复杂度，而且partition不能达到稳定性(就是会改变原来的相对顺序)；          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 static class Node {     public int value;     publ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/08/19/%E6%89%BE%E5%88%B0%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E7%9A%84%E6%9C%80%E5%A4%A7%E6%90%9C%E7%B4%A2%E4%BA%8C%E5%8F%89%E5%AD%90%E6%A0%91/" title="找到二叉树中的最大搜索二叉子树">找到二叉树中的最大搜索二叉子树</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-08-18T16:00:00.000Z" title="发表于 2022-08-19 00:00:00">2022-08-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">找到二叉树中的最大搜索二叉子树 递归 技巧的写法 完整测试代码  题目 递归解析:这种题目的解题过程分为三步:  列出所有可能性； **列出结点需要的信息，并整合信息(成一个结构体)**； 改递归 ，先假设左和右都给我信息(黑盒)，然后怎么利用左边和右边的信息组出来我该返回的信息，最后basecase(边界)填什么；  具体到这个题目：第一步，列出所有可能性：  第一种可能性，以node为头的结点的最大二叉搜索子树可能来自它左子树； 第二种可能性，以node为头的结点的最大二叉搜索子树可能来自它右子树； 第三种可能性，左树整体是搜索二叉树，右树整体也是搜索二叉树，而且左树的头是node.left，右树的头是node.right，且左树的最大值&lt; node.value，右树的最小值 &gt; node.value， 那么以我为头的整棵树都是搜索二叉树；  第二步，列出结点需要的信息:  信息一: 左树最大搜索二叉树大小； 信息二: 右树最大搜索二叉树大小； 信息三: 左树上最大搜索二叉树的头部是什么； 信息四: 右树上最大搜索二叉树的头部是什么； 信息五: 左树上的最大值； ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/08/02/%E5%9C%A8%E4%B8%80%E9%A2%97%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%AF%BB%E6%89%BE%E4%B8%80%E4%B8%AA%E7%BB%93%E7%82%B9%E7%9A%84%E5%90%8E%E7%BB%A7%E7%BB%93%E7%82%B9(%E5%89%8D%E9%A9%B1%E7%BB%93%E7%82%B9)/" title="在一颗二叉树中寻找一个结点的后继结点(前驱结点)">在一颗二叉树中寻找一个结点的后继结点(前驱结点)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-08-01T16:00:00.000Z" title="发表于 2022-08-02 00:00:00">2022-08-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">在一颗二叉树中寻找一个结点的后继结点(前驱结点) 找后继结点 找前驱结点   找后继结点首先知道什么是后继结点，就是二叉树中序遍历的序列中，某个结点紧随的那个结点比如下面的二叉树以及对应的中序遍历顺序。  则4的后继是2 ，2的后继是5，7的后继是null。 在树的结构中，每个结点有一个指向父亲的域parent，看如下结构         1 2 3 4 5 6 7 8 9 10 11 static class Node{     public int value;     public Node left;     public Node right;     public Node parent;      public Node(int value) {         this.value = value;     } }   那么如何快速的寻找当前结点node后继结点呢? 其实只需要分为两种情况  第一，如果node结点有右子树，那么就是右子树上最左的结点，例如上图的２的右子树上的最左结点是5，5的右子树上最左的结点是8，1的右子树上最左的结点是9，3的右子树上最左的结...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/07/27/%E5%A6%82%E4%BD%95%E7%9B%B4%E8%A7%82%E7%9A%84%E6%89%93%E5%8D%B0%E4%B8%80%E9%A2%97%E4%BA%8C%E5%8F%89%E6%A0%91/" title="如何直观的打印一颗二叉树">如何直观的打印一颗二叉树</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-07-26T16:00:00.000Z" title="发表于 2022-07-27 00:00:00">2022-07-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">如何直观的打印一颗二叉树打印的结果是需要顺时针旋转90度的，如下面的结果打印出来是这样的。   如何打印呢? 需要处理以下四个问题：  遍历树的顺序是　右子树-&gt;根-&gt;左子树； 因为要避免数字长度影响对齐的因素，所以两边补上空格(有一个总长度可以自己确定)； 在结点的两边加上特定的字符串标记区分孩子和父亲以及位置，使用 H、 ^、 v 这个几个标记 和高度有关系的 height * len， 打印相应前面的空格长度；   代码如下        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 public class PrintBinaryTree {      static class Node{         public int value;         public Node ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/07/05/%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8BMorris%E9%81%8D%E5%8E%86/" title="二叉树之Morris遍历">二叉树之Morris遍历</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-07-04T16:00:00.000Z" title="发表于 2022-07-05 00:00:00">2022-07-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">二叉树之Morris遍历 递归理解以及morris遍历 由morris遍历改成前序遍历 由morris遍历改成中序遍历 由morris遍历改成后续遍历 完整测试代码   递归理解以及morris遍历        1 2 3 4 5 6 7 8 static void rec(Node head) {      if (head == null) return;     System.out.print(head.value + &quot; &quot;); //这里打印就是前序遍历     rec(head.left);     System.out.print(head.value + &quot; &quot;); //这里打印就是中序遍历     rec(head.right);     System.out.print(head.value + &quot; &quot;); //这里打印就是后续遍历 }   这是我们用递归写的三种遍历方法，如果是下面的例子，上面程序输出如下：  程序输出:         1 1 2 4 8 8 8 4 4 2 5 5 9 9 9 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/06/25/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%BB%93%E7%82%B9%E9%97%B4%E7%9A%84%E6%9C%80%E5%A4%A7%E8%B7%9D%E7%A6%BB%E9%97%AE%E9%A2%98/" title="二叉树结点间的最大距离问题">二叉树结点间的最大距离问题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-24T16:00:00.000Z" title="发表于 2022-06-25 00:00:00">2022-06-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">二叉树结点间的最大距离问题 递归  改进的写法  完整测试代码 题目   递归解析这个也是一个二叉树的问题，分为三步:  列出所有可能性； 列出结点需要的信息，并整合信息(成一个结构体)； 改递归 ，先假设左和右都给我信息(黑盒)，然后怎么利用左边和右边的信息组出来我该返回的信息，最后basecase(边界)填什么；  具体到这个题目:第一步，列出可能性： 一个以node为头的树上，最大距离只可能来自下面三种情况:  不需要经过node这个点，node的左子树上自己的最大距离； 不需要经过node这个点，node的右子树上自己的最大距离； 要经过node这个点，此时就是左子树的高度 + 右子树的高度 + 1 ；  第二步，确定结点需要的信息，并整合:  信息一: 返回的以node为头的树的最大距离； 信息二: 返回的以node为头的高度；  第三步，封装信息，写出递归         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/06/06/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86,%E6%A0%91%E6%B7%B1%E5%BA%A6,%E7%BB%93%E7%82%B9%E4%B8%AA%E6%95%B0%E7%AD%89%E7%AD%89)/" title="二叉树的各种操作(递归和非递归遍历,树深度,结点个数等等)">二叉树的各种操作(递归和非递归遍历,树深度,结点个数等等)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-05T16:00:00.000Z" title="发表于 2022-06-06 00:00:00">2022-06-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">二叉树的各种操作(递归和非递归遍历,树深度,结点个数等等) 建立二叉树 1、根据下标关系 2、前序输入(cin)建立   前序遍历 1、递归前序 2、非递归前序   中序遍历 1、递归中序 2、非递归中序   后序遍历 1、递归后序 2、非递归后序   层次遍历 寻找树中有没有值为x的结点 统计树中结点的个数 计算树的高度 判断两颗树是不是相等 完整测试代码   二叉树建立先给出结点结构:         1 2 3 4 5 6 7 8 9 static class Node {     public int val;     public Node left;     public Node right;      public Node(int val) {         this.val = val;     } }   两种建立方式:  可以根据二叉树根节点和左右子结点的下标关系递归建立二叉树，层次输入二叉树结点； 也可以使用输入流前序建立二叉树(注意空树要输入-1)；  1、根据下标关系        1 2 3 4 5 6 7 8 9 &#96;&#96;&#96;...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2022/05/26/%E5%AD%90%E6%95%B0%E7%BB%84%E7%B4%AF%E5%8A%A0%E5%92%8C%E4%B8%BAaim(%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8Eaim)%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" title="子数组累加和为aim(小于等于aim)的三个问题">子数组累加和为aim(小于等于aim)的三个问题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-05-25T16:00:00.000Z" title="发表于 2022-05-26 00:00:00">2022-05-26</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="content">子数组累加和为aim(小于等于aim)的三个问题 累加和 = aim的最长子数组的长度(数组可+,-,0)； 累加和 = aim的最长子数组的长度(数组+)(只有正数)； 累加和 &lt;= aim的最长子数组的长度(数组可+,-,0)；   累加和 = aim的最长子数组的长度(数组可+,-,0)；这个题目使用HashMap来存储前面出现过的累加和的下标，具体过程如下:  使用变量sum表示从0位置开始一直加到i位置所有元素的累加和； HashMap中key表示从arr最左边开始累加过程中出现过的sum值，value表示的是sum值出现最早的位置；、 假设当前元素为arr[i]，则sum += arr[i]，之前所有累加和为sum ，查看map中是否有sum - aim这个值，如果有，且对应value为j，那么就找到一个子数组累加和为aim的，且长度为 i - j + 1； 检查现在的sum 是否在map中出现，如果不存在，说明此时是第一次出现的，把(sum,i)加入到map中； 继续遍历数组；  很重要的一个地方就是一开始map中要存(0,-1)这个值，直观理解是一个数也没有...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/5/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#content-inner">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/#content-inner">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/#content-inner">11</a><a class="extend next" rel="next" href="/page/7/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/"><span class="card-category-list-name">Categories</span><span class="card-category-list-count">109</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Algorithm/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">20</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Big-Data/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">2</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/C-C/21-categories/"><span class="card-category-list-name">21 categories</span><span class="card-category-list-count">2</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/102-tags/" style="font-size: 1.1em; color: #999">102 tags</a> <a href="/tags/Tags/" style="font-size: 1.1em; color: #999">Tags</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/06/">
+            <span class="card-archive-list-date">
+              六月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/05/">
+            <span class="card-archive-list-date">
+              五月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/04/">
+            <span class="card-archive-list-date">
+              四月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/03/">
+            <span class="card-archive-list-date">
+              三月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/02/">
+            <span class="card-archive-list-date">
+              二月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/01/">
+            <span class="card-archive-list-date">
+              一月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/12/">
+            <span class="card-archive-list-date">
+              十二月 2023
+            </span>
+            <span class="card-archive-list-count">4</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/11/">
+            <span class="card-archive-list-date">
+              十一月 2023
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">109</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-05T09:26:58.821Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

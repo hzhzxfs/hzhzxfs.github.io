@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>RabbitMQ | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="RabbitMQ1、什么是 RabbitMQ？为什么使用 RabbitMQ？RabbitMQ 是一款开源的，Erlang 编写的，基于 AMQP 协议的，消息中间件； 可以用它来：解耦、异步、削峰。 2、RabbitMQ 有什么优缺点？优点：解耦、异步、削峰； 缺点：降低了系统的稳定性：本来系统运行好好的，现在你非要加入个消息队列进去，那消息队列挂了，你的系统不是呵呵了。因此，系统可用性会降低；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/03/04/RabbitMQ/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="RabbitMQ1、什么是 RabbitMQ？为什么使用 RabbitMQ？RabbitMQ 是一款开源的，Erlang 编写的，基于 AMQP 协议的，消息中间件； 可以用它来：解耦、异步、削峰。 2、RabbitMQ 有什么优缺点？优点：解耦、异步、削峰； 缺点：降低了系统的稳定性：本来系统运行好好的，现在你非要加入个消息队列进去，那消息队列挂了，你的系统不是呵呵了。因此，系统可用性会降低；">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-03-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:13.553Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "RabbitMQ",
+  "url": "https://hzhzxfs.github.io/2024/03/04/RabbitMQ/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-03-03T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:13.553Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/03/04/RabbitMQ/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RabbitMQ',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">RabbitMQ</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">RabbitMQ</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-03T16:00:00.000Z" title="发表于 2024-03-04 00:00:00">2024-03-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:13.553Z" title="更新于 2026-06-05 16:26:13">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Message-Queues/">Message Queues</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Message-Queues/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h2><h4 id="1、什么是-RabbitMQ？为什么使用-RabbitMQ？"><a href="#1、什么是-RabbitMQ？为什么使用-RabbitMQ？" class="headerlink" title="1、什么是 RabbitMQ？为什么使用 RabbitMQ？"></a>1、什么是 RabbitMQ？为什么使用 RabbitMQ？</h4><p>RabbitMQ 是一款开源的，Erlang 编写的，基于 AMQP 协议的，消息中间件；</p>
+<p>可以用它来：解耦、异步、削峰。</p>
+<h4 id="2、RabbitMQ-有什么优缺点？"><a href="#2、RabbitMQ-有什么优缺点？" class="headerlink" title="2、RabbitMQ 有什么优缺点？"></a>2、RabbitMQ 有什么优缺点？</h4><p>优点：解耦、异步、削峰；</p>
+<p>缺点：降低了系统的稳定性：本来系统运行好好的，现在你非要加入个消息队列进去，那消息队列挂了，你的系统不是呵呵了。因此，系统可用性会降低；</p>
+<p>增加了系统的复杂性：加入了消息队列，要多考虑很多方面的问题，比如：一致性问题、如何保证消息不被重复消费、如何保证消息可靠性传输等。因此，需要考虑的东西更多，复杂性增大。</p>
+<h4 id="3-rabbitmq-的使用场景"><a href="#3-rabbitmq-的使用场景" class="headerlink" title="3.rabbitmq 的使用场景"></a>3.rabbitmq 的使用场景</h4><p>（1）服务间异步通信</p>
+<p>（2）顺序消费</p>
+<p>（3）定时任务</p>
+<p>（4）请求削峰</p>
+<h4 id="4-RabbitMQ基本概念"><a href="#4-RabbitMQ基本概念" class="headerlink" title="4.RabbitMQ基本概念"></a>4.RabbitMQ基本概念</h4><p>Broker： 简单来说就是消息队列服务器实体<br>Exchange： 消息交换机，它指定消息按什么规则，路由到哪个队列<br>Queue： 消息队列载体，每个消息都会被投入到一个或多个队列<br>Binding： 绑定，它的作用就是把exchange和queue按照路由规则绑定起来<br>Routing Key： 路由关键字，exchange根据这个关键字进行消息投递<br>VHost： vhost 可以理解为虚拟 broker ，即 mini-RabbitMQ server。其内部均含有独立的 queue、exchange 和 binding 等，但最最重要的是，其拥有独立的权限系统，可以做到 vhost 范围的用户控制。当然，从 RabbitMQ 的全局角度，vhost 可以作为不同权限隔离的手段（一个典型的例子就是不同的应用可以跑在不同的 vhost 中）。<br>Producer： 消息生产者，就是投递消息的程序<br>Consumer： 消息消费者，就是接受消息的程序<br>Channel： 消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务<br>由Exchange、Queue、RoutingKey三个才能决定一个从Exchange到Queue的唯一的线路。</p>
+<h4 id="5-RabbitMQ-中的-broker-是指什么？cluster-又是指什么？"><a href="#5-RabbitMQ-中的-broker-是指什么？cluster-又是指什么？" class="headerlink" title="5.RabbitMQ 中的 broker 是指什么？cluster 又是指什么？"></a>5.RabbitMQ 中的 broker 是指什么？cluster 又是指什么？</h4><p><code>broker</code> 是指一个或多个 <code>erlang node</code> 的逻辑分组，且 <code>node</code> 上运行着 <code>RabbitMQ</code> 应用程序。<br><code>cluster</code> 是在 <code>broker</code> 的基础之上，增加了 <code>node</code> 之间共享元数据的约束。</p>
+<h4 id="6、RabbitMQ-概念里的-channel、exchange-和-queue-是逻辑概念，还是对应着进程实体？分别起什么作用？"><a href="#6、RabbitMQ-概念里的-channel、exchange-和-queue-是逻辑概念，还是对应着进程实体？分别起什么作用？" class="headerlink" title="6、RabbitMQ 概念里的 channel、exchange 和 queue 是逻辑概念，还是对应着进程实体？分别起什么作用？"></a>6、RabbitMQ 概念里的 channel、exchange 和 queue 是逻辑概念，还是对应着进程实体？分别起什么作用？</h4><p><strong>Queue</strong> 具有自己的 <strong>erlang</strong> 进程；<strong>exchange</strong> 内部实现为保存 binding 关系的查找表；channel 是实际进行路由工作的实体，即负责按照 routing_key 将 message 投递给 queue 。由 AMQP 协议描述可知，channel 是真实 TCP 连接之上的虚拟连接，所有 AMQP 命令都是通过 channel 发送的，且每一个 channel 有唯一的 ID。一个 channel 只能被单独一个操作系统线程使用，故投递到特定 channel 上的 message 是有顺序的。但一个操作系统线程上允许使用多个 channel 。</p>
+<h4 id="7-vhost-是什么？起什么作用？"><a href="#7-vhost-是什么？起什么作用？" class="headerlink" title="7 vhost 是什么？起什么作用？"></a>7 vhost 是什么？起什么作用？</h4><p><code>vhost</code> 可以理解为虚拟 <code>broker</code> ，即 <code>mini-RabbitMQ server</code>。其内部均含有独立的 <code>queue</code>、<code>exchange</code> 和 <code>binding</code> 等，但最最重要的是，其拥有独立的权限系统，可以做到 <code>vhost</code> 范围的用户控制。当然，从 <code>RabbitMQ</code> 的全局角度，<code>vhost</code> 可以作为不同权限隔离的手段（一个典型的例子就是不同的应用可以跑在不同的 <code>vhost</code> 中）。</p>
+<h4 id="8-消息基于什么传输？"><a href="#8-消息基于什么传输？" class="headerlink" title="8. 消息基于什么传输？"></a>8. 消息基于什么传输？</h4><p>由于TCP连接的创建和销毁开销较大，且并发数受系统资源限制，会造成性能瓶颈。RabbitMQ使用信道的方式来传输数据。信道是建立在真实的TCP连接内的虚拟连接，且每条TCP连接上的信道数量没有限制。</p>
+<h4 id="9-消息如何分发？"><a href="#9-消息如何分发？" class="headerlink" title="9. 消息如何分发？"></a>9. 消息如何分发？</h4><p>若该队列至少有一个消费者订阅，消息将以循环（round-robin）的方式发送给消费者。每条消息只会分发给一个订阅的消费者（前提是消费者能够正常处理消息并进行确认）。</p>
+<h4 id="10-消息怎么路由？"><a href="#10-消息怎么路由？" class="headerlink" title="10. 消息怎么路由？"></a>10. 消息怎么路由？</h4><p>从概念上来说，消息路由必须有三部分：<strong>交换器</strong>、<strong>路由</strong>、<strong>绑定</strong>。生产者把消息发布到交换器上；绑定决定了消息如何从路由器路由到特定的队列；消息最终到达队列，并被消费者接收。</p>
+<p>消息发布到交换器时，消息将拥有一个路由键（routing key），在消息创建时设定。<br>通过队列路由键，可以把队列绑定到交换器上。<br>消息到达交换器后，RabbitMQ会将消息的路由键与队列的路由键进行匹配（针对不同的交换器有不同的路由规则）。如果能够匹配到队列，则消息会投递到相应队列中；如果不能匹配到任何队列，消息将进入 “黑洞”。</p>
+<p>常用的交换器主要分为一下三种：</p>
+<ul>
+<li>direct：如果路由键完全匹配，消息就被投递到相应的队列</li>
+<li>fanout：如果交换器收到消息，将会广播到所有绑定的队列上</li>
+<li>topic：可以使来自不同源头的消息能够到达同一个队列。使用topic交换器时，可以使用通配符。<br>比如：“*” 匹配特定位置的任意文本， “.” 把路由键分为了几部分，“#” 匹配所有规则等。<br>特别注意：发往topic交换器的消息不能随意的设置选择键（routing_key），必须是由”.”隔开的一系列的标识符组成。</li>
+</ul>
+<h4 id="11-什么是元数据？元数据分为哪些类型？包括哪些内容？与-cluster-相关的元数据有哪些？元数据是如何保存的？元数据在-cluster-中是如何分布的？"><a href="#11-什么是元数据？元数据分为哪些类型？包括哪些内容？与-cluster-相关的元数据有哪些？元数据是如何保存的？元数据在-cluster-中是如何分布的？" class="headerlink" title="11. 什么是元数据？元数据分为哪些类型？包括哪些内容？与 cluster 相关的元数据有哪些？元数据是如何保存的？元数据在 cluster 中是如何分布的？"></a>11. 什么是元数据？元数据分为哪些类型？包括哪些内容？与 cluster 相关的元数据有哪些？元数据是如何保存的？元数据在 cluster 中是如何分布的？</h4><p>在非 <code>cluster</code> 模式下，元数据主要分为 <code>Queue</code> 元数据（queue 名字和属性等）、<code>Exchange</code>元数据（exchange 名字、类型和属性等）、<code>Binding</code> 元数据（存放路由关系的查找表）、<code>Vhost</code>元数据（vhost 范围内针对前三者的名字空间约束和安全属性设置）。<br>在 <code>cluster</code> 模式下，还包括 cluster 中 node 位置信息和 node 关系信息。元数据按照 erlang node 的类型确定是仅保存于 RAM 中，还是同时保存在 RAM 和 disk 上。元数据在 cluster 中是全 node 分布的。</p>
+<h4 id="12-在单node-系统和多-node-构成的-cluster-系统中声明-queue、exchange-，以及进行-binding-会有什么不同？"><a href="#12-在单node-系统和多-node-构成的-cluster-系统中声明-queue、exchange-，以及进行-binding-会有什么不同？" class="headerlink" title="12. 在单node 系统和多 node 构成的 cluster 系统中声明 queue、exchange ，以及进行 binding 会有什么不同？"></a>12. 在单node 系统和多 node 构成的 cluster 系统中声明 queue、exchange ，以及进行 binding 会有什么不同？</h4><p>答：当你在单 node 上声明 queue 时，只要该 node 上相关元数据进行了变更，你就会得到 Queue.Declare-ok 回应；而在 cluster 上声明 queue ，则要求 cluster 上的全部 node 都要进行元数据成功更新，才会得到 Queue.Declare-ok 回应。另外，若 node 类型为 RAM node 则变更的数据仅保存在内存中，若类型为 disk node 则还要变更保存在磁盘上的数据。</p>
+<p>死信队列&amp;死信交换器：DLX 全称（Dead-Letter-Exchange）,称之为死信交换器，当消息变成一个死信之后，如果这个消息所在的队列存在x-dead-letter-exchange参数，那么它会被发送到x-dead-letter-exchange对应值的交换器上，这个交换器就称之为死信交换器，与这个死信交换器绑定的队列就是死信队列。</p>
+<h4 id="13-如何确保消息正确地发送至RabbitMQ？"><a href="#13-如何确保消息正确地发送至RabbitMQ？" class="headerlink" title="13. 如何确保消息正确地发送至RabbitMQ？"></a>13. 如何确保消息正确地发送至RabbitMQ？</h4><p><strong>RabbitMQ</strong>使用发送方确认模式，确保消息正确地发送到<strong>RabbitMQ</strong>。<br>发送方确认模式：将信道设置成<code>confirm</code>模式（发送方确认模式），则所有在信道上发布的消息都会被指派一个唯一的ID。一旦消息被投递到目的队列后，或者消息被写入磁盘后（可持久化的消息），信道会发送一个确认给生产者（包含消息唯一ID）。如果<code>RabbitMQ</code>发生内部错误从而导致消息丢失，会发送一条<code>nack</code>（not acknowledged，未确认）消息。发送方确认模式是异步的，生产者应用程序在等待确认的同时，可以继续发送消息。当确认消息到达生产者应用程序，生产者应用程序的回调方法就会被触发来处理确认消息。</p>
+<h4 id="14-如何确保消息接收方消费了消息？"><a href="#14-如何确保消息接收方消费了消息？" class="headerlink" title="14. 如何确保消息接收方消费了消息？"></a>14. 如何确保消息接收方消费了消息？</h4><p>接收方消息确认机制：消费者接收每一条消息后都必须进行确认（消息接收和消息确认是两个不同操作）。只有消费者确认了消息，<code>RabbitMQ</code>才能安全地把消息从队列中删除。这里并没有用到超时机制，<code>RabbitMQ</code>仅通过<code>Consumer</code>的连接中断来确认是否需要重新发送消息。也就是说，只要连接不中断，<code>RabbitMQ</code>给了<code>Consumer</code>足够长的时间来处理消息。</p>
+<p>下面罗列几种特殊情况：</p>
+<ul>
+<li>如果消费者接收到消息，在确认之前断开了连接或取消订阅，RabbitMQ会认为消息没有被分发，然后重新分发给下一个订阅的消费者。（可能存在消息重复消费的隐患，需要根据bizId去重）</li>
+<li>如果消费者接收到消息却没有确认消息，连接也未断开，则RabbitMQ认为该消费者繁忙，将不会给该消费者分发更多的消息。</li>
+</ul>
+<h4 id="15、如何保证-RabbitMQ-不被重复消费？"><a href="#15、如何保证-RabbitMQ-不被重复消费？" class="headerlink" title="15、如何保证 RabbitMQ 不被重复消费？"></a>15、如何保证 RabbitMQ 不被重复消费？</h4><p>先说为什么会重复消费：正常情况下，消费者在消费消息的时候，消费完毕后，会发送一个确认消息给消息队列，消息队列就知道该消息被消费了，就会将该消息从消息队列中删除；</p>
+<p>但是因为网络传输等等故障，确认信息没有传送到消息队列，导致消息队列不知道自己已经消费过该消息了，再次将消息分发给其他的消费者。</p>
+<p>针对以上问题，一个解决思路是：保证消息的唯一性，就算是多次传输，不要让消息的多次消费带来影响；保证消息等幂性；</p>
+<p>比如：在写入消息队列的数据做唯一标示，消费消息时，根据唯一标识判断是否消费过；</p>
+<h4 id="16、如何保证-RabbitMQ-消息的可靠传输？"><a href="#16、如何保证-RabbitMQ-消息的可靠传输？" class="headerlink" title="16、如何保证 RabbitMQ 消息的可靠传输？"></a>16、如何保证 RabbitMQ 消息的可靠传输？</h4><p>消息不可靠的情况可能是消息丢失，劫持等原因；</p>
+<p>丢失又分为：生产者丢失消息、消息列表丢失消息、消费者丢失消息；</p>
+<p>生产者丢失消息：从生产者弄丢数据这个角度来看，RabbitMQ 提供 transaction 和 confirm 模式来确保生产者不丢消息；</p>
+<p>transaction 机制就是说：发送消息前，开启事务（channel.txSelect()）, 然后发送消息，如果发送过程中出现什么异常，事务就会回滚（channel.txRollback()）, 如果发送成功则提交事务（channel.txCommit()）。然而，这种方式有个缺点：吞吐量下降；</p>
+<p>confirm 模式用的居多：一旦 channel 进入 confirm 模式，所有在该信道上发布的消息都将会被指派一个唯一的 ID（从 1 开始），一旦消息被投递到所有匹配的队列之后；</p>
+<p>rabbitMQ 就会发送一个 ACK 给生产者（包含消息的唯一 ID），这就使得生产者知道消息已经正确到达目的队列了；</p>
+<p>如果 rabbitMQ 没能处理该消息，则会发送一个 Nack 消息给你，你可以进行重试操作。</p>
+<p>消息队列丢数据：消息持久化。</p>
+<p>处理消息队列丢数据的情况，一般是开启持久化磁盘的配置。</p>
+<p>这个持久化配置可以和 confirm 机制配合使用，你可以在消息持久化磁盘后，再给生产者发送一个 Ack 信号。</p>
+<p>这样，如果消息持久化磁盘之前，rabbitMQ 阵亡了，那么生产者收不到 Ack 信号，生产者会自动重发。</p>
+<p>那么如何持久化呢？</p>
+<p>这里顺便说一下吧，其实也很容易，就下面两步</p>
+<ol>
+<li>将 queue 的持久化标识 durable 设置为 true, 则代表是一个持久的队列</li>
+<li>发送消息的时候将 deliveryMode&#x3D;2</li>
+</ol>
+<p>这样设置以后，即使 rabbitMQ 挂了，重启后也能恢复数据</p>
+<p>消费者丢失消息：消费者丢数据一般是因为采用了自动确认消息模式，改为手动确认消息即可！</p>
+<p>消费者在收到消息之后，处理消息之前，会自动回复 RabbitMQ 已收到消息；</p>
+<p>如果这时处理消息失败，就会丢失该消息；</p>
+<p>解决方案：处理消息成功后，手动回复确认消息。</p>
+<h4 id="17、如何保证-RabbitMQ-消息的顺序性？"><a href="#17、如何保证-RabbitMQ-消息的顺序性？" class="headerlink" title="17、如何保证 RabbitMQ 消息的顺序性？"></a>17、如何保证 RabbitMQ 消息的顺序性？</h4><p>单线程消费保证消息的顺序性；对消息进行编号，消费者处理消息是根据编号处理消息；</p>
+<h4 id="18-死信队列和延迟队列的使用"><a href="#18-死信队列和延迟队列的使用" class="headerlink" title="18. 死信队列和延迟队列的使用?"></a>18. 死信队列和延迟队列的使用?</h4><p><strong>死信消息：</strong></p>
+<p>消息被拒绝（Basic.Reject或Basic.Nack）并且设置 requeue 参数的值为 false<br>消息过期了<br>队列达到最大的长度</p>
+<p><strong>过期消息：</strong></p>
+<p>在 rabbitmq 中存在2种方可设置消息的过期时间，第一种通过对队列进行设置，这种设置后，该队列中所有的消息都存在相同的过期时间，第二种通过对消息本身进行设置，那么每条消息的过期时间都不一样。如果同时使用这2种方法，那么以过期时间小的那个数值为准。当消息达到过期时间还没有被消费，那么那个消息就成为了一个 死信 消息。</p>
+<p>**队列设置：**在队列申明的时候使用 x-message-ttl 参数，单位为 毫秒</p>
+<p>**单个消息设置：**是设置消息属性的 expiration 参数的值，单位为 毫秒</p>
+<p>**延时队列：**在rabbitmq中不存在延时队列，但是我们可以通过设置消息的过期时间和死信队列来模拟出延时队列。消费者监听死信交换器绑定的队列，而不要监听消息发送的队列。</p>
+<hr>
+<p>有了以上的基础知识，我们完成以下需求：</p>
+<p>需求：用户在系统中创建一个订单，如果超过时间用户没有进行支付，那么自动取消订单。</p>
+<p>分析：</p>
+<p>1、上面这个情况，我们就适合使用延时队列来实现，那么延时队列如何创建<br>2、延时队列可以由 过期消息+死信队列 来时间<br>3、过期消息通过队列中设置 x-message-ttl 参数实现<br>4、死信队列通过在队列申明时，给队列设置 x-dead-letter-exchange 参数，然后另外申明一个队列绑定x-dead-letter-exchange对应的交换器。</p>
+<h4 id="19-使用了消息队列会有什么缺点"><a href="#19-使用了消息队列会有什么缺点" class="headerlink" title="19. 使用了消息队列会有什么缺点?"></a>19. 使用了消息队列会有什么缺点?</h4><p>1.系统可用性降低:你想啊，本来其他系统只要运行好好的，那你的系统就是正常的。现在你非要加个消息队列进去，那消息队列挂了，你的系统不是呵呵了。因此，系统可用性降低</p>
+<p>2.系统复杂性增加:要多考虑很多方面的问题，比如一致性问题、如何保证消息不被重复消费，如何保证保证消息可靠传输。因此，需要考虑的东西更多，系统复杂性增大。</p>
+<h4 id="20-多个消费者监听一个队列时，消息如何分发"><a href="#20-多个消费者监听一个队列时，消息如何分发" class="headerlink" title="20. 多个消费者监听一个队列时，消息如何分发?"></a>20. 多个消费者监听一个队列时，消息如何分发?</h4><ul>
+<li>轮询: 默认的策略，消费者轮流，平均地接收消息</li>
+<li>公平分发: 根据消费者的能力来分发消息，给空闲的消费者发送更多消息</li>
+</ul>
+<p>当消费者有x条消息没有响应ACK时，不再给这个消费者发送消息</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>channel.basicQos(int x)</code></td>
+</tr>
+</tbody></table>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/woadmin/p/10537174.html">https://www.cnblogs.com/woadmin/p/10537174.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/thinkwon/article/details/104588612/">https://blog.csdn.net/thinkwon/article/details/104588612/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/coder-programming/p/12465314.html">https://www.cnblogs.com/coder-programming/p/12465314.html</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/03/04/RabbitMQ/">https://hzhzxfs.github.io/2024/03/04/RabbitMQ/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/03/15/Tomcat/" title="Tomcat"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Tomcat</div></div><div class="info-2"><div class="info-item-1">Tomcat1.Tomcat的缺省端口是多少，怎么修改？1）找到Tomcat目录下的conf文件夹 2）进入conf文件夹里面找到server.xml文件 3）打开server.xml文件 4）在server.xml文件里面找到下列信息 port&#x3D;”8080”改成你想要的端口 2.tomcat 有哪几种Connector 运行模式(优化)？bio：传统的Java I&#x2F;O操作，同步且阻塞IO。maxThreads&#x3D;”150”&#x2F;&#x2F;Tomcat使用线程来处理接收的每个请求。这个值表示Tomcat可创建的最大的线程数。默认值200。可以根据机器的时期性能和内存大小调整，一般可以在400-500。最大可以在800左右。minSpareThreads&#x3D;”25”—Tomcat初始化时创建的线程数。默认值4。如果当前没有空闲线程，且没有超过maxThreads，一次性创建的空闲线程数量。Tomcat初始化时创建的线程数量也由此值设置。maxSpareThreads&#x3D;”75”–一旦创建的线程超过这个值，Tomcat就会关闭不再需...</div></div></div></a><a class="pagination-related" href="/2024/02/26/Nginx/" title="Nginx"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Nginx</div></div><div class="info-2"><div class="info-item-1">Nginx1.什么是Nginx?Nginx是一个高性能的HTTP和反向代理服务器。同时也是一个 IMAP&#x2F;POP3&#x2F;SMTP 代理服务器。 官方网站:http://nginx.org。 2.Nginx主要特征？处理静态文件，索引文件以及自动索引;打开文件描述符缓冲. 无缓存的反向代理加速，简单的负载均衡和容错. FastCGI，简单的负载均衡和容错.模块化的结构。包括 gzipping, byte ranges, chunked responses,以及 SSI-filter 等filter。如果由 FastCGI 或其它代理服务器处理单页中存在的多个 SSI，则这项处理可以并行 运行，而不需要相互等待。 支持 SSL 和 TLSSNI. Nginx 它支持内核 Poll 模型，能经受高负载的考验,有报告表明能支持高达 50,000 个并发连接数。 Nginx 具有很高的稳定性。 例如当前 apache 一旦上到 200 个以上进程，web 响应速度就明显非常缓慢了。而 Nginx 采取了分阶段资源分配技术，使得它的 CPU 与内存占用率非常低。nginx 官...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/08/02/%E5%9C%A8%E4%B8%80%E9%A2%97%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%AF%BB%E6%89%BE%E4%B8%80%E4%B8%AA%E7%BB%93%E7%82%B9%E7%9A%84%E5%90%8E%E7%BB%A7%E7%BB%93%E7%82%B9(%E5%89%8D%E9%A9%B1%E7%BB%93%E7%82%B9)/" title="在一颗二叉树中寻找一个结点的后继结点(前驱结点)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-02</div><div class="info-item-2">在一颗二叉树中寻找一个结点的后继结点(前驱结点)</div></div><div class="info-2"><div class="info-item-1">在一颗二叉树中寻找一个结点的后继结点(前驱结点) 找后继结点 找前驱结点   找后继结点首先知道什么是后继结点，就是二叉树中序遍历的序列中，某个结点紧随的那个结点比如下面的二叉树以及对应的中序遍历顺序。  则4的后继是2 ，2的后继是5，7的后继是null。 在树的结构中，每个结点有一个指向父亲的域parent，看如下结构         1 2 3 4 5 6 7 8 9 10 11 static class Node{     public int value;     public Node left;     public Node right;     public Node parent;      public Node(int value) {         this.value = value;     } }   那么如何快速的寻找当前结点node后继结点呢? 其实只需要分为两种情况  第一，如果node结点有右子树，那么就是右子树上最左的结点，例如上图的２的右子树上的最左结点是5，5的右子树上最左的结点是8，1的右子树上最左的结点是9，3的右子树上最左的结...</div></div></div></a><a class="pagination-related" href="/2021/09/05/JVM%E6%80%BB%E7%BB%93(%E4%BA%8C)%20-%20%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" title="JVM总结(二)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-05</div><div class="info-item-2">JVM总结(二)</div></div><div class="info-2"><div class="info-item-1">JVM总结(二) - 垃圾收集器与内存分配策略 一、垃圾回收概述 二、如何判定对象为垃圾对象 1、引用计数法 2、可达性分析算法 3、引用分类 4、生存还是死亡-finalize()方法 5、回收方法区   三、垃圾回收算法 1、标记清除算法 2、复制算法 3、标记整理算法 4、分代收集算法   四、垃圾收集器 1、各个垃圾收集器的联系 2、Serial收集器 3、ParNew收集器 4、Parallel Scavenge收集器 5、Serial Old收集器 6、Paralell Old收集器 7、CMS收集器 8、G1收集器 9、各种垃圾收集算法的对比   五、内存分配与回收策略 1、对象优先在Eden分配 2、大对象直接进入老年代 3、长期存活对象将进入老年代 4、空间分配担保 5、动态对象年龄判定 6、关于逃逸分析以及栈上分配     一、垃圾回收概述关于垃圾回收，主要探讨下面四个问题。  1、回收区域  程序计数器、虚拟机栈和本地方法栈这三个区域属于线程私有的，只存在于线程的生命周期内，线程结束之后也会消失，因此不需要对这三个区域进行垃圾回收； 垃圾回收主要是针对 Ja...</div></div></div></a><a class="pagination-related" href="/2021/11/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E4%B8%80%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%92%8C%E5%8D%8F%E8%AE%AE(%E4%B8%80)/" title="计算机网络知识总结一计算机网络和协议(一)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-21</div><div class="info-item-2">计算机网络知识总结一计算机网络和协议(一)</div></div><div class="info-2"><div class="info-item-1">计算机网络知识总结一计算机网络和协议(一) 互联网概述 互联网组成 计算机网络的性能指标 OSI参考模型以及TCP&#x2F;IP四层模型、五层协议 通信过程、数据传输、网络设备 小结   互联网概述 计算机网络: 由若干节点和连接这些节点的链路组成，网络中的节点可以是计算机、集线器、交换机、或路由器等； 网络之间可以通过路由器相互连接，这就构成了一个更大范围的计算机网路，这样的网路称为互连网，因此互连网是网路的网路； 因特网(互联网): 全球最大的特定互连网；  注意以下两个意思相差很大的名词 internet 和 Internet [RFC 1208]:  以小写字母 i 开始的 internet (互连网) 是一个通用名词，它泛指由多个计算机网络互连而成的计算机网络。在这些网络之间的通信协议〈即通信规则) 可以任意选择，不一定非要使用TCP/IP 协议； 以大写字母 I 开始的 Internet 〈互联网或因特网) 则是一个专用名词，它指当前全球最大的、开放的、由众多网络相互连接而成的特定互连网，它采用 TCP/IP 协议族作为通信的规则，且其前身是美国的 ARPANET；...</div></div></div></a><a class="pagination-related" href="/2023/12/15/Git/" title="Git必知必会"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-15</div><div class="info-item-2">Git必知必会</div></div><div class="info-2"><div class="info-item-1">Git1.什么是Git？我建议你先通过了解 git 的架构再来回答这个问题，如下图所示，试着解释一下这个图：  Git 是分布式版本控制系统（DVCS）。它可以跟踪文件的更改，并允许你恢复到任何特定版本的更改。 与 SVN 等其他版本控制系统（VCS）相比，其分布式架构具有许多优势，一个主要优点是它不依赖于中央服务器来存储项目文件的所有版本。 每个开发人员都可以“克隆”我在图中用“Local repository”标注的存储库的副本，并且在他的硬盘驱动器上具有项目的完整历史记录，因此当服务器中断时，你需要的所有恢复数据都在你队友的本地 Git 存储库中。 还有一个中央云存储库，开发人员可以向其提交更改，并与其他团队成员进行共享，如图所示，所有协作者都在提交更改“远程存储库”。  2.Git 工作流程本章节我们将为大家介绍 Git 的工作流程。 一般工作流程如下：  克隆 Git 资源作为工作目录。 在克隆的资源上添加或修改文件。 如果其他人修改了，你可以更新资源。 在提交前查看修改。 提交修改。 在修改完成后，如果发现错误，可以撤回提交并再次修改并提交。  下图展示了 Git 的...</div></div></div></a><a class="pagination-related" href="/2021/06/27/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%8A%82%E7%82%B9%E5%88%86%E7%B1%BB%E4%B8%8E%E8%BE%B9%E9%A2%84%E6%B5%8B/" title="图神经网络——节点分类与边预测"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-27</div><div class="info-item-2">图神经网络——节点分类与边预测</div></div><div class="info-2"><div class="info-item-1">1.InMemoryDataset基类在PyG中，可以通过继承InMemoryDataset类来自定义一个数据可全部存储到内存的数据集类。(继承Dataset是分次加载到内存，继承InMemoryDataset是一次性加载所有数据到内存)         1 class InMemoryDataset(root: Optional[str] = None, transform: Optional[Callable] = None, pre_transform: Optional[Callable] = None, pre_filter: Optional[Callable] = None)   参数说明：  transform：数据转换函数，用于转换Data对象，每一次数据获取过程中都会被执行。pre_transform：数据转换函数，用于转换Data对象，在Data对象被保存到文件前调用。pre_filter：检查数据是否要保留的函数，接收一个Data对象，返回此Data对象是否应该被包含在最终的数据集中，在Data对象被保存到文件前调用。  2.Sequential容器nn....</div></div></div></a><a class="pagination-related" href="/2023/04/01/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8/" title="虚拟机字节码执行引擎_01"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="info-item-2">虚拟机字节码执行引擎_01</div></div><div class="info-2"><div class="info-item-1">方法调用Java 的方法的执行分为两个部分：  方法调用：确定被调用的方法是哪一个； 基于栈的解释执行：真正的执行方法的字节码。  在本节中我们将对方法调用进行详细的讲解，我们知道，一切方法的调用在 Class 文件中存储的都是常量池中的符号引用，而不是方法实际运行时的入口地址（直接引用），直到类加载的时候，甚至是实际运行的时候才回去会去确定要被运行的方法的直接引用，而确定要被运行的方法的直接引用的过程就叫做方法调用。  方法调用 方法调用字节码指令 解析调用 分派调用 静态分派（方法重载） 变量的静态类型和实际类型 重载方法匹配优先级，例如一个字符 ‘a’ 作为入参   动态分派（方法重写） 动态分派的过程 动态分派的实现   单分派与多分派   动态类型语言支持 java.lang.invoke 包 MethodHandle 的使用 MethodHandle 和 Reflection 的区别   invokedynamic 指令      方法调用字节码指令Java 虚拟机提供了 5 个职责不同的方法调用字节码指令：  invokestatic：调用静态方法； invokes...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMQ"><span class="toc-number">1.</span> <span class="toc-text">RabbitMQ</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF-RabbitMQ%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-RabbitMQ%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1、什么是 RabbitMQ？为什么使用 RabbitMQ？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81RabbitMQ-%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2、RabbitMQ 有什么优缺点？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-rabbitmq-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.3.</span> <span class="toc-text">3.rabbitmq 的使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-RabbitMQ%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.4.</span> <span class="toc-text">4.RabbitMQ基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-RabbitMQ-%E4%B8%AD%E7%9A%84-broker-%E6%98%AF%E6%8C%87%E4%BB%80%E4%B9%88%EF%BC%9Fcluster-%E5%8F%88%E6%98%AF%E6%8C%87%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.5.</span> <span class="toc-text">5.RabbitMQ 中的 broker 是指什么？cluster 又是指什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81RabbitMQ-%E6%A6%82%E5%BF%B5%E9%87%8C%E7%9A%84-channel%E3%80%81exchange-%E5%92%8C-queue-%E6%98%AF%E9%80%BB%E8%BE%91%E6%A6%82%E5%BF%B5%EF%BC%8C%E8%BF%98%E6%98%AF%E5%AF%B9%E5%BA%94%E7%9D%80%E8%BF%9B%E7%A8%8B%E5%AE%9E%E4%BD%93%EF%BC%9F%E5%88%86%E5%88%AB%E8%B5%B7%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-number">1.6.</span> <span class="toc-text">6、RabbitMQ 概念里的 channel、exchange 和 queue 是逻辑概念，还是对应着进程实体？分别起什么作用？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-vhost-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E8%B5%B7%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-number">1.7.</span> <span class="toc-text">7 vhost 是什么？起什么作用？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E6%B6%88%E6%81%AF%E5%9F%BA%E4%BA%8E%E4%BB%80%E4%B9%88%E4%BC%A0%E8%BE%93%EF%BC%9F"><span class="toc-number">1.8.</span> <span class="toc-text">8. 消息基于什么传输？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E6%B6%88%E6%81%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91%EF%BC%9F"><span class="toc-number">1.9.</span> <span class="toc-text">9. 消息如何分发？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-%E6%B6%88%E6%81%AF%E6%80%8E%E4%B9%88%E8%B7%AF%E7%94%B1%EF%BC%9F"><span class="toc-number">1.10.</span> <span class="toc-text">10. 消息怎么路由？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%9F%E5%85%83%E6%95%B0%E6%8D%AE%E5%88%86%E4%B8%BA%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%EF%BC%9F%E5%8C%85%E6%8B%AC%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9%EF%BC%9F%E4%B8%8E-cluster-%E7%9B%B8%E5%85%B3%E7%9A%84%E5%85%83%E6%95%B0%E6%8D%AE%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F%E5%85%83%E6%95%B0%E6%8D%AE%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E5%AD%98%E7%9A%84%EF%BC%9F%E5%85%83%E6%95%B0%E6%8D%AE%E5%9C%A8-cluster-%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%B8%83%E7%9A%84%EF%BC%9F"><span class="toc-number">1.11.</span> <span class="toc-text">11. 什么是元数据？元数据分为哪些类型？包括哪些内容？与 cluster 相关的元数据有哪些？元数据是如何保存的？元数据在 cluster 中是如何分布的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E5%9C%A8%E5%8D%95node-%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A4%9A-node-%E6%9E%84%E6%88%90%E7%9A%84-cluster-%E7%B3%BB%E7%BB%9F%E4%B8%AD%E5%A3%B0%E6%98%8E-queue%E3%80%81exchange-%EF%BC%8C%E4%BB%A5%E5%8F%8A%E8%BF%9B%E8%A1%8C-binding-%E4%BC%9A%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-number">1.12.</span> <span class="toc-text">12. 在单node 系统和多 node 构成的 cluster 系统中声明 queue、exchange ，以及进行 binding 会有什么不同？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%B6%88%E6%81%AF%E6%AD%A3%E7%A1%AE%E5%9C%B0%E5%8F%91%E9%80%81%E8%87%B3RabbitMQ%EF%BC%9F"><span class="toc-number">1.13.</span> <span class="toc-text">13. 如何确保消息正确地发送至RabbitMQ？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%B6%88%E6%81%AF%E6%8E%A5%E6%94%B6%E6%96%B9%E6%B6%88%E8%B4%B9%E4%BA%86%E6%B6%88%E6%81%AF%EF%BC%9F"><span class="toc-number">1.14.</span> <span class="toc-text">14. 如何确保消息接收方消费了消息？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15%E3%80%81%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-RabbitMQ-%E4%B8%8D%E8%A2%AB%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%EF%BC%9F"><span class="toc-number">1.15.</span> <span class="toc-text">15、如何保证 RabbitMQ 不被重复消费？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16%E3%80%81%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-RabbitMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%EF%BC%9F"><span class="toc-number">1.16.</span> <span class="toc-text">16、如何保证 RabbitMQ 消息的可靠传输？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17%E3%80%81%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-RabbitMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7%EF%BC%9F"><span class="toc-number">1.17.</span> <span class="toc-text">17、如何保证 RabbitMQ 消息的顺序性？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18-%E6%AD%BB%E4%BF%A1%E9%98%9F%E5%88%97%E5%92%8C%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.18.</span> <span class="toc-text">18. 死信队列和延迟队列的使用?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19-%E4%BD%BF%E7%94%A8%E4%BA%86%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%BC%9A%E6%9C%89%E4%BB%80%E4%B9%88%E7%BC%BA%E7%82%B9"><span class="toc-number">1.19.</span> <span class="toc-text">19. 使用了消息队列会有什么缺点?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20-%E5%A4%9A%E4%B8%AA%E6%B6%88%E8%B4%B9%E8%80%85%E7%9B%91%E5%90%AC%E4%B8%80%E4%B8%AA%E9%98%9F%E5%88%97%E6%97%B6%EF%BC%8C%E6%B6%88%E6%81%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91"><span class="toc-number">1.20.</span> <span class="toc-text">20. 多个消费者监听一个队列时，消息如何分发?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.21.</span> <span class="toc-text">参考</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

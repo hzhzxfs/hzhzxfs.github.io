@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>图的基本结构以及BFS和DFS(递归和非递归) | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="图的基本结构以及BFS和DFS(递归和非递归) 完整的图结构 有向图建图以及BFS和DFS 无向图建图以及BFS和DFS DFS和BFS常见应用   完整的图结构 图的每个顶点包括顶点的值、入度、出度、和它相邻的点(或者在有向图中就是下一个可以到达的点)的集合、以及以它为起点出发的边的集合； 图的每条边包括边的权值、边的起点、边的终点； 一个图包括点的集合和边的集合；  综上可以得到如下的图结构:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图的基本结构以及BFS和DFS(递归和非递归)">
+<meta property="og:url" content="https://hzhzxfs.github.io/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="图的基本结构以及BFS和DFS(递归和非递归) 完整的图结构 有向图建图以及BFS和DFS 无向图建图以及BFS和DFS DFS和BFS常见应用   完整的图结构 图的每个顶点包括顶点的值、入度、出度、和它相邻的点(或者在有向图中就是下一个可以到达的点)的集合、以及以它为起点出发的边的集合； 图的每条边包括边的权值、边的起点、边的终点； 一个图包括点的集合和边的集合；  综上可以得到如下的图结构:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2022-01-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:00.968Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "图的基本结构以及BFS和DFS(递归和非递归)",
+  "url": "https://hzhzxfs.github.io/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2022-01-28T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:00.968Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '图的基本结构以及BFS和DFS(递归和非递归)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">图的基本结构以及BFS和DFS(递归和非递归)</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">图的基本结构以及BFS和DFS(递归和非递归)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-28T16:00:00.000Z" title="发表于 2022-01-29 00:00:00">2022-01-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:00.968Z" title="更新于 2026-06-05 16:26:00">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/">Algorithm</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Algorithm/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="图的基本结构以及BFS和DFS-递归和非递归"><a href="#图的基本结构以及BFS和DFS-递归和非递归" class="headerlink" title="图的基本结构以及BFS和DFS(递归和非递归)"></a>图的基本结构以及BFS和DFS(递归和非递归)</h2><ul>
+<li>完整的图结构</li>
+<li>有向图建图以及BFS和DFS</li>
+<li>无向图建图以及BFS和DFS</li>
+<li>DFS和BFS常见应用</li>
+</ul>
+<hr>
+<h3 id="完整的图结构"><a href="#完整的图结构" class="headerlink" title="完整的图结构"></a>完整的图结构</h3><ul>
+<li>图的每个顶点包括顶点的值、入度、出度、和<strong>它相邻的点(或者在有向图中就是下一个可以到达的点)的集合</strong>、以及<strong>以它为起点出发的边的集合；</strong></li>
+<li>图的每条边包括边的权值、边的起点、边的终点；</li>
+<li>一个图包括点的集合和边的集合；</li>
+</ul>
+<p>综上可以得到如下的图结构:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39</code></td>
+<td><code>//点  (默认我是from的情况下)    static class Node{        public int value;        public int in; //入度        public int out; //出度        public ArrayList&lt;Node&gt;nexts;// 从我出发能到达的下一级结点，就是邻居结点  可以有多个(邻居)(跳一步)	        public ArrayList&lt;Edge&gt;edges;//我是from的情况下，从我出发，发散出边的集合         public Node(int value) {            this.value = value;            in = 0;            out = 0;            nexts = new ArrayList&lt;&gt;();            edges = new ArrayList&lt;&gt;();        }    }    //边    static class Edge{        public int weight;        public Node from;        public Node to;         public Edge( Node from, Node to, int weight) {            this.from = from;            this.to = to;            this.weight = weight;        }    }     //图    static class Graph{        HashMap&lt;Integer,Node&gt;nodes; // 点的编号,以及实际对应的node        HashSet&lt;Edge&gt;edges;         public Graph() {            nodes = new HashMap&lt;&gt;();            edges = new HashSet&lt;&gt;();        }    }</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="有向图建图以及BFS和DFS"><a href="#有向图建图以及BFS和DFS" class="headerlink" title="有向图建图以及BFS和DFS"></a>有向图建图以及BFS和DFS</h3><p>这里使用一个二维矩阵来表示图(<strong>每一行都代表输入一条边</strong>)，第一列表示的是边的起点、第二列是边的终点、第三列是边的权值。如下例子:</p>
+<p><img src="/images/p1.png" alt="这里写图片描述"></p>
+<p>使用上面的例子来建图并进行BFS(广度遍历)和DFS(深度遍历)的代码如下: (<strong>在遍历的过程中边的集合几乎用不到</strong>)</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149</code></td>
+<td><code>import java.util.*;  /**  * 完整的图的结构  */ public class GraphTest {      //点     static class Node {         public int value;         public int in; //入度         public int out; //出度         public ArrayList&lt;Node&gt; nexts;         public ArrayList&lt;Edge&gt; edges;          public Node(int value) {             this.value = value;             in = 0;             out = 0;             nexts = new ArrayList&lt;&gt;();             edges = new ArrayList&lt;&gt;();         }     }      //边     static class Edge {         public int weight;         public Node from;         public Node to;          public Edge(Node from, Node to, int weight) {             this.from = from;             this.to = to;             this.weight = weight;         }     }      //图     static class Graph {         HashMap&lt;Integer, Node&gt; nodes;         HashSet&lt;Edge&gt; edges;          public Graph() {             nodes = new HashMap&lt;&gt;();             edges = new HashSet&lt;&gt;();         }     }       static Graph createGraph(Integer[][] matrix) {         Graph graph = new Graph();         for (int i = 0; i &lt; matrix.length; i++) {             Integer from = matrix[i][0];             Integer to = matrix[i][1];             Integer weight = matrix[i][2];              if (!graph.nodes.containsKey(from)) graph.nodes.put(from, new Node(from));             if (!graph.nodes.containsKey(to)) graph.nodes.put(to, new Node(to));              Node fromNode = graph.nodes.get(from);             Node toNode = graph.nodes.get(to);              fromNode.nexts.add(toNode);//有向图             fromNode.out++;             toNode.in++;              Edge newEdge = new Edge(fromNode, toNode, weight);             fromNode.edges.add(newEdge);             graph.edges.add(newEdge);         }         return graph;     }       static void bfs(Node node) {         if (node == null)             return;         Queue&lt;Node&gt; que = new LinkedList&lt;&gt;();         HashSet&lt;Node&gt; set = new HashSet&lt;&gt;(); //相当于记录是否访问过         que.add(node);         set.add(node);         while (!que.isEmpty()) {             Node cur = que.poll();             System.out.print(cur.value + &quot; &quot;);             for (Node next : cur.nexts) {                 if (!set.contains(next)) {                     set.add(next);                     que.add(next);                 }             }         }     }      //递归的     static void dfs1(Node node, HashSet&lt;Node&gt; set) {         if (node == null) return;         set.add(node);         System.out.print(node.value + &quot; &quot;);         for (Node next : node.nexts) {             if (!set.contains(next)) dfs1(next, set);         }     }      //非递归的     static void dfs2(Node node) {         if (node == null) return;         Stack&lt;Node&gt; stack = new Stack&lt;&gt;();         HashSet&lt;Node&gt; set = new HashSet&lt;&gt;();         stack.push(node);         System.out.print(node.value + &quot; &quot;);         set.add(node);         while (!stack.isEmpty()) {             Node cur = stack.pop();             for (Node next : cur.nexts) {                 if (!set.contains(next)) {                     stack.push(cur); //注意这个也要入栈                     stack.push(next);                     set.add(next);                     System.out.print(next.value + &quot; &quot;);                     break;                 }             }         }     }      public static void main(String[] args) {         //每一列分别代表的是    边的 起点,终点,和权值         Integer[][] martix = {                 {1, 2, 4},                 {1, 3, 5},                 {2, 4, 8},                 {2, 5, 6},                 {2, 8, 2},                 {3, 7, 1},                 {5, 4, 2},                 {5, 6, 7},                 {6, 4, 3},         };         Graph G = createGraph(martix);         System.out.println(&quot;----------BFS-----------&quot;);         bfs(G.nodes.get(1));         System.out.println();         System.out.println(&quot;----------DFS-----------&quot;);         dfs1(G.nodes.get(1), new HashSet&lt;&gt;());         System.out.println();         System.out.println(&quot;----------DFS-----------&quot;);         dfs2(G.nodes.get(1));     } }</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>BFS就是按照到起点的距离(按层次)遍历;</li>
+<li>DFS就是只要某个结点可以往下走，就一直走下去(一条路走到黑)，走不了了再回溯回来;</li>
+<li>其中非递归的DFS使用栈完成，注意，<strong>访问某个结点的<code>next</code>结点集合的时候，只访问一个，然后结点本身还是要先入栈;</strong></li>
+<li>BFS和DFS都要记录某个结点是否已经被访问过;</li>
+</ul>
+<p>上面例子的遍历结果:</p>
+<p><img src="/images/p2.png" alt="这里写图片描述"></p>
+<hr>
+<h3 id="无向图建图以及BFS和DFS"><a href="#无向图建图以及BFS和DFS" class="headerlink" title="无向图建图以及BFS和DFS"></a>无向图建图以及BFS和DFS</h3><p>无向图和有向图的区别就是<strong>度没有出度和入度之分，结点的<code>nexts</code>域、和结点相邻的边集要相互的添加</strong>；<br>看下图的例子:</p>
+<p><img src="/images/p3.png" alt="这里写图片描述"></p>
+<p>建图以及BFS和DFS遍历如下: (这里省去了边的集合)</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105</code></td>
+<td><code>import java.io.BufferedInputStream; import java.util.*;  //无向图BFS和DFS public class BFS_DFS {      static class Node {         public int value;         public ArrayList&lt;Node&gt; nexts;          public Node(int value) {             this.value = value;             nexts = new ArrayList&lt;&gt;();         }     }      static class Graph {         HashMap&lt;Integer, Node&gt; nodes;          public Graph() {             nodes = new HashMap&lt;&gt;();         }     }      //建一个无向图     public static void main(String[] args) {         Scanner cin = new Scanner(new BufferedInputStream(System.in));         while (cin.hasNext()) {             int n = cin.nextInt();             int m = cin.nextInt();             if (n == 0 &amp;&amp; m == 0) break;             Graph G = new Graph();             for (int i = 0; i &lt; m; i++) {                 int a = cin.nextInt();                 int b = cin.nextInt();                 if (!G.nodes.containsKey(a)) G.nodes.put(a, new Node(a));                 if (!G.nodes.containsKey(b)) G.nodes.put(b, new Node(b));                 Node from = G.nodes.get(a);                 Node to = G.nodes.get(b);                 from.nexts.add(to);                 to.nexts.add(from); //无向图             }             System.out.println(&quot;---------------BFS----------------&quot;);             bfs(G.nodes.get(1)); // 从某个结点开始BFS遍历             System.out.println();             System.out.println(&quot;---------------DFS----------------&quot;);             dfs1(G.nodes.get(1), new HashSet&lt;&gt;());             System.out.println();             System.out.println(&quot;---------------DFS----------------&quot;);             dfs2(G.nodes.get(1));             System.out.println();         }     }       static void bfs(Node node) {         if (node == null) return;         Queue&lt;Node&gt; que = new LinkedList&lt;&gt;();         HashSet&lt;Node&gt; set = new HashSet&lt;&gt;(); //相当于记录是否访问过         que.add(node);         set.add(node);         while (!que.isEmpty()) {             Node cur = que.poll();             System.out.print(cur.value + &quot; &quot;);             for (Node next : cur.nexts) {                 if (!set.contains(next)) {                     set.add(next);                     que.add(next);                 }             }         }     }      //递归的     static void dfs1(Node node, HashSet&lt;Node&gt; set) {         if (node == null) return;         set.add(node);         System.out.print(node.value + &quot; &quot;);         for (Node next : node.nexts) {             if (!set.contains(next)) dfs1(next, set);         }     }      //非递归的     static void dfs2(Node node) {         if (node == null) return;         Stack&lt;Node&gt; stack = new Stack&lt;&gt;();         HashSet&lt;Node&gt; set = new HashSet&lt;&gt;();         stack.push(node);         System.out.print(node.value + &quot; &quot;);         set.add(node);         while (!stack.isEmpty()) {             Node cur = stack.pop();             for (Node next : cur.nexts) {                 if (!set.contains(next)) {                     stack.push(cur); //注意这个也要入栈                     stack.push(next);                     set.add(next);                     System.out.print(next.value + &quot; &quot;);                     break;                 }             }         }     }  }</code></td>
+</tr>
+</tbody></table>
+<p>遍历结果</p>
+<p><img src="/images/p4.png" alt="这里写图片描述"></p>
+<hr>
+<h3 id="DFS和BFS常见应用"><a href="#DFS和BFS常见应用" class="headerlink" title="DFS和BFS常见应用"></a>DFS和BFS常见应用</h3><p><code>DFS</code> : 求一个图的连通分量以及判断两个点是否可通，以及求出任意一条路径；<br><code>DFS</code>：求最短路径；</p>
+<p>代码：（未测试）</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193</code></td>
+<td><code>import java.util.ArrayList; import java.util.*;  //无权图 public class SparseGraph { // 稀疏图      private class Graph {         public int n; // vertex num         public int m; // edge num         public boolean directed; // is a directed graph         public ArrayList&lt;Integer&gt;[] g;          public Graph(int n, boolean directed) {             this.n = n;             this.m = 0;             this.directed = directed;             g = new ArrayList[n];             for (int i = 0; i &lt; n; i++)                 g[i] = new ArrayList&lt;&gt;();         }          public void addEdge(int from, int to) {             g[from].add(to);             if (from != to &amp;&amp; !directed) // 自环, 无向图                 g[to].add(from);             m++;         }          // from to is connected         boolean hasEdge(int from, int to) {             for (int i = 0; i &lt; g[from].size(); i++) {                 if (g[from].get(i) == to)                     return true;             }             return false;         }     }       // 求一个图的连通分量以及　判断两个点是否可通     private class Component{         public Graph G;         public boolean[] vis;  // 记录dfs的过程中节点是否被访问         public int count;         public int[] id;        // 每个节点所对应的联通分量标记          public Component(Graph G){             this.G = G;             vis = new boolean[G.n];             id = new int[G.n];             count = 0;             for(int i = 0; i &lt; G.n; i++) {                 vis[i] = false;                 id[i] = -1;             }         }          //返回连通分量         public int getCount(){             for(int i = 0; i &lt; G.n; i++){                 for(int j = 0; j &lt; G.g[i].size(); j++){                     if(!vis[j]){                         dfs(j);                         count++;                     }                 }             }             return count;         }          private void dfs(int v){             vis[v] = true;             id[v] = count; // 当前节点在第count个连通分量             for(int i = 0; i &lt; G.g[v].size(); i++){                 if(!vis[i])                     dfs(i);             }         }          public boolean isConnected(int i, int j){             return id[i] == id[j]; // 判断两个点所属连通分量是不是同一个         }     }       //使用dfs获取路径     private class Path{         public Graph G;         public boolean[] vis;         public int[] pre; // 记录路径, pre[i]表示查找的路径上i的上一个节点          public Path(Graph G){             this.G = G;             vis = new boolean[G.n];             pre = new int[G.n];             for(int i = 0; i &lt; G.n; i++){                 vis[i] = false;                 pre[i] = -1;             }         }          private void dfs(int v){             vis[v] = true;             for(int i = 0; i &lt; G.g[i].size(); i++){                 if(!vis[i]){                     pre[i] = v; // is important                     dfs(i);                 }             }         }         public ArrayList&lt;Integer&gt; getPath(int start, int end){             dfs(start);             if(!vis[end])                 return null; // no path             Stack&lt;Integer&gt;stack = new Stack&lt;&gt;();             int p = end;             while(p != -1){                 stack.push(p);                 p = pre[p];             }             ArrayList&lt;Integer&gt;res = new ArrayList&lt;&gt;();             while(!stack.isEmpty())                 res.add(stack.pop());             return res;         }     }       //使用BFS求最短路径     private class ShortestPath{         public Graph G;         public boolean[] vis;         public int[] pre;          public ShortestPath(Graph G){             this.G = G;             vis = new boolean[G.n];             pre = new int[G.n];             for(int i = 0; i &lt; G.n; i++){                 vis[i] = false;                 pre[i] = -1;             }         }          //获取从s到所有顶点的最短路径         public int[] getShortestPath(int start){             int[] dist = new int[G.n];             for(int i = 0; i &lt; G.n; i++) dist[i] = -1;             Queue&lt;Integer&gt;queue = new LinkedList&lt;&gt;();             queue.add(start);             vis[start] = true;             dist[start] = 0;             while(!queue.isEmpty()){                 int cur = queue.poll();                 for(int i = 0; i &lt; G.g[cur].size(); i++){                     if(!vis[i]){                         queue.add(i);                         vis[i] = true;                         pre[i] = cur;                         dist[i] = dist[cur]+1;                     }                 }             }             return dist;         }          private void dfs(int v){             vis[v] = true;             for(int i = 0; i &lt; G.g[i].size(); i++){                 if(!vis[i]){                     pre[i] = v; // is important                     dfs(i);                 }             }         }          public ArrayList&lt;Integer&gt; getPath(int start, int end){             dfs(start);             if(!vis[end])                 return null; // no path             Stack&lt;Integer&gt;stack = new Stack&lt;&gt;();             int p = end;             while(p != -1){                 stack.push(p);                 p = pre[p];             }             ArrayList&lt;Integer&gt;res = new ArrayList&lt;&gt;();             while(!stack.isEmpty())                 res.add(stack.pop());             return res;         }     } }</code></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/">https://hzhzxfs.github.io/2022/01/29/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS(%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/02/17/Instrction%20Arrangement%E4%BB%A5%E5%8F%8A%E5%85%B3%E9%94%AE%E8%B7%AF%E5%BE%84%E8%AF%A6%E8%A7%A3/" title="Instrction Arrangement以及关键路径详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Instrction Arrangement以及关键路径详解</div></div><div class="info-2"><div class="info-item-1">Instrction Arrangement以及关键路径详解 关键路径详解 Hdu4109-Instrction Arrangement题解   关键路径详解AOE网概念:  在一个表示工程的带权有向图中，用顶点表示事件，用有向边表示活动，边上的权值表示活动的持续时间，称这样的有向图叫做边表示活动的网，简称AOE(Activity On Edge)网。AOE网中没有入边的顶点称为始点（或源点），没有出边的顶点称为终点（或汇点）。  如下图的 V...表示事件，a...表示活动。  对比AOV (Activity On Vertex Network)网: 用顶点表示活动，用弧表示活动间的优先关系的有向图。   AOE网可用来估算工程的完成时间，对于AOE网，有两个关键的问题: ① 完成整个工程至少需要多少时间？ ② 哪些活动是影响工程进度的关键？（或者说，为缩短完成工程所需要的时间，应该加快哪些活动 ?）    性质:  只有在某顶点所代表的事件发生后，从该顶点出发的各活动才能开始； 只有在进入某顶点的各活动都结束，该顶点所代表的事件才能发生。  关键路径 在AOE网中，从始点到终...</div></div></div></a><a class="pagination-related" href="/2022/01/15/%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97LCS%20%E5%92%8C%20%E6%9C%80%E9%95%BF%E5%85%AC%E4%BC%97%E5%AD%90%E4%B8%B2/" title="最长公共子序列LCS 和 最长公众子串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">最长公共子序列LCS 和 最长公众子串</div></div><div class="info-2"><div class="info-item-1">最长公共子序列LCS 和 最长公众子串 51Nod-1006-最长公共子序列LCS 最长公众子串   51Nod-1006-最长公共子序列LCS题目链接 http://www.51nod.com/Challenge/Problem.html#!#problemId=1006  题目就是输入两个字符串str1、str2，输出任意一个最长公共子序列。 解析dp[i][j]代表的是 : 必须以str1[i]、str2[j]结尾的最长公共子序列，dp[i][j]来源:  可能是dp[i-1][j]，代表str1[0~i-1]与str2[0~j]的最长公共子序列。 可能是dp[i][j-1]，代表str1[0~i]与str2[0~j-1]的最长公共子序列。 如果str1[i] == str2[j]，还可能是dp[i-1][j-1] + 1。  这三种情况中取最大值。  构造结果的过程(利用dp数组即可)  从矩阵的右下角开始，有三种移动方式: 向上、向左、向左上。 如果dp[i][j] &gt; dp[i-1][j] &amp;&amp; dp[i][j] &gt; dp[i][j-1]，...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/06/01/Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96/" title="Java运行期优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-01</div><div class="info-item-2">Java运行期优化</div></div><div class="info-2"><div class="info-item-1">运行期优化 我们知道，Java 是解释执行的，可是解释执行毕竟还是有点慢的，这也使得 Java 一直被认为是效率低下的语言……，不过随着即时编译技术的发展，Java 的运行速度得到了很大的提升，在本篇文章中，我们将会对 Java 的运行期优化，也就是即时编译 (Just In Time, JIT) 时进行的优化进行详细的讲解，我们先来看看什么是即时编译。  运行期优化 即时编译 HotSpot 虚拟机内的即时编译器运作过程 为什么要使用解释器与编译器并存的架构？ 为什么虚拟机要实现两个不同的 JIT 编译器？ 什么是虚拟机的分层编译？ 如何判断热点代码，触发编译？ 什么是热点代码？ 什么是 “多次” 执行？ HotSpot 中每个方法的 2 个计数器 HotSpot 热点代码探测流程   热点代码编译的过程？   经典优化技术介绍 公共子表达式消除【语言无关】 数组范围检查消除【语言相关】 方法内联【最重要】 逃逸分析【最前沿】 基本行为 对于不会逃逸到方法或线程外的对象能进行优化 虚拟机参数   一个优化的例子      即时编译什么是即时编译？  当虚拟机发现某个方法或某段代...</div></div></div></a><a class="pagination-related" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-26</div><div class="info-item-2">Hadoop简介</div></div><div class="info-2"><div class="info-item-1">Hadoop简介概述 Hadoop：开源分布式存储、计算矿框架。免费试用 CHD：Hadoop的一个发行版本，可以一键式部署集群，但是是收费的，非常昂贵   Hadoop是Yahoo 开发，后来贡献给了Apache的一套开源的、可靠的、可扩展的（可伸缩的）用于进行分布式计算的框架  Hadoop之父：Doug Cutting（道格·卡丁）  Hadoop的版本管理非常混乱（最新更新版本2.10，版本最新确实3.2）    模块 Hadoop Common：基本模块，支撑其他模块运行 Hadoop Distributed File System (HDFS™)：分布式存储 Hadoop YARN：任务调度和集群资源管理 Hadoop MapReduce：分布式计算 Hadoop Ozone：对象存储  版本 Hadoop 1.0：包含Common、HDFS、MapReduce Hadoop 2.0：包含Common、HDFS、MapReduce和YARN 从Hadoop 2.7开始包含了Ozone 从Hadoop 2.9开始包含了Submarine &#x3D;&#x3D;Hado...</div></div></div></a><a class="pagination-related" href="/2022/03/09/%E6%9C%80%E7%9F%AD%E8%B7%AFdijkstra%E6%A8%A1%E6%9D%BF/" title="最短路dijkstra模板"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-09</div><div class="info-item-2">最短路dijkstra模板</div></div><div class="info-2"><div class="info-item-1">﻿## 最短路dijkstra模板  dijkstra算法总结 常用模板解决 其他写法   题目链接 http://acm.hdu.edu.cn/showproblem.php?pid=1874  题目 dijkstra算法总结总结一下dijkstra算法大致的流程:  一开始有一个dist[]数组(也可以是map)来保存从start(起点)到每个点的最短路径(一开始的话，如果start和某个点没有边，就为INF(或者为null)，如果有连线的话就是边的权值)； 然后每次从dist数组中取出一个dist[i]最小的i(不能取已经用过的顶点(vis数组标记))，也就是start距离某个结点最近的一个； 取出这个结点之后，用这个结点更新和它相连的边的dist数组； 直到把所有的dist数组都更新一遍；    注意: dijkstra为什么不能有负权边? 因为如果有的话，我们找最小的那个结构的时候，没准它还能通过松弛变得更短，例如上面我们一开始选出0~2这条边的时候，试想如果2~1的那条边权值为-4，那一开始我们找的0~2这条边就是错的，所以不能有负权边。   常用模板解决推荐的写法 ...</div></div></div></a><a class="pagination-related" href="/2021/02/21/pandas_2/" title="Pandas的一些常用操作_2"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-21</div><div class="info-item-2">Pandas的一些常用操作_2</div></div><div class="info-2"><div class="info-item-1"> 今天继续介绍几个常用的Pandas操作。          1 2 3 import numpy as np import pandas as pd df = pd.read_csv(&#39;./economics.csv&#39;)   1.DataFrame的apply方法        1 df[[&#39;psavert&#39;,&#39;uempmed&#39;]].apply(lambda x:x.max()-x.min(), axis=1)#axis=1 将函数应用到列           1 df.applymap(lambda x:x*10)#applymap 将函数应用到每个元素   2.DataFrame的分组        1 df.groupby(&#39;unemploy&#39;)[&#39;psavert&#39;].median()#样例:df.groupby(分组依据)[数据来源].使用操作           1 2 condition = df.unemploy &gt; df.unemploy.mean()#使用condition定...</div></div></div></a><a class="pagination-related" href="/2023/10/27/SSM%E6%95%B4%E5%90%88/" title="SSM整合"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-27</div><div class="info-item-2">SSM整合</div></div><div class="info-2"><div class="info-item-1">1. ssmbuild2. 环境要求 IDEA MySQL5.7.19 Tomcat 9 Maven3.6  需要熟练掌握MySQL数据库、Spring、JavaWeb及Mybatis知识，简单的前端知识 3. 创建数据库        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 CREATE DATABASE ssmbuild;  USE ssmbuild;  CREATE TABLE `books`( `bookID` INT NOT NULL AUTO_INCREMENT COMMENT &#39;书id&#39;, `bookName` VARCHAR(100) NOT NULL COMMENT &#39;书名&#39;, `bookCounts` INT NOT NULL COMMENT &#39;数量&#39;, `detail` VARCHAR(200) NOT NULL COMMENT &#39;描述&#39;, KEY `bookID`(`bookID`) )ENGINE=INNODB DEFAULT CHARSET=utf8;...</div></div></div></a><a class="pagination-related" href="/2021/05/12/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E7%AE%80%E4%BB%8B/" title="异常检测(Anomaly Detection)简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-12</div><div class="info-item-2">异常检测(Anomaly Detection)简介</div></div><div class="info-2"><div class="info-item-1">异常检测顾名思义就是检测出与正常数据不同的数据，检测给定的新数据是否属于这组数据集。 1. 异常检测的任务类型无监督：训练集无标签有监督：训练集的正例和反例均有标签半监督：在训练集中只有正例，异常实例不参与训练 2. 异常检测的难点数据量少：异常检测任务通常情况下负样本（abnormal）较少，0、1两类样本严重不均衡，有时候依赖于人工标签。噪音：异常和噪音有时容易混淆，如两幅图中的A点识别难度就不一样。 3. 异常检测方法简介3.1 基于统计学的方法通常做法是假设样本服从高斯分布，计算p(x)&#x3D;ϵ作为判定正常和异常的阈值。 3.2 线性模型在线性模型中，有2个假设：①不同维度的变量近似线性相关，可以通过一个相关系数矩阵进行衡量。②数据是镶嵌在低维子空间中的，线性建模是为了找到某个低维子空间使异常点区别于正常点。常用模型的包括：最小二乘法——最小化目标函数得到直线方程,计算每个变量与回归方程之间的残差,可通过3σ 法则判断异常值.PCA——将样本的协方差矩阵特征值分解后，特征值是样本投影到轴上对应的方差，特征值越小，投影后样本点分布越集中，异常点容易偏离，以此作为判定异...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS-%E9%80%92%E5%BD%92%E5%92%8C%E9%9D%9E%E9%80%92%E5%BD%92"><span class="toc-number">1.</span> <span class="toc-text">图的基本结构以及BFS和DFS(递归和非递归)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E5%9B%BE%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">完整的图结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%90%91%E5%9B%BE%E5%BB%BA%E5%9B%BE%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS"><span class="toc-number">1.2.</span> <span class="toc-text">有向图建图以及BFS和DFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E5%90%91%E5%9B%BE%E5%BB%BA%E5%9B%BE%E4%BB%A5%E5%8F%8ABFS%E5%92%8CDFS"><span class="toc-number">1.3.</span> <span class="toc-text">无向图建图以及BFS和DFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DFS%E5%92%8CBFS%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">DFS和BFS常见应用</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

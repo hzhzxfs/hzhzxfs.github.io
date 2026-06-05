@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>李宏毅机器学习——回归 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="李宏毅机器学习——回归回归大致可以理解为根据数据集$D$，拟合出近似的曲线，所以回归也常称为拟合（Fit）。按照自变量的数量可以分为一元回归和多元回归，按照自变量与因变量之间的函数表达式可以分为线性回归(Linear Regression)和非线性回归(Non-linear Regression)。 1 模型步骤 Step1：模型假设，选择模型框架（线性模型） Step2：模型评估，如何判断众多模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="李宏毅机器学习——回归">
+<meta property="og:url" content="https://hzhzxfs.github.io/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="李宏毅机器学习——回归回归大致可以理解为根据数据集$D$，拟合出近似的曲线，所以回归也常称为拟合（Fit）。按照自变量的数量可以分为一元回归和多元回归，按照自变量与因变量之间的函数表达式可以分为线性回归(Linear Regression)和非线性回归(Non-linear Regression)。 1 模型步骤 Step1：模型假设，选择模型框架（线性模型） Step2：模型评估，如何判断众多模">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2021-07-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:25:56.677Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "李宏毅机器学习——回归",
+  "url": "https://hzhzxfs.github.io/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2021-07-13T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:25:56.677Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '李宏毅机器学习——回归',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">李宏毅机器学习——回归</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">李宏毅机器学习——回归</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-07-13T16:00:00.000Z" title="发表于 2021-07-14 00:00:00">2021-07-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:25:56.677Z" title="更新于 2026-06-05 16:25:56">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Machine-Learning/">Machine Learning</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Machine-Learning/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h3 id="李宏毅机器学习——回归"><a href="#李宏毅机器学习——回归" class="headerlink" title="李宏毅机器学习——回归"></a>李宏毅机器学习——回归</h3><p>回归大致可以理解为根据数据集$D$，拟合出近似的曲线，所以回归也常称为拟合（Fit）。按照自变量的数量可以分为一元回归和多元回归，按照自变量与因变量之间的函数表达式可以分为线性回归(Linear Regression)和非线性回归(Non-linear Regression)。</p>
+<h4 id="1-模型步骤"><a href="#1-模型步骤" class="headerlink" title="1 模型步骤"></a>1 模型步骤</h4><ul>
+<li>Step1：模型假设，选择模型框架（线性模型）</li>
+<li>Step2：模型评估，如何判断众多模型的好坏（损失函数）</li>
+<li>Step3：模型优化，如何筛选最优的模型（梯度下降）</li>
+</ul>
+<h5 id="1-1-模型假设（多元线性模型）"><a href="#1-1-模型假设（多元线性模型）" class="headerlink" title="1.1 模型假设（多元线性模型）"></a>1.1 模型假设（多元线性模型）</h5><p>多元线性模型就是特征x的线性组合的函数，可以表示为$y&#x3D;\sum{w_ix_i}+b$，$x_i$为特征，$w_i$为权重，b为偏移量。</p>
+<h5 id="1-2-模型评估（损失函数）"><a href="#1-2-模型评估（损失函数）" class="headerlink" title="1.2 模型评估（损失函数）"></a>1.2 模型评估（损失函数）</h5><p>常用的损失函数是均方误差（mean-square error, MSE），也被称为最小二乘法 (least square method)，其几何意义就是欧氏距离。</p>
+<blockquote>
+<p>不同的loss函数，具有不同的拟合特性：<br>Hinge Loss——SVM；<br>exp-Loss ——Boosting；<br>log-Loss——Logistic Regression。</p>
+</blockquote>
+<p>Square loss损失函数表示为：<br>$$<br>L\left( w,b \right) &#x3D;\sum_{i&#x3D;1}^m{\left( f\left( x_i \right) -y_i \right) ^2}，<br>$$<br>我们需要找到令结果最小的$w^*$和$b^*$，即<br>$$<br>\left( w^*,b^* \right) &#x3D;arg\min <em>{\left( w,b \right)}\sum</em>{i&#x3D;1}^m{\left( f\left( x_i \right) -y_i \right) ^2}。<br>$$</p>
+<h5 id="1-3-最佳模型（解析解）"><a href="#1-3-最佳模型（解析解）" class="headerlink" title="1.3 最佳模型（解析解）"></a>1.3 最佳模型（解析解）</h5><p>多元（多个特征）的情况下，损失函数可以引入矩阵表示为：<br>$$<br>L\left( w,b \right) &#x3D;\sum_{i&#x3D;1}^m{\left( f\left( x_i \right) -y_i \right) ^2}&#x3D;\left( XW-y \right) ^T\left( XW-y \right)<br>$$<br>式中，$X$是一组样本形成的样本矩阵，$W$是权重矩阵，$y$是样本真实值形成的矩阵。<br>上式可以展开为：<br>$$<br>L\left( w,b \right) &#x3D;\left( XW-y \right) ^T\left( XW+y \right)<br>$$<br>$$<br>&#x3D;\left( \left( XW \right) ^T-y^T \right) \left( XW-y \right)<br>$$<br>$$<br>&#x3D;\left( X^TW^T-y^T \right) \left( XW-y \right)<br>$$<br>$$<br>&#x3D;X^TW^TXW-y^TXW-W^TX^Ty+y^Ty<br>$$<br>对$w$求导：<br>$$<br>\frac{\partial L\left( W \right)}{\partial W}&#x3D;2X^TXW-\left( y^TX \right) ^T-X^Ty<br>$$<br>$$<br>&#x3D;2X^TXW-2X^Ty<br>$$<br>偏导等于零时可以求得损失函数最小时对应的$W$，即我们最终想要获得的系数矩阵：<br>$$<br>X^TXW-X^Ty&#x3D;0<br>$$<br>$$<br>X^TXW&#x3D;X^Ty<br>$$<br>$$<br>((X^TX)^{-1}X^TX)W&#x3D;(X^TX)^{-1}X^Ty<br>$$<br>$$<br>IW&#x3D;(X^TX)^{-1}X^Ty<br>$$<br>$$<br>W&#x3D;(X^TX)^{-1}X^Ty<br>$$</p>
+<p>上式必须满足矩阵的逆存在，而矩阵可逆需要方正且满秩。但是因为不能保证所选的特征是完全线性无关的，所以矩阵不一定满秩，这导致线性回归有解析解但存在无穷多解，还是无法求得一个准确的解，这时候就需要使用梯度下降法来逼近一个解。</p>
+<h5 id="1-4-最佳模型（梯度下降法）"><a href="#1-4-最佳模型（梯度下降法）" class="headerlink" title="1.4 最佳模型（梯度下降法）"></a>1.4 最佳模型（梯度下降法）</h5><p>首先设置初始的$w_0$和$b_0$，然后通过求$L$对$w$和$b$的偏导不断地更新$w$和$b$，直到找到$L$的最小值。<br>整个过程可以表示为：<br>$$<br>repeat,,until,,converge{w_i:&#x3D;w_i-\eta \frac{\partial L\left( w_i \right)}{w_i};\ b_i:&#x3D;b_i-\eta \frac{\partial L\left( b_i \right)}{b_i}}<br>$$<br>其中$\eta $是学习率，用来控制每步下降的距离（太小收敛会很慢，太大则可能跳过最优点），一般按照对数的方法来选择，例如0.1, 0.03, 0.01, 0.003…这种方法称为批量梯度下降（batch gradient descent, BGD）</p>
+<p>original-loss存在很多奇点，而BGD每次下降的方向就是original-loss的负梯度，因此BGD很容易陷入某个奇点，而无法达到global minimal（或者比较好的local minimal）。随机梯度下降（stochastic gradient descent, SGD）一定程度上可以避免这个情况——不容易陷入original-loss和minibatch-loss的奇点：</p>
+<ul>
+<li>引入randomness，SGD中计算的梯度是对original-loss梯度的近似，相当于在original-loss梯度的基础上加了randomness，因此即使当前走到了original-loss的奇点，SGD计算的梯度因为引入了randomness，所以也不接近0，比较容易跳出奇点。</li>
+<li>SGD计算的不是original-loss的梯度，而是minibatch-loss的梯度，original-loss和minibatch-loss的形状不同，奇点分布也不同，如果当前这个点在original-loss上是奇点，但这个点在minibatch-loss中并不是奇点，此时使用minibatch-loss的负梯度作为下降方向，自然不会陷入这个点。</li>
+<li>每次迭代，都会使用不同的mini batch，而不同的minibatch-loss的形状不同。就算此时陷入了当前minibatch-loss的奇点，那么下一次迭代，这个点也不一定就是下一个minibatch-loss的奇点，如果不是的话，自然就跳出来了。</li>
+</ul>
+<h5 id="1-5-正则化"><a href="#1-5-正则化" class="headerlink" title="1.5 正则化"></a>1.5 正则化</h5><p>当我们筛选出模型进行拟合数据时，可能会没有很好地拟合数据，称为欠拟合（underfitting），或者叫做高偏差（bias）；也可能对训练集拟合得很好，但在测试集上拟合不好，称为过拟合（overfitting），也叫高方差（variance）。</p>
+<p>对于过拟合，我们可以</p>
+<ul>
+<li>1.减少选取变量的数量（通过特征选择保留更为重要的特征变量）</li>
+</ul>
+<p>特征选择的缺点在于：舍弃一部分特征变量的同时，也舍弃了问题中的一些信息。<br>如果我们不想舍弃这些信息，可以使用正则化。</p>
+<ul>
+<li>2.正则化</li>
+</ul>
+<p>当线性回归从1次变成高次的过程中，在训练集上的拟合越来越好，但在测试集上并不是这样。于是我们可以采用正则化，去惩罚$w_1$到$w_n$，以L2正则化为例，原始的损失函数$L$上加上$\lambda \sum{\left( w_i \right) ^2}$，使得权重的绝对值大小整体倾向于减小（权重衰减），这样可以使函数更加平滑，也就是更加简单，不容易发生过拟合。形象一点看，损失函数曲面通过L2正则化的加持，最小值所在的位置从一条山岭变成一个山谷，故L2正则化在机器学习中也叫做“岭回归”（ridge regression）。<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/W2hcxH"><img src="https://z3.ax1x.com/2021/07/25/W2hcxH.png" alt="W2hcxH.png"></a></p>
+<p>L1正则化则是加上$\lambda \sum{\left| \left. w_i \right| \right.}$，L1 正则化除了和L2正则化一样可以约束数量级外，还能使参数更加稀疏，参数一部分为0，另一部分为非零实值。非零实值的那部分参数值可起到选择重要参数或特征维度的作用，同时可起到去除噪声的效果。</p>
+<h4 id="2-sklearn实现多元线性回归"><a href="#2-sklearn实现多元线性回归" class="headerlink" title="2 sklearn实现多元线性回归"></a>2 sklearn实现多元线性回归</h4><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26</code></td>
+<td><code>import pandas as pd import numpy as np import matplotlib.pyplot as pltfrom sklearn.linear_model import LinearRegression from sklearn.model_selection import train_test_split import seaborn as sns  data = pd.read_csv(&#39;./data.csv&#39;) X_train,X_test,Y_train,Y_test = train_test_split(train_size = 0.7) model = LinearRegression()model.fit(X_train,Y_train)  a = model.intercept_ b = model.coef_ print(&quot;最佳拟合线:截距&quot;,a,&quot;,回归系数：&quot;,b) print(&#39;拟合函数: y = %f * x+%f * x+%f * x+ %f&#39;%(b[0],b[1],b[2],a))  plt.rcParams[&#39;font.sans-serif&#39;] = &#39;SimHei&#39; score = model.score(X_test,Y_test) print(score) Y_test_pred = model.predict(X_test) plt.plot(range(len(Y_test_pred)) Y_test,label = &#39;test&#39;,color = &#39;b&#39;) plt.plot(range(len(Y_test_pred)),Y_test_pred,color = &#39;r&#39;,label = &#39;predict&#39;) plt.xlabel(&#39;X&#39;) plt.ylabel(&#39;y&#39;) plt.legend()</code></td>
+</tr>
+</tbody></table>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p>1.<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av59538266">b站李宏毅《机器学习》</a><br>2.<a target="_blank" rel="noopener" href="https://datawhalechina.github.io/leeml-notes/#/">datawhale李宏毅机器学习笔记(LeeML-Notes)</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/">https://hzhzxfs.github.io/2021/07/14/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2021/07/16/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" title="李宏毅机器学习——梯度下降"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">李宏毅机器学习——梯度下降</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——梯度下降1 偏差与方差使用样本数据拟合函数，由于样本数据使采样而并非真实值本身，采样本身会带来误差。经过研究发现，其误差的期望值可以分解为三个部分：样本噪音、模型预测值的方差、预测值相对真实值的偏差，公式为：$$E\left((y-\hat{f}(x))^{2}\right)&#x3D;\sigma^{2}+\operatorname{Var}[\hat{f}(x)]+(\operatorname{Bias}[\hat{f}(x)])^{2}$$其中$Bias[\hat{f}(x)] &#x3D; E[\hat{f}(x) - f(x)]$，即误差的期望值 &#x3D; 噪音的方差 + 模型预测值的方差 + 预测值相对真实值的偏差的平方，如下图所示。  靶心（红点）是测试样本的真实值，测试样本的y（橙色点）是真实值加上噪音，特定模型重复多次训练会得到多个具体的模型，每一个具体模型对测试样本进行一次预测，就在靶上打出一个预测值（图上蓝色的点）。所有预测值的平均就是预测值的期望（较大的浅蓝色点），浅蓝色的圆圈表示预测值的离散程度，即预测值的方差。 2 调整梯度下降的...</div></div></div></a><a class="pagination-related" href="/2021/07/12/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D/" title="李宏毅机器学习——机器学习介绍"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">李宏毅机器学习——机器学习介绍</div></div><div class="info-2"><div class="info-item-1">李宏毅机器学习——机器学习介绍1. 机器学习简介机器学习是人工智能的一部分, 研究如何让计算机从数据学习某种规律。机器学习的目的是通过计算机程序根据数据去优化某一个评价指标，自动的从数据发现规律, 使用这些规律做出预测。如图，机器学习可以简化为三个步骤，一、找一个function，二、让machine评价这个function，三、让machine自动地挑出最好的function。 2. 机器学习分类机器学习可大致分为监督学习、无监督学习、半监督学习、迁移学习和强化学习。 2.1 监督学习监督学习是机器学习任务的一种。它从有标签的训练数据中推导出预测函数。有标签的训练数据是指每个训练实例都包括输入和期望的输出。简单来说就是给定数据，预测标签。监督学习包括分类和回归。 2.2 无监督学习无监督学习是机器学习任务的一种。它从无标签的训练数据中推断结论。它可以在探索性数据分析阶段用于发现隐藏的模式或者对数据进行分组。简单来说就是给定数据，寻找隐藏的结构。无监督学习包括聚类和降维。 2.3 半监督学习半监督学习介于监督学习与无监督学习之间。半监督学习的任务与监督学习一致，任务中包含有明确的...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/03/27/Zookeeper/" title="Zookeeper"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-27</div><div class="info-item-2">Zookeeper</div></div><div class="info-2"><div class="info-item-1">Zookeeper1.ZooKeeper 是什么？ZooKeeper 是一个开源的分布式协调服务。它是一个为分布式应用提供一致性服务的软件，分布式应用程序可以基于 Zookeeper 实现诸如数据发布&#x2F;订阅、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master 选举、分布式锁和分布式队列等功能。 ZooKeeper 的目标就是封装好复杂易出错的关键服务，将简单易用的接口和性能高效、功能稳定的系统提供给用户。 Zookeeper 保证了如下分布式一致性特性： （1）顺序一致性 （2）原子性 （3）单一视图 （4）可靠性 （5）实时性（最终一致性） 客户端的读请求可以被集群中的任意一台机器处理，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 zookeeper 机器来处理。对于写请求，这些请求会同时发给其他 zookeeper 机器并且达成一致后，请求才会返回成功。因此，随着 zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。 有序性是 zookeeper 中非常重要的一个特性，所有的更新都是全局有序的，每个更新都有一...</div></div></div></a><a class="pagination-related" href="/2021/08/19/Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/" title="Java虚拟机性能监控工具"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-19</div><div class="info-item-2">Java虚拟机性能监控工具</div></div><div class="info-2"><div class="info-item-1">Java虚拟机性能监控工具 一、JDK的命令行工具 二、JDK的可视化工具 三、性能调优   一、JDK的命令行工具主要有以下几种:  jps (Java Process Status Tool): 虚拟机进程状态工具； jstat (JVM Statistics Monitoring Tool): 虚拟机统计信息监视工具； jinfo (Configuration Info for Java): Java配置信息工具； jmap (Memory Map for Java): Java内存映像工具； jhat (JVM Heap Dump Browser): 虚拟机堆转存储快照工具； jstack (Stack Trace for Java): Java堆栈跟踪工具；  下面一个个来总结: 1、jps : 虚拟机进程状态工具 jps（JVM Process Status Tool，虚拟机进程监控工具），这个命令可以列出正在运行的虚拟机进程，并显示虚拟机执行主类名称，以及这些进程的本地虚拟机唯一ID。 这个 ID 被称为本地虚拟机唯一 ID（Local Virtual Machin...</div></div></div></a><a class="pagination-related" href="/2021/06/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92%E7%BD%91%E7%BB%9C/" title="图神经网络——消息传递网络"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-19</div><div class="info-item-2">图神经网络——消息传递网络</div></div><div class="info-2"><div class="info-item-1">消息传递(Message Passing) 指的是目标节点$S1$的邻居$\mathcal{N(S1)}$——B1、B2、B3，这些邻居节点根据一定的规则将信息(特征)，汇总到目标节点上。信息汇总中最简单的规则就是逐个元素相加。在pytorch-geometric的官方文档中，消息传递图神经网络被描述为:$$\mathbf{x}_i^{(k)} &#x3D; \gamma^{(k)} \left( \mathbf{x}i^{(k-1)}, \square{j \in \mathcal{N}(i)} , \phi^{(k)}\left(\mathbf{x}i^{(k-1)}, \mathbf{x}j^{(k-1)},\mathbf{e}{j,i}\right) \right),$$其中，$\mathbf{e}{j,i} \in \mathbb{R}^D$ 表示从节点$j$到节点$i$的边的属性，$\mathbf{x}^{(k-1)}_i\in\mathbb{R}^F$表示$(k-1)$层中节点$i$的节点表征，$\square$表示聚合策略，$\gamma$和$\phi$表示一些神...</div></div></div></a><a class="pagination-related" href="/2023/07/15/Listener/" title="Listener"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-15</div><div class="info-item-2">Listener</div></div><div class="info-2"><div class="info-item-1">监听器笔记1、观察者模式  观察者监控被观察者的行为 被观察者做出相应的动作会触发事件 当观察者发现被观察者触发事件，就会调用事先准备好的方法  2、监听器分类 监听域对象本身 ServletContext HttpSession HttpServletRequest   监听域对象的属性域 应用域 会话域 请求域   监听存入Session域的对象本身 对象是否存入会话域 对象是否和Session一起被钝化到了硬盘上    3、后续用到的监听器名称：ServletContextListener 方法：    方法名 作用    contextInitialized(ServletContextEvent sce) ServletContext创建时调用   contextDestroyed(ServletContextEvent sce) ServletContext销毁时调用    将来在SpringMVC中会用到：ContextLoaderListener，这个监听器就是实现了ServletContextListener接口。  </div></div></div></a><a class="pagination-related" href="/2021/05/12/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E7%AE%80%E4%BB%8B/" title="异常检测(Anomaly Detection)简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-12</div><div class="info-item-2">异常检测(Anomaly Detection)简介</div></div><div class="info-2"><div class="info-item-1">异常检测顾名思义就是检测出与正常数据不同的数据，检测给定的新数据是否属于这组数据集。 1. 异常检测的任务类型无监督：训练集无标签有监督：训练集的正例和反例均有标签半监督：在训练集中只有正例，异常实例不参与训练 2. 异常检测的难点数据量少：异常检测任务通常情况下负样本（abnormal）较少，0、1两类样本严重不均衡，有时候依赖于人工标签。噪音：异常和噪音有时容易混淆，如两幅图中的A点识别难度就不一样。 3. 异常检测方法简介3.1 基于统计学的方法通常做法是假设样本服从高斯分布，计算p(x)&#x3D;ϵ作为判定正常和异常的阈值。 3.2 线性模型在线性模型中，有2个假设：①不同维度的变量近似线性相关，可以通过一个相关系数矩阵进行衡量。②数据是镶嵌在低维子空间中的，线性建模是为了找到某个低维子空间使异常点区别于正常点。常用模型的包括：最小二乘法——最小化目标函数得到直线方程,计算每个变量与回归方程之间的残差,可通过3σ 法则判断异常值.PCA——将样本的协方差矩阵特征值分解后，特征值是样本投影到轴上对应的方差，特征值越小，投影后样本点分布越集中，异常点容易偏离，以此作为判定异...</div></div></div></a><a class="pagination-related" href="/2021/08/26/JVM%E6%80%BB%E7%BB%93(%E4%B8%80)%20-%20%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E4%B8%8E%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="JVM总结(一)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-26</div><div class="info-item-2">JVM总结(一)</div></div><div class="info-2"><div class="info-item-1">JVM总结(一) - 内存区域与内存管理 一、JVM启动以及JVM体系概述 1、JVM启动流程 2、JVM体系结构   二、运行时数据区总体概括 1、程序计数器 2、Java虚拟机栈 3、本地方法栈 4、Java堆 5、方法区 6、运行时常量池 7、直接内存-不是运行时数据区域的一部分   三、对象相关 1、对象的创建过程 2、对象的内存布局 3、对象的访问定位     一、JVM启动以及JVM体系概述概括:  Java有Java编译器和Java虚拟机，编译器将Java源代码转换为.class文件，虚拟机加载并运行.class文件。 Java 的开发遵循“一次编写到处乱跑”理念，它运行在 VM（虚拟机）上。  1、JVM启动流程JVM工作原理和特点主要是指操作系统装入JVM，是通过jdk中java.exe来完成,通过下面4步来完成JVM环境:  创建JVM装载环境和配置； 装载JVM.dll； 初始化JVM.dll并挂界到JNIENV(JNI调用接口)实例； 调用JNIEnv实例装载并处理class类。   2、JVM体系结构JVM体系主要是两个JVM的内部体系结构，分为三个子系...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%94%E5%9B%9E%E5%BD%92"><span class="toc-number">1.</span> <span class="toc-text">李宏毅机器学习——回归</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.1.</span> <span class="toc-text">1 模型步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-1-%E6%A8%A1%E5%9E%8B%E5%81%87%E8%AE%BE%EF%BC%88%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 模型假设（多元线性模型）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0%EF%BC%88%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 模型评估（损失函数）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-%E6%9C%80%E4%BD%B3%E6%A8%A1%E5%9E%8B%EF%BC%88%E8%A7%A3%E6%9E%90%E8%A7%A3%EF%BC%89"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 最佳模型（解析解）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-4-%E6%9C%80%E4%BD%B3%E6%A8%A1%E5%9E%8B%EF%BC%88%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%EF%BC%89"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4 最佳模型（梯度下降法）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-5-%E6%AD%A3%E5%88%99%E5%8C%96"><span class="toc-number">1.1.5.</span> <span class="toc-text">1.5 正则化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-sklearn%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="toc-number">1.2.</span> <span class="toc-text">2 sklearn实现多元线性回归</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.3.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

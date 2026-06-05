@@ -1,0 +1,1018 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hadoop简介 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Hadoop简介概述 Hadoop：开源分布式存储、计算矿框架。免费试用 CHD：Hadoop的一个发行版本，可以一键式部署集群，但是是收费的，非常昂贵   Hadoop是Yahoo 开发，后来贡献给了Apache的一套开源的、可靠的、可扩展的（可伸缩的）用于进行分布式计算的框架  Hadoop之父：Doug Cutting（道格·卡丁）  Hadoop的版本管理非常混乱（最新更新版本2.10，版">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop简介">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Hadoop简介概述 Hadoop：开源分布式存储、计算矿框架。免费试用 CHD：Hadoop的一个发行版本，可以一键式部署集群，但是是收费的，非常昂贵   Hadoop是Yahoo 开发，后来贡献给了Apache的一套开源的、可靠的、可扩展的（可伸缩的）用于进行分布式计算的框架  Hadoop之父：Doug Cutting（道格·卡丁）  Hadoop的版本管理非常混乱（最新更新版本2.10，版">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-05-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:26:15.922Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Hadoop简介",
+  "url": "https://hzhzxfs.github.io/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-05-25T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:26:15.922Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hadoop简介',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Hadoop简介</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Hadoop简介</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:26:15.922Z" title="更新于 2026-06-05 16:26:15">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Big-Data/">Big Data</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Big-Data/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Hadoop简介"><a href="#Hadoop简介" class="headerlink" title="Hadoop简介"></a>Hadoop简介</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p>Hadoop：开源分布式存储、计算矿框架。免费试用</p>
+<p>CHD：Hadoop的一个发行版本，可以一键式部署集群，但是是收费的，非常昂贵</p>
+</blockquote>
+<ol>
+<li><p>Hadoop是Yahoo 开发，后来贡献给了Apache的一套开源的、可靠的、可扩展的（可伸缩的）用于进行分布式计算的框架</p>
+</li>
+<li><p>Hadoop之父：Doug Cutting（道格·卡丁）</p>
+</li>
+<li><p>Hadoop的版本管理非常混乱（最新更新版本2.10，版本最新确实3.2）</p>
+<p><img src="https://gitee.com/sxhDrk/images/raw/master/imgs/Hadoop%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F-3%E4%B8%AA%E8%8A%82%E7%82%B9.png"></p>
+</li>
+</ol>
+<h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><ol>
+<li>Hadoop Common：基本模块，支撑其他模块运行</li>
+<li>Hadoop Distributed File System (HDFS™)：分布式存储</li>
+<li>Hadoop YARN：任务调度和集群资源管理</li>
+<li>Hadoop MapReduce：分布式计算</li>
+<li>Hadoop Ozone：对象存储</li>
+</ol>
+<h2 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h2><ol>
+<li>Hadoop 1.0：包含Common、HDFS、MapReduce</li>
+<li>Hadoop 2.0：包含Common、HDFS、MapReduce和YARN<ul>
+<li>从Hadoop 2.7开始包含了Ozone</li>
+<li>从Hadoop 2.9开始包含了Submarine</li>
+<li>&#x3D;&#x3D;Hadoop 1.0和Hadoop 2.0不兼容&#x3D;&#x3D;</li>
+</ul>
+</li>
+<li>Hadoop 3.0：包含Common、HDFS、MapReduce和YARN<ul>
+<li>从Hadoop 3.1开始包含了Ozone</li>
+<li>从Hadoop 3.1最新版本中包含了Submarine</li>
+</ul>
+</li>
+</ol>
+<h2 id="相关组件"><a href="#相关组件" class="headerlink" title="相关组件"></a>相关组件</h2><ol>
+<li>HBase: 类似Google BigTable的分布式NoSQL列数据库。（HBase和Avro已经于2010年5月成为顶级 Apache 项目）</li>
+<li>Hive：数据仓库工具，由Facebook贡献</li>
+<li>Zookeeper：分布式锁设施，提供类似Google Chubby的功能，由Facebook贡献</li>
+<li>Avro：新的数据序列化格式与传输工具，将逐步取代Hadoop原有的IPC机制。</li>
+<li>Pig: 大数据分析平台，为用户提供多种接口</li>
+<li>Ambari：Hadoop管理工具，可以快捷的监控、部署、管理集群</li>
+<li>Sqoop：用在Hadoop与传统的数据库间进行数据的传递</li>
+</ol>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><blockquote>
+<p>开启Hadoop：start-all.sh</p>
+<p>关闭Hadoop：stop-all.sh</p>
+</blockquote>
+<h2 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h2><p>只能启动MapReduce，所以不使用单机模式</p>
+<h2 id="伪分布式"><a href="#伪分布式" class="headerlink" title="伪分布式"></a>伪分布式</h2><h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><blockquote>
+<p>能启动HDFS、MapReduce、Yran的大部分功能</p>
+</blockquote>
+<ol>
+<li><p>关闭防火墙</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>service iptables stop chkconfig iptables off</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>修改云主机的主机名，Hadoop集群中要求主机名中不能出现<code>-</code>或者<code>_</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>cd /etc/sysconfig vim network</code></td>
+</tr>
+</tbody></table>
+<p>修改</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>HOSTNAME=hadoop01</code></td>
+</tr>
+</tbody></table>
+<p>保存退出，重新生效</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>source network</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>需要将IP和主机名进行映射</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>cd /etc vim hosts</code></td>
+</tr>
+</tbody></table>
+<p>添加host映射</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>10.9.162.133 hadoop01</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>重启</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>reboot</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>配置免密登录</p>
+<p>产生密钥：<code>ssh-keygen</code></p>
+<p>拷贝密钥：<code>ssh-copy-id root@hadoop01</code></p>
+<p>测试是否能够免密登录：<code>ssh hadoop01</code></p>
+<p>如果成功，则退出：<code>logout</code></p>
+</li>
+<li><p>下载Hadoop的安装包</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>wget http://bj-yzjd.ufile.cn-north-02.ucloud.cn/hadoop-alone.tar.gz</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>解压安装包</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>tar -xvf hadoop-alone.tar.gz</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>配置环境变量</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>vim /etc/profile</code></td>
+</tr>
+</tbody></table>
+<p>文件末尾添加</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>export HADOOP_HOME=/home/software/hadoop-2.7.1 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin</code></td>
+</tr>
+</tbody></table>
+<p>保存退出，重新生效</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>source /etc/profile</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>格式化<code>namenode</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop namenode -format</code></td>
+</tr>
+</tbody></table>
+<p>如果出现</p>
+<p><code>Storage directory /home/software/hadoop-2.7.1/tmp/dfs/name has been successfully formatted.</code></p>
+<p>表示格式化成功</p>
+</li>
+<li><p>启动hadoop</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>start-all.sh</code></td>
+</tr>
+</tbody></table>
+<p>通过jps查看，有6个进程</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>Jps NameNode DataNode SecondaryNameNode ResourceManager NodeManager</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>通过网页浏览</p>
+<p>可以通过浏览器访问HDFS的页面，访问地址为：IP地址:50070</p>
+<p>可以通过浏览器访问Yarn的页面，访问地址为：IP地址:8088</p>
+</li>
+</ol>
+<h3 id="配置文件的修改"><a href="#配置文件的修改" class="headerlink" title="配置文件的修改"></a>配置文件的修改</h3><blockquote>
+<p>进入：<code>cd hadoop-2.7.1/etc/hadoop</code></p>
+</blockquote>
+<ol>
+<li><p>配置<code>hadoop-env.sh</code></p>
+<ul>
+<li><p>编辑hadoop-env.sh:<code>vim hadoop-env.sh</code></p>
+</li>
+<li><p>修改JAVA_HOME的路径：</p>
+<p><code>export JAVA_HOME=/home/software/jdk1.8</code></p>
+</li>
+<li><p>修改HADOOP_CONF_DIR的路径</p>
+<p><code>export HADOOP_CONF_DIR=/home/software/hadoop-2.7.1/etc/hadoop</code></p>
+</li>
+<li><p>保存退出</p>
+</li>
+<li><p>重新生效：<code>source hadoop-env.sh</code></p>
+</li>
+</ul>
+</li>
+<li><p>配置<code>core-site.xml</code></p>
+<ul>
+<li><p>编辑core-site.xml：<code>vim core-site.xml</code></p>
+</li>
+<li><p>指定如下内容</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11</code></td>
+<td><code>&lt;property&gt;     &lt;!-- 指定HDFS中的主节点 - namenode --&gt;     &lt;name&gt;fs.defaultFS&lt;/name&gt;                    &lt;value&gt;hdfs://hadoop01:9000&lt;/value&gt; &lt;/property&gt; &lt;property&gt;     &lt;!-- 执行Hadoop运行时的数据存放目录 --&gt;     &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;     &lt;value&gt;/home/software/hadoop-2.7.1/tmp&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>保存退出</p>
+</li>
+</ul>
+</li>
+<li><p>配置<code>hdfs-site.xml</code></p>
+<ul>
+<li><p>编辑文件：<code>vim hdfs-site.xml</code></p>
+</li>
+<li><p>添加如下内容</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>&lt;property&gt;     &lt;!-- 设置HDFS中的副本数量 --&gt;     &lt;!-- 在伪分布式下，值设置为1 --&gt;     &lt;name&gt;dfs.replication&lt;/name&gt;     &lt;value&gt;1&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>保存退出</p>
+</li>
+</ul>
+</li>
+<li><p>配置<code>mapred-site.xml</code></p>
+<ul>
+<li><p>将<code>mapred-site.xml.template</code>复制为<code>mapred-site.xml</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>cp mapred-site.xml.template mapred-site.xml</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>编辑新文件：<code>vim mapred-site.xml</code></p>
+</li>
+<li><p>添加如下配置</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5</code></td>
+<td><code>&lt;property&gt;     &lt;!-- 指定将MapReduce在Yarn上运行  --&gt;     &lt;name&gt;mapreduce.framework.name&lt;/name&gt;     &lt;value&gt;yarn&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>保存退出</p>
+</li>
+</ul>
+</li>
+<li><p>配置<code>yarn-site.xml</code></p>
+<ul>
+<li><p>编辑yarn-site.xml：<code>vim yarn-site.xml</code></p>
+</li>
+<li><p>添加如下内容：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10</code></td>
+<td><code>&lt;!-- 指定Yarn的主节点 - resourcemanager --&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;     &lt;value&gt;hadoop01&lt;/value&gt; &lt;/property&gt; &lt;!-- NodeManager的数据获取方式 --&gt; &lt;property&gt;     &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;     &lt;value&gt;mapreduce_shuffle&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>保存退出</p>
+</li>
+</ul>
+</li>
+<li><p>配置<code>slaves</code></p>
+<ul>
+<li>编辑slaves：<code>vim slaves</code></li>
+<li>添加从节点信息，例如：hadoop01</li>
+<li>保存退出</li>
+</ul>
+</li>
+</ol>
+<h2 id="完全分布式"><a href="#完全分布式" class="headerlink" title="完全分布式"></a>完全分布式</h2><blockquote>
+<p>能启动Hadoop的所有功能</p>
+</blockquote>
+<p><img src="https://gitee.com/sxhDrk/images/raw/master/imgs/%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%93%E6%9E%84.png"></p>
+<blockquote>
+<p>如上图所示，完全分布式的Hadoop的结构，最少需要13个节点，才能保证高可用，也就是最少需要13台服务器</p>
+</blockquote>
+<p>只有三台服务器，在三台服务器上搭建Hadoop完全分布式集群</p>
+<p><img src="https://gitee.com/sxhDrk/images/raw/master/imgs/Hadoop%E7%89%88%E6%9C%AC%E6%B7%B7%E4%B9%B1.png"></p>
+<h3 id="环境配置-1"><a href="#环境配置-1" class="headerlink" title="环境配置"></a>环境配置</h3><blockquote>
+<p>因为第一台 服务器搭建过伪分布式，所以需要将伪分布式Hadoop文件重命名</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>cd /home/software/ mv hadoop-2.7.1/ hadoop-alone</code></td>
+</tr>
+</tbody></table>
+<ol>
+<li><p>三台云主机关闭防火墙</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>service iptables stop chkconfig iptables off</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>修改三台云主机的主机名</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>vim /etc/sysconfig/network</code></td>
+</tr>
+</tbody></table>
+<p>修改HOSTNAME属性，依次改为hadoop01、hadoop02、hadoop03</p>
+<p>保存退出，并且重新生效</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>source /etc/sysconfig/network</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>三台云主机添加IP映射</p>
+<blockquote>
+<p>编辑hosts文件<code>vim /etc/hosts</code>，添加如下内容</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>10.9.162.133 hadoop01 10.9.152.65 hadoop02 10.9.130.83 hadoop03</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>三台云主机重启：<code>reboot</code></p>
+</li>
+<li><p>三台云主机开启Zookeeper</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>cd /home/software/zookeeper-3.4.8/bin  sh zkServer.sh start    #开启Zookeeper sh zkServer.sh status    #检查Zookeeper的状态，应该为2个follower1个leader</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>返回第一个节点software目录下：<code>cd /home/software</code></p>
+</li>
+<li><p>下载Hadoop完全分布式的安装包</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>wget http://bj-yzjd.ufile.cn-north-02.ucloud.cn/hadoop-dist.tar.gz</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>三台机器进行免密登录</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>ssh-keygen ssh-copy-id    root@hadoop01 ssh-copy-id    root@hadoop02 ssh-copy-id    root@hadoop03</code></td>
+</tr>
+</tbody></table>
+<p>三台集器测试：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>ssh hadoop01 #如果不需要密码logout ssh hadoop02 #如果不需要密码logout ssh hadoop03 #如果不需要密码logout</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>解压安装包</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>tar -xvf hadoop-dist.tar.gz</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>将Hadoop的安装包拷贝到其他两个节点上</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>scp -r hadoop-2.7.1/ root@hadoop02:/home/software/ scp -r hadoop-2.7.1/ root@hadoop03:/home/software/</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>三台节点配置环境变量</p>
+<blockquote>
+<p>修改文件：<code>vim /etc/profile</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>export HADOOP_HOME=/home/software/hadoop-2.7.1 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin</code></td>
+</tr>
+</tbody></table>
+<p>保存退出，并且重新生效：<code>source /etc/profile</code></p>
+</li>
+<li><p>在任意一个节点格式化Zookeeper</p>
+<blockquote>
+<p>实际上就是在Zookeeper中注册Hadoop节点</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hdfs zkfc -formatZK</code></td>
+</tr>
+</tbody></table>
+<p>如果成功，日志会显示：<code>Successfully created /hadoop-ha/ns in ZK</code></p>
+<p>如果出现：<code>HA is not available</code>，说明系统兼容性不够，重装系统解决</p>
+</li>
+<li><p>三台云主机启动<code>JournalNode</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop-daemon.sh start journalnode</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在第一个节点上格式化<code>NameNode</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop namenode -format</code></td>
+</tr>
+</tbody></table>
+<p>如果格式化成功，则出现：<code>Storage directory /home/software/hadoop-2.7.1/tmp/hdfs/name has been successfully formatted.</code></p>
+</li>
+<li><p>在第一个节点上启动NameNode</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop-daemon.sh start namenode</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在第二个节点上格式化NameNode</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hdfs namenode -bootstrapStandby</code></td>
+</tr>
+</tbody></table>
+<p>如果格式化成功，则出现：<code>Storage directory /home/software/hadoop-2.7.1/tmp/hdfs/name has been successfully formatted.</code></p>
+</li>
+<li><p>在第二个节点启动NameNode</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop-daemon.sh start namenode</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在&#x3D;&#x3D;三个节点上都启动&#x3D;&#x3D;DataNode</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop-daemon.sh start datanode</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在&#x3D;&#x3D;第三个节点&#x3D;&#x3D;上启动YARN</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>start-yarn.sh</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在第一个节点上启动ResourceManager</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>yarn-daemon.sh start resourcemanager</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在第一个和第二个节点上启动zkfc</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>hadoop-daemon.sh start zkfc</code></td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<blockquote>
+<p>如果都启动成功，通过jps查看：</p>
+<ul>
+<li><p>第一个节点出现8个进程</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8</code></td>
+<td><code>- Jps - NameNode - DataNode - JournalNode - ResourceManager - NodeManager - DFSZKFailoverController - QuorumPeerMain</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>第二个节点出现7个进程</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7</code></td>
+<td><code>- Jps - NameNode - DataNode - JournalNode - NodeManager - DFSZKFailoverController - QuorumPeerMain</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>第三个节点出现6个进程</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>- Jps - DataNode - JournalNode - ResourceManager - NodeManager - QuorumPeerMain</code></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>如果少了QuorumPeerMain，表示Zookeeper启动出错</p>
+<p>如果少了NameNode&#x2F;DataNode&#x2F;JournalNode&#x2F;DFSZKFailoverController</p>
+<ul>
+<li>可以通过<code>hadoop-daemon.sh start namenode/datanode/journalnode/zkfc</code></li>
+</ul>
+<p>如果少了ResourceManager&#x2F;NodeManager</p>
+<ul>
+<li>可以通过<code>yarn-daemon.sh start resourcemanager/nodemanager</code></li>
+</ul>
+<p>&#x3D;&#x3D;Hadoop完全分布式开启，需要先启动ZooKeeper，再开Hadoop&#x3D;&#x3D;</p>
+</blockquote>
+<h3 id="配置文件的修改-1"><a href="#配置文件的修改-1" class="headerlink" title="配置文件的修改"></a>配置文件的修改</h3><blockquote>
+<p>上述下载的Hadoop的jar包中已经配置好了</p>
+</blockquote>
+<ol>
+<li><p>编辑core-site.xml，添加如下内容：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</code></td>
+<td><code>&lt;!--指定hdfs的nameservice，为整个集群起一个别名--&gt; &lt;property&gt;     &lt;name&gt;fs.defaultFS&lt;/name&gt;                     &lt;value&gt;hdfs://ns&lt;/value&gt; &lt;/property&gt; &lt;!--指定Hadoop数据临时存放目录--&gt; &lt;property&gt;     &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;     &lt;value&gt;/home/software/hadoop-2.7.1/tmp&lt;/value&gt; &lt;/property&gt;  &lt;!--指定zookeeper的存放地址--&gt; &lt;property&gt;     &lt;name&gt;ha.zookeeper.quorum&lt;/name&gt;     &lt;value&gt;hadoop01:2181,hadoop02:2181,hadoop03:2181&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>编辑hdfs-site.xml</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80</code></td>
+<td><code>&lt;!--执行hdfs的nameservice为ns，注意要和core-site.xml中的名称保持一致--&gt; &lt;property&gt;     &lt;name&gt;dfs.nameservices&lt;/name&gt;     &lt;value&gt;ns&lt;/value&gt; &lt;/property&gt; &lt;!--ns集群下有两个namenode，分别为nn1, nn2--&gt; &lt;property&gt;     &lt;name&gt;dfs.ha.namenodes.ns&lt;/name&gt;     &lt;value&gt;nn1,nn2&lt;/value&gt; &lt;/property&gt; &lt;!--nn1的RPC通信--&gt; &lt;property&gt;     &lt;name&gt;dfs.namenode.rpc-address.ns.nn1&lt;/name&gt;     &lt;value&gt;hadoop01:9000&lt;/value&gt; &lt;/property&gt; &lt;!--nn1的http通信--&gt; &lt;property&gt;     &lt;name&gt;dfs.namenode.http-address.ns.nn1&lt;/name&gt;     &lt;value&gt;hadoop01:50070&lt;/value&gt; &lt;/property&gt; &lt;!-- nn2的RPC通信地址 --&gt; &lt;property&gt;     &lt;name&gt;dfs.namenode.rpc-address.ns.nn2&lt;/name&gt;     &lt;value&gt;hadoop02:9000&lt;/value&gt; &lt;/property&gt; &lt;!-- nn2的http通信地址 --&gt; &lt;property&gt;     &lt;name&gt;dfs.namenode.http-address.ns.nn2&lt;/name&gt;     &lt;value&gt;hadoop02:50070&lt;/value&gt; &lt;/property&gt; &lt;!--指定namenode的元数据在JournalNode上存放的位置，这样，namenode2可以从journalnode集群里的指定位置上获取信息，达到热备效果--&gt; &lt;property&gt;     &lt;name&gt;dfs.namenode.shared.edits.dir&lt;/name&gt;     &lt;value&gt;qjournal://hadoop01:8485;hadoop02:8485;hadoop03:8485/ns&lt;/value&gt; &lt;/property&gt; &lt;!-- 指定JournalNode在本地磁盘存放数据的位置 --&gt; &lt;property&gt;     &lt;name&gt;dfs.journalnode.edits.dir&lt;/name&gt;     &lt;value&gt;/home/software/hadoop-2.7.1/tmp/journal&lt;/value&gt; &lt;/property&gt; &lt;!-- 开启NameNode故障时自动切换 --&gt; &lt;property&gt;     &lt;name&gt;dfs.ha.automatic-failover.enabled&lt;/name&gt;     &lt;value&gt;true&lt;/value&gt; &lt;/property&gt; &lt;!-- 配置失败自动切换实现方式 --&gt; &lt;property&gt;     &lt;name&gt;dfs.client.failover.proxy.provider.ns&lt;/name&gt;     &lt;value&gt;org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider&lt;/value&gt; &lt;/property&gt; &lt;!-- 配置隔离机制 --&gt; &lt;property&gt;     &lt;name&gt;dfs.ha.fencing.methods&lt;/name&gt;     &lt;value&gt;sshfence&lt;/value&gt; &lt;/property&gt; &lt;!-- 使用隔离机制时需要ssh免登陆 --&gt; &lt;property&gt;     &lt;name&gt;dfs.ha.fencing.ssh.private-key-files&lt;/name&gt;     &lt;value&gt;/root/.ssh/id_rsa&lt;/value&gt; &lt;/property&gt; &lt;!--配置namenode存放元数据的目录，可以不配置，如果不配置则默认放到hadoop.tmp.dir下--&gt; &lt;property&gt;         &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;         &lt;value&gt;file:///home/software/hadoop-2.7.1/tmp/hdfs/name&lt;/value&gt;     &lt;/property&gt;     &lt;!--配置datanode存放元数据的目录，可以不配置，如果不配置则默认放到hadoop.tmp.dir下--&gt; &lt;property&gt;         &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;         &lt;value&gt;file:///home/software/hadoop-2.7.1/tmp/hdfs/data&lt;/value&gt;     &lt;/property&gt; &lt;!--配置副本数量--&gt;     &lt;property&gt;         &lt;name&gt;dfs.replication&lt;/name&gt;         &lt;value&gt;3&lt;/value&gt;     &lt;/property&gt;    &lt;!--设置用户的操作权限，false表示关闭权限验证，任何用户都可以操作--&gt;                                                                     &lt;property&gt;         &lt;name&gt;dfs.permissions&lt;/name&gt;         &lt;value&gt;false&lt;/value&gt;     &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>编辑mapred-site.xml</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>&lt;property&gt;         &lt;name&gt;mapreduce.framework.name&lt;/name&gt;         &lt;value&gt;yarn&lt;/value&gt;     &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>编辑yarn-site.xml</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50</code></td>
+<td><code>&lt;!--配置yarn的高可用--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.ha.enabled&lt;/name&gt;     &lt;value&gt;true&lt;/value&gt; &lt;/property&gt; &lt;!--指定两个resourcemaneger的名称--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.ha.rm-ids&lt;/name&gt;     &lt;value&gt;rm1,rm2&lt;/value&gt; &lt;/property&gt; &lt;!--配置rm1的主机--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.hostname.rm1&lt;/name&gt;     &lt;value&gt;hadoop01&lt;/value&gt; &lt;/property&gt; &lt;!--配置rm2的主机--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.hostname.rm2&lt;/name&gt;     &lt;value&gt;hadoop03&lt;/value&gt; &lt;/property&gt; &lt;!--开启yarn恢复机制--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.recovery.enabled&lt;/name&gt;     &lt;value&gt;true&lt;/value&gt; &lt;/property&gt; &lt;!--执行rm恢复机制实现类--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.store.class&lt;/name&gt;     &lt;value&gt;org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore&lt;/value&gt; &lt;/property&gt; &lt;!--配置zookeeper的地址--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.zk-address&lt;/name&gt;     &lt;value&gt;hadoop01:2181,hadoop02:2181,hadoop03:2181&lt;/value&gt; &lt;/property&gt; &lt;!--执行yarn集群的别名--&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.cluster-id&lt;/name&gt;     &lt;value&gt;ns-yarn&lt;/value&gt; &lt;/property&gt; &lt;!-- 指定nodemanager启动时加载server的方式为shuffle server --&gt; &lt;property&gt;         &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;         &lt;value&gt;mapreduce_shuffle&lt;/value&gt;     &lt;/property&gt;   &lt;!-- 指定resourcemanager地址 --&gt; &lt;property&gt;     &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;     &lt;value&gt;hadoop03&lt;/value&gt; &lt;/property&gt;</code></td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h1 id="Docker安装"><a href="#Docker安装" class="headerlink" title="Docker安装"></a>Docker安装</h1></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/">https://hzhzxfs.github.io/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Hadoop常见参数</div></div><div class="info-2"><div class="info-item-1">[TOC] Hadoop常见参数   配置所在文件 参数 参数默认值 作用    hdfs-site.xml dfs.namenode.support.allow.format true 表示设置NameNode是否允许被格式化。 在生产系统，把它设置为false，阻止任何格式化操作在一个运行的DFS上。 建议初次格式化后，修改配置禁止，改成false   hdfs-site.xml dfs.heartbeat.interval 3 DataNode的心跳间隔，默认单位为秒 在集群网络通信状态不好的时候，适当调大   hdfs-site.xml dfs.blocksize 134217728 块大小，默认是128MB 必须得是1024(page size)的整数倍   hdfs-site.xml dfs.namenode.checkpoint.period 或者： fs.checkpoint.period 3600 edits和fsimage文件合并周期阈值，默认单位为s   hdfs-site.xml dfs.stream-buffer-size 4096 文件流缓存大小。需要...</div></div></div></a><a class="pagination-related" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java设计模式及UML类图</div></div><div class="info-2"><div class="info-item-1">目录[TOC] 23种设计模式GOF在 1994 年，由 Erich Gamma、Richard Helm、Ralph Johnson 和 John Vlissides 四人合著出版了一本名为 Design Patterns - Elements of Reusable Object-Oriented Software（中文译名：设计模式 - 可复用的面向对象软件元素） 的书，该书首次提到了软件开发中设计模式的概念。 四位作者合称 GOF（四人帮，全拼 Gang of Four）。他们所提出的设计模式主要是基于以下的面向对象设计原则。  对接口编程而不是对实现编程。 优先使用对象组合而不是继承。  设计模式简介参考网址    模式类型 模式 &amp; 描述 包括    创建型模式 这些设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式， 而不是使用 new 运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。 单例模式（Singleton Pattern） 原型模式（Prototype Pattern） 工厂模式（Factory Pattern）...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/07/05/%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B9%8BMorris%E9%81%8D%E5%8E%86/" title="二叉树之Morris遍历"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-05</div><div class="info-item-2">二叉树之Morris遍历</div></div><div class="info-2"><div class="info-item-1">二叉树之Morris遍历 递归理解以及morris遍历 由morris遍历改成前序遍历 由morris遍历改成中序遍历 由morris遍历改成后续遍历 完整测试代码   递归理解以及morris遍历        1 2 3 4 5 6 7 8 static void rec(Node head) {      if (head == null) return;     System.out.print(head.value + &quot; &quot;); //这里打印就是前序遍历     rec(head.left);     System.out.print(head.value + &quot; &quot;); //这里打印就是中序遍历     rec(head.right);     System.out.print(head.value + &quot; &quot;); //这里打印就是后续遍历 }   这是我们用递归写的三种遍历方法，如果是下面的例子，上面程序输出如下：  程序输出:         1 1 2 4 8 8 8 4 4 2 5 5 9 9 9 ...</div></div></div></a><a class="pagination-related" href="/2022/01/15/%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97LCS%20%E5%92%8C%20%E6%9C%80%E9%95%BF%E5%85%AC%E4%BC%97%E5%AD%90%E4%B8%B2/" title="最长公共子序列LCS 和 最长公众子串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-15</div><div class="info-item-2">最长公共子序列LCS 和 最长公众子串</div></div><div class="info-2"><div class="info-item-1">最长公共子序列LCS 和 最长公众子串 51Nod-1006-最长公共子序列LCS 最长公众子串   51Nod-1006-最长公共子序列LCS题目链接 http://www.51nod.com/Challenge/Problem.html#!#problemId=1006  题目就是输入两个字符串str1、str2，输出任意一个最长公共子序列。 解析dp[i][j]代表的是 : 必须以str1[i]、str2[j]结尾的最长公共子序列，dp[i][j]来源:  可能是dp[i-1][j]，代表str1[0~i-1]与str2[0~j]的最长公共子序列。 可能是dp[i][j-1]，代表str1[0~i]与str2[0~j-1]的最长公共子序列。 如果str1[i] == str2[j]，还可能是dp[i-1][j-1] + 1。  这三种情况中取最大值。  构造结果的过程(利用dp数组即可)  从矩阵的右下角开始，有三种移动方式: 向上、向左、向左上。 如果dp[i][j] &gt; dp[i-1][j] &amp;&amp; dp[i][j] &gt; dp[i][j-1]，...</div></div></div></a><a class="pagination-related" href="/2021/07/21/%E5%A4%8D%E7%9B%98%EF%BD%9C%E5%A4%A9%E5%A0%82%E7%A1%85%E8%B0%B7%C2%B7%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E7%AE%97%E6%B3%95%E7%BC%96%E7%A8%8B%E5%A4%A7%E8%B5%9B/" title="复盘｜天堂硅谷·数字经济算法编程大赛"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-21</div><div class="info-item-2">复盘｜天堂硅谷·数字经济算法编程大赛</div></div><div class="info-2"><div class="info-item-1">复盘｜天堂硅谷·数字经济算法编程大赛题目-01 化学反应【模拟】按题意模拟（可以用大根堆或者平衡树），每次找两个最大的出来，直到没有剩余或只剩一个。         1 2 3 4 5 6 7 8 9 #平衡树 from sortedcontainers import SortedList class Solution:     def lastMaterial(self, material: List[int]) -&gt; int:         s = SortedList(material)         while len(s) &gt; 1:             a, b = s.pop(), s.pop()             if a != b: s.add(a - b)         return s[0] if s else 0           1 2 3 4 5 6 7 8 9 #大根堆 class Solution:     def lastMaterial(self, material: List[int]) -&gt; int:   ...</div></div></div></a><a class="pagination-related" href="/2021/11/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E4%B8%80%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%92%8C%E5%8D%8F%E8%AE%AE(%E4%B8%80)/" title="计算机网络知识总结一计算机网络和协议(一)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-21</div><div class="info-item-2">计算机网络知识总结一计算机网络和协议(一)</div></div><div class="info-2"><div class="info-item-1">计算机网络知识总结一计算机网络和协议(一) 互联网概述 互联网组成 计算机网络的性能指标 OSI参考模型以及TCP&#x2F;IP四层模型、五层协议 通信过程、数据传输、网络设备 小结   互联网概述 计算机网络: 由若干节点和连接这些节点的链路组成，网络中的节点可以是计算机、集线器、交换机、或路由器等； 网络之间可以通过路由器相互连接，这就构成了一个更大范围的计算机网路，这样的网路称为互连网，因此互连网是网路的网路； 因特网(互联网): 全球最大的特定互连网；  注意以下两个意思相差很大的名词 internet 和 Internet [RFC 1208]:  以小写字母 i 开始的 internet (互连网) 是一个通用名词，它泛指由多个计算机网络互连而成的计算机网络。在这些网络之间的通信协议〈即通信规则) 可以任意选择，不一定非要使用TCP/IP 协议； 以大写字母 I 开始的 Internet 〈互联网或因特网) 则是一个专用名词，它指当前全球最大的、开放的、由众多网络相互连接而成的特定互连网，它采用 TCP/IP 协议族作为通信的规则，且其前身是美国的 ARPANET；...</div></div></div></a><a class="pagination-related" href="/2021/12/15/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E7%9A%84%E6%80%BB%E7%BB%93(6%E7%A7%8D%E5%8F%98%E5%BD%A2)/" title="二分查找的总结(6种变形)"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-15</div><div class="info-item-2">二分查找的总结(6种变形)</div></div><div class="info-2"><div class="info-item-1">二分查找的总结 普通的二分查找 普通二分查找的另一种写法 第一个=key的，不存在返回-1 第一个&gt;=key的 第一个&gt;key的 第一个...的总结 最后一个=key的，不存在返回-1 最后一个&lt;=key的 最后一个&lt;key 的 最后一个...的总结 完整测试代码   普通的二分查找最普通的写法:  范围在[L,R]闭区间中，L = 0、R = arr.length - 1； 注意循环条件为 L &lt;= R ，而不是L &lt; R；           1 2 3 4 5 6 7 8 9 10 11 12 13 14 static int bs1(int[] arr,int key){     int L = 0,R = arr.length - 1; //在[L,R]范围内寻找key     int mid;     while( L &lt;= R){         mid = L + (R - L) / 2;         if(arr[mid] == key)             return mid;         if(arr[...</div></div></div></a><a class="pagination-related" href="/2023/02/05/OOM%E5%BC%82%E5%B8%B8/" title="OOM异常"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-05</div><div class="info-item-2">OOM异常</div></div><div class="info-2"><div class="info-item-1">OOM 异常 (OutOfMemoryError) OOM 异常 (OutOfMemoryError) Java 堆溢出 Java 虚拟机栈和本地方法栈溢出 方法区和运行时常量池溢出 直接内存溢出    Java 堆溢出 出现标志：java.lang.OutOfMemoryError: Java heap space 解决方法： 先通过内存映像分析工具分析 Dump 出来的堆转储快照，确认内存中的对象是否是必要的，即分清楚是出现了内存泄漏还是内存溢出； 如果是内存泄漏，通过工具查看泄漏对象到 GC Root 的引用链，定位出泄漏的位置； 如果不存在泄漏，检查虚拟机堆参数（-Xmx 和 -Xms）是否可以调大，检查代码中是否有哪些对象的生命周期过长，尝试减少程序运行期的内存消耗。   虚拟机参数： -XX:HeapDumpOnOutOfMemoryError：让虚拟机在出现内存泄漏异常时 Dump 出当前的内存堆转储快照用于事后分析。    Java 虚拟机栈和本地方法栈溢出 单线程下，栈帧过大、虚拟机容量过小都不会导致 OutOfMemoryError，只会导致 StackOve...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hadoop%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">Hadoop简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.</span> <span class="toc-text">模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.</span> <span class="toc-text">版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%BB%84%E4%BB%B6"><span class="toc-number">1.4.</span> <span class="toc-text">相关组件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text">单机模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">伪分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.1.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">2.2.2.</span> <span class="toc-text">配置文件的修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%AE%E6%94%B9-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">配置文件的修改</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">Docker安装</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

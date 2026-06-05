@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>图神经网络——超大图上的节点表征学习 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="图卷积网络(GCN)已经成功地应用于许多基于图形的应用，然而大规模的GCN的训练仍然具有挑战性。目前基于SGD的算法要么面临着随GCN层数呈指数增长的高计算成本，要么面临着保存整个图形和每个节点的embedding到内存的巨大空间(显存)需求。于是论文Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Conv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图神经网络——超大图上的节点表征学习">
+<meta property="og:url" content="https://hzhzxfs.github.io/2021/07/01/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%B6%85%E5%A4%A7%E5%9B%BE%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="图卷积网络(GCN)已经成功地应用于许多基于图形的应用，然而大规模的GCN的训练仍然具有挑战性。目前基于SGD的算法要么面临着随GCN层数呈指数增长的高计算成本，要么面临着保存整个图形和每个节点的embedding到内存的巨大空间(显存)需求。于是论文Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Conv">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2021-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-05T08:25:56.186Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="102 tags">
+<meta property="article:tag" content="Tags">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "图神经网络——超大图上的节点表征学习",
+  "url": "https://hzhzxfs.github.io/2021/07/01/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%B6%85%E5%A4%A7%E5%9B%BE%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2021-06-30T16:00:00.000Z",
+  "dateModified": "2026-06-05T08:25:56.186Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2021/07/01/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%B6%85%E5%A4%A7%E5%9B%BE%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '图神经网络——超大图上的节点表征学习',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">图神经网络——超大图上的节点表征学习</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">图神经网络——超大图上的节点表征学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-06-30T16:00:00.000Z" title="发表于 2021-07-01 00:00:00">2021-07-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-05T08:25:56.186Z" title="更新于 2026-06-05 16:25:56">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/">Categories</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Machine-Learning/">Machine Learning</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Categories/Machine-Learning/21-categories/">21 categories</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>图卷积网络(GCN)已经成功地应用于许多基于图形的应用，然而大规模的GCN的训练仍然具有挑战性。目前基于SGD的算法要么面临着随GCN层数呈指数增长的高计算成本，要么面临着保存整个图形和每个节点的embedding到内存的巨大空间(显存)需求。于是论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.07953">Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Convolutional Network</a>提出了Cluster-GCN方法来解决超大图的训练问题。</p>
+<h4 id="1-Cluster-GCN方法简单概括"><a href="#1-Cluster-GCN方法简单概括" class="headerlink" title="1.Cluster-GCN方法简单概括"></a>1.Cluster-GCN方法简单概括</h4><ul>
+<li>利用图节点聚类算法将一个图的节点划分为$c$个簇，每一次选择几个簇的节点和这些节点对应的边构成一个子图，然后对子图做训练。</li>
+<li>由于是利用图节点聚类算法将节点划分为多个簇，所以簇内边的数量要比簇间边的数量多得多，所以可以提高表征利用率，并提高图神经网络的训练效率。</li>
+<li>每一次随机选择多个簇来组成一个batch，这样不会丢失簇间的边，同时也不会有batch内类别分布偏差过大的问题。</li>
+<li>基于小图进行训练，不会消耗很多内存空间，于是我们可以训练更深的神经网络，进而可以达到更高的精度。</li>
+</ul>
+<h4 id="2-GCN回顾"><a href="#2-GCN回顾" class="headerlink" title="2.GCN回顾"></a>2.GCN回顾</h4><p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.02907">2017. Semi-supervised classification with graph convolutional networks</a>中提出了GCN。作者定义了一种类似卷积的运算，称为谱图卷积。这使得CNN可以直接在图形上操作。GCN中的每一层通过考虑相邻节点的embedding，来更新Graph中的每个节点的特征向量表示。GCN的逐层正向传播可以总结为：<br>$$<br>X^{\left( l+1 \right)}&#x3D;f\left( X^l,A \right) &#x3D;\sigma \left( \tilde{D}^{-\frac{1}{2}}\tilde{A}D^{-\frac{1}{2}}X^{\left( l \right)}W^{\left( l \right)} \right)<br>$$</p>
+<ul>
+<li>$X$是所有节点的特征向量构成的特征矩阵。</li>
+<li>$X^l$和$X^{l+1}$分别是$l$层的输入和输出矩阵，$X^l$也是第$l$层对于所有节点的embedding。</li>
+<li>A是图的邻接矩阵。</li>
+<li>${A}&#x3D;A+I_N$是带有自环的无向图的邻接矩阵。</li>
+<li>$I_N$是单位矩阵。</li>
+<li>$\tilde{D}<em>{ii}&#x3D;\sum{\tilde{A}</em>{ij}}$是带有自环的无向图的度矩阵，是一个对角矩阵。</li>
+<li>$W^{(l)}$是一个可训练权重矩阵或参数矩阵。</li>
+<li>$\sigma(\cdot)$是激活函数，通常被设为<code>ReLU</code>。</li>
+</ul>
+<p>为了简化计算，假设所有层的表征维度都是F，上式写为：<br>$$<br>Z^{(l+1)}&#x3D;A^{\prime} X^{(l)} W^{(l)}, X^{(l+1)}&#x3D;\sigma\left(Z^{(l+1)}\right)<br>$$</p>
+<ul>
+<li>$A^{\prime}$是归一化和规范化后的邻接矩阵</li>
+</ul>
+<p>将GCN用于半监督节点分类时，目标是通过最小化损失函数来学习上式中的权重矩阵：<br>$$<br>\mathcal{L}&#x3D;\frac{1}{\left|\mathcal{Y}<em>{L}\right|} \sum</em>{i \in \mathcal{Y}<em>{L}} \operatorname{loss}\left(y</em>{i}, z_{i}^{L}\right)<br>$$</p>
+<ul>
+<li><p>$\mathcal{Y}_{\mathcal{L}}$是节点类别。</p>
+</li>
+<li><p>$z_{i}^{(L)}$是$Z^{(L)}$的第$i$行，表示节点$i$的最终层预测。</p>
+</li>
+<li><p>$y_{i}$为节点$i$的真实类别。</p>
+<h4 id="3-Cluster-GCN的速度"><a href="#3-Cluster-GCN的速度" class="headerlink" title="3.Cluster-GCN的速度"></a>3.Cluster-GCN的速度</h4><p>原始的GCN的训练使用的是全批量梯度下降(Full Gradient Descent)，它的计算和内存成本很高:</p>
+</li>
+<li><p>在内存方面，通过反向传播来计算full gradient需要存储所有的embedding矩阵，这需要O(NFL)的内存空间（F是特征数量，N是结点数量，L是网络层数）。</p>
+</li>
+<li><p>在收敛速度方面，由于在每个epoch模型才更新一次，所以需要很多个epoch才会使模型达到收敛。</p>
+</li>
+</ul>
+<p>mini-batch SGD可以提高GCN的训练速度，其不需要计算整个梯度，只需要计算每次更新的mini-batch的梯度。使用大小为$b&#x3D;|\mathcal{B}|$的$\mathcal{B} \subseteq[N]$来表示一个batch的节点索引。SGD的每一步都将计算梯度估计值$\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \nabla \operatorname{loss}\left(y_{i}, z_{i}^{(L)}\right)$来进行参数更新。</p>
+<p>尽管在每个epoch收敛得更快，但SGD在GCN训练上引入了另一个计算开销（邻域扩展），这使得SGD的每个epoch时间内比全梯度下降（full gradient descent）要慢得多——计算一个节点$i$的梯度，需要节点$i$的embedding，而节点$i$的embedding的依赖于前面的层里的它的邻居的embeddings，为了提取前面的层中它的邻居节点embeddings，还需要进一步聚合每个邻居节点的邻居节点的embeddings。假设一个图神经网络有$L+1$层，节点的平均的度为$d$。为了得到节点$i$的梯度，需要聚合图上$O\left(d^{L}\right)$的节点的表征，与权重矩阵$W^{(l)}$相乘，所以计算任意节点表征的时间开销是$O\left(F^{2}\right)$。所以SGD一个节点的梯度的计算需要$O\left(d^{L} F^{2}\right)$的时间。</p>
+<h4 id="4-Cluster-GCN详解"><a href="#4-Cluster-GCN详解" class="headerlink" title="4.Cluster-GCN详解"></a>4.Cluster-GCN详解</h4><p>在mini-batch SGD更新中，设计一个batch和相应的计算sub graph来最大限度地提高embedding utilization。Cluster-GCN通过将embedding utilization连接到一个聚类目标上来实现。</p>
+<p>对于一个Graph$G$，我们将其节点划分为$c$个簇：$\mathcal{V}&#x3D;\left[\mathcal{V}<em>{1}, \cdots \mathcal{V}</em>{c}\right]$，其中$\mathcal{V}<em>{t}$由第$t$个簇中的节点组成，得到$c$个子图:<br>$$<br>\bar{G}&#x3D;\left[G</em>{1}, \cdots, G_{c}\right]&#x3D;\left[\left{\mathcal{V}<em>{1}, \mathcal{E}</em>{1}\right}, \cdots,\left{\mathcal{V}<em>{c}, \mathcal{E}</em>{c}\right}\right]<br>\notag<br>$$<br>其中$\mathcal{E}<em>{t}$只由$\mathcal{V}</em>{t}$中的节点之间的边组成。经过节点重组，邻接矩阵被划分为大小为$c^{2}$的块矩阵，如下所示<br>$$<br>A&#x3D;\bar{A}+\Delta&#x3D;\left[\begin{array}{ccc}<br>A_{11} &amp; \cdots &amp; A_{1 c} \<br>\vdots &amp; \ddots &amp; \vdots \<br>A_{c 1} &amp; \cdots &amp; A_{c c}<br>\end{array}\right]<br>$$<br>其中<br>$$<br>\bar{A}&#x3D;\left[\begin{array}{ccc}<br>A_{11} &amp; \cdots &amp; 0 \<br>\vdots &amp; \ddots &amp; \vdots \<br>0 &amp; \cdots &amp; A_{c c}<br>\end{array}\right], \Delta&#x3D;\left[\begin{array}{ccc}<br>0 &amp; \cdots &amp; A_{1 c} \<br>\vdots &amp; \ddots &amp; \vdots \<br>A_{c 1} &amp; \cdots &amp; 0<br>\end{array}\right]<br>$$</p>
+<ul>
+<li>对角线上的块$A_{t t}$是大小为$\left|\mathcal{V}<em>{t}\right| \times\left|\mathcal{V}</em>{t}\right|$的邻接矩阵，它由$G_{t}$内部的边构成。</li>
+<li>$\bar{A}$是图$\bar{G}$的邻接矩阵。</li>
+<li>$A_{s t}$由两个簇$\mathcal{V}<em>{s}$和$\mathcal{V}</em>{t}$之间的边构成。</li>
+<li>$\Delta$是由$A$的所有非对角线块组成的矩阵。</li>
+</ul>
+<p>用块对角线邻接矩阵$\bar{A}$去近似邻接矩阵$A$之后，完整的损失函数可以根据batch分解成多个部分之和：</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/W2fREV"><img src="https://z3.ax1x.com/2021/07/25/W2fREV.png" alt="W2fREV.png"></a></p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/W2fX4O"><img src="https://z3.ax1x.com/2021/07/25/W2fX4O.png" alt="W2fX4O.png"></a></p>
+<p>Cluster-GCN使用了Graph聚类算法来划分Graph。Graph聚类的方法，如metis和graclus等，旨在在Graph中的顶点上构建分区，使得簇内连接远大于簇间连接，从而更好的捕捉聚类和区分结构。</p>
+<p><img src="https://i.loli.net/2021/07/12/h2CLbu9VMEzyNTa.jpg" alt="LAYER.jpg"></p>
+<h4 id="5-Cluster-GCN实践"><a href="#5-Cluster-GCN实践" class="headerlink" title="5.Cluster-GCN实践"></a>5.Cluster-GCN实践</h4><p>PyG库中提供了Cluster-GCN的接口，可以像训练普通神经网络一样在超大图上训练图神经网络。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</code></td>
+<td><code>#导入库和数据集 import torch import torch.nn.functional as F from torch.nn import ModuleList from torch_geometric.nn import SAGEConv from tqdm import tqdm from torch_geometric.datasets import Reddit, Reddit2 from torch_geometric.data import ClusterData, ClusterLoader, NeighborSampler  dataset = Reddit(&#39;../dataset/Reddit&#39;) data = dataset[0] print(dataset.num_classes) print(data.num_nodes) print(data.num_edges) print(data.num_features)</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>结果：<br>41, 232965, 114615892, 602</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td><code>#图节点聚类并生成数据加载器 cluster_data = ClusterData(data, num_parts=1500, recursive=False, save_dir=dataset.processed_dir)  train_loader = ClusterLoader(cluster_data, batch_size=20, shuffle=True, num_workers=12)  subgraph_loader = NeighborSampler(data.edge_index, sizes=[-1], batch_size=1024, shuffle=False,num_workers=12)</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38</code></td>
+<td><code>#构建网络 class Net(torch.nn.Module):     def __init__(self, in_channels, out_channels):         super(Net, self).__init__()         self.convs = ModuleList(             [SAGEConv(in_channels, 128),              SAGEConv(128, out_channels)])      def forward(self, x, edge_index):         for i, conv in enumerate(self.convs):             x = conv(x, edge_index)             if i != len(self.convs) - 1:                 x = F.relu(x)                 x = F.dropout(x, p=0.5, training=self.training)         return F.log_softmax(x, dim=-1)      def inference(self, x_all):         pbar = tqdm(total=x_all.size(0) * len(self.convs))         pbar.set_description(&#39;Evaluating&#39;)                  for i, conv in enumerate(self.convs):             xs = []             for batch_size, n_id, adj in subgraph_loader:                 edge_index, _, size = adj.to(device)                 x = x_all[n_id].to(device)                 x_target = x[:size[1]]                 x = conv((x, x_target), edge_index)                 if i != len(self.convs) - 1:                     x = F.relu(x)                 xs.append(x.cpu())                  pbar.update(batch_size)              x_all = torch.cat(xs, dim=0)          pbar.close()          return x_all</code></td>
+</tr>
+</tbody></table>
+<p>此神经网络的forward函数的定义与普通的图神经网络并无区别，而inference方法应用于推理阶段，为了获取更高的预测精度，所以使用subgraph_loader。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44</code></td>
+<td><code>#训练、验证、测试 device = torch.device(&#39;cuda&#39; if torch.cuda.is_available() else &#39;cpu&#39;) model = Net(dataset.num_features, dataset.num_classes).to(device) optimizer = torch.optim.Adam(model.parameters(), lr=0.005)  def train():     model.train()      total_loss = total_nodes = 0     for batch in train_loader:         batch = batch.to(device)         optimizer.zero_grad()         out = model(batch.x, batch.edge_index)         loss = F.nll_loss(out[batch.train_mask], batch.y[batch.train_mask])         loss.backward()         optimizer.step()          nodes = batch.train_mask.sum().item()         total_loss += loss.item() * nodes         total_nodes += nodes      return total_loss / total_nodes  @torch.no_grad() def test():  # Inference should be performed on the full graph.     model.eval()      out = model.inference(data.x)     y_pred = out.argmax(dim=-1)      accs = []     for mask in [data.train_mask, data.val_mask, data.test_mask]:         correct = y_pred[mask].eq(data.y[mask]).sum().item()         accs.append(correct / mask.sum().item())     return accs  for epoch in range(1, 31):     loss = train()     if epoch % 10 == 0:         train_acc, val_acc, test_acc = test()         print(f&#39;Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, &#39;               f&#39;Val: {val_acc:.4f}, test: {test_acc:.4f}&#39;)     else:         print(f&#39;Epoch: {epoch:02d}, Loss: {loss:.4f}&#39;)</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>结果：<br>Epoch: 10, Loss: 0.2893, Train: 0.9620, Val: 0.9516, test: 0.9496<br>Epoch: 20, Loss: 0.2478, Train: 0.9664, Val: 0.9546, test: 0.9560<br>Epoch: 30, Loss: 0.2397, Train: 0.9689, Val: 0.9515, test: 0.9502</p>
+</blockquote>
+<p>在训练过程中，使用train_loader获取batch，每次根据多个簇组成的batch进行训练；在验证阶段，使用subgraph_loader，在计算一个节点的表征时会计算该节点的距离从$0$到$L$的邻接节点，可以更好地测试神经网络的性能。</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p>1.<a target="_blank" rel="noopener" href="https://github.com/datawhalechina/team-learning-nlp/tree/master/GNN">datawhale-GNN开源学习资料</a><br>2.<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.07953">Cluster-GCN论文</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2021/07/01/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%B6%85%E5%A4%A7%E5%9B%BE%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/">https://hzhzxfs.github.io/2021/07/01/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%B6%85%E5%A4%A7%E5%9B%BE%E4%B8%8A%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Tags/">Tags</a><a class="post-meta__tags" href="/tags/102-tags/">102 tags</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2021/07/05/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%9B%BE%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/" title="图神经网络——基本图论与PyG库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">图神经网络——基本图论与PyG库</div></div><div class="info-2"><div class="info-item-1">图神经网络——基于图神经网络的图表征学习方法图表征学习要求在输入节点属性、边和边的属性（如果有的话）得到一个向量作为图的表征，基于图表征进一步的我们可以做图的预测，而图同构网络（Graph Isomorphism Network, GIN）的图表征网络是当前最经典的图表征学习网络。 1.GNN的邻域聚合(消息传递)GNN的目标是以图结构数据和节点特征作为输入，以学习到节点（或图）的embedding，用于分类任务。基于邻域聚合的GNN可以拆分为以下三个模块：  Aggregate：聚合一阶邻域特征。 Combine：将邻居聚合的特征 与 当前节点特征合并， 以更新当前节点特征。 Readout（可选）：如果是对graph分类，需要将graph中所有节点特征转变成graph特征。  但是Aggregate的三种方式sum、mean、max的表征能力不够强大。 如上图，节点v和v’为中心节点，通过聚合邻居特征生成embedding来分析不同aggregate设置下是否能区分不同的结构。设红绿蓝色节点特征值分别为r,g,b，不考虑combine。  图a中：mean：左$\frac{1...</div></div></div></a><a class="pagination-related" href="/2021/06/27/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E8%8A%82%E7%82%B9%E5%88%86%E7%B1%BB%E4%B8%8E%E8%BE%B9%E9%A2%84%E6%B5%8B/" title="图神经网络——节点分类与边预测"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">图神经网络——节点分类与边预测</div></div><div class="info-2"><div class="info-item-1">1.InMemoryDataset基类在PyG中，可以通过继承InMemoryDataset类来自定义一个数据可全部存储到内存的数据集类。(继承Dataset是分次加载到内存，继承InMemoryDataset是一次性加载所有数据到内存)         1 class InMemoryDataset(root: Optional[str] = None, transform: Optional[Callable] = None, pre_transform: Optional[Callable] = None, pre_filter: Optional[Callable] = None)   参数说明：  transform：数据转换函数，用于转换Data对象，每一次数据获取过程中都会被执行。pre_transform：数据转换函数，用于转换Data对象，在Data对象被保存到文件前调用。pre_filter：检查数据是否要保留的函数，接收一个Data对象，返回此Data对象是否应该被包含在最终的数据集中，在Data对象被保存到文件前调用。  2.Sequential容器nn....</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/02/16/Netty/" title="Netty"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-16</div><div class="info-item-2">Netty</div></div><div class="info-2"><div class="info-item-1">Netty1.Netty的特点？ 一个高性能、异步事件驱动的NIO框架，它提供了对TCP、UDP和文件传输的支持 使用更高效的socket底层，对epoll空轮询引起的cpu占用飙升在内部进行了处理，避免了直接使用NIO的陷阱，简化了NIO的处理方式。 采用多种decoder&#x2F;encoder 支持，对TCP粘包&#x2F;分包进行自动化处理 可使用接受&#x2F;处理线程池，提高连接效率，对重连、心跳检测的简单支持 可配置IO线程数、TCP参数， TCP接收和发送缓冲区使用直接内存代替堆内存，通过内存池的方式循环利用ByteBuf 通过引用计数器及时申请释放不再引用的对象，降低了GC频率 使用单线程串行化的方式，高效的Reactor线程模型 大量使用了volitale、使用了CAS和原子类、线程安全类的使用、读写锁的使用  2.Netty的线程模型？ Netty通过Reactor模型基于多路复用器接收并处理用户请求，内部实现了两个线程池，boss线程池和work线程池，其中boss线程池的线程负责处理请求的accept事件，当接收到accept事件的请求时，把对应的so...</div></div></div></a><a class="pagination-related" href="/2023/08/31/%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/" title="Linux用户管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-31</div><div class="info-item-2">Linux用户管理</div></div><div class="info-2"><div class="info-item-1">[TOC] 用户管理1. 基本用户管理  Linux系统是一个多用户多任务的分时操作系统，任何一个要使用系统资源的用户，都必须首先向系统管理员申请一个账号，然后以这个账号的身份进入系统。 用户的账号一方面可以帮助系统管理员对使用系统的用户进行跟踪，并控制他们对系统资源的访问；另一方面也可以帮助用户组织文件，并为用户提供安全性保护。 每个用户账号都拥有一个唯一的用户名和各自的口令。 要完成的工作主要有如下几个方面： 用户账号的添加、删除与修改。 用户口令的管理。 用户组的管理。     1.1 添加用户 添加用户：useradd [选项] 用户名。  1.1.1 参数说明 选项:  -c comment 指定一段注释性描述。 -d 目录 指定用户主目录，如果此目录不存在，则同时使用-m选项，可以创建主目录。 -g 用户组 指定用户所属的用户组。 -G 用户组，用户组 指定用户所属的附加组。 -s Shell文件 指定用户的登录Shell。 -u 用户号 指定用户的用户号，如果同时有-o选项，则可以重复使用其他用户的标识号。 -f [缓冲天数] 指定在密码过期后多少天即关闭该帐号。 ...</div></div></div></a><a class="pagination-related" href="/2023/10/08/SSM%E6%A1%86%E6%9E%B6%E4%B9%8BMybatis/" title="SSM框架之Mybatis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-08</div><div class="info-item-2">SSM框架之Mybatis</div></div><div class="info-2"><div class="info-item-1">0. ssm框架大纲   1. Mybatis    2. 第一个Mybatis程序mybatis-01 搭建环境          1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 CREATE DATABASE `mybatis`;  USE `mybatis`;  CREATE TABLE `user` ( `id` INT(20) NOT NULL PRIMARY KEY, `name` VARCHAR(30) DEFAULT NULL, `pwd` VARCHAR(30) DEFAULT NULL ) ENGINE=INNODB DEFAULT CHARSET=utf8;   INSERT INTO `user` (`id`,`name`,`pwd`) VALUES (1, &#39;狂神&#39;, &#39;123456&#39;), (2, &#39;李四&#39;, &#39;123456&#39;), (3, &#39;张三&#39;, &#39;123890&#39;)    新建项目(创建子模块)  配置mybatis的核心配置文件 ...</div></div></div></a><a class="pagination-related" href="/2022/11/26/The%20Suspects%E4%BB%A5%E5%8F%8A%E5%B9%B6%E6%9F%A5%E9%9B%86%E6%80%BB%E7%BB%93/" title="The Suspects以及并查集总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-26</div><div class="info-item-2">The Suspects以及并查集总结</div></div><div class="info-2"><div class="info-item-1">The Suspects以及并查集总结 题目 基本并查集 Size优化并查集 Rank优化并查集 路径压缩优化一(最好) 路径压缩优化二(递归)  题目链接 http://poj.org/problem?id=1611  题意就是告诉你0号同学被感染了，他还参加了一些社团，给出一些社团以及里面的人，问总共多少人感染。输入给出n表示人数(标号为0~n-1)，m表示社团数目，接下来m行每行第一个数k ，表示该社团有k人，然后是k个人的编号。要你输出有多少个人感染了病毒。  解析题目本身并不难:  把每个社团加入到各自的集合中，然后不断的合并相同的集合，最后看哪些和0号同学在同一个集合中，使用一个变量记录和0号同学在同一个集合中的人数即可； 这里主要是总结并查集几种优化的方式；  基本并查集基本并查集，记录一个每个结点p的父亲结点是parent[p]，然后是一个不断从孩子找父亲的过程:  find()操作， while(p != parent[p])p = parent[p]，一直往上找根的过程； union()操作，就是找到两个结点的根节点，然后将其中一个结点的根节点挂到另一个结点的...</div></div></div></a><a class="pagination-related" href="/2023/06/01/Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96/" title="Java运行期优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-01</div><div class="info-item-2">Java运行期优化</div></div><div class="info-2"><div class="info-item-1">运行期优化 我们知道，Java 是解释执行的，可是解释执行毕竟还是有点慢的，这也使得 Java 一直被认为是效率低下的语言……，不过随着即时编译技术的发展，Java 的运行速度得到了很大的提升，在本篇文章中，我们将会对 Java 的运行期优化，也就是即时编译 (Just In Time, JIT) 时进行的优化进行详细的讲解，我们先来看看什么是即时编译。  运行期优化 即时编译 HotSpot 虚拟机内的即时编译器运作过程 为什么要使用解释器与编译器并存的架构？ 为什么虚拟机要实现两个不同的 JIT 编译器？ 什么是虚拟机的分层编译？ 如何判断热点代码，触发编译？ 什么是热点代码？ 什么是 “多次” 执行？ HotSpot 中每个方法的 2 个计数器 HotSpot 热点代码探测流程   热点代码编译的过程？   经典优化技术介绍 公共子表达式消除【语言无关】 数组范围检查消除【语言相关】 方法内联【最重要】 逃逸分析【最前沿】 基本行为 对于不会逃逸到方法或线程外的对象能进行优化 虚拟机参数   一个优化的例子      即时编译什么是即时编译？  当虚拟机发现某个方法或某段代...</div></div></div></a><a class="pagination-related" href="/2023/02/05/OOM%E5%BC%82%E5%B8%B8/" title="OOM异常"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-05</div><div class="info-item-2">OOM异常</div></div><div class="info-2"><div class="info-item-1">OOM 异常 (OutOfMemoryError) OOM 异常 (OutOfMemoryError) Java 堆溢出 Java 虚拟机栈和本地方法栈溢出 方法区和运行时常量池溢出 直接内存溢出    Java 堆溢出 出现标志：java.lang.OutOfMemoryError: Java heap space 解决方法： 先通过内存映像分析工具分析 Dump 出来的堆转储快照，确认内存中的对象是否是必要的，即分清楚是出现了内存泄漏还是内存溢出； 如果是内存泄漏，通过工具查看泄漏对象到 GC Root 的引用链，定位出泄漏的位置； 如果不存在泄漏，检查虚拟机堆参数（-Xmx 和 -Xms）是否可以调大，检查代码中是否有哪些对象的生命周期过长，尝试减少程序运行期的内存消耗。   虚拟机参数： -XX:HeapDumpOnOutOfMemoryError：让虚拟机在出现内存泄漏异常时 Dump 出当前的内存堆转储快照用于事后分析。    Java 虚拟机栈和本地方法栈溢出 单线程下，栈帧过大、虚拟机容量过小都不会导致 OutOfMemoryError，只会导致 StackOve...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">109</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">43</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Cluster-GCN%E6%96%B9%E6%B3%95%E7%AE%80%E5%8D%95%E6%A6%82%E6%8B%AC"><span class="toc-number">1.</span> <span class="toc-text">1.Cluster-GCN方法简单概括</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-GCN%E5%9B%9E%E9%A1%BE"><span class="toc-number">2.</span> <span class="toc-text">2.GCN回顾</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Cluster-GCN%E7%9A%84%E9%80%9F%E5%BA%A6"><span class="toc-number">3.</span> <span class="toc-text">3.Cluster-GCN的速度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Cluster-GCN%E8%AF%A6%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">4.Cluster-GCN详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Cluster-GCN%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">5.Cluster-GCN实践</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/01/Hadoop%E5%8F%82%E6%95%B0/" title="Hadoop常见参数">Hadoop常见参数</a><time datetime="2024-05-31T16:00:00.000Z" title="发表于 2024-06-01 00:00:00">2024-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/26/Hadoop%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%AE%89%E8%A3%85/" title="Hadoop简介">Hadoop简介</a><time datetime="2024-05-25T16:00:00.000Z" title="发表于 2024-05-26 00:00:00">2024-05-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/05/Java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8AUML%E7%B1%BB%E5%9B%BE/" title="Java设计模式及UML类图">Java设计模式及UML类图</a><time datetime="2024-05-04T16:00:00.000Z" title="发表于 2024-05-05 00:00:00">2024-05-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/16/MySQL%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%AB%98%E7%BA%A7/" title="MySQL基础与高级">MySQL基础与高级</a><time datetime="2024-04-15T16:00:00.000Z" title="发表于 2024-04-16 00:00:00">2024-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/04/Maven/" title="Maven">Maven</a><time datetime="2024-04-03T16:00:00.000Z" title="发表于 2024-04-04 00:00:00">2024-04-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
