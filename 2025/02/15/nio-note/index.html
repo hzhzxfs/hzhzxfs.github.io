@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>nio-note | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nio-note">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/02/15/nio-note/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-02-15T13:17:09.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.417Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "nio-note",
+  "url": "https://hzhzxfs.github.io/2025/02/15/nio-note/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-02-15T13:17:09.000Z",
+  "dateModified": "2026-06-10T02:14:46.417Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/02/15/nio-note/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'nio-note',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">nio-note</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">nio-note</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-15T13:17:09.000Z" title="发表于 2025-02-15 21:17:09">2025-02-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.417Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/02/15/nio-note/">https://hzhzxfs.github.io/2025/02/15/nio-note/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/16/performance-note/" title="performance-note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">performance-note</div></div><div class="info-2"><div class="info-item-1">Performation RelatedCacheCPU 缓存结构对于 X86 架构 CPU，L1 和 L2 为每个 core 独享，L3 为所有 core 共享。L1 可以分为 L1D 和 L1I，即 数据一级缓存 和 指令一级缓存。 一般来说，并行只能提升计算耗时，而不能减少内存读写耗时。 分支预测(Branch Prediction)深入理解CPU的分支预测(Branch Prediction)模型why is processing a sorted arrry faster than processing an unsorted array  因为分支发生在一个类似if语句的条件判断时,由于判断这个if是否成立会耗费很多个周期,所以CPU先根据分支预测给出的地址把下一条指令送上流水线,而很多个周期后给出的”if 成立与否(是否跳转)”就是你说的”判断是否猜错”.分支预测当然是有意义的,由于程序执行的”局部性原理”,分支预测在现代CPU上会达到很高的正确率(&gt;95%),所以猜错虽有代价但概率很小.  Demo Code: Unsorted Array: 1234567...</div></div></div></a><a class="pagination-related" href="/2025/02/14/mysql-notes/" title="mysql-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">mysql-notes</div></div><div class="info-2"><div class="info-item-1">MySQL笔记MySQL-Server的安装1sudo yum install mysql-server  服务的停启Linux12sudo service mysql startsudo service mysql stop  12345sudo systemctl start mysql.servicesudo systemctl stop mysql.servicesudo systemctl restart mysql.servicesudo systemctl enable mysql.servicesudo systemctl status mysql.service  Windows12net start mysqlnet stop mysql  数据库的备份备份1mysqldump -u用户名 -p密码 数据库名称 &gt; 保存的路径  还原 登录数据库 创建数据库 使用数据库 执行文件。source 文件路径  MySQL服务器的登录方式123mysql -u user -pmysql -hhost -uuser -ppasswordmysql --host=...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/02/19/server-software/" title="server-software"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">server-software</div></div><div class="info-2"><div class="info-item-1">服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服务器，可做反向代理、负载均衡，一般放在最前面直面用户，和后端Tomcat打配合；纯C写的，性能贼高、内存消耗极少、稳定性也相当好，互联网公司重度使用2、Tengine：阿里出品，基于Nginx服务器做的改造(加强和封装)，对大流量场景做了很多高级功能，性能、稳定性优秀3、Apache http server：也是静态服务器，但是不如Nginx3、IIS：微软开发，只能用在Windows下，具有应用服务器能力的http服务器4、Tomcat：Apache出品，典型的应用服务器软件，符合Servlet标准的应用容器，也可以提供http服务，但一般不会作为http服务器；是Spring Boo...</div></div></div></a><a class="pagination-related" href="/2025/01/10/Introduction/" title="Introduction"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-10</div><div class="info-item-2">Introduction</div></div><div class="info-2"><div class="info-item-1">什么是后端？后端是在服务器上运行的应用程序的一部分监听 HTTP、WebSocket、gRPC（gRPC 远程过程调用）或其他协议等请求。 它负责：  接收来自客户端的请求（浏览器、移动应用程序、其他服务） 处理逻辑 与数据库和外部服务通信 将响应发送回客户端  后端服务在特定端口上运行（例如3000、5000、8080）以便客户可以通过互联网访问它们。 后端被称为服务器，因为它提供以下服务：  静态文件（HTML、CSS、JS） 动态数据（JSON、文件、媒体） 前端和移动应用程序使用的 API  后端如何工作（高级流程）生产中的典型请求流程： 客户端（浏览器&#x2F;应用程序）→ DNS 服务器（解析域）→ 负载均衡器（AWS&#x2F;云）→ 防火墙&#x2F;安全规则→ 服务器实例（EC2&#x2F;虚拟机&#x2F;容器）→ 网络服务器（Nginx &#x2F; Apache）→ 后端应用程序（Node.js、Java 等）→ 数据库&#x2F;外部服务→ 回复客户 为什么我们需要后端？考虑这个例子： 您喜欢您朋友在 Instagram 上发布的帖子。您的朋友立即收到...</div></div></div></a><a class="pagination-related" href="/2025/03/07/16_jsonwebtoken/" title="16_jsonwebtoken"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-07</div><div class="info-item-2">16_jsonwebtoken</div></div><div class="info-2"><div class="info-item-1">JWT（JSON Web 令牌）——核心概念1.智威汤逊凯亚·霍塔海？JWT ek 签名令牌 hota hai jo 服务器生成 karta hai aur 客户端 ko deta hai。 Iska 目的 hota hai 用户 ki 身份 ko 无状态 tareeke se 验证 karna。 无状态 ka matlab：服务器 ko 会话存储 karne ki zarurat nahi hoti。 Har 请求 ke sath 令牌 aata hai aur 服务器 usko 验证 karta hai。  2. JWT Ka 结构JWT 3 部分 par mushtamil hota hai：  头部（算法信息） Payload（用户数据jaise id、角色）3.签名（秘钥se签名kiya gaya部分）  签名确保karti hai ke token不可篡改nahi hua。  3. JWT 身份验证流程登录 kebaad:  用户凭据验证hote hain2.服务器JWT生成karta hai 客户端 ko token diya jata hai (cookie ya...</div></div></div></a><a class="pagination-related" href="/2025/06/03/02.Go%E8%AF%AD%E8%A8%80%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%EF%BC%88%E4%B8%8B%EF%BC%89/" title="02.Go语言原理与实践学习资料（下）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-03</div><div class="info-item-2">02.Go语言原理与实践学习资料（下）</div></div><div class="info-2"><div class="info-item-1">第四节：高性能 Go 语言发行版优化与落地实践概述本节课程主要分为四个方面：  自动内存管理  Go 内存管理及优化  编译器和静态分析  Go 编译器优化   课前部分主要罗列课程中涉及到的概念。对于不熟悉的概念，同学们可以提前查询预习；课中部分主要罗列每一部分的关键思路，帮助同学们跟上课程的进度；课后部分是一些问题，帮助同学们在课后梳理本课程的重点。 课前 （必须）自动内存管理 Auto memory management: 自动内存管理  Grabage collction: 垃圾回收  Mutator: 业务线程  Collector: GC 线程  Concurrent GC: 并发 GC  Parallel GC: 并行 GC  Tracing garbage collection: 追踪垃圾回收  Copying GC: 复制对象 GC Mark-sweep GC: 标记-清理 GC Mark-compact GC: 标记-压缩 GC   Reference counting: 引用计数  Generational GC: 分代 GC  Young generati...</div></div></div></a><a class="pagination-related" href="/2025/03/02/11_mongo_db_notes/" title="11_mongo_db_notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-02</div><div class="info-item-2">11_mongo_db_notes</div></div><div class="info-2"><div class="info-item-1">MongoDB + ImageKit 集成（后端架构笔记） 目标允许用户上传图像。将图像存储在云存储（ImageKit）中。将返回的图像 URL 保存在 MongoDB 中。返回正确的响应给客户端。  完整的系统流程客户端（颤振&#x2F;邮递员）→ HTTP 请求（多部分&#x2F;表单数据）→ 快速路线→ Multer 中间件（解析文件）→ ImageKit 上传服务→ 云存储→ 返回的 URL→ MongoDB（存储 URL）→ 回复已发回  1. 为什么需要 MulterExpress 默认可以解析 JSON。但是，图像上传不是 JSON。它们被发送为： 内容类型：多部分&#x2F;表单数据 此格式包含原始二进制数据。仅 Express 无法从此格式提取文件。 穆特解决了这个问题。 穆尔特：  读取传入的请求流 检测文件边界 将文件数据与文本字段分开 将文件附加到 req.file 将文本字段附加到 req.body  多路复用器配置123456const multer = require(&quot;multer&quot;);const upload = multer...</div></div></div></a><a class="pagination-related" href="/2025/03/16/9_http_request_lifecycle/" title="9_http_request_lifecycle"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-16</div><div class="info-item-2">9_http_request_lifecycle</div></div><div class="info-2"><div class="info-item-1">HTTP 和请求生命周期（后端基础） 1.什么是HTTP？HTTP（超文本传输​​协议）是客户端和服务器之间使用的通信协议。 型号： 客户端→请求→服务器服务器→响应→客户端 HTTP 是无状态，这意味着每个请求都是独立的。  2. HTTP 请求的结构HTTP 请求包含： 1. 方法 GET（读取数据） POST（创建数据） PUT（替换数据） 补丁（部分更新） 删除（删除数据）  2.网址示例： 12/notes/notes/123 3. 标题额外的元数据，例如：  内容类型 授权 饼干  4. 正文（可选）主要用于 POST &#x2F; PUT &#x2F; PATCH 请求。  3. HTTP 响应的结构服务器响应包含：  状态代码（200、201、400、404、500） 标题 正文（JSON、文本等）  JSON 响应示例： 123&#123;  &quot;message&quot;: &quot;success&quot;&#125;  4. Node.js 请求生命周期（深入理解）第 1 步：服务器启动1app.listen(3000) 内部： 1http.c...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

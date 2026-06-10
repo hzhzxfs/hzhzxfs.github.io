@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ports-and-protocols | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="常用端口 和协议有 65,535 个端口可用于连接网络上的设备。端口由设备操作系统管理的软件控制。 每个端口都与特定的服务或进程相关联。为了传输数据黑白端口通信端口必须以相同的方式配置。 前约 1000 个端口保留用于特定服务（例如：HTTPS 始终位于端口 443）。其余的可以使用&#x2F;分配给计算机&#x2F;程序决定的任何服务。 常用 TCP 端口FTP（文件传输协议）FTP 是分配给端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ports-and-protocols">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/05/14/ports-and-protocols/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="常用端口 和协议有 65,535 个端口可用于连接网络上的设备。端口由设备操作系统管理的软件控制。 每个端口都与特定的服务或进程相关联。为了传输数据黑白端口通信端口必须以相同的方式配置。 前约 1000 个端口保留用于特定服务（例如：HTTPS 始终位于端口 443）。其余的可以使用&#x2F;分配给计算机&#x2F;程序决定的任何服务。 常用 TCP 端口FTP（文件传输协议）FTP 是分配给端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-05-14T12:16:52.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.461Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Network Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ports-and-protocols",
+  "url": "https://hzhzxfs.github.io/2025/05/14/ports-and-protocols/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-05-14T12:16:52.000Z",
+  "dateModified": "2026-06-10T02:14:46.461Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/05/14/ports-and-protocols/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ports-and-protocols',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">ports-and-protocols</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ports-and-protocols</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-14T12:16:52.000Z" title="发表于 2025-05-14 20:16:52">2025-05-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.461Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="常用端口-和协议"><a href="#常用端口-和协议" class="headerlink" title="常用端口 和协议"></a>常用<a href="/networking/routing/ports.md">端口</a> 和协议</h1><p>有 65,535 个端口可用于连接网络上的设备。端口由设备操作系统管理的软件控制。</p>
+<p>每个端口都与特定的服务或进程相关联。为了传输数据黑白端口<em>通信端口必须以相同的方式配置</em>。</p>
+<p>前约 1000 个端口保留用于特定服务（例如：HTTPS 始终位于端口 443）。其余的可以使用&#x2F;分配给计算机&#x2F;程序决定的任何服务。</p>
+<h2 id="常用-TCP-端口"><a href="#常用-TCP-端口" class="headerlink" title="常用 TCP 端口"></a>常用 TCP 端口</h2><h3 id="FTP（文件传输协议）"><a href="#FTP（文件传输协议）" class="headerlink" title="FTP（文件传输协议）"></a><a href="/networking/protocols/FTP.md">FTP</a>（文件传输协议）</h3><p>FTP 是分配给端口 21 的 TCP 协议。通过端口 21 访问设备，您可以上传、下载、复制、剪切、粘贴（等）由该设备提供服务的文件。</p>
+<h3 id="SSH（安全外壳协议）和-Telnet"><a href="#SSH（安全外壳协议）和-Telnet" class="headerlink" title="SSH（安全外壳协议）和 Telnet"></a><a href="/networking/protocols/SSH.md">SSH</a>（安全外壳协议）和 <a href="/networking/protocols/telnet.md">Telnet</a></h3><p>SSH（端口 22）和 Telnet（端口 23）都是允许远程方连接到设备并在其上执行命令的协议。 Telnet 是两者中较旧的，并且不安全，因为<em>双方之间的所有通信都是以明文形式传递</em>。</p>
+<p>SSH 的诞生是为了取代 telnet。通过两台设备之间的 SSH 通信，“已加密”，并且双方在发送&#x2F;接收数据之前必须“进行身份验证”。</p>
+<h3 id="POP3、IMAP、SMTP"><a href="#POP3、IMAP、SMTP" class="headerlink" title="POP3、IMAP、SMTP"></a><a href="/networking/protocols/POP3.md">POP3</a>、<a href="/networking/protocols/IMAP.md">IMAP</a>、<a href="/networking/protocols/SMTP.md">SMTP</a></h3><p>这三个协议都与<a href="/networking/email.md">email</a>相关。 SMTP（端口 25）负责通过客户端和邮件服务器发送电子邮件，而 POP3（端口 110）和 IMAP（端口 143）是规定如何在服务器上处理和存储电子邮件的协议。</p>
+<h4 id="POP3："><a href="#POP3：" class="headerlink" title="POP3："></a>POP3：</h4><p>来自服务器的所有邮件都会下载到<em>本地计算机上</em>的收件箱中。</p>
+<h4 id="IMAP："><a href="#IMAP：" class="headerlink" title="IMAP："></a>IMAP：</h4><p>邮件不会下载到客户端设备，而是“保留在服务器上”。仅电子邮件标头发送到客户端的收件箱，如果客户端决定需要整个邮件正文，则可以从服务器本地下载。</p>
+<h3 id="DNS（域名系统）"><a href="#DNS（域名系统）" class="headerlink" title="DNS（域名系统）"></a><a href="/networking/protocols/DNS/DNS.md">DNS</a>（域名系统）</h3><p>此协议（端口 53）允许设备上的 DNS 服务器将 IP 地址解析为其关联的域名。域被组织成层次结构，从根域开始，然后是顶级域，然后是二级域。</p>
+<p>为了将域名解析为 IP 地址（以便设备可以使用域名来回发送数据），设备将首先查询其本地缓存以查看其是否已经知道关联的 IP。如果没有，它将向递归 DNS 服务器发送请求（ISP 维护自己的递归服务器）。</p>
+<p>如果域不在递归服务器中，则请求将发送到根名称服务器。世界上曾经只有 13 台根名称服务器，每台都有自己的 IP 地址。根服务器跟踪层次结构中低于它们的下一级（顶级域服务器）。</p>
+<p>每个顶级域服务器都会跟踪特定的顶级域（例如：来自 <code>site.com</code> 的 <code>com</code>）以及与其关联的所有二级域。从那里，可以查询 TLD 所涵盖的二级域名（例如：来自 <code>site.com</code> 的 <code>site</code>）。</p>
+<h3 id="HTTP-HTTPS"><a href="#HTTP-HTTPS" class="headerlink" title="HTTP &amp; HTTPS"></a><a href="/www/HTTP.md">HTTP</a> &amp; <a href="/www/HTTPS.md">HTTPS</a></h3><p>HTTP（端口 80）和 HTTPS（端口 443）是规定如何在设备之间传输“超媒体文档”（如 HTML）的协议。这些协议主要涉及 OSI 模型的应用层。</p>
+<p>HTTP 和 HTTPS 的开发是为了标准化 Web 浏览器和 Web 服务器的通信方式。当浏览器向服务器请求其存储的与网站地址 (<code>site.com</code>) 相关的信息时，它使用 HTTP。当服务器将其存储的网站数据发送到 Web 浏览器时，它也使用 HTTP。</p>
+<p>HTTP 和 HTTPS 的区别在于 HTTPS 是加密的。</p>
+<h3 id="SMB（服务器消息块）"><a href="#SMB（服务器消息块）" class="headerlink" title="SMB（服务器消息块）"></a><a href="/networking/protocols/SMB.md">SMB</a>（服务器消息块）</h3><p>SMB（端口 445 和 139）是一种协议，允许网络上的设备共享和访问相同的文件和打印服务，并在远程计算机上运行的进程之间提供进程间通信。</p>
+<p>通过 SMB 在网络上共享的资源称为“共享”(<code>$ipc</code>)。 SMB 的主要目的是允许远程计算机上的用户通过网络上的共享打印机共享文件和打印文档。 SMB 还允许<em>文件读取和写入</em>。</p>
+<blockquote>
+<p><em>奖励：</em> 最近（2017 年）使用了 <a href="/cybersecurity/vulnerability/eternal-blue.md">Eternal Blue</a> 系列（CVE-2017-0143 thru -0148）等主要 SMB 漏洞，严重攻击包括 <a href="/cybersecurity/attacks/wannacry.md">WannaCry</a> 和<a href="/cybersecurity/attacks/notpetya.md">NotPetya</a>。</p>
+</blockquote>
+<h2 id="常用UDP端口"><a href="#常用UDP端口" class="headerlink" title="常用UDP端口"></a>常用UDP端口</h2><h3 id="DNS（UDP-端口-53）"><a href="#DNS（UDP-端口-53）" class="headerlink" title="DNS（UDP &#x3D; 端口 53）"></a>DNS（UDP &#x3D; 端口 53）</h3><h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a><a href="/networking/protocols/DHCP.md">DHCP</a></h3><p><em>端口 67、68</em>。用于将网络上的设备“随机”关联到 IP 地址的协议，通常是在指定范围内并在特定时间内进行。</p>
+<h3 id="TFTP（简单-FTP）："><a href="#TFTP（简单-FTP）：" class="headerlink" title="TFTP（简单 FTP）："></a>TFTP（简单 FTP）：</h3><p><em>端口 69</em>。 FTP 使用 UDP 而不是 TCP。</p>
+<h3 id="SNMP（简单网络管理协议）："><a href="#SNMP（简单网络管理协议）：" class="headerlink" title="SNMP（简单网络管理协议）："></a><a href="/networking/protocols/SNMP.md">SNMP</a>（简单网络管理协议）：</h3><p><em>端口 161。</em> </p>
+<blockquote>
+<p>[!资源]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Domain_Name_System">维基百科：域名系统</a></li>
+<li><a target="_blank" rel="noopener" href="https://cybersophia.net/articles/what-is/what-is-smb-protocol-and-why-is-it-a-security-concern/">CyberSophia：什么是 SMB 以及为什么它是一个安全问题？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.sentinelone.com/blog/eternalblue-nsa-development-exploit-just-wont-die/">SentinelOne：EternalBlue 漏洞利用：它是什么以及如何工作</a></li>
+</ul>
+</blockquote>
+<blockquote>
+<p>[！我以前的笔记（在文本中链接）]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/networking/ports.md">端口</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/networking/protocols/">各种提到的协议</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/networking/email.md">电子邮件</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/networking/DNS/DNS.md">DNS</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/cybersecurity/vulnerability/eternalblue.md">永恒之蓝</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/cybersecurity/attacks/wannacry.md">WannaCry</a></li>
+<li>NotPetya（还没有注释）</li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/05/14/ports-and-protocols/">https://hzhzxfs.github.io/2025/05/14/ports-and-protocols/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Network-Security/">Network Security</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/15/post-exploitation/" title="post-exploitation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">post-exploitation</div></div><div class="info-2"><div class="info-item-1">后利用一旦我们利用了一个目标，我们就想知道我们可以访问哪些信息，因为这些“是发现”，客户会想知道他们的资产有多脆弱。因此，后期利用包括对目标的大量侦察。 枚举目标网络拓扑我们想使用常用命令查看一些网络拓扑：  ifconfig - IP 地址 ip a - IP 地址 arp - MAC 地址 route - 路由表  ###须藤作为当前用户，我们可以使用 sudo -l 来查看我们的 sudo 权限是什么。这将向我们展示允许用户以 root 身份运行哪些命令。 /etc/passwd用于列出用户的密码，但现在仅列出带有 x 占位符的用户。 /etc/shadow密码哈希现在保存在 /etc/shadow 中，因此我们可以找到系统上用户密码的哈希值，然后使用 john 等工具破解这些哈希值以获取明文密码。 其他（稍后再说） 文件系统中的文件 连接到计算机的设备 网络上的其他设备 服务运行 开放端口 等   [！我以前的笔记（在文本中链接）]  IP 地址 MAC 地址 路由表 约翰   </div></div></div></a><a class="pagination-related" href="/2025/05/13/payloads/" title="payloads"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">payloads</div></div><div class="info-2"><div class="info-item-1">分阶段与非分阶段有效负载有效负载是指建立对目标机器的访问（通常通过 shell）的实际代码或可执行文件。主要有两种类型：阶段式和非阶段式。 非分阶段非分段有效负载一次性发送整个 shellcode 或执行代码。这种类型的有效负载“通常大于”分段有效负载。  上演分阶段的有效负载是分阶段发送到目标的，而不是一次全部发送。由于代码是以块的形式发送的，因此非分阶段的有效负载往往“不太稳定”。然而，分阶段可能是有利的，因为每个阶段都“较小”，并且在发送到目标时不易被检测到。 奖金：使用 Metasploit 时，您可以通过有效负载的路径来识别非阶段性有效负载与阶段性负载： 1234# Non-staged payload:windows/meterpreter_reverse_tcp# Staged payload:windows/meterpreter/reverse_tcp  [！我以前的笔记（在文本中链接）]  Metasploit   </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/04/15/ethical-hacking-methodology/" title="ethical-hacking-methodology"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-15</div><div class="info-item-2">ethical-hacking-methodology</div></div><div class="info-2"><div class="info-item-1">道德黑客方法论进行渗透测试&#x2F;道德黑客攻击有 5 个阶段： 1. 侦察通过 OSINT、DNS 记录、浏览网站等被动方式收集有关目标的信息。目标是“收集尽可能多的目标信息”，以便您可以计划和有效的测试。 2. 扫描扫描就像侦察，但更主动，因为您*可能会留下您存在的痕迹。*此阶段包括探测系统&#x2F;网络以发现可用于获取访问权限的功能。 有效的扫描将告诉您：  开放端口 系统&#x2F;网络上运行的服务 这些服务中的漏洞  扫描包括端口扫描、漏洞扫描、网络映射等技术。 3. 获取访问权限利用侦察和扫描期间收集的信息，利用目标系统中的漏洞来获取访问权限。此阶段使用的一些技术包括密码暴力破解、社会工程、利用软件漏洞等。 4. 维护访问权限一旦目标被渗透，你必须通过隐藏你的踪迹、建立“后门”以便在必要时重新进入并获得持久性来保持访问。 在道德黑客攻击中，这一阶段的重点是模仿真正的黑客会做什么，以找出可能造成多少损害以及目标面临的风险。 5. 覆盖轨迹一旦系统的利用和渗透完成，您需要掩盖您的踪迹并删除您存在的证据。一些掩盖您踪迹的技术包括删除日志、删除或更改文件以及尝试将系统恢复...</div></div></div></a><a class="pagination-related" href="/2025/04/17/file-permissions/" title="file-permissions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-17</div><div class="info-item-2">file-permissions</div></div><div class="info-2"><div class="info-item-1">Linux 中的权限和权限：ls -al 的输出是当前&#x2F;父目录中所有文件和目录的列表并添加一些元数据。 -l 标志表示“长”形式，或“列出有关每个文件&#x2F;目录的更多信息”。这包括文件类型、大小、时间戳、权限、所有者、上次访问日期&#x2F;时间等。 -a 标志表示 all 或列出所有文件&#x2F;目录，包括隐藏的文件&#x2F;目录（其名称开头有 . ）。 输出如下所示： 1234567trshpuppy@trshheap:~$ ls -altotal 100drwxr-xr-x 16 trshpuppy trshpuppy 4096 May 17 11:21 .drwxr-xr-x  3 root      root      4096 Sep 18  2022 ..-rw-------  1 trshpuppy trshpuppy 2546 May 19 14:32 .bash_history-rw-r--r--  1 trshpuppy trshpuppy  220 Sep 18  2022 .bash_logout... 在 &#39; &#39; 上...</div></div></div></a><a class="pagination-related" href="/2025/05/01/LLMNR-poisoning/" title="LLMNR-poisoning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="info-item-2">LLMNR-poisoning</div></div><div class="info-2"><div class="info-item-1">LLMNR 中毒什么是 LLMNR？LLMNR（链路本地多播名称解析）是网络上使用的一种协议，用于代替 DNS 帮助解析主机名。它曾经也被称为 NBT-NS，但此后已在大多数系统中进行了更新。 机制为了将 IP 地址 解析为主机名，LLMNR 通过网络向所有侦听接口发送一个“多播数据包”。该数据包询问每个接口是否是权威主机名。权威主机名是能够将 IP 解析为主机名的接口。 LLMNR 中毒LLMNR 是“脆弱的”，因为它允许 MITM 攻击，例如 LLMNR 中毒。在 LLMNR 中毒中，攻击者冒充网络中的权威主机名。然后，他们等待受害计算机使用 LLMNR 来查找主机名。 例如，如果受害计算机发送 LLMNR 请求以获取类似 \\lemons 的主机名，则多播数据包将发送到所有侦听接口，包括攻击者的虚假权威服务器。当他们收到数据包时，攻击者会用一个数据包进行响应，告诉受害者计算机“嘿！我知道如何连接到该主机名。您想要 IP 地址吗？” 受害者机器将响应：“是的！我想要该 IP 地址”，但为了从权威服务器接收 IP 地址，受害者必须通过发送 NTLM 哈希来对其进行身份验证。该哈...</div></div></div></a><a class="pagination-related" href="/2025/05/09/memory/" title="memory"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-09</div><div class="info-item-2">memory</div></div><div class="info-2"><div class="info-item-1">内存解剖计算机内存可以分为易失性和非易失性类型。两者之间的区别在于所存储的信息是否在设备断电后仍然保留。 缓冲区溢出 在 RAM 中的易失性内存上执行。具体来说，它们的目标是将内存“临时分配”给正在运行的程序。从基本意义上讲，缓冲区溢出允许攻击者“将数据写入超出易受攻击的代码中的函数调用或变量的预期存储边界”。 堆栈堆栈内存是程序执行期间在 RAM 中分配的内存。它用于运行程序并跟踪代码中的函数和变量。 堆栈具有后进先出 (LIFO) 结构，这意味着其单元按字面量堆栈进行组织。如果堆栈上有三个对象，则第二个对象无法执行或引用，直到其上方的对象消失。 堆栈帧堆栈帧也称为“激活帧”，是程序执行期间组成堆栈的单元。它们包含程序中定义和使用的子例程&#x2F;函数和变量。堆栈上的第一帧是程序的“主”函数（无论执行进入何处）。 当程序被编译为机器代码&#x2F;汇编时，它会生成CPU在执行程序时遵循的指令。这些指令的一部分包括*在执行期间调用函数时应如何创建和管理堆栈帧。 执行时，CPU 遵循这些指令并在 RAM 中分配内存以创建堆栈帧。每个堆栈帧对应一个函数调用并包含所有所需的信息（包括...</div></div></div></a><a class="pagination-related" href="/2025/04/05/breached-credentials/" title="breached-credentials"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-05</div><div class="info-item-2">breached-credentials</div></div><div class="info-2"><div class="info-item-1">收集泄露的凭证当大公司遭到黑客攻击并且其客户数据被盗时，这些数据通常会在恶意行为者之间出售（通常在暗网上）。  访问这些大型数据转储非常有用，因为组成它们的用户名&#x2F;密码&#x2F;电子邮件也可用于利用道德黑客攻击的目标。 方法论收集连接到目标的凭据并创建一组交织的信息，您可以使用这些信息来针对它们进行攻击。  例如，查找散列密码并在后续搜索中使用它可以为您提供额外的结果和与目标的连接。 违规解析Heath Adams 编写的一个工具，可以搜索大量泄露数据。＃＃＃ 用法： 1./breach-parse.sh @tesla.com tesla.txt 在此示例中，breach-parse 将扫描 tesla.txt 并查找包含“tesla.com”的所有用户名&#x2F;电子邮件。然后它将返回与这些帐户关联的所有密码。  结果以 3 个文件返回：  tesla-master.txt tesla-passwords.txt tesla-users.txt  DehashedDehashed 是一个网站（每月付款），其中包含您可以搜索的被破坏的凭据。 允许您使用电子邮件、用户...</div></div></div></a><a class="pagination-related" href="/2025/05/07/linux-filesystem/" title="linux-filesystem"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-07</div><div class="info-item-2">linux-filesystem</div></div><div class="info-2"><div class="info-item-1">Linux 文件系统层次结构： [！我之前的笔记：]  Linux 文件系统   </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%AB%AF%E5%8F%A3-%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.</span> <span class="toc-text">常用端口 和协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8-TCP-%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">常用 TCP 端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FTP%EF%BC%88%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">FTP（文件传输协议）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSH%EF%BC%88%E5%AE%89%E5%85%A8%E5%A4%96%E5%A3%B3%E5%8D%8F%E8%AE%AE%EF%BC%89%E5%92%8C-Telnet"><span class="toc-number">1.1.2.</span> <span class="toc-text">SSH（安全外壳协议）和 Telnet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POP3%E3%80%81IMAP%E3%80%81SMTP"><span class="toc-number">1.1.3.</span> <span class="toc-text">POP3、IMAP、SMTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POP3%EF%BC%9A"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">POP3：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IMAP%EF%BC%9A"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">IMAP：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS%EF%BC%88%E5%9F%9F%E5%90%8D%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="toc-number">1.1.4.</span> <span class="toc-text">DNS（域名系统）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-HTTPS"><span class="toc-number">1.1.5.</span> <span class="toc-text">HTTP &amp; HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SMB%EF%BC%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%B6%88%E6%81%AF%E5%9D%97%EF%BC%89"><span class="toc-number">1.1.6.</span> <span class="toc-text">SMB（服务器消息块）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8UDP%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.2.</span> <span class="toc-text">常用UDP端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS%EF%BC%88UDP-%E7%AB%AF%E5%8F%A3-53%EF%BC%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">DNS（UDP &#x3D; 端口 53）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP"><span class="toc-number">1.2.2.</span> <span class="toc-text">DHCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TFTP%EF%BC%88%E7%AE%80%E5%8D%95-FTP%EF%BC%89%EF%BC%9A"><span class="toc-number">1.2.3.</span> <span class="toc-text">TFTP（简单 FTP）：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SNMP%EF%BC%88%E7%AE%80%E5%8D%95%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E5%8D%8F%E8%AE%AE%EF%BC%89%EF%BC%9A"><span class="toc-number">1.2.4.</span> <span class="toc-text">SNMP（简单网络管理协议）：</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

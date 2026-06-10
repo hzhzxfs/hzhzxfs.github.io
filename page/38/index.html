@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/38/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/38/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E5%8D%8F%E8%AE%AE/" title="计算机网络体系结构和协议">计算机网络体系结构和协议</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-14T12:55:51.000Z" title="发表于 2024-08-14 20:55:51">2024-08-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">计算机网络系统结构和协议 体系结构：研究系统中各个组成成分及其关系的一门学科。 计算机网络体系结构：定义和描述一组用于计算机及其通信设施之间互连的标准和规范的集合，遵循这组规范可以很方便的实现计算机间的通信。  开放系统互连基本参考模式（OSI&#x2F;RM）的设计原理 分解：将整个系统划分为若干易于实现和控制的子模块，并通过对各模块的功能、交换的数据结构和时序进行约定，协调模块之间的动作，保证系统设计的合理性和互操作性。同时可以根据各子模块的依赖关系，使用结构化的设计和实现方法，采用具有层次结构的模型与之对应。  抽象：标准的提出应当独立于实现的具体环境， OSI&#x2F;RM 的确立采用了三级抽象技术。  提出 OSI&#x2F;RM：建立计算机网络在概念和功能上的框架，包括确定 OSI 的层次模型，以及公共术语、属性和子模块的功能等。 提出 OSI 服务定义：在 OSI&#x2F;RM 的基础上，定义各个子模块可提供的服务，即确定各个子模块的外观特性。 定义 OSI 协议规范：定义一组为确保子模块服务的提供而应遵循的规则。   子模块（层）划分的原则：   各子模块具有...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/13/%E7%BB%AA%E8%AE%BA/" title="绪论">绪论</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-13T14:40:37.000Z" title="发表于 2024-08-13 22:40:37">2024-08-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">绪论O记号 问题：随着问题规模的增长，计算成本是如何变化的？考虑的是计算成本的增长趋势 分析：在问题规模足够大的情况下，计算成本如何变化： 需要执行的基本操作次数T(n) 需要占用的存储单元数量S(n)，一般不考虑空间占用   对于T(n)转为O(f(n)) 常系数可以忽略，低次项可以忽略   O复杂度计算基于悲观的角度 判断代码的复杂度 常数复杂度O(1)：不含转向（循环、调用、递归等），部分特例虽然含有循环、调用、递归等，但是需要考虑到实际情况才能确定。 对数复杂度O(log n)：高效，复杂度无限接近常数 多项式复杂度O(n^c)：界定为多项式的最高次项 线性复杂度O(n) 指数复杂度O(c^n)：计算成本高    1234567void func(int n)&#123;    // n是正整数    int i = 1;    while(i&lt;=n)i*=2;&#125;// 被嵌套的深层语句是i*=2；频率由i&lt;=n决定，显然时间复杂度为O(log n)  冒泡排序 观察： 有序序列中，任意一对相邻元素顺序 &#x2F; 无序序列中，存在一对相邻元素逆序 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/12/%E7%BA%BF%E6%80%A7%E8%A1%A8/" title="线性表">线性表</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-12T00:08:09.000Z" title="发表于 2024-08-12 08:08:09">2024-08-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">线性表线性表 定义：由n个数据元素组成的有限序列；原则上数据类型可以不一致，但存储类型可能会做出一定的限制 特性: 除第一个元素外,其他元素只有一个直接前驱;除了最后一个元素,其他元素只有一个直接后继. 表示方式:顺序存储方式&#x2F;链表存储方式    顺序表 定义:将线性表中的元素相继存放在一个连续的存储空间中,可以利用一维数组描述数据结构 特性:所有元素的逻辑先后顺序和物理存放顺序一致  123456789101112131415161718192021const MAX_SIZE = 100// SQListA 顺序表的静态存储表示type SQListA struct&#123;    data    [MAX_SIZE]int64    length  int&#125;// SQListB 顺序表的动态存储表示type SQListB struct&#123;    data    *int64    length  int&#125;// Init_SQ 初始化顺序表func Init_SQ(list *SQListA) bool&#123;    list.d...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/11/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/" title="树与二叉树">树与二叉树</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-11T02:35:48.000Z" title="发表于 2024-08-11 10:35:48">2024-08-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">树与二叉树树 定义：树是n个结点的有限集合，在任何一个非空的树中 有且只有一个根节点 子女：结点的子树非空，结点子树的根即为结点的子女 双亲：结点有子女，该结点是子女的双亲 兄弟：某一结点的所有子女，互为兄弟 度：结点的子女个数 分支结点：非终端结点 叶：终端结点 祖先：沿着双亲的路径返回均为祖先 子孙：下属所有结点 结点的层次：规定根节点在第一层，子女依次加1 深度：层次的最大值 树的高度：根节点的高度-&gt;所有子女高度+1 有序树：树的结点的各棵子树是从左到右有顺序的 无序树：无序，各棵子树之间的次序可以呼唤 森林：m棵互不相交的树组成    二叉树 二叉树中不存在度大于2的结点 满二叉树 完全二叉树：k层二叉树除了第k层有从有向左的连续缺失的结点   二叉树的顺序表示 按照满二叉树的顺序，有数则填，无数则留空 极端情况下，资源利用率特别低   二叉树的链式表示 二叉链表 三叉链表     二叉树遍历 前序遍历（VLR）【-+a*b-cd&#x2F;ef】 中序遍历（LVR）【a+b*c-d-e&#x2F;f】 后序遍历（LRV）【abcd-*+ef&#x2F;-】   ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/10/%E6%A0%88%E4%B8%8E%E9%98%9F%E5%88%97/" title="栈与队列">栈与队列</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-10T12:20:13.000Z" title="发表于 2024-08-10 20:20:13">2024-08-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">栈与队列栈Stack 栈：只允许在一段插入和删除的线性表（LIFO） 栈是操作受限的单向链表，只能在头部和尾部有操作  队列Queue 队列：先进先出的线性表（FIFO），只允许一端插入，另一端删除 循环队列：为了避免空间浪费引入。需要注意的是，插入的时候要注意要预判队首和队尾是否相连。  </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/09/%E6%9F%A5%E6%89%BE/" title="查找">查找</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-09T13:16:33.000Z" title="发表于 2024-08-09 21:16:33">2024-08-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">查找平均查找长度1ASL = 1/2 ASL_success + 1/2\*ASL_failed = 3/4\*(n+1)  有序表的查找 折半查找（Binary Search， 二分查找） 高效率的查找方案，前提条件是查找表中的记录有序 二分查找的路径会得到一个二叉树，称为判定树。n个结点的判定深度是log2n+1。   分块查找（Blocking Search，索引顺序查找）  将查找表分为几块，块间有序，块内无序    在查找表的基础上附加一个索引表，索引表按关键字有序查找方法的比较         查找方法 顺序查找 二分查找 索引查找    ASL 最大 最小 中等   表结构 有序表、无序表 有序表 分块有序表   存储结构 顺序存储结构线性链表 顺序存储结构 顺序存储结构线性链表   二叉搜索树 具有以下特性的二叉树或空树 每个结点都有一个作为搜索依据的关键字，所有结点的关键字互不相同 左子树上的所有结点的关键字都小于根节点关键字 右子树上的所有结点的关键字都大于根节点关键字 左右子树也是二叉搜索树   特性： 左子树&lt;根结点&lt;右子树 如果对一棵二叉搜索...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/08/%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" title="文件管理">文件管理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-08T05:02:54.000Z" title="发表于 2024-08-08 13:02:54">2024-08-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">文件管理文件系统基础文件是具有符号名，由字节序列构成的数据项集合（文件系统的基本数据单位，文件名是文件的标识符号）  文件系统的功能 分配文件磁盘空间：管理文件块（位置和顺序）、管理空闲空间（位置）、分配算法（策略） 管理文件集合：定位（文件及其内容）、命名（通过名字找到文件）、文件系统结构（文件组织方式） 数据可靠和安全：安全（多层次保护数据安全）、可靠（持久保存、避免被破坏）   文件的属性：名称、类型、位置、大小、保护、创建者、时间、最近创建时间 文件头：文件系统元数据中的文件信息  文件的逻辑结构 文件大小 大多数文件很小：需要对小文件提供很好的支持，块空间不能太大 有的文件特别大：必须支持大文件，大文件的访问需要高效   文件分配（如何表示分配给一个文件数据块的位置和顺序） 分配类型：连续分配、链式分配、索引分配 考虑指标：存储效率（连续分配的外部碎片）、读写性能（链式和索引分配访问速度） 顺序文件：文件头指定起始块和长度（文件读取的性能好，搞笑顺序和随机访问；有碎片和文件增长无法实现的问题） 链式文件：文件以数据块链表方式存储，文件头包含了第一块和最后一块的指针（修改...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/07/%E6%95%B0%E7%BB%84%E4%B8%8E%E5%B9%BF%E4%B9%89%E8%A1%A8/" title="数组与广义表">数组与广义表</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-07T02:30:49.000Z" title="发表于 2024-08-07 10:30:49">2024-08-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">数组与广义表一维数组 数组是相同类型的数据元素的集合，而一维数组的每个数组元素是一个序对，由index和value组成 一维数组一般会被看成向量vector，二维数组一般被看成向量组  多维数组特殊矩阵的压缩存储 特殊矩阵是指非零元素和零元素的分布有一定规律的矩阵 特殊矩阵的压缩存储主要是针对阶数很高的特殊矩阵,为了节省存储空间,对可以不存储的元素,如零元素或者对称元素,不再存储 对称矩阵 沿着主对角线只需要一半的空间   三对角矩阵 沿着主对角线形成一个列表   稀疏矩阵 如果矩阵中很多数量是0，只需要存储对应的坐标和value的值即可 在稀疏矩阵的三元组表中，非零矩阵元素按照行存放，行号相同的时候，按照列号递增存放    十字链表 对于稀疏矩阵，当非0元素的个数和位置在操作过程中变化较大时（如相加），采用练市存储结构比较方便    广义表 列表里面的元素自定义，也可以是一个类型，可以类比Python中的list Samples： A()：深度1，长度0 B(6,2)：深度1，长度2 C(‘a’,(5,2))：深度2，长度2 D(B, C)：深度3，长度2 F(4, F)：深度...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/06/%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/" title="数据通信原理">数据通信原理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-06T15:59:42.000Z" title="发表于 2024-08-06 23:59:42">2024-08-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">数据通信原理通信系统的基本组成通信三要素： 信源：信息的发送者，是发出各种信息（文字、图片或者数据）的信息源 信宿：信息的接受者 载体：传送信息的媒体（信道） 噪声的存在对通信产生不利影响    通信系统的基本组成 变换器：将信源发出的信息变为载体上看传输的格式 反变换器：将载体上传输的信息变换成信宿可识别格式  信道：信息可以单向传输的途径 按传输类型分类：  有线信道 无线信道   按传输方式分类：  模拟信道 数字信道   信道带宽：信道可以不失真地传输信号的频率范围  信道容量：信道在单位时间内可以传输的最大信号量  数据传输速率（bps）：信道在单位时间内可以传输的最大比特数。  差错率、误码率：出错&#x2F;总数、与传输距离成正比  由于噪声的影响和信道带宽的限制，信号可能发生失真   调制&#x2F;解调：利用模拟信道支持数据信息传输的技术  调制：将数据信息变换成适合于模拟信道上传输的电磁波信号（数字-&gt;模拟） 解调：将从模拟信道上收取的载波信号还原成数据信息（模拟-&gt;数字） 调制解调器：具有调制、解调功能的通信设备 调制方法 调制依据：模拟信号的三...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2024/08/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" title="操作系统概述">操作系统概述</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2024-08-05T06:07:06.000Z" title="发表于 2024-08-05 14:07:06">2024-08-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="content">操作系统概述操作系统的概念、特征、功能以及提供的服务 概念 控制程序（防止不当使用、为用户提供服务）   一个系统软件    控制程序执行过程    防止错误或者计算机的不当操作    执行用户程序    为用户程序提供各种服务，方便用户使用计算机      资源管理器（连接软件硬件，管理资源被高效利用，解决冲突确保公平）   应用程序和硬件之间的中间层    管理各种计算机软硬资源    提供访问计算机软硬资源的高效手段    解决资源访问冲突，确保资源公平使用        特征 并发  计算机系统中存在多个运行的程序，需要OS进行管理和调度    共享  程序运行过程中，宏观上并行执行，微观上互斥共享软硬件资源    虚拟  利用多道程序设计技术（交替运行程序），让计算机的每个用户专门有一个用户为它访问的感观    异步   程序的执行不是一贯到底而是走走停停，向前推进的速度不可知，只要运行环境相同，操作系统应当保证每次返回的数值相同      功能 进程管理（处理机管理功能）  进程控制、进程同步、进程通信、调度    内存管理（存储器管理功能）  内存分配、内存保护、地...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/37/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/#content-inner">37</a><span class="page-number current">38</span><a class="page-number" href="/page/39/#content-inner">39</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/39/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>subnetting | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Subnetting子网划分是一种用于网络的组织技术，用于将网络划分为子网。子网划分的工作原理是利用 CIDR 表示法 重新委派 IP 地址中的位来为主机或网络提供服务。 Subnet Mask子网掩码告诉您 IP 地址的哪些部分是网络位，哪些部分是主机位。子网掩码中设置为 255 的每个八位字节表示属于网络的整个字节。子网掩码中的每个 0 表示属于主机的位： 1234567IP Address">
+<meta property="og:type" content="article">
+<meta property="og:title" content="subnetting">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/05/23/subnetting/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Subnetting子网划分是一种用于网络的组织技术，用于将网络划分为子网。子网划分的工作原理是利用 CIDR 表示法 重新委派 IP 地址中的位来为主机或网络提供服务。 Subnet Mask子网掩码告诉您 IP 地址的哪些部分是网络位，哪些部分是主机位。子网掩码中设置为 255 的每个八位字节表示属于网络的整个字节。子网掩码中的每个 0 表示属于主机的位： 1234567IP Address">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-05-23T07:45:15.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.466Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Network Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "subnetting",
+  "url": "https://hzhzxfs.github.io/2025/05/23/subnetting/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-05-23T07:45:15.000Z",
+  "dateModified": "2026-06-10T02:14:46.466Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/05/23/subnetting/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'subnetting',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">subnetting</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">subnetting</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-23T07:45:15.000Z" title="发表于 2025-05-23 15:45:15">2025-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.466Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Subnetting"><a href="#Subnetting" class="headerlink" title="Subnetting"></a>Subnetting</h1><p>子网划分是一种用于网络的组织技术，用于将网络划分为子网。子网划分的工作原理是利用 <a href="/networking/routing/CIDR.md">CIDR 表示法</a> 重新委派 IP 地址中的位来为主机或网络提供服务。</p>
+<h2 id="Subnet-Mask"><a href="#Subnet-Mask" class="headerlink" title="Subnet Mask"></a>Subnet Mask</h2><p>子网掩码告诉您 IP 地址的哪些部分是网络位，哪些部分是主机位。子网掩码中设置为 <code>255</code> 的每个八位字节表示属于网络的整个字节。子网掩码中的每个 <code>0</code> 表示属于主机的位：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IP Address    :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.5</span></span><br><span class="line"><span class="attr">Subnet Mask   :</span> <span class="number">255.255</span><span class="number">.255</span><span class="number">.0</span></span><br><span class="line"><span class="attr">CIDR Notation :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.5</span><span class="string">/24</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># According to the Subnet mask:</span></span><br><span class="line"><span class="attr">Network Bits :</span> <span class="number">192.168</span><span class="number">.32</span><span class="string">.x</span> <span class="string">(total</span> <span class="string">of</span> <span class="number">24</span> <span class="string">bits)</span></span><br><span class="line"><span class="attr">Host bits    :</span> <span class="string">x.x.x.5</span>      <span class="string">(total</span> <span class="string">of</span> <span class="number">8</span> <span class="string">bits)</span></span><br></pre></td></tr></table></figure>
+<h3 id="主机位"><a href="#主机位" class="headerlink" title="主机位"></a>主机位</h3><p>IP 地址中为主机保留的位数告诉我们网络可以支持<em>多少主机</em>（网络上可以有多少设备拥有自己唯一的 IP 地址）。</p>
+<p>在为主机保留 8 位的 <code>/24</code> 网络中，该网络上可以有 2^8 (256) 个主机&#x2F;设备（负 2，因为 <code>0</code> 地址被保留，通常用于路由器并计为第一个地址）。</p>
+<h3 id="通配符掩码"><a href="#通配符掩码" class="headerlink" title="通配符掩码"></a>通配符掩码</h3><p>通配符掩码是反转的子网掩码。要创建通配符掩码，您必须获取二进制子网掩码的“按位补码”（即所有 1 位都变为 0，所有 0 位都变为 1）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IP Address (CIDR)    :</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span><span class="string">/23</span></span><br><span class="line"><span class="attr">Subnet Mask          :</span> <span class="number">255.255</span><span class="number">.254</span><span class="number">.0</span></span><br><span class="line"><span class="attr">Subnet Mask (binary) :</span> <span class="number">11111111.11111111</span><span class="number">.11111110</span><span class="number">.00000000</span></span><br><span class="line"><span class="attr">Wildcard (binary)    :</span> <span class="number">00000000.00000000</span><span class="number">.00000001</span><span class="number">.11111111</span></span><br><span class="line"><span class="attr">Wildcard Mask        :</span> <span class="number">0.0</span><span class="number">.1</span><span class="number">.255</span></span><br></pre></td></tr></table></figure>
+<p>查找子网的地址范围时，通配符掩码非常有用。例如，对于 <code>/23</code> 网络，您知道子网掩码为 <code>255.255.254.0</code>，因此通配符掩码为 <code>0.0.1.255</code>。</p>
+<p>在<em>第三个</em>八位字节中，唯一可以翻转以形成唯一地址的位是第一位 (<code>0000000(1)</code>)。它可以是 <code>1</code> 或 <code>0</code>。第三个八位位组中的其余位对于地址空间“不可用”（就像前两个八位位组中的位一样）。</p>
+<p>第四个八位位组中的每一位都可以翻转为 <code>1</code> 或 <code>0</code> ，总共提供 2^8 (256) 个组合，从而获得 256 个唯一地址。</p>
+<p>这意味着第三个八位位组设置为 <code>0</code> 时有 256 个可能的地址，第三个八位位组设置为 <code>1</code> 时还有 256 个<em>附加</em>可能的地址。因此地址 <code>192.168.0.0/23</code> 的 IP 地址范围是：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Third octet set to 0 :</span></span><br><span class="line">    <span class="attr">Range :</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.255</span></span><br><span class="line"><span class="attr">Third octet set to 1 :</span></span><br><span class="line">    <span class="attr">Range :</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.0</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.255</span></span><br></pre></td></tr></table></figure>
+<p>总共 512 个唯一的 IP 地址。</p>
+<h2 id="更改子网掩码"><a href="#更改子网掩码" class="headerlink" title="更改子网掩码"></a>更改子网掩码</h2><p>子网划分只是“更改子网掩码”以允许 IP 地址支持更多网络。要在 IP 地址中创建子网，需要从地址的主机部分获取位并“赋予”网络部分。</p>
+<p>位只能从<em>最低有效位到最高有效位</em>获取：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IP Address  :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.5</span></span><br><span class="line"><span class="attr">Subnet Mask :</span> <span class="number">255.255</span><span class="number">.255</span><span class="number">.0</span> <span class="string">--&gt;</span> <span class="attr">in binary:</span> <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.00000000</span></span><br><span class="line"><span class="comment"># Bits cannot be taken from just anywhere in the subnet mask:</span></span><br><span class="line"><span class="attr">Wrong       :</span> <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.00000</span><span class="string">(0)00</span></span><br><span class="line"><span class="comment"># Bits have to be taken starting on the left side (the left-most host bit):</span></span><br><span class="line"><span class="attr">Correct     :</span> <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="string">.(0)0000000</span></span><br><span class="line"><span class="comment"># The new subnet mask becomes:</span></span><br><span class="line"><span class="attr">Binary      :</span> <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.10000000</span></span><br><span class="line"><span class="attr">Decimal     :</span> <span class="number">255.255</span><span class="number">.255</span><span class="number">.192</span></span><br><span class="line"><span class="attr">CIDR        :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.5</span><span class="string">/25</span></span><br></pre></td></tr></table></figure>
+<h3 id="决定采用多少位"><a href="#决定采用多少位" class="headerlink" title="决定采用多少位"></a>决定采用多少位</h3><p>从网络中获取的位数决定了可以创建多少个子网络。可能的子网数量 &#x3D; 2^（占用了多少位）。</p>
+<p><em>例如</em>：创建 4 个子网 &#x3D; 2^x。求解 x 得到 2，这意味着需要从主机位中取出 2 位来创建 4 个子网。</p>
+<p><em>示例 2</em>：创建 17 个子网 &#x3D; 2^x。 2^4 &#x3D; 16（不够，需要多一位）&#x3D;&#x3D;&gt; 2^5 &#x3D; 32，因此需要占用 5 位来创建 17 个子网络。</p>
+<h2 id="子网"><a href="#子网" class="headerlink" title="子网"></a>子网</h2><p>一旦更改子网掩码以支持子网，就可以确定每个子网的范围。要计算出范围，您需要<em>增量。</em></p>
+<h3 id="增量"><a href="#增量" class="headerlink" title="增量"></a>增量</h3><p>增量（或每个网络所属的地址范围）可以通过查看子网掩码找到：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IP Address           :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.5</span></span><br><span class="line"><span class="attr">Subnet Mask          :</span> <span class="number">255.255</span><span class="number">.255</span><span class="number">.192</span></span><br><span class="line"><span class="attr">Subnet Mask (binary) :</span> <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.11000000</span></span><br><span class="line"><span class="comment"># The increment = the least significant network bit:</span></span><br><span class="line">    <span class="attr">Forth Octet      :</span> <span class="number">1</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></span><br><span class="line">                      <span class="number">128</span>  <span class="string">(64)</span>  <span class="number">32</span>   <span class="number">16</span>   <span class="number">8</span>    <span class="number">4</span>    <span class="number">2</span>    <span class="number">1</span></span><br><span class="line">                     <span class="comment"># the least sig network bit = 64 = the increment</span></span><br></pre></td></tr></table></figure>
+<p>一旦获得增量，您就知道每个子网跨越<em>增量</em>数量的地址。本示例中的子网范围为：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Subnet 1 :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.0</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.63</span></span><br><span class="line"><span class="attr">Subnet 2 :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.64</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.127</span></span><br><span class="line"><span class="attr">Subnet 3 :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.128</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.191</span></span><br><span class="line"><span class="attr">Subnet 4 :</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.192</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.32</span><span class="number">.255</span></span><br></pre></td></tr></table></figure>
+<h3 id="带子网的保留-IP"><a href="#带子网的保留-IP" class="headerlink" title="带子网的保留 IP"></a>带子网的保留 IP</h3><p>在子网中，可用主机的数量始终是子网中可能的地址总数的 -2。这是为了说明该范围中的第一个和最后一个地址，这些地址是为网络 ID 和广播 ID 保留的：</p>
+<h4 id="网络-ID"><a href="#网络-ID" class="headerlink" title="网络 ID"></a>网络 ID</h4><p>这通常是子网范围中的第一个地址。</p>
+<h4 id="广播-ID"><a href="#广播-ID" class="headerlink" title="广播 ID"></a>广播 ID</h4><p>通常是范围中的最后一个地址（但并非总是如此）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">IP Address       :</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.32</span><span class="string">/27</span></span><br><span class="line"><span class="attr">Subnet mask      :</span> <span class="number">255.255</span><span class="number">.255</span><span class="number">.224</span></span><br><span class="line"><span class="attr">Wildcard         :</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.31</span>       <span class="string">&lt;--</span> <span class="number">32</span> <span class="string">possible</span> <span class="string">addresses</span></span><br><span class="line"><span class="attr">Range            :</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.32</span> <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.63</span></span><br><span class="line">    <span class="attr">Network ID   :</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.32</span></span><br><span class="line">    <span class="attr">Broadcast ID :</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.63</span></span><br><span class="line">    <span class="attr">Num of available addresses for hosts :</span> <span class="number">29</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>[！资源：]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=oZGZRtaGyG8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF&index=5">网络查克：子网划分播放列表</a></li>
+<li><a target="_blank" rel="noopener" href="https://subnetipv4.com/">subnetipv4.com</a></li>
+<li><a target="_blank" rel="noopener" href="https://superuser.com/questions/1126822/how-do-i-get-a-22-subnet-from-192-168-0-0-22-network-address">超级用户：关于子网划分的回答</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bitwise_operation">维基百科：按位运算符</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Wildcard_mask">维基百科：通配符掩码</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.subnet-calculator.com/wildcard.php">子网计算器</a></li>
+</ul>
+</blockquote>
+<blockquote>
+<p>[！我之前的笔记（在文中链接）：]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/blob/main/networking/routing/CIDR.md">CIDR 表示法</a></li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/05/23/subnetting/">https://hzhzxfs.github.io/2025/05/23/subnetting/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Network-Security/">Network Security</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/24/sudo/" title="sudo"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">sudo</div></div><div class="info-2"><div class="info-item-1">Linux sudo 命令sudo 代表“超级用户执行”，允许您以 root 用户身份运行命令。 权限提升仅在运行命令时存在。某些发行版（例如 Ubuntu）会将超级用户权限保留 15 分钟。 “sudoers”组中的用户拥有超级用户权限。 根用户：Linux 发行版中“sudoers”组中的默认用户的一个示例是 root 用户。要以 root 用户身份登录，请使用 sudo su - 并且 shell 的上下文将更改为您作为 root 用户。退出或终止当前 shell 将终止该 shell 的 root 用户权限。 </div></div></div></a><a class="pagination-related" href="/2025/05/22/spiking/" title="spiking"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">spiking</div></div><div class="info-2"><div class="info-item-1">使用 Vulnserver 进行尖峰攻击以下注释是在 Windows 10 VM 上使用 Vulnserver 和 Immunity Debugger 时创建的。 设置在易受攻击的 Windows 虚拟机上安装 Vulnserver 和 Immunity Debugger 后，使用 ipconfig 查找虚拟机的 IP 地址。验证您的攻击盒和易受攻击的盒可以相互通信（使用 ping）。 然后你可以使用 netcat 从你的攻击箱连接到 Vulnserver： 1234┌──(hakcypuppy㉿kali)-[~]└─$ nc -nv $t 9999(UNKNOWN) [10.0.2.15] 9999 (?) openWelcome to Vulnerable Server! Enter HELP for help.  -n：仅代表数字连接（netcat 将需要 IP 地址和端口） -v：代表详细 9999 是 Vulnserver 将在 Windows 框中侦听的端口  命令现在您已连接，请使用 HELP 获取命令列表： 1234567891011121314151617181...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/04/22/important-tools/" title="important-tools"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-22</div><div class="info-item-2">important-tools</div></div><div class="info-2"><div class="info-item-1">重要的记笔记工具Windows 和 MacGreenshot使用按 PntSc（打印屏幕）按钮。使用该工具捕获屏幕的方框部分，然后从下拉列表中选择 Open in image editor。 LinuxFlameShot</div></div></div></a><a class="pagination-related" href="/2025/05/08/linux-services/" title="linux-services"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-08</div><div class="info-item-2">linux-services</div></div><div class="info-2"><div class="info-item-1">启动和停止 Linux 服务Linux 进程 每个进程都有一个由内核根据启动后启动的顺序分配给它们的进程 ID。 系统控制：systemctl 是 Linux 中的一个命令，它允许您与 systemd 交互，当 Linux 机器启动时，该命令（通常）是 PID 1。 systemd 是 Linux 的服务管理器，由于它的 PID 为 1，因此启动后计算机上运行的大多数进程都是 systemd** 的子进程。 因为我们想要在 Linux 上交互或使用的大多数进程都是 systemd 的子进程，所以我们可以使用 systemd 来控制它们。这是因为它们共享相同的命名空间。 要与 systemd 交互，我们必须使用 systemctl 命令。您可以为 systemctl 提供四个选项来管理进程：  start：启动一个或多个已经加载到内存中的单元（单元是系统启动和维护所需的对象的封装） stop：停用一个或多个单元 enable：启用一个或多个单元实例 disable：禁用一个或多个单元实例。  在启动时启动进程：要使用 systemctl 在启动时启动特定进程，请使用： 1234sy...</div></div></div></a><a class="pagination-related" href="/2025/05/27/tuples/" title="tuples"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-27</div><div class="info-item-2">tuples</div></div><div class="info-2"><div class="info-item-1">Python TuplesTuples are structures in python which are similar to lists but are immutable. They also differ in that they use () instead of []. 1fruits = (&quot;apples&quot;, &quot;oranges&quot;, &quot;kiwis&quot;) 访问元组：要访问元组中的元素，可以使用括号表示法，就像列表一样： 123print(f&quot;It&#x27;s like comparing $&#123;fruits[0]&#125; to $&#123;fruits[1]&#125;!&quot;)# output:It&#x27;s like comparing apples to oranges!</div></div></div></a><a class="pagination-related" href="/2025/05/11/network-commands/" title="network-commands"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-11</div><div class="info-item-2">network-commands</div></div><div class="info-2"><div class="info-item-1">Linux 网络命令The ip and ifconfig commands are similar. They list and configure current network interfaces on the device. ifconfig is the older of the two and may not be present on all machines. 使用 ip a 将列出无线和硬连线&#x2F;以太网连接，而 ifconfig 将仅列出以太网。另一个可用于列出无线连接的命令是 iwconfig。 ARP（地址解析协议）地址解析协议是第 3 层(&#x2F;networking&#x2F;OSI&#x2F;network-layer.md) 协议，可帮助主机将 IP 地址解析为关联设备的 MAC 地址。  arp -a 和 ip n （n 代表 neighbor）命令可在 Linux 中使用来列出与网络中本地 IP 地址关联的 MAC 地址。 您还可以使用带有 -r 标志的 netdiscover 来执行实时 ARP 数据包捕获： 123456sudo...</div></div></div></a><a class="pagination-related" href="/2025/04/08/common-legal-documents/" title="common-legal-documents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-08</div><div class="info-item-2">common-legal-documents</div></div><div class="info-2"><div class="info-item-1">常用法律笔测试文件一般来说，是这样的过程： 销售客户请求渗透测试服务。首先，客户通常会要求您签署保密协议，这样您就不会在此过程中分享您了解到的有关其平台的信息。 双方坐下来召开“销售会议”，其中整理了两份文件：  主服务协议 工作说明书  相互保密 (NDA)双方同意不会将整个过程中了解到的任何信息透露给第三方。 主服务协议 (MSA)合同文件，规定合作目标并概述双方的责任。涵盖多个合同的一揽子协议。 Rapid7 协议示例Rapid7 有其主服务协议 可供查看。 工作说明书 (SOW)具体到单个合同。涵盖活动、可交付成果、时间表和付款报价。基本上“这就是我们要做的测试类型。这是我们要完成它的时间。我们将向您提供一份报告，这就是整个活动将花费多少钱”。 附加销售文件：报告样本有些客户喜欢看样本报告 推荐信有些客户喜欢在接受您之前查看其他企业&#x2F;客户的推荐。 参与规则（测试前）一旦 SOW、NDA、MSA 等全部签署并达成一致，您和客户将召开“合作规则会议”。在此之前（在销售阶段），您和客户可能已就一般范围和条款达成一致。这次会议将涵盖您的测试的细节。 在签署本文件之前，您...</div></div></div></a><a class="pagination-related" href="/2025/04/06/burp-suite/" title="burp-suite"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-06</div><div class="info-item-2">burp-suite</div></div><div class="info-2"><div class="info-item-1">使用 Burp Suite 收集信息Burp Suite is a web proxy which means it can intercept web traffic. Firefox Setup对于 Firefox，请执行以下操作来设置 Burp： Open FirefoxGo to menu –&gt; settings –&gt; general –&gt; Network Settings (at bottom of page) In Network Settings设置“手动代理配置”：  HTTP Proxy: 127.0.0.1 check ‘Also use this proxy for HTTPS’  访问https://burp在新选项卡中访问 https://burp。 Accept both  check boxes, then hit the CA Certificate button. This will download a certificate to your ~/Downloads folder. Back in FirefoxGo to P...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Subnetting"><span class="toc-number">1.</span> <span class="toc-text">Subnetting</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Subnet-Mask"><span class="toc-number">1.1.</span> <span class="toc-text">Subnet Mask</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E4%BD%8D"><span class="toc-number">1.1.1.</span> <span class="toc-text">主机位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E6%8E%A9%E7%A0%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">通配符掩码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text">更改子网掩码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E5%AE%9A%E9%87%87%E7%94%A8%E5%A4%9A%E5%B0%91%E4%BD%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">决定采用多少位</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90%E7%BD%91"><span class="toc-number">1.3.</span> <span class="toc-text">子网</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E9%87%8F"><span class="toc-number">1.3.1.</span> <span class="toc-text">增量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%A6%E5%AD%90%E7%BD%91%E7%9A%84%E4%BF%9D%E7%95%99-IP"><span class="toc-number">1.3.2.</span> <span class="toc-text">带子网的保留 IP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C-ID"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">网络 ID</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%BF%E6%92%AD-ID"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">广播 ID</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>进程管理 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="进程管理进程和线程 进程概念  进程是指一个具有一定独立功能的程序在一个数据集合上的一次动态执行的过程 进程包含了一个正在运行的程序的所有状态信息：代码、数据、状态寄存器、通用寄存器和进程占用系统资源 &#x3D;&gt; 进程控制块 进程是操作系统处于执行状态程序的抽象 程序 &#x3D;&gt; 文件 进程 &#x3D;&gt; 执行中的文件 &#x3D;&gt; 程序 + 执行状态    进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程管理">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/08/18/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="进程管理进程和线程 进程概念  进程是指一个具有一定独立功能的程序在一个数据集合上的一次动态执行的过程 进程包含了一个正在运行的程序的所有状态信息：代码、数据、状态寄存器、通用寄存器和进程占用系统资源 &#x3D;&gt; 进程控制块 进程是操作系统处于执行状态程序的抽象 程序 &#x3D;&gt; 文件 进程 &#x3D;&gt; 执行中的文件 &#x3D;&gt; 程序 + 执行状态    进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-08-18T03:09:14.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.356Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Computer Basics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "进程管理",
+  "url": "https://hzhzxfs.github.io/2024/08/18/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-08-18T03:09:14.000Z",
+  "dateModified": "2026-06-10T02:14:46.356Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/08/18/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '进程管理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">进程管理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">进程管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-18T03:09:14.000Z" title="发表于 2024-08-18 11:09:14">2024-08-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.356Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Computer-Basics/">Computer Basics</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h2><ul>
+<li>进程概念<blockquote>
+<ul>
+<li>进程是指一个具有一定独立功能的程序在一个数据集合上的一次动态执行的过程</li>
+<li>进程包含了一个正在运行的程序的所有状态信息：<code>代码</code>、<code>数据</code>、<code>状态寄存器</code>、<code>通用寄存器</code>和<code>进程占用系统资源</code> &#x3D;&gt; 进程控制块</li>
+<li>进程是操作系统处于执行状态程序的抽象</li>
+<li>程序 &#x3D;&gt; 文件</li>
+<li>进程 &#x3D;&gt; 执行中的文件 &#x3D;&gt; 程序 + 执行状态</li>
+</ul>
+</blockquote>
+</li>
+<li>进程的状态与转换<ul>
+<li>进程创建：系统初始化时，用户请求创建一个新的进程 或 正在运行的进程申请创建新的进程。</li>
+<li>进程执行：内核通过调度算法选择一个就绪的进程开始执行。</li>
+<li>进程等待：请求并等待系统服务 或 启动过某种操作，导致无法马上完成进程的等待；比如需要的数据没有到达的等待。</li>
+<li>进程抢占：高优先级的进程就绪 或 当前执行的进程执行时间用完，被其他进程抢占。</li>
+<li>进程唤醒：被阻塞的进程需要的资源被满足；被阻塞的进程等待的事件到达（进程只能被其他进程或者操作唤醒，不能自身唤醒）</li>
+<li>进程结束：将进程占用的资源释放给操作系统（包括正常退出、错误退出、致命错误和被其它进程所杀等）</li>
+</ul>
+</li>
+<li>进程的控制与组织<ul>
+<li>进程控制块：操作系统管理和控制进程运行所用的信息的集合<blockquote>
+<ul>
+<li>进程控制块包括进程的基本信息（ID、程序） 和进程的变化过程（进程状态）</li>
+<li>PCB是进程存在的唯一标示，每个进程在操作系统中都有唯一的PCB，PCB存放了 标识信息、处理机现场保存、进程控制信息等。</li>
+<li>进程地址空间包括：段表、共享库、栈、堆、初始化数据和代码</li>
+</ul>
+</blockquote>
+</li>
+<li>调度队列和调度器<strong>TODO</strong></li>
+<li>进程的创建和终止<ul>
+<li>进程切换<ul>
+<li>暂停当前运行的程序，从运行状态变为其他状态，调度另一个进程从就绪状态变为运行状态</li>
+<li>要求：切换前需要保证进程的上下文，切换后要恢复进程的上下文。切换速度要尽可能的快。</li>
+<li>要保存的信息：寄存器信息、CPU状态信息、内存地址空间</li>
+</ul>
+</li>
+<li>进程创建<ul>
+<li>idleproc -&gt; 分配idleproc需要的资源 -&gt; 初始化PCB -&gt; 完成初始化过程</li>
+<li>fork()复制进程 -&gt; exec()修改进程</li>
+<li>pid -&gt; 子进程的ppid</li>
+</ul>
+</li>
+<li>进程等待和退出<ul>
+<li>进程结束的时候调用exit(),完成对进程资源的回收<blockquote>
+<ul>
+<li>资源回收的内容包括：将调用参数作为进程的结果结束、关闭所有打开的文件等占用资源、释放内存、释放大部分进程相关的内核数据结构、检查父进程是否存活（如果存活则保留返回值直到父进程需要，子进程进入僵尸状态；如果不存活，释放所有数据结构，进程结束）、清理所有处理等待状态的僵尸进程</li>
+</ul>
+</blockquote>
+</li>
+<li>父进程在wait()的收检查子进程是否存活</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>进程概念与多线程模型<ul>
+<li>作用：进程内部进一步提高并发性，线程间能直接通信和共享数据</li>
+<li>多线程的解决思路：实体间可以并发执行，实体间可以共享相同的地址，这种实体就是线程</li>
+<li>概念：线程是进程的一部分，描述指令流的执行状态。它是进程中指令流的最小单位，是CPU调度的基本单位。</li>
+<li>优点：一个线程中可以存在多个线程；各个线程之间可以并发执行；各个线程之间可以共享地址空间和文件等资源。</li>
+<li>缺点：一个线程的崩溃会导致该进程下面的所有线程的崩溃。</li>
+</ul>
+</li>
+</ul>
+<h2 id="CPU调度"><a href="#CPU调度" class="headerlink" title="CPU调度"></a>CPU调度</h2><ul>
+<li><p>调度的基本概念</p>
+<ul>
+<li>基本概念：管理处理机执行能力资源的功能（对应进程切换，CPU资源当前占用者的切换）</li>
+<li>主要功能：从就绪队列中挑选下一个占用CPU资源运行的程序 + 从多个可用CPU中挑选出就绪进程可用使用的CPU资源</li>
+<li>调度程序：挑选就绪进程的内核函数<blockquote>
+<ul>
+<li>调度程序需要考虑的方面有：1.调度策略，依据何种原则来挑选进程&#x2F;线程；2.调度时机，什么时候进行调度</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>调度时机、切换与过程</p>
+<ul>
+<li>内核运行调度程序的条件：<ul>
+<li>进程从运行状态切换到等待状态</li>
+<li>进程被终结</li>
+</ul>
+</li>
+<li>针对非抢占系统的过程<ul>
+<li>当前进程主动放弃CPU资源</li>
+</ul>
+</li>
+<li>针对抢占系统的过程<ul>
+<li>中断请求被服务器例程响应完成时</li>
+<li>当前进程被抢占（进程时间片耗尽，进程从等待状态切换到就绪）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>调度的基本准则</p>
+<ul>
+<li>调度策略和调度算法比较指标<blockquote>
+<ul>
+<li>进程在CPU计算和IO操作间交替进行，每次调度 决定在下一个CPU计算时哪个工作交给CPU，在时间片机制下，进程可能在结束当前CPU计算结束前因时间片耗尽而放弃CPU资源</li>
+</ul>
+</blockquote>
+</li>
+<li>衡量调度算法的指标<ul>
+<li>CPU使用率（CPU忙的时间百分比，一般而言越高越好）</li>
+<li>吞吐量（单位时间内进程完成的数量。用户希望有更快的服务，如传输文件时的高带宽、调度算法时的高吞吐量）、</li>
+<li>周转时间（进程从进入初始化到结束的总时间）</li>
+<li>等待时间（进程在就绪队列中消耗的时间）</li>
+<li>响应时间（从提交请求到产生响应所消耗的总时间）</li>
+</ul>
+</li>
+<li>调度算法指标的期望值<ul>
+<li>减少响应时间、减少平均响应时间波动、增加吞吐量（减少开销，系统资源的高利用率）、减少等待时间（减少每个进程的等待时间）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>调度方式<strong>TODO</strong></p>
+</li>
+<li><p>典型调度算法</p>
+<ul>
+<li>先来先服务算法[FCFS]</li>
+<li>短作业[SJF]（短进程，短线程）优先调度算法<ul>
+<li>将最短的作业提前的调度算法。响应的变种有：最短进程优先，最短作业优先调度，剩余时间最短优先调度</li>
+<li>缺点：预知进程的运行时间一般是不容易的，对长进程不利会出现进程饥饿的情况，人机无法交互，没有考虑到进程的紧迫程度</li>
+</ul>
+</li>
+<li>最高响应比算法（Wait&#x2F;(Wait+Run)）<ul>
+<li>将等待时间过长的进程优先执行，总体保证不会出现进程饥饿</li>
+</ul>
+</li>
+<li>时间片轮调度算法[RR]配合FCFS<ul>
+<li>确定进程执行的最大时间长度限制，片轮执行过程按照先来先服务进行调度，在合理的时间限制下，会兼顾到每个进程的运行</li>
+</ul>
+</li>
+<li>优先级调度算法<ul>
+<li>事先规定好的优先级算法</li>
+</ul>
+</li>
+<li>多级反馈队列调度算法[MFQ]<ul>
+<li>将就绪队列排成多个子队列，综合几种算法得出的结果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="同步与互斥"><a href="#同步与互斥" class="headerlink" title="同步与互斥"></a>同步与互斥</h2><ul>
+<li><p>进程间的三种关系</p>
+<ul>
+<li>互斥：一个进程占用了资源，其他进程不能使用</li>
+<li>死锁：多个进程占用了部分资源，形成循环等待</li>
+<li>饥饿：其他进程轮流占用资源，某一个进程一直得不到资源</li>
+</ul>
+</li>
+<li><p>进程同步和临界区的基本概念</p>
+<ul>
+<li>进程同步：协调多线程对共享数据的访问，任何时刻都只能有一个线程执行临界区代码</li>
+</ul>
+  <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 临界区操作其实是一个原子操作</span></span><br><span class="line"><span class="comment"># 进入临界区</span></span><br><span class="line">Lock.Acquire()</span><br><span class="line"><span class="keyword">if</span> bread:</span><br><span class="line">    buy</span><br><span class="line"><span class="comment"># 离开临界区</span></span><br><span class="line">Lock.Release()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>进程的相互关系</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>相互感知的程度</th>
+<th>交互关系</th>
+<th>进程间的影响</th>
+<th>Sample</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>相互不感知（完全不了解其他进程的存在）</td>
+<td>独立</td>
+<td>对其它进程没有任何影响</td>
+<td>A和B独立运行</td>
+</tr>
+<tr>
+<td>间接感知（双方与第三方交互，如共享资源）</td>
+<td>通过共享进行协作</td>
+<td>一个进程的结果依赖共享资源的状态</td>
+<td>A和B独立运行，但是A修改数据库结果会对B的显示产生影响</td>
+</tr>
+<tr>
+<td>直接感知（双方直接交互，如通信）</td>
+<td>通过通信进行协作</td>
+<td>一个进程的结果依赖于从其他进程获取的消息</td>
+<td>A中代码有发起B中的接口请求代码</td>
+</tr>
+</tbody></table>
+<ul>
+<li>临界区相关<ul>
+<li>临界区：进程中访问临界资源的一段需要互斥执行的代码（如数据库中的事务上锁）</li>
+<li>进入区：检查是否可以进入临界区的一段代码；如果可以进入，设置相应标志（上锁）</li>
+<li>退出区：释放锁</li>
+<li>剩余区：释放锁后执行的代码</li>
+</ul>
+</li>
+<li>临界区的实现方法：禁用中断、软件方法、抽象方法</li>
+</ul>
+</li>
+<li><p>信号量</p>
+<ul>
+<li>概念：信号量是操作系统中提供的一种协调共享资源的方法，用信号量表示系统资源的数量。<blockquote>
+<ul>
+<li>信号量 &#x3D; (一个整型变量 + 两个原子操作（P()+V()）) 类比车站应用</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>使用信号量描述和解决经典同步问题</p>
+<ul>
+<li>互斥访问：每类资源设置一个信号量，初始值为1，必须要同时使用P（保证互斥访问临界资源）V（使用后释放资源）操作。</li>
+<li>条件同步：设置一个信号量，初始值为0。在要插入的地方加入P，插入结束的地方加入 V。以此完成条件等待以完成条件同步（数据库update操作参考）</li>
+<li>生产者消费者问题：<ul>
+<li>要求：<blockquote>
+<ul>
+<li>任何时刻只能有一个线程控制缓存区（互斥访问）</li>
+<li>缓冲区为空，消费者必须等待生产者（条件同步）</li>
+<li>缓冲区为满，生产者必须等待消费者（条件同步）</li>
+</ul>
+</blockquote>
+</li>
+<li><a href="../%E4%BB%A3%E7%A0%81/product_customer.cpp">C++代码示例</a></li>
+</ul>
+</li>
+<li>哲学家就餐问题：<ul>
+<li>要求：略</li>
+<li>代码：略</li>
+</ul>
+</li>
+<li>读者写者问题：<ul>
+<li>要求：<ul>
+<li>读者：读但不修改</li>
+<li>写者：读且修改</li>
+</ul>
+</li>
+<li>需定义变量：<ul>
+<li>信号量WriteMutex： 控制读写操作的互斥 初始化为1</li>
+<li>读者计数：RCount 正在进行读操作的读者个数</li>
+<li>信号量CountMutex：控制对读者计数的互斥 初始化为1</li>
+</ul>
+</li>
+<li>代码：<a href="../%E4%BB%A3%E7%A0%81/code/writer_reader.py">Go代码示例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><ul>
+<li>死锁的概念<ul>
+<li>概念：由于竞争资源或者通信关系，两个或者更多线程在执行中出现永远的互相等待只能由其他进程引发的事件。</li>
+<li>可重用资源：处理器，IO，存储器，文件，数据库，信号量等数据结构。每个进程占用部分资源而请求其它资源</li>
+<li>消费资源：IO缓冲区的中断，信号，消息等。进程间相互等待对方的消息</li>
+<li>出现死锁的必要条件：互斥、持有并等待、非抢占、循环等待</li>
+</ul>
+</li>
+<li>死锁的处理策略<ul>
+<li>死锁预防（确保系统不会进入死锁状态）</li>
+<li>死锁避免（在使用前进行判断，只允许不会出现死锁的进程请求资源）</li>
+<li>死锁的检测和恢复（在检测到系统进入到死锁状态后，进行恢复）<blockquote>
+<ul>
+<li>需要由应用程序检测死锁，因为系统通常会忽略死锁</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>死锁预防（限制申请的方式）<ul>
+<li>概念：采用某种策略，限制并发进程对资源的请求，使系统在任何时候都不满足死锁的必要条件</li>
+<li>互斥预防：将互斥的共享资源改封装成可同时访问</li>
+<li>持有并等待预防：进程请求资源时，要求它不持有任何资源，仅允许进程开始执行时一次性请求所有需要的资源</li>
+<li>非抢占预防：如进程请求不能立即分配资源，则释放已占用资源，只有能同事获得所有资源时，才分配操作</li>
+<li>循环等待预防：对资源排序，要求进程按照顺序请求资源</li>
+</ul>
+</li>
+<li>死锁避免（利用额外的先验信息，在分配资源前判断是否会出现死锁，只在不会死锁时分配资源）<ul>
+<li>死锁避免方法：要求声明需要资源的最大量，限定提供与分配的资源数量确保满足进程的最大需求，动态检查资源分配状态确保不会出现环形等待</li>
+<li>系统安全状态：当进程请求资源时，系统判断分配后是否处于安全状态；系统处于安全状态后，针对所有已占用进程，存在安全序列</li>
+<li>银行家算法：<ul>
+<li>数据结构：<ul>
+<li>记录系统状态（Max&#x3D;线程数量*资源类型数量）</li>
+<li>剩余空闲量</li>
+<li>已分配量</li>
+<li>未来需要量</li>
+</ul>
+</li>
+<li>安全状态判断<ul>
+<li>判断剩余空闲量能否和某一个线程的需要量匹配</li>
+<li>如果有：分配给该线程并执行，执行完毕后回收资源</li>
+<li>如果无：系统状态不安全，无法执行，死锁避免</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>死锁的检测和解除<ul>
+<li>步骤：<ul>
+<li><ol>
+<li>允许系统进入死锁状态</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>维护系统的资源分配图<blockquote>
+<p>周期性调用死锁检测算法搜索是否有死锁</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>出现死锁时进行恢复</li>
+</ol>
+<ul>
+<li>数据结构：资源分配图应当为一个向量列表，最终构成一个矩阵</li>
+<li>死锁恢复：终止所有的死锁进程，一次只终止一个进程直到死锁结束</li>
+<li>终止进程的顺序：优先级、已运行时间、已占用资源、完成需要资源、终止进程数量等</li>
+<li>可能会导致的问题：<ul>
+<li>选择被抢占的资源（最小成本目标）</li>
+<li>进程回退（返回到安全状态）</li>
+<li>可能饥饿（某一进程长时间被选为抢占者）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/08/18/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">https://hzhzxfs.github.io/2024/08/18/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Computer-Basics/">Computer Basics</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/09/01/1_introduction/" title="1_introduction"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">1_introduction</div></div><div class="info-2"><div class="info-item-1">简介Tornado 是一个 Python Web 框架和异步网络库。通过使用非阻塞网络 I&#x2F;O，Tornado 可以扩展到数万个开放连接，这使其成为长轮询、Websockets 和其他需要相互长期连接的应用程序的理想选择。 ##主要组成部分  网络框架包括 RequestHandler，它被子类化以创建 Web 应用程序。  HTTP 的客户端和服务器端实现HTTPServer 和 AsyncHTTPClient  异步网络库包括 IOLoop 和 IOStream 类，它们充当 HTTP 组件的构建块，也可用于实现其他协议。  协朗库类tornado.gen 允许以比链接回调更直接的方式编写异步代码。这类似于Python3.5（或更高版本，async def）中引入的原生协程功能。   其他Tornado Web 框架和 HTTP 服务器一起提供了 WSGI 上的全栈替代方案。虽然可以使用 Tornado HTTP 服务器作为其他 WSGI 框架的容器，但每种组合都有局限性，要充分利用 Tornado，您需要同时使用 Tornado 的 Web 框架和 HTTP 服务...</div></div></div></a><a class="pagination-related" href="/2024/08/17/%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%EF%BC%88IO%EF%BC%89%E7%AE%A1%E7%90%86/" title="输入输出（IO）管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">输入输出（IO）管理</div></div><div class="info-2"><div class="info-item-1">输入输出IO管理三种常见的设备接口类型  字符设备（键盘鼠标、串口等） 块设备（磁盘、磁带、光驱等） 网络设备（以太网、无线等）  IO管理概述IO控制方式 阻塞IOWait：读数据时，进程进入等待状态，直到数据读取完成；写数据时，进程进入等待状态，直到设备完成数据写入 非阻塞IODon&#39;t Wait：立即从读写系统调用返回，返回值成功传输字节数 异步IOTell me later：读数据时，使用指针标记好数据缓存区，立即返回，稍后内核将填充缓冲区并通知用户；写数据时，使用指针标记好用户缓冲区，立即返回，稍后内核将处理数据并返回给用户。  IO软件层次结构设备 -&gt; 设备控制器 -&gt; 设备驱动 -&gt; IO子系统 -&gt; 内核 IO核心子系统IO调度概念高速缓存与缓冲区 缓存：数据传输双方访问速度差距较大，引入的速度匹配中间层。磁盘缓存是磁盘扇区在内存中的缓冲区  </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/08/10/%E6%A0%88%E4%B8%8E%E9%98%9F%E5%88%97/" title="栈与队列"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-10</div><div class="info-item-2">栈与队列</div></div><div class="info-2"><div class="info-item-1">栈与队列栈Stack 栈：只允许在一段插入和删除的线性表（LIFO） 栈是操作受限的单向链表，只能在头部和尾部有操作  队列Queue 队列：先进先出的线性表（FIFO），只允许一端插入，另一端删除 循环队列：为了避免空间浪费引入。需要注意的是，插入的时候要注意要预判队首和队尾是否相连。  </div></div></div></a><a class="pagination-related" href="/2024/08/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="设计模式学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-16</div><div class="info-item-2">设计模式学习笔记</div></div><div class="info-2"><div class="info-item-1">创建型作用：如何创建对象 1 单例模式单例模式（Singleton）创建分为饿汉式和懒汉式，但是在开源项目中使用最多的主要有两种写法。 1.1 静态常量静态常量方式属于饿汉式，以静态变量的方式声明对象。这种单例模式在 Spring 中使用的比较多，举个例子，在 Spring 中对于 Bean 的名称生成有个类 AnnotationBeanNameGenerator 就是单例的。  1.2 双重检查机制双重检查机制（DCL）方式属于懒汉式。 123456789101112131415161718public class Singleton &#123;        private volatile static Singleton INSTANCE;    private Singleton() &#123;&#125;    public static Singleton getInstance() &#123;        if (INSTANCE == null) &#123;            synchronized (Singleton.class) &#123...</div></div></div></a><a class="pagination-related" href="/2024/08/01/%E4%B8%B2/" title="串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-01</div><div class="info-item-2">串</div></div><div class="info-2"><div class="info-item-1">串串 串（字符串）：由零个或者多个字符组成的有限序列。 串值：双引号括起来的字符序列 串长：所包含的字符总数量 子串（substring） 子串序号（index） 串相等：长度相等且对应位置的字符也一样 串常量：只能读，不能写 串变量：可读可写 串在计算机中的存储方式 定长顺序存储表示 堆分配存储 块链存储（块的意思是每个结点存放不止一个字符）    串的模式匹配算法 模式匹配：子串在主串中的定位称为模式匹配或串匹配 Brute-Force模式匹配算法 匹配流程   代码  BF算法代码 执行的复杂度为O(m+n)，最坏为O(m*n)。当遇到s&#x3D;”001”,p&#x3D;”00000000001”的串的时候，就会遇到最坏情况   KMP模式匹配算法 改进点：每当一趟匹配出现字符不相等时，主串指示器不用回溯，而利用已经得到的部分匹配的结果，将模式匹配器向右尽可能滑动一段距离后在继续比较 匹配流程   代码  KMP算法代码 可以大大缩短匹配的次数 时间复杂度一定是O(m+n) 仅当模式与主串之间存在许多部分匹配的情况，才会比BF算法有明显的性能提升    </div></div></div></a><a class="pagination-related" href="/2024/08/12/%E7%BA%BF%E6%80%A7%E8%A1%A8/" title="线性表"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-12</div><div class="info-item-2">线性表</div></div><div class="info-2"><div class="info-item-1">线性表线性表 定义：由n个数据元素组成的有限序列；原则上数据类型可以不一致，但存储类型可能会做出一定的限制 特性: 除第一个元素外,其他元素只有一个直接前驱;除了最后一个元素,其他元素只有一个直接后继. 表示方式:顺序存储方式&#x2F;链表存储方式    顺序表 定义:将线性表中的元素相继存放在一个连续的存储空间中,可以利用一维数组描述数据结构 特性:所有元素的逻辑先后顺序和物理存放顺序一致  123456789101112131415161718192021const MAX_SIZE = 100// SQListA 顺序表的静态存储表示type SQListA struct&#123;    data    [MAX_SIZE]int64    length  int&#125;// SQListB 顺序表的动态存储表示type SQListB struct&#123;    data    *int64    length  int&#125;// Init_SQ 初始化顺序表func Init_SQ(list *SQListA) bool&#123;    list.d...</div></div></div></a><a class="pagination-related" href="/2024/08/13/%E7%BB%AA%E8%AE%BA/" title="绪论"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-13</div><div class="info-item-2">绪论</div></div><div class="info-2"><div class="info-item-1">绪论O记号 问题：随着问题规模的增长，计算成本是如何变化的？考虑的是计算成本的增长趋势 分析：在问题规模足够大的情况下，计算成本如何变化： 需要执行的基本操作次数T(n) 需要占用的存储单元数量S(n)，一般不考虑空间占用   对于T(n)转为O(f(n)) 常系数可以忽略，低次项可以忽略   O复杂度计算基于悲观的角度 判断代码的复杂度 常数复杂度O(1)：不含转向（循环、调用、递归等），部分特例虽然含有循环、调用、递归等，但是需要考虑到实际情况才能确定。 对数复杂度O(log n)：高效，复杂度无限接近常数 多项式复杂度O(n^c)：界定为多项式的最高次项 线性复杂度O(n) 指数复杂度O(c^n)：计算成本高    1234567void func(int n)&#123;    // n是正整数    int i = 1;    while(i&lt;=n)i*=2;&#125;// 被嵌套的深层语句是i*=2；频率由i&lt;=n决定，显然时间复杂度为O(log n)  冒泡排序 观察： 有序序列中，任意一对相邻元素顺序 &#x2F; 无序序列中，存在一对相邻元素逆序 ...</div></div></div></a><a class="pagination-related" href="/2024/08/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E5%8D%8F%E8%AE%AE/" title="计算机网络体系结构和协议"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-14</div><div class="info-item-2">计算机网络体系结构和协议</div></div><div class="info-2"><div class="info-item-1">计算机网络系统结构和协议 体系结构：研究系统中各个组成成分及其关系的一门学科。 计算机网络体系结构：定义和描述一组用于计算机及其通信设施之间互连的标准和规范的集合，遵循这组规范可以很方便的实现计算机间的通信。  开放系统互连基本参考模式（OSI&#x2F;RM）的设计原理 分解：将整个系统划分为若干易于实现和控制的子模块，并通过对各模块的功能、交换的数据结构和时序进行约定，协调模块之间的动作，保证系统设计的合理性和互操作性。同时可以根据各子模块的依赖关系，使用结构化的设计和实现方法，采用具有层次结构的模型与之对应。  抽象：标准的提出应当独立于实现的具体环境， OSI&#x2F;RM 的确立采用了三级抽象技术。  提出 OSI&#x2F;RM：建立计算机网络在概念和功能上的框架，包括确定 OSI 的层次模型，以及公共术语、属性和子模块的功能等。 提出 OSI 服务定义：在 OSI&#x2F;RM 的基础上，定义各个子模块可提供的服务，即确定各个子模块的外观特性。 定义 OSI 协议规范：定义一组为确保子模块服务的提供而应遵循的规则。   子模块（层）划分的原则：   各子模块具有...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">进程管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">进程和线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU%E8%B0%83%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">CPU调度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5"><span class="toc-number">1.3.</span> <span class="toc-text">同步与互斥</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%BB%E9%94%81"><span class="toc-number">1.4.</span> <span class="toc-text">死锁</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

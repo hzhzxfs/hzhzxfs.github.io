@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/17/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/17/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/11/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADPlacement%20Group%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8/" title="Ray框架中Placement Group概念及作用">Ray框架中Placement Group概念及作用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-11T03:50:45.000Z" title="发表于 2025-08-11 11:50:45">2025-08-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">好的，我们来详细解释一下 Ray 框架中的 Placement Group 概念及其作用。 核心概念：什么是 Placement Group？Placement Group 是 Ray 中用于精细化控制任务或角色资源布局的抽象概念。它允许你提前声明一“组”资源，并指定这组资源在集群中的“摆放策略”，然后你可以将任务或演员调度到这组资源的“插槽”中。 你可以把它想象成：  传统调度：就像你去餐厅，告诉服务员“我需要两个座位”，服务员会随机找两个空位给你。 使用 Placement Group：就像你提前预定了一个包含特定座位（比如一个沙发座和两个普通座）的卡座，并指定这个卡座要靠窗。之后你的朋友们会直接到这个预定好的卡座就坐。   为什么需要 Placement Group？它的作用是什么？在没有 Placement Group 的情况下，Ray 的默认调度器虽然能高效地分配资源，但它主要关注的是“资源量”（例如，需要 2 个 CPU），而不太关心“资源的位置”。这在很多高级场景下会成为一个瓶颈。 Placement Group 的主要作用体现在以下几个方面： 1. 实现任务间的紧...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/10/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADActor%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="Ray框架中Actor概念及作用详解">Ray框架中Actor概念及作用详解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-10T03:05:11.000Z" title="发表于 2025-08-10 11:05:11">2025-08-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">好的，我们来详细讲解一下 Ray 框架中的 Actor 概念。 1. Actor 是什么？在 Ray 中，Actor 是一个有状态的“工作进程”。你可以把它理解为一个“活的”对象。  普通 Python 类 vs. Ray Actor  一个普通的 Python 类 MyClass 在被实例化后（obj = MyClass()），obj 只是一个存在于当前进程内存中的对象。 一个 Ray Actor 是通过 ray.remote(MyClass) 创建的。当你实例化它时（actor_handle = MyClass.remote()），Ray 会在集群中的某个节点上（可能是在远程机器上）启动一个独立的进程，并在该进程中创建一个 MyClass 的实例。你得到的 actor_handle 并不是对象本身，而是一个指向远程对象（即那个进程中的实例）的引用或句柄。   核心特征：有状态Actor 的关键在于它可以在其整个生命周期内维护和修改内部状态（即它的实例变量，如 self.value）。所有对该 Actor 的方法调用都会在同一个进程中顺序执行，从而安全地修改和访问这个共享状态。...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/09/Qwen3-VL-8B%E6%8E%A8%E7%90%86%E7%BB%93%E6%9E%9C%E4%B8%BA%E7%A9%BA/" title="Qwen3-VL-8B推理结果为空">Qwen3-VL-8B推理结果为空</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-09T10:17:27.000Z" title="发表于 2025-08-09 18:17:27">2025-08-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">123456789101112131415161718192021222324252627python -m vllm.entrypoints.openai.api_server \--model /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct \--dtype bfloat16 \--gpu-memory-utilization 0.9 \--max-model-len 8192  \--max_num_batched_tokens 8192--host 0.0.0.0 \--port 8000 \--compilation-config &#x27;&#123;&quot;cudagraph_capture_sizes&quot;: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]&#125;&#x27;curl -X POST http://localhost:8000/v1/chat/completions \    -H &quot;Content-Type: app...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/" title="Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错">Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-08T01:34:50.000Z" title="发表于 2025-08-08 09:34:50">2025-08-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">12345678# localscp -P 8333 images.zip root@139.9.155.20:/media/# remotesudo apt updatesudo apt install -y unzipcd /mediaunzip images.zip  准备图片： 12345678910111213141516#!/usr/bin/env bashimage_base64=$(base64 -w 0 /media/b0.jpg)cat &gt; /media/image_request.json &lt;&lt;EOF&#123;    &quot;model&quot;: &quot;/root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct&quot;,    &quot;messages&quot;: [        &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpfu...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/" title="Qwen3-Omni没有vllm_config属性">Qwen3-Omni没有vllm_config属性</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-07T07:57:07.000Z" title="发表于 2025-08-07 15:57:07">2025-08-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config = vllm_config </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/" title="Qwen2.5-VL_RoPE计算流程详解">Qwen2.5-VL_RoPE计算流程详解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-06T06:38:17.000Z" title="发表于 2025-08-06 14:38:17">2025-08-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程整个流程从 forward(x, grid_thw) 开始，分为以下几个阶段：  第一步：初始化时预计算 cos&#x2F;sin 缓存qwen2_5_vl.py:608-612 123456self.rotary_pos_emb = get_rope(    head_size=head_dim,    max_position=8192,    is_neox_style=True,    rope_parameters=&#123;&quot;partial_rotary_factor&quot;: 0.5&#125;,)  get_rope 最终创建一个 RotaryEmbedding 对象，关键参数：  rotary_dim = head_dim * 0.5 → 只使用一半的 head 维度做旋转 在 _compute_cos_sin_cache 中(base.py:83-92)：  12345# inv_freq 形状: [rotary_dim // 2]inv_fr...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/05/Qwen2.5-VL_1/" title="Qwen2.5-VL_1">Qwen2.5-VL_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-05T04:38:59.000Z" title="发表于 2025-08-05 12:38:59">2025-08-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">Qwen2.5-VL 差异对比Qwen2_5_VLForConditionalGeneration__init__()123456789101112131415161718192021222324252627282930# vllmself.use_data_parallel = multimodal_config.mm_encoder_tp_mode == &quot;data&quot;if multimodal_config.get_limit_per_prompt(    &quot;image&quot;) or multimodal_config.get_limit_per_prompt(&quot;video&quot;):    attn_backend_override = (        multimodal_config.mm_encoder_attn_backend        if multimodal_config is not None        else None    )    self.visual = Qwen2_5_VisionTr...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/04/Qwen2.5-VL/" title="Qwen2.5-VL">Qwen2.5-VL</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-04T02:44:08.000Z" title="发表于 2025-08-04 10:44:08">2025-08-04</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">Qwen2.5-VL12Layer:- Qwen 方法 = vLLM 算子   LayersQwen2_5_VisionTransformer:  patch_embed &#x3D; Qwen2_5_VisionPatchEmbed rotary_pos_emb &#x3D; Qwen2_5_VisionRotaryEmbedding blocks &#x3D; Qwen2_5_VisionBlock * layer_num merger &#x3D; Qwen2_5_VisionPatchMerger   Qwen2_5_VisionPatchEmbed:  proj &#x3D; nn.Conv3d   Qwen2_5_VisionRotaryEmbedding:  Qwen2_5_VisionBlock:  norm1 &#x3D; RMSNorm attn &#x3D; Qwen2_5_VisionAttention norm2 &#x3D; RMSNorm mlp &#x3D; Qwen2_5_VisionMLP  Qwen2_5_VisionAttention:  ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/03/Qwen2-VL%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98/" title="Qwen2-VL精度问题">Qwen2-VL精度问题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-03T15:04:47.000Z" title="发表于 2025-08-03 23:04:47">2025-08-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">Qwen2-VL 精度问题12345678------------------------------ Captured log call -------------------------------WARNING  transformers.models.auto.image_processing_auto:logging.py:328 The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that t...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/02/Qwen2-VL%E6%8A%A5%E9%94%99/" title="Qwen2-VL报错">Qwen2-VL报错</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-08-02T08:14:01.000Z" title="发表于 2025-08-02 16:14:01">2025-08-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">1234apply_token_matchesapply_text_matchesTypeError: can&#x27;t convert npu:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first. </div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/16/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#content-inner">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/#content-inner">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/18/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Ascend NPU 硬件架构入门 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Ascend NPU 硬件架构入门一、概述昇腾 NPU 是专门用于 AI 训练&#x2F;推理计算的 AI 专用处理器，其中的 AI Core 能够在很大程度上提高 AI 计算的效率。 本文将主要介绍 ASCEND NPU 的硬件架构 &amp; 工作原理、AI Core 的计算模式以及异构计算平台 CANN 等内容。 二、NPU 硬件架构2.1 NPU SOC 架构2.1.1 Ascend 31">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ascend NPU 硬件架构入门">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Ascend NPU 硬件架构入门一、概述昇腾 NPU 是专门用于 AI 训练&#x2F;推理计算的 AI 专用处理器，其中的 AI Core 能够在很大程度上提高 AI 计算的效率。 本文将主要介绍 ASCEND NPU 的硬件架构 &amp; 工作原理、AI Core 的计算模式以及异构计算平台 CANN 等内容。 二、NPU 硬件架构2.1 NPU SOC 架构2.1.1 Ascend 31">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-10-02T04:23:36.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.514Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ascend NPU 硬件架构入门",
+  "url": "https://hzhzxfs.github.io/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-10-02T04:23:36.000Z",
+  "dateModified": "2026-06-10T02:14:46.514Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Ascend NPU 硬件架构入门',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Ascend NPU 硬件架构入门</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Ascend NPU 硬件架构入门</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-02T04:23:36.000Z" title="发表于 2025-10-02 12:23:36">2025-10-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.514Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Ascend-NPU-硬件架构入门"><a href="#Ascend-NPU-硬件架构入门" class="headerlink" title="Ascend NPU 硬件架构入门"></a>Ascend NPU 硬件架构入门</h1><h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>昇腾 NPU 是专门用于 AI 训练&#x2F;推理计算的 AI 专用处理器，其中的 AI Core 能够在很大程度上提高 AI 计算的效率。</p>
+<p>本文将主要介绍 ASCEND NPU 的硬件架构 &amp; 工作原理、AI Core 的计算模式以及异构计算平台 CANN 等内容。</p>
+<h2 id="二、NPU-硬件架构"><a href="#二、NPU-硬件架构" class="headerlink" title="二、NPU 硬件架构"></a>二、NPU 硬件架构</h2><h3 id="2-1-NPU-SOC-架构"><a href="#2-1-NPU-SOC-架构" class="headerlink" title="2.1 NPU SOC 架构"></a>2.1 NPU SOC 架构</h3><h4 id="2-1-1-Ascend-310-架构"><a href="#2-1-1-Ascend-310-架构" class="headerlink" title="2.1.1 Ascend 310 架构"></a>2.1.1 Ascend 310 架构</h4><ul>
+<li>AI Core：计算核心，负责执行矩阵、向量、标量计算密集的算子任务，采用达芬奇架构；</li>
+<li>AI CPU：承担非矩阵类复杂计算，即负责执行不适合跑在 AI Core 上的算子；</li>
+<li>TS Core：作为任务调度器（Task Scheduler，TS），以实现计算任务在 AI Core 上的高效分配和调度（专门服务于 AI Core 和 AI CPU，不承担任何其它的工作）；</li>
+<li>ARM CPU：控制芯片整体运行；</li>
+<li>DVPP：数字视觉预处理子系统，完成图像视频编解码；</li>
+<li>Cache &amp; Buffer。</li>
+</ul>
+<p><img src="/./images/image-20240828232223378.png" alt="image-20240828232223378"></p>
+<h4 id="2-1-2-Ascend-910-架构"><a href="#2-1-2-Ascend-910-架构" class="headerlink" title="2.1.2 Ascend 910 架构"></a>2.1.2 Ascend 910 架构</h4><ul>
+<li>AI Core：32 个，上下各 16 个，中间放 buffer，方便更快地取数据；</li>
+<li>Taishan Core：一部分为 AI CPU，承担部分 AI 计算，一部分为 Ctrl CPU，负责 SoC 控制功能，两类 CPU 占用的核数由软件进行分配；</li>
+<li>TS CPU：负责任务调度，把算子任务切分之后，通过硬件调度器（HWTS）分发给 AI Core 或 AI CPU 执行计算；</li>
+<li>Nimbus：提供 PCIe 接口和 Host CPU 对接；提供 NIC 用于跨服务器传递数据；集成一个 ARM CPU 核，执行启动、功耗控制等硬件管理任务；</li>
+<li>Cache &amp; Buffer。</li>
+</ul>
+<p><img src="/./images/image-20240828233501980.png" alt="image-20240828233501980"></p>
+<h3 id="2-2-NPU-达芬奇架构"><a href="#2-2-NPU-达芬奇架构" class="headerlink" title="2.2 NPU 达芬奇架构"></a>2.2 NPU 达芬奇架构</h3><p>NPU 的达芬奇架构中共包含 3 种类型的单元：</p>
+<ul>
+<li>计算单元：包含矩阵计算单元（DaVinci Core）、向量计算单元（Vector）、标量计算单元（Scalar）；</li>
+<li>存储系统：AI Core 片上存储单元和相应数据通路构成存储系统；</li>
+<li>控制单元：计算过程提供指令控制，负责 AI Core 的运行。</li>
+</ul>
+<p><img src="/./images/image-20240829001202550.png" alt="image-20240829001202550"></p>
+<p><img src="/./images/Snipaste_2024-08-29_00-16-08.png" alt="Snipaste_2024-08-29_00-16-08"></p>
+<h4 id="2-2-1-计算单元"><a href="#2-2-1-计算单元" class="headerlink" title="2.2.1 计算单元"></a>2.2.1 计算单元</h4><ul>
+<li>Cube Core：每次执行可以完成 fp16 的矩阵乘，如 C &#x3D; A(16<em>16) * B(16</em>16)，更大的矩阵运算需要先对矩阵进行分块（在 L1 Buffer 中进行缓存）；</li>
+<li>Vector Unit：算力低于 Cube，灵活度高（如数学中的求倒数、平方根等），Vector 所有计算的源数据和目标数据都会存储在 Unified Buffer 中（Unified Buffer 再与 L1 Buffer 进行交互），并按 32 Byte 对齐；</li>
+<li>Scalar Unit：负责各类型标量数据运算和程序流程控制，算力最低，功能上类比小核 CPU，完成整个程序循环控制、分支判断、Cube&#x2F;Vector 等指令地址和参数计算以及基本算术运算等；</li>
+<li>Accumulator（累加器）：把当前矩阵乘的结果与上一次计算的结果相加，可以用于完成卷积中增加 bias 等操作。</li>
+</ul>
+<p><img src="/./images/image-20240829000235760.png" alt="image-20240829000235760"></p>
+<blockquote>
+<p>注意：AI Core 就是指 Cube Core，即矩阵计算单元。</p>
+</blockquote>
+<h4 id="2-2-2-存储单元"><a href="#2-2-2-存储单元" class="headerlink" title="2.2.2 存储单元"></a>2.2.2 存储单元</h4><ul>
+<li>存储控制单元（MTE）：作为 AI Core 内部数据通路传输控制器，负责 AI Core 内部数据在不同缓冲区间的读写管理，以及完成一系列的格式转换操作；</li>
+<li>缓冲区：<ul>
+<li>输入缓冲区（L1 Buffer）：AI Core 采用了大容量片上缓冲区设计，通过增大片上缓存的数据量来减少数据从片外搬运到 AI Core 中的频次，从而降低数据搬运过程中所产生的功耗和时延，有效控制整体计算耗能和提升性能；</li>
+<li>输出缓冲区（Unified Buffer）：用来存放神经网络中每层计算的中间结果，从而在进入下一层时方便获取数据。</li>
+</ul>
+</li>
+<li>寄存器（SPR&#x2F;GPR）：寄存器资源主要是标量计算单元在使用。</li>
+</ul>
+<p><img src="/./images/image-20240829234855134.png" alt="image-20240829234855134"></p>
+<blockquote>
+<p>上图中，HBM&#x2F;DDR 和 L2 缓冲器都属于 AI Core 核外的数据存储系统。</p>
+</blockquote>
+<p>数据通路是数据在 AI Core 中的流通路径，它有以下特点：</p>
+<ul>
+<li>多进单出，可通过并行输入来提高数据流入的效率；</li>
+<li>将多种输入数据处理完成后只生成输出特征矩阵，数据种类相对单一，单输出数据通路，可以节约芯片硬件资源。</li>
+</ul>
+<h4 id="2-2-3-控制单元"><a href="#2-2-3-控制单元" class="headerlink" title="2.2.3 控制单元"></a>2.2.3 控制单元</h4><ul>
+<li>系统控制模块：控制“任务块”（AI Core 中最小的任务计算粒度）的执行进程，在任务块执行完成后，系统控制模块会进行中断处理和状态申报。</li>
+<li>指令缓存；</li>
+<li>标量指令处理队列；</li>
+<li>指令发射模块：根据指令类型分别发送指令到对应的执行队列中；</li>
+<li>事件同步模块。</li>
+</ul>
+<h3 id="2-3-AI-Core-电路结构"><a href="#2-3-AI-Core-电路结构" class="headerlink" title="2.3 AI Core 电路结构"></a>2.3 AI Core 电路结构</h3><p>对于运算 C &#x3D; A(<code>16*16</code>) * B(<code>16*16</code>)，矩阵 C 中的每一个元素都需要进行 16 次乘法与 15 次加法计算得到（一个矩阵计算子电路）。</p>
+<p>在 AI Core 中，共有 256 个矩阵计算子电路，每一条指令都可以并行完成 256 个矩阵 C 中的元素的计算。</p>
+<p><img src="/./images/image-20240830003200162.png" alt="image-20240830003200162"></p>
+<h2 id="三、NPU-工作原理"><a href="#三、NPU-工作原理" class="headerlink" title="三、NPU 工作原理"></a>三、NPU 工作原理</h2><h3 id="3-1-NPU-并行计算架构"><a href="#3-1-NPU-并行计算架构" class="headerlink" title="3.1 NPU 并行计算架构"></a>3.1 NPU 并行计算架构</h3><ul>
+<li>异步指令流：Scalar 计算单元读取指令序列，并把向量计算、矩阵计算、数据搬运指令发送给对应的指令队列，Vector 计算单元、Cube 计算单元、DMA 搬运单元异步地并行执行接收到的指令（“异步并行”：将串行的指令流分解）；</li>
+<li>同步信号流：指令间可能会存在依赖关系，为了保证不同指令队列间的指令按照正确的逻辑关系执行，Scalar 计算单元也会给对应单元下发同步指令；</li>
+<li>计算数据流：DMA 搬入单元把数据搬运到 Local Memory，Vector&#x2F;Cube 计算单元完成数据计算，并把计算结果回写到 Local Memory，DMA 搬出单元把处理好的数据搬运回 Global Memory。</li>
+</ul>
+<p><img src="/./images/image-20240830231115596.png" alt="image-20240830231115596"></p>
+<h3 id="3-2-AI-Core-计算模式"><a href="#3-2-AI-Core-计算模式" class="headerlink" title="3.2 AI Core 计算模式"></a>3.2 AI Core 计算模式</h3><p>Cube 单元能够高效地执行 MAC（矩阵乘加）操作，目前支持的矩阵大小为 <code>16*16*16</code>。</p>
+<p><img src="/./images/image-20240829000617549.png" alt="image-20240829000617549"></p>
+<blockquote>
+<p>注意：通常矩阵乘中两矩阵很大，因此数据是分块（Tiling）后送入 Cube 单元的，每送完一块，结果存放到累加器，最后得到结果。</p>
+</blockquote>
+<p>在 CPU 的计算过程中，矩阵 A 按行扫描，矩阵 B 按列扫描。典型的存储方式是 A 和 B 都按照行方式进行存储（Row-Major），而内存读取按行读更方便，因此对 A 矩阵高效，对 B 矩阵低效。</p>
+<p>为了提高内存读取的效率，NPU 将矩阵 B 的存储方式转成按列存储（Column-Major），通过改变矩阵存储的方式来提升矩阵计算的效率。</p>
+<p>Cube Core 一条指令完成两个 16*16 矩阵的 MAC，相当于一个时钟周期进行 163 &#x3D; 4096 个 MAC 运算。执行前将 A 按行、将 B 按列存放在 Input Buffer，并通过 Cube Core 计算得到 C，按行存放在 Output Buffer。</p>
+<p><img src="/./images/image-20240830001826459.png" alt="image-20240830001826459"></p>
+<blockquote>
+<p>注意：矩阵 A 不需要转换，可以直接从 L1 Buffer 读取到 AI Core 里面；矩阵 B 需要预先读到 MTE 中进行转换），然后再读取到 AI Core 里进行计算。</p>
+</blockquote>
+<p>矩阵的预处理：</p>
+<ul>
+<li>分块（Tiling）：因为片上缓存容量有限，因此将整个矩阵 B 划分为多个子矩阵，并依次搬运到缓存中，最后得到结果矩阵 C；</li>
+<li>填充（Padding）：A 和 B 都等分成同样大小的块（<code>16*16</code>），排不满的地方可以通过补 0 实现。</li>
+</ul>
+<h2 id="四、CANN-平台"><a href="#四、CANN-平台" class="headerlink" title="四、CANN 平台"></a>四、CANN 平台</h2><h3 id="4-1-整体架构"><a href="#4-1-整体架构" class="headerlink" title="4.1 整体架构"></a>4.1 整体架构</h3><p>异构计算架构 CANN（Compute Architecture for Neural Networks）是华为针对 AI 场景推出的异构计算架构，向上支持多种 AI 框架，包括 MindSpore、PyTorch、TensorFlow 等，向下服务 AI 处理器与编程，发挥承上启下的关键作用，是提升昇腾 AI 处理器计算效率的关键平台。同时针对多样化应用场景，提供多层次编程接口，支持用户快速构建基于昇腾平台的AI应用和业务。</p>
+<ul>
+<li>计算语言开发接口：<ul>
+<li>应用开发接口：提供深度学习推理计算、图像预处理、单算子加速计算能力；</li>
+<li>图开发接口：提供统一网络构图接口；</li>
+<li>算子开发接口：Ascend C 是 CANN 在算子开发场景的编程语言，原生支持 C&amp;C++ 标准规范，最大化匹配用户开发习惯。</li>
+</ul>
+</li>
+<li>计算服务层：<ul>
+<li>昇腾算子库 AOL；</li>
+<li>昇腾调优引擎 AOE：用于在推理、训练等场景对模型、算子、子图等进行调优，充分利用硬件资源，提升网络性能。</li>
+</ul>
+</li>
+<li>计算编译层：<ul>
+<li>图转换：各种模型编译器；</li>
+<li>图编译：图准备、图优化、图拆分、图编译；</li>
+<li>Tensor Boost Engine（TBE）：算子融合、算子编译。</li>
+</ul>
+</li>
+<li>计算执行层：类似于 CUDA 的 runtime，提供 stream 管理、context 管理等功能；</li>
+<li>基础服务层：资源管理、通信管理、设备管理、芯片 IP 驱动、公共服务。</li>
+</ul>
+<p><img src="/./images/image-20240831231212086.png" alt="image-20240831231212086"></p>
+<blockquote>
+<p>CANN 官方社区：<a target="_blank" rel="noopener" href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/80RC3alpha002/quickstart/quickstart/quickstart_18_0004.html">CANN 社区版 8.0.RC3.alpha002 开发文档</a>。</p>
+</blockquote>
+<h3 id="4-2-Ascend-C-算子编程"><a href="#4-2-Ascend-C-算子编程" class="headerlink" title="4.2 Ascend C 算子编程"></a>4.2 Ascend C 算子编程</h3><p>Ascend C 算子编程使用 C++ 语言和 Ascend C 类库 API 进行开发。</p>
+<p>Ascend C 类库 API：</p>
+<ul>
+<li>基本 API：计算 API、搬运 API、同步 API、……；</li>
+<li>高阶 API：Matmul API、Conv API、Softmax API、……。</li>
+</ul>
+<p>Ascend C 算子编程采用 SPMD（单程序多数据编程）模式，即一个核的算子程序被调用时，会启动 N 个实例，每个运行实例称为一个 block，它们都执行相同的代码，有相同的参数，但参与计算的数据不同。</p>
+<blockquote>
+<p>注意：block 类似于线程（进程），而 block_idx 类似于 thread_id，算子程序需要使用 block_idx 来进行数据并行计算切分。</p>
+</blockquote>
+<h3 id="4-3-推理应用开发"><a href="#4-3-推理应用开发" class="headerlink" title="4.3 推理应用开发"></a>4.3 推理应用开发</h3><ul>
+<li>AMCT 模型压缩：支持量化、通道稀疏、张量分解，降低模型的数据量和计算量，提升计算性能；<ul>
+<li>量化：将模型的权重和数据从浮点型转换为整型（比如：低精度 int8），从而生成更加轻量化的网络模型，减少数据和计算量；</li>
+<li>张量分解：分解卷积 Tensor，将一个大卷积转化成两个级联的小卷积，从而降低存储空间和计算量（张量分解处理后，需要重训练以保证模型精度）；</li>
+<li>稀疏：通过结构剪枝，对模型中的部分算子裁剪部分权重和参数，从而得到参数量和计算量更小的网络模型（稀疏处理后，需要重训练以保证模型精度）。</li>
+</ul>
+</li>
+<li>ATC 模型转换工具：将开源框架的网络模型转换为适配昇腾 AI NPU 的 om 模型；</li>
+<li>AOE 智能调优工具：支持算子计算过程的自动寻优，提升整体网络的性能。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/">https://hzhzxfs.github.io/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/10/03/MEMO/" title="MEMO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MEMO</div></div><div class="info-2"><div class="info-item-1">MEMO环境搭建 Preparation Dockerfile Init env script  Linux123456789101112131415161718192021222324252627282930313233343536373839404142434445# 安装 sudoapt-get updateapt-get install sudo# 安装 curlsudo apt updatesudo apt upgradesudo apt install curl# 将自己的 SSH 公钥配置到远程服务器上ssh user@IP -p port# 将 id_rsa.pub 公钥放在服务器上的 authorized_keys 文件中vim /root/.ssh/authorized_keys# 安装 SSH 服务sudo apt updatesudo apt install openssh-client -y# 将 SSH 公钥配置到 GitHub 上ssh-keygen -t ed25519 -C &quot;467638484@qq.com&quot;eval &qu...</div></div></div></a><a class="pagination-related" href="/2025/10/01/AI%E8%AE%AD%E7%BB%83&amp;%E6%8E%A8%E7%90%86%E5%B8%B8%E7%94%A8%E4%BE%9D%E8%B5%96%E5%BA%93/" title="AI训练&amp;推理常用依赖库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI训练&推理常用依赖库</div></div><div class="info-2"><div class="info-item-1">AI 训练 &amp; 推理常用依赖库PyTorchtorch…… torchaudiotorchaudio 是 PyTorch 官方用于处理音频数据和进行音频相关深度学习任务的工具包，提供了音频数据的加载和保存、频谱分析、预训练的音频模型（支持音频分类、语音识别等任务）、与 PyTorch 的数据集和数据加载器集成等功能。 torchaudio.load() 是 torchaudio 库中的一个函数，用于加载音频文件并返回音频数据及其采样率。它可以方便地将音频文件加载到 PyTorch 的张量中，以便进行后续的音频处理和深度学习任务。 具体功能包括：  读取音频文件：支持多种音频格式（如 WAV、MP3 等）； 返回数据和采样率：返回两个值：音频信号的张量表示（通常是浮点数）和音频的采样率（Hz），方便后续处理和分析。  torchaudio.functional.resample(y, orig_freq=xxx, new_freq=xxx) 是用于对音频信号进行重采样的函数。该函数适用于需要调整音频采样率的场景，如匹配不同音频源的采样频率或准备音频数据以供模型训练。 具体功...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/12/11/%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E/" title="推理引擎"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-11</div><div class="info-item-2">推理引擎</div></div><div class="info-2"><div class="info-item-1">推理引擎推理系统与推理引擎训练和推理服务推理和训练的区别：  模型部署后，长期运行； 不需要反向传播； 部署设备更加多样。  推理服务系统的功能（与 AI 算法关系不大，更多地是平台性的工作）：  模型加载； 版本管理； 数据管理； 服务接口。  优化目标 低延迟； 高吞吐：高负载； 高效率：低功耗使用 CPU&#x2F;GPU； 灵活性：支持多框架； 扩展性。  部署态场景：数据中心的服务端、边缘侧的移动端。  云端； 边侧：严格约束功耗、算力不足、数据分散、平台多样化。  推理系统架构推理服务化、推理服务框架。 基本概念：  推理：前向计算； 部署：将模型部署到硬件上，包括：移植、压缩、加速等； 服务化：将模型封装为 sdk 或 web 服务。  Triton 服务化框架：  接入层：HTTP、gRPC、CAPI； 模型仓库； 模型预编排：解析 URL 请求； 框架后端：指推理引擎（如 TensorRT、ONNX Runtime、MindSpore Lite 等）； 监控功能：健康管理。  模型版本管理模型生命周期管理：  金丝雀策略（Canary）； 回滚策略（Rollba...</div></div></div></a><a class="pagination-related" href="/2025/10/03/MEMO/" title="MEMO"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-03</div><div class="info-item-2">MEMO</div></div><div class="info-2"><div class="info-item-1">MEMO环境搭建 Preparation Dockerfile Init env script  Linux123456789101112131415161718192021222324252627282930313233343536373839404142434445# 安装 sudoapt-get updateapt-get install sudo# 安装 curlsudo apt updatesudo apt upgradesudo apt install curl# 将自己的 SSH 公钥配置到远程服务器上ssh user@IP -p port# 将 id_rsa.pub 公钥放在服务器上的 authorized_keys 文件中vim /root/.ssh/authorized_keys# 安装 SSH 服务sudo apt updatesudo apt install openssh-client -y# 将 SSH 公钥配置到 GitHub 上ssh-keygen -t ed25519 -C &quot;467638484@qq.com&quot;eval &qu...</div></div></div></a><a class="pagination-related" href="/2025/11/14/vLLM6.md/" title="vLLM6.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-14</div><div class="info-item-2">vLLM6.md</div></div><div class="info-2"><div class="info-item-1">一、引言Guided Decoding，又叫 Structured Output，是大模型推理领域中非常重要的一个特性，主要用于引导大模型输出符合某种特定格式（如：SQL、Json）的结果，以便更好地将大模型落地到具体的应用场景中。 在我的上一篇文章中，简要地介绍了 Guided Decoding 的原理，并详细分析了 vLLM 中相关代码的实现（V0），文章链接：vLLM 学习笔记｜Guided Decoding。 自从 vLLM v0.8.x 之后，V1 Engine 将作为 vLLM 启动时的默认选项。关于 V1 Engine 的系统设计以及具体的优化点，我将会在之后逐步梳理并分享出来（如果有空的话）。而在本文中，我将针对 V1 Engine，分享 Structured Output 模块的整体设计与具体实现。 二、V1 Engine 整体架构在介绍 Structured Output 模块的设计之前，让我们先来看下 vLLM V1 Engine 的整体架构。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU...</div></div></div></a><a class="pagination-related" href="/2025/08/02/Qwen2-VL%E6%8A%A5%E9%94%99/" title="Qwen2-VL报错"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-02</div><div class="info-item-2">Qwen2-VL报错</div></div><div class="info-2"><div class="info-item-1">1234apply_token_matchesapply_text_matchesTypeError: can&#x27;t convert npu:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first. </div></div></div></a><a class="pagination-related" href="/2025/11/09/vLLM1/" title="vLLM1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-09</div><div class="info-item-2">vLLM1</div></div><div class="info-2"><div class="info-item-1">一、引言vLLM 是目前最流行的大模型推理框架之一，凭借着 PagedAttention 等核心技术在工业界广泛落地。然而，作为一个高速迭代的大型开源项目，vLLM 的代码库庞大、模块繁多，对新贡献者来说上手成本极高——光是读懂一个 Feature 的实现路径，往往就需要数天时间。 随着 Coding Agent 越来越普及，在参与 vLLM 社区开发的过程中，我开始尝试使用 Claude Code 来辅助日常工作：读代码、写测试、做 Code Review、分析 Issue 等，发现效果还不错。相比于纯“古法编程”，我的工作效率确实提升了不少。 因此，我整理了自己平时在 vLLM 社区工作的 Workflow 以及一些常用的 Skill，放到了 vllm-dev-skills 这个仓库中，分享给同样想做 or 正在做 vLLM 社区贡献的朋友。  注意：从这里开始，以下内容都是 AI 生成的（Co-authored-by: Calude Code）。_(:3 ⌒ﾞ)_  二、项目介绍这个仓库按开发流程将 10 个 Skill 分为三大类： 123vllm-dev-skills/...</div></div></div></a><a class="pagination-related" href="/2025/11/10/vLLM2.md/" title="vLLM2.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-10</div><div class="info-item-2">vLLM2.md</div></div><div class="info-2"><div class="info-item-1">一、引言vLLM V1 是 vLLM 团队基于 V0 的实践经验并参考工业界其它相关工作提出的最新架构，从 vLLM 0.8.x 版本开始，V1 Engine 将作为 vLLM 启动时的默认选项。 相比于 V0，vLLM V1 具有以下优势：  可读性：代码更加简洁易懂、更加模块化； 高性能：提供更好的推理性能，使用双进程异步处理不同的 CPU 操作，极大地降低了推理的时延和开销； 易扩展：可以轻松集成多样化的特性； 易用性：简化了配置，会默认开启一些特性，以提供更好的性能和体验。  下面，本文将揭秘 vLLM V1 从接收请求到算子执行的推理全流程（附超长流程图，画图不易，欢迎点赞 &amp; 收藏~）。 二、整体概览在深入具体细节之前，让我们先从整体上认识下 V1 Engine 的推理流程。 下面是 vLLM 官方博客中提供的 V1 Engine 在线推理架构图。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU 操作，减少了不同步骤之间相互等待的时间，因此能够更好地压榨硬件的计算性能。   Process 0...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Ascend-NPU-%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">Ascend NPU 硬件架构入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">一、概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81NPU-%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二、NPU 硬件架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-NPU-SOC-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 NPU SOC 架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-1-Ascend-310-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">2.1.1 Ascend 310 架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-2-Ascend-910-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">2.1.2 Ascend 910 架构</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-NPU-%E8%BE%BE%E8%8A%AC%E5%A5%87%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 NPU 达芬奇架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-%E8%AE%A1%E7%AE%97%E5%8D%95%E5%85%83"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">2.2.1 计算单元</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-%E5%AD%98%E5%82%A8%E5%8D%95%E5%85%83"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">2.2.2 存储单元</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-%E6%8E%A7%E5%88%B6%E5%8D%95%E5%85%83"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">2.2.3 控制单元</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-AI-Core-%E7%94%B5%E8%B7%AF%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 AI Core 电路结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81NPU-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">三、NPU 工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-NPU-%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 NPU 并行计算架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-AI-Core-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 AI Core 计算模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81CANN-%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.4.</span> <span class="toc-text">四、CANN 平台</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 整体架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Ascend-C-%E7%AE%97%E5%AD%90%E7%BC%96%E7%A8%8B"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 Ascend C 算子编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%8E%A8%E7%90%86%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 推理应用开发</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

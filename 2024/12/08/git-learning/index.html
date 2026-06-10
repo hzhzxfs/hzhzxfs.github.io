@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>git-learning | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="git笔记git的基本操作config的3个作用域local:只对当前仓库有效global:对登录用户所有仓库有效system:对系统的所有用户有效 3个作用域的优先级： 12345678git config --list --local                       # 查看版本库范围的所有设置(若不指定local，则显示所有范围的设置)git config --list --gl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git-learning">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/12/08/git-learning/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="git笔记git的基本操作config的3个作用域local:只对当前仓库有效global:对登录用户所有仓库有效system:对系统的所有用户有效 3个作用域的优先级： 12345678git config --list --local                       # 查看版本库范围的所有设置(若不指定local，则显示所有范围的设置)git config --list --gl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-12-08T04:35:31.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.379Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "git-learning",
+  "url": "https://hzhzxfs.github.io/2024/12/08/git-learning/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-12-08T04:35:31.000Z",
+  "dateModified": "2026-06-10T02:14:46.379Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/12/08/git-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'git-learning',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">git-learning</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">git-learning</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-12-08T04:35:31.000Z" title="发表于 2024-12-08 12:35:31">2024-12-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.379Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="git笔记"><a href="#git笔记" class="headerlink" title="git笔记"></a>git笔记</h1><h2 id="git的基本操作"><a href="#git的基本操作" class="headerlink" title="git的基本操作"></a>git的基本操作</h2><h3 id="config的3个作用域"><a href="#config的3个作用域" class="headerlink" title="config的3个作用域"></a>config的3个作用域</h3><p><strong>local</strong>:只对当前仓库有效<br><strong>global</strong>:对登录用户所有仓库有效<br><strong>system</strong>:对系统的所有用户有效</p>
+<p>3个作用域的优先级：<br><img src="/git-priority.png" alt="git-config-priority"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git config --list --local                       # 查看版本库范围的所有设置(若不指定local，则显示所有范围的设置)</span><br><span class="line">git config --list --global                      # 查看global范围的设置参数</span><br><span class="line">git config --list --system                      # 查看system范围的设置</span><br><span class="line">git config --list user.name                     # 只显示user.name的值</span><br><span class="line">git config --local user.name &#x27;username&#x27;         # 修改local(版本库)范围的user.name(若不加变量作用域，则默认为local)</span><br><span class="line">git config --global user.email &#x27;email@domain&#x27;   # 修改global范围的user.email3</span><br><span class="line">git config --unset varname                      # 删除变量</span><br><span class="line">git config --local --edit                       # 使用文本编辑器编辑各域的配置文件(默认为local)</span><br></pre></td></tr></table></figure>
+
+<h3 id="git的别名"><a href="#git的别名" class="headerlink" title="git的别名"></a>git的别名</h3><p><a target="_blank" rel="noopener" href="https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-Git-%E5%88%AB%E5%90%8D">git的别名(git-scm)</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --local alias.amend commit -a --amend</span><br></pre></td></tr></table></figure>
+
+<p>以下两条命令等价:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git commit -a --amend</span><br><span class="line">git amend</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global alias.visual &#x27;!gitk&#x27;        # 设置执行外部命令</span><br></pre></td></tr></table></figure>
+
+<h3 id="git常用命令"><a href="#git常用命令" class="headerlink" title="git常用命令"></a>git常用命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git init                        # 初始化版本库</span><br><span class="line">git add filename                # 添加文件至暂存区</span><br><span class="line">git add -u                      # 添加已tracked并修改的文件至暂存区</span><br><span class="line">git add -A                      # 将当前工作区的所有文件add至暂存区</span><br><span class="line">git commit -m &#x27;commit message&#x27;  # 提交当前暂存区至历史版本库</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">git status                      # 查看工作区的状态</span><br><span class="line">git log --all --oneline --gragh # 查看版本库的提交历史</span><br><span class="line">                                # --all:查看所有分支的提交历史，默认为当前分支</span><br><span class="line">                                # --oneline:所有提交历史显示成一行</span><br><span class="line">                                # --gragh:图像化的显示提交的历史，若有all选项，则会显示所有分支的演进过程</span><br><span class="line">git log branchname              # 查看指定分支的提交历史，与--all一起使用则无效</span><br><span class="line">git branch -v                   # 显示分支 -v:分支最后一次提交的message</span><br><span class="line">git branch -r                   # --remote 显示远端分支</span><br><span class="line">git branch -a                   # --all 显示所有分支</span><br></pre></td></tr></table></figure>
+
+<h3 id="git的结构"><a href="#git的结构" class="headerlink" title="git的结构"></a>git的结构</h3><p><strong>下图中存在的问题: git reset &lt;file&gt; 只将repo中的文件恢复至staging 而不恢复workspace</strong><br><img src="/git-operations.png" alt="git-operations"></p>
+<h3 id="git目录"><a href="#git目录" class="headerlink" title=".git目录"></a>.git目录</h3><ul>
+<li><strong>HEAD</strong> : 当前的分支的引用(refs&#x2F;heads&#x2F;master)</li>
+<li><strong>config</strong> : local的配置文件(当前版本库)</li>
+<li><strong>refs</strong> : heads 和 tags</li>
+<li><strong>&#x2F;refs&#x2F;heads&#x2F;master</strong> : master指针指向的commit ID</li>
+<li><strong>objects</strong> ：git的对象  dirname + filename &#x3D; object_ID</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git cat-file -t object  # 查看该对象的类型(type)</span><br><span class="line">git cat-file -p object  # 查看该对象的内容</span><br></pre></td></tr></table></figure>
+
+<h3 id="git的对象"><a href="#git的对象" class="headerlink" title="git的对象"></a>git的对象</h3><ol>
+<li><strong>commit</strong>   提交&#x2F;变更</li>
+<li><strong>tree</strong>     树</li>
+<li><strong>blob</strong>     文件</li>
+</ol>
+<h4 id="结构示意图"><a href="#结构示意图" class="headerlink" title="结构示意图"></a>结构示意图</h4><p><img src="/commit-tree-blob.png" alt="commit-tree-blob"></p>
+<p>一个tree可以包含多个blob和多个tree。一个tree对应一个目录，这个tree会包含这个目录下的所有blob和tree(目录的嵌套)。<br>git add 执行后会在.git&#x2F;objects&#x2F;中创建对应文件的blob，commit后创建commit和tree</p>
+<h3 id="分离HEAD-头指针"><a href="#分离HEAD-头指针" class="headerlink" title="分离HEAD(头指针)"></a>分离HEAD(头指针)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout commitID           # 切换HEAD到某个commit，切换分支</span><br></pre></td></tr></table></figure>
+
+<p>HEAD-&gt;commitID<br>在此基础上能够继续commit，但若checkout至其他branch,则在头指针分离的情况下的commit会丢失。</p>
+<h3 id="分支的创建"><a href="#分支的创建" class="headerlink" title="分支的创建"></a>分支的创建</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b branchname commitID(branch)         # 创建新的分支</span><br><span class="line">git diff HEAD HEAD^                                 # 比较HEAD和HEAD的父commit的差别</span><br><span class="line">HEAD^2                                              # 第2个父节点</span><br><span class="line">HEAD~2                                              # 父节点 的 父节点</span><br></pre></td></tr></table></figure>
+
+<p>可以基于某个分支创建新的分支，也能基于某个commit创建新分支。HEAD指向分支 &#x3D;&#x3D; 指向那个分支最新的commit。</p>
+<h3 id="分支的删除"><a href="#分支的删除" class="headerlink" title="分支的删除"></a>分支的删除</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch -d branch_name       # 删除指定的分支</span><br><span class="line">git branch -D branch_name       # 强制删除该分支</span><br></pre></td></tr></table></figure>
+
+<p>使用-d 在删除前Git会判断在该分支上开发的功能是否被merge的其它分支。如果没有，不能删除。如果merge到其它分支，但之后又在其上做了开发，使用-d还是不能删除。-D会强制删除。</p>
+<h3 id="commit-message的修改"><a href="#commit-message的修改" class="headerlink" title="commit message的修改"></a>commit message的修改</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend              # 修改最近一次commit。若stage中有内容，则会将这些stage中的文件合并至上一次的commit中。</span><br><span class="line">                                # 该commit在修改后commitID会发生变化，因为message作为commit的一个属性发生变化后,commit hash发生了变化</span><br><span class="line">git rebase -i parentCommitID    # 修改任意一次的commit parentCommitID为父commitID</span><br></pre></td></tr></table></figure>
+
+<p>进入rebase交互模式后，修改需要修改的commit前的pick为r,随后:wq,将分离HEAD至该commit，自动调用vim编辑该<code>commit(.git/COMMIT_EDITMSG)</code>,:wq后会重建所有后续commit，commitID会发生变化</p>
+<h3 id="多个commit合并为一个commit"><a href="#多个commit合并为一个commit" class="headerlink" title="多个commit合并为一个commit"></a>多个commit合并为一个commit</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i parentCommit</span><br><span class="line">squash commitID</span><br></pre></td></tr></table></figure>
+
+<p>git rebase -i 开始commit [结束commit], 在执行这个命令时，<br>如果没有指定 结束commit,那么结束commit 默认为当前分支最新的 commit，那么rebase 结束后会自动更新当前分支指向的 commit,<br>如果指定了结束 commit，而且结束 commit不是当前分支最新的 commit，那么rebase 后会有生成一个 游离的 HEAD，而且当前分支指向的commit 不会更新</p>
+<h3 id="不连续的commit的合并"><a href="#不连续的commit的合并" class="headerlink" title="不连续的commit的合并"></a>不连续的commit的合并</h3><p>在<code>rebase -i</code>中，调整commit的顺序后再sqaush<br>?文件的变更历史发生了变化，文件内容是否不完整，影响正常理解</p>
+<h3 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git diff --cached                               # 比较暂存区和HEAD(当前分支)之间的差异</span><br><span class="line">git diff --staged</span><br><span class="line">git diff [filename]                             # 比较工作区和暂存区之间的差异</span><br><span class="line">git diff HEAD [filename]                        # 比较工作区与HEAD之间的差异</span><br><span class="line">git diff commitID_old commitID_new [filename]   # 后边的commit与前边的commit做对比，可以指定对比的文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-reset-git-checkout"><a href="#git-reset-git-checkout" class="headerlink" title="git reset &amp; git checkout"></a>git reset &amp; git checkout</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git reset --soft commitID           # 将HEAD的引用(即当前分支)指向commit</span><br><span class="line">git reset [--mixed] commitID        # 将HEAD的引用(即当前分支)指向commit,并将暂存区的内容同步成commit的内容(commit--&gt;stage)</span><br><span class="line">git reset --hard commitID           # 将HEAD的引用(即当前分支)指向commit,使暂存区和工作区的内容都恢复成commitID的内容，！“工作区危险”命令！，会丢失工作区中的内容！</span><br><span class="line">                                    # 等价于 删除了commitID后的所有commit，HEAD/ref-&gt;commitID,并使暂存区和工作区都同步成HEAD</span><br><span class="line">git reset [commitID] filename       # file level,有filename时恢复暂存区中该文件为commit中的内容(对暂存区操作)(commit缺省值为HEAD)</span><br><span class="line"></span><br><span class="line">git checkout commitID               # 将历史库中的内容覆盖至WD&amp;index(切换分支)</span><br><span class="line">git checkout [commitID] filename    # file level,将commit的内容覆盖到index和workdir(commit--&gt;index/workspace)(对工作区和暂存区操作)(commit缺省值为HEAD)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>下面的速查表列出了命令对树的影响。 “HEAD” 一列中的 “REF” 表示该命令移动了 HEAD 指向的分支引用，而 “HEAD” 则表示只移动了 HEAD 自身。 特别注意 WD Safe? 一列——如果它标记为 NO，那么运行该命令之前请考虑一下。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>HEAD</th>
+<th align="center">Index</th>
+<th align="center">Workdir</th>
+<th align="center">WD Safe?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Commit Level</strong></td>
+<td></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>reset –soft [commit]</td>
+<td>REF</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td>reset [commit]</td>
+<td>REF</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td>reset –hard [commit]</td>
+<td>REF</td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td>checkout [commit]</td>
+<td>HEAD</td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td><strong>File Level</strong></td>
+<td></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>reset (commit) [file]</td>
+<td>NO</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td>checkout (commit) [file]</td>
+<td>NO</td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+</tr>
+</tbody></table>
+<p><strong><a target="_blank" rel="noopener" href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86">更详细的解释，关于reset和checkout</a></strong></p>
+<h3 id="git-rm"><a href="#git-rm" class="headerlink" title="git rm"></a>git rm</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rm filename                     # 将暂存区和工作区中的该文件删除</span><br><span class="line">git rm --cached filename            # 将暂存区中的该文件删除</span><br><span class="line">git ls-files                        # 查看暂存区中的文件</span><br></pre></td></tr></table></figure>
+
+<p>commit之后文件会从版本库中删除</p>
+<h3 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h3><p><code>git stash</code>默认情况缓存以下文件：</p>
+<p>~ git跟踪的但未添加到暂存区的修改</p>
+<p>~ 添加到暂存区的修改<br>不会缓存以下文件：<br>~ 在工作目录中的新文件<br>~ 被忽略的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git stash                   # 将 git跟踪的但未添加到暂存区的修改 添加到暂存区的修改 缓存至stash list 中</span><br><span class="line">git stash list              # 查看缓存中的内容</span><br><span class="line">git stash pop [stash@&#123;0&#125;]   # 将一个stash恢复，缺省值为最近一个(stash@&#123;0&#125;),并在list中删除该stash</span><br><span class="line">git stash apply [stash@&#123;0&#125;] # 将一个stash恢复，缺省值为最近一个(stash@&#123;0&#125;),list中不会删除该stash</span><br></pre></td></tr></table></figure>
+
+<h3 id="gitignore"><a href="#gitignore" class="headerlink" title=".gitignore"></a>.gitignore</h3><blockquote>
+<p>The problem is that <strong>.gitignore ignores just files that weren’t tracked before (by git add)</strong>. Run git reset name_of_file to unstage the file and keep it. In case you want to also remove given file from the repository (after pushing), use git rm –cached name_of_file.</p>
+</blockquote>
+<p>.gitignore只忽略未被跟踪(<code>git add filename</code>)的文件<br>add后可以通过<code>git reset filename</code>来unstage,即将版本库中的该文件覆盖至index中，但因为HEAD中没有该文件，所以index中也没有该文件，等价于unstage。也能通过<code>git rm --cached filename</code>将index中的文件删除,来实现unstage<br>如果已经将需要ignore的文件commit,可以通过git rm –cached filename将index中的该文件删除，然后再<code>git commit --amend</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.gitignore:</span><br><span class="line">*.class         # 忽略的文件</span><br><span class="line">.idea/          # 忽略目录下的所有文件</span><br><span class="line">!.git/*         # 不忽略该目录下的所有文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="git的备份"><a href="#git的备份" class="headerlink" title="git的备份"></a>git的备份</h3><p><img src="/git-backup.png" alt="git backup"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone [--bare] url                        # 从远端clone一个仓库</span><br></pre></td></tr></table></figure>
+
+<p>–bare 指clone裸仓库，其中包含所有分支。否则只包含远端仓库的当前分支。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git remote -v                               # 查看远程版本库信息</span><br><span class="line">git remote add reponame url                 # 添加remote</span><br><span class="line">git push reponame branchname                # push 指定的分支</span><br><span class="line">git push reponame --all                     # push 所有分支</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch"></a>git fetch</h3><ul>
+<li>将远端的仓库拉至本地，但<strong>不执行merge</strong>操作</li>
+</ul>
+<p><code>git fetch reponame</code></p>
+<ul>
+<li>remove any remote tracking branches that no longer exist remotely</li>
+</ul>
+<p><code>git fetch -p</code><br><code>git fetch --prune</code></p>
+<h3 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h3><p>将远端的仓库拉至本地，并<strong>执行merge</strong>操作</p>
+<p>rebase后导致HEAD和remote不是fast-forward,只能rebase remote后的commit?也不能使用amend(rebase实现)</p>
+<h3 id="git-使用技巧-from-PegasusWang"><a href="#git-使用技巧-from-PegasusWang" class="headerlink" title="git 使用技巧(from PegasusWang)"></a>git 使用技巧(from PegasusWang)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alias gco=&#x27;git checkout&#x27;</span><br><span class="line">alias ga=&#x27;git add&#x27;</span><br><span class="line">alias gcm=&#x27;git commit -m&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av63256332">av63256332</a></p>
+<h3 id="git-设置代理"><a href="#git-设置代理" class="headerlink" title="git 设置代理"></a>git 设置代理</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.proxy socks5://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+
+<h3 id="git的默认文本编辑器"><a href="#git的默认文本编辑器" class="headerlink" title="git的默认文本编辑器"></a>git的默认文本编辑器</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.editor &quot;vim&quot;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="多人合作"><a href="#多人合作" class="headerlink" title="多人合作"></a>多人合作</h2><h3 id="双方修改了不同的文件"><a href="#双方修改了不同的文件" class="headerlink" title="双方修改了不同的文件"></a>双方修改了不同的文件</h3><p>因为不存在冲突，所以能够auto-merge。<br><code>git fetch &amp;&amp; git merge ; git pull</code></p>
+<blockquote>
+<p>如果在进行git push之前发现远程又有了更新，比较好的做法应该是，将本地的提交回退掉，避免掉无用的远程merge本地分支的提交记录，可以使用如下命令：<br>1.git reset HEAD~<br>2.git pull<br>然后重新进行新的提交，这样就可以避免掉远程与本地分支的merge提交记录，让git的提交历史更加干净</p>
+<blockquote>
+<p>或者把本地的提交基于远端分支做 rebase ，在本地解决掉冲突并完成自测。</p>
+</blockquote>
+</blockquote>
+<h3 id="双方修改了同一文件的不同区域"><a href="#双方修改了同一文件的不同区域" class="headerlink" title="双方修改了同一文件的不同区域"></a>双方修改了同一文件的不同区域</h3><p>因为不存在冲突，git也能够auto-merge,执行git pull &amp;&amp; git push</p>
+<h3 id="双方修改了同一文件的同一区域"><a href="#双方修改了同一文件的同一区域" class="headerlink" title="双方修改了同一文件的同一区域"></a>双方修改了同一文件的同一区域</h3><p>此时git无法决定保留哪个更改，所以无法auto-merge,需要手动解决冲突后，再<br><code>git add &amp;&amp; git commit</code><br>或<br><code>git add &amp;&amp; git merge --continue</code></p>
+<h3 id="同时修改了一个文件的文件名和内容"><a href="#同时修改了一个文件的文件名和内容" class="headerlink" title="同时修改了一个文件的文件名和内容"></a>同时修改了一个文件的文件名和内容</h3><p>git能够自动merge rename 和 内容变更</p>
+<h3 id="同一文件改成了不同的文件名"><a href="#同一文件改成了不同的文件名" class="headerlink" title="同一文件改成了不同的文件名"></a>同一文件改成了不同的文件名</h3><p>需要手动git rm 不需要的文件，解决冲突后再<code>git commit -am&#39;message&#39;</code></p>
+<h3 id="多人开发中应避免的操作"><a href="#多人开发中应避免的操作" class="headerlink" title="多人开发中应避免的操作"></a>多人开发中应避免的操作</h3><h4 id="向集成分支执行push-f"><a href="#向集成分支执行push-f" class="headerlink" title="向集成分支执行push -f"></a>向集成分支执行push -f</h4><p><code>git push -f remote_repo</code></p>
+<blockquote>
+<p>自己独自使用的分支，可以采用push -f 的方式。<br>团队集成分支，通常做法不是去掉不想要的commit，而是把不想要的commit的内容采用revert的方式生成新的commit，以此去掉不想要的变更。然后push到远端</p>
+</blockquote>
+<h4 id="向集成分支执行变基操作"><a href="#向集成分支执行变基操作" class="headerlink" title="向集成分支执行变基操作"></a>向集成分支执行变基操作</h4><p><code>git rebase</code></p>
+<hr>
+<h2 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h2><h3 id="search"><a href="#search" class="headerlink" title="search"></a>search</h3><p><code>keywords in:readme stars:&gt;1000</code><br><code>&#39;code&#39;,&#39;code&#39; filename:fileName</code></p>
+<h3 id="ssh-key-生成"><a href="#ssh-key-生成" class="headerlink" title="ssh key 生成"></a>ssh key 生成</h3><p><a target="_blank" rel="noopener" href="https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">Generating a new SSH key and adding it to the ssh-agent</a></p>
+<h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><p>feature-&gt;master</p>
+<h4 id="merge-commit"><a href="#merge-commit" class="headerlink" title="merge commit"></a>merge commit</h4><p>如同<code>git commit</code>，无冲突则自动merge</p>
+<h4 id="Squash-and-merge"><a href="#Squash-and-merge" class="headerlink" title="Squash and merge"></a>Squash and merge</h4><p>把需要merge的分支的所有commit进行squash，然后merge至master<br>具体表现为：将feature分支所有commit squash为一个commit，然后将该commit rebase至master分支<br>该操作不会移动feature的refs<br>等价与<code>git merge --squash</code></p>
+<h4 id="Rebase-and-merge"><a href="#Rebase-and-merge" class="headerlink" title="Rebase and merge"></a>Rebase and merge</h4><p>直接将feature的所有commit rebase 至 master</p>
+<hr>
+<h2 id="git提交信息规范"><a href="#git提交信息规范" class="headerlink" title="git提交信息规范"></a>git提交信息规范</h2><p><a target="_blank" rel="noopener" href="https://juejin.im/post/5afc5242f265da0b7f44bee4">优雅的提交你的 Git Commit Message</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html">Commit message 和 Change log 编写指南</a></p>
+<hr>
+<h2 id="git-command"><a href="#git-command" class="headerlink" title="git command"></a>git command</h2><h3 id="git-gc"><a href="#git-gc" class="headerlink" title="git gc"></a>git gc</h3><p>git 垃圾回收</p>
+<ul>
+<li>git-gc - Cleanup unnecessary files and optimize the local repository</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">SYNOPSIS</span><br><span class="line">       git gc [--aggressive] [--auto] [--quiet] [--prune=&lt;<span class="built_in">date</span>&gt; | --no-prune] [--force]</span><br><span class="line">OPTIONS</span><br><span class="line">       --aggressive</span><br><span class="line">           Usually git gc runs very quickly <span class="keyword">while</span> providing good disk space utilization and performance. This option will cause git gc to more aggressively optimize the repository at the expense of taking</span><br><span class="line">           much more <span class="keyword">time</span>. The effects of this optimization are persistent, so this option only needs to be used occasionally; every few hundred changesets or so.</span><br><span class="line"></span><br><span class="line">       --auto</span><br><span class="line">           With this option, git gc checks whether any housekeeping is required; <span class="keyword">if</span> not, it exits without performing any work. Some git commands run git gc --auto after performing operations that could</span><br><span class="line">           create many loose objects.</span><br><span class="line"></span><br><span class="line">           Housekeeping is required <span class="keyword">if</span> there are too many loose objects or too many packs <span class="keyword">in</span> the repository. If the number of loose objects exceeds the value of the gc.auto configuration variable, <span class="keyword">then</span></span><br><span class="line">           all loose objects are combined into a single pack using git repack -d -l. Setting the value of gc.auto to 0 disables automatic packing of loose objects.</span><br><span class="line"></span><br><span class="line">           If the number of packs exceeds the value of gc.autoPackLimit, <span class="keyword">then</span> existing packs (except those marked with a .keep file) are consolidated into a single pack by using the -A option of git</span><br><span class="line">           repack. Setting gc.autoPackLimit to 0 disables automatic consolidation of packs.</span><br></pre></td></tr></table></figure>
+
+<p><strong>For the issue which unable to update local ref</strong><br><strong>Pllease refer below same issue:</strong><br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10068640/git-error-on-git-pull-unable-to-update-local-ref">Git error on git pull (unable to update local ref)</a></p>
+<p>Issue:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">error: couldn<span class="string">&#x27;t set &#x27;</span>refs/remotes/github/master<span class="string">&#x27;</span></span><br><span class="line"><span class="string"> ! a263a4c..bd437fa  master     -&gt; github/master  (unable to update local ref)</span></span><br></pre></td></tr></table></figure>
+
+<p>Solution:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git gc --prune=now</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/12/08/git-learning/">https://hzhzxfs.github.io/2024/12/08/git-learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/12/09/html-notes/" title="html-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">html-notes</div></div><div class="info-2"><div class="info-item-1">HTML NotesChore常用HTML标签的英文全称及简单描述   HTML标签 英文全称 中文释义    a Anchor 锚   abbr Abbreviation 缩写词   acronym Acronym 取首字母的缩写词   address Address 地址   alt alter 替用(一般是图片显示不出的提示)   b Bold 粗体（文本）   bdo Direction of Text Display 文本显示方向   big Big 变大（文本）   blockquote Block Quotation 区块引用语   br Break 换行   cell cell 巢   cellpadding cellpadding 巢补白   cellspacing cellspacing 巢空间   center Centered 居中（文本）   cite Citation 引用   code Code 源代码（文本）   dd Definition Description 定义描述   del Deleted 删除（的文本）   dfn Defines a...</div></div></div></a><a class="pagination-related" href="/2024/12/07/design-pattern-from-spring/" title="design-pattern-from-spring"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">design-pattern-from-spring</div></div><div class="info-2"><div class="info-item-1">跟着 Spring 学设计模式观察者模式定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并自动更新 又称：发布订阅、消息通知机制、事件监听、事件驱动编程 利用 Spring 事件机制改造，利用观察者模式设计高扩展性的代码 Spring 中的 ApplicationListener(ApplicationEvent) 案例：  3个监听器，在 UnderwritingEvent 被触发的时候，执行 onApplicationEvent() 方法 App Listener: 12345678@Component@Slf4jpublic class AppListener implements ApplicationListener&lt;UnderwritingEvent&gt; &#123;    @Override    public void onApplicationEvent(UnderwritingEvent event) &#123;        log.info(&quot;App start...&quot;);    &...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/12/19/mybatis-plus-notes/" title="mybatis-plus-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-19</div><div class="info-item-2">mybatis-plus-notes</div></div><div class="info-2"><div class="info-item-1">Mybatis Plus 笔记Mybatis Plus 介绍框架结构 特性 无入侵、损耗小、强大的 CRUD 操作 支持Lambda形式调用、支持多种数据库(MySQL、Oracle) 支持主键自动生成、支持 ActiveRecord 模式 支持自定义全局通用操作、支持关键词自动转义 内置代码生成器、内置分页插件、内置性能分析插件 内置全局拦截插件、内置 SQL 注入剥离器  HelloWorld 执行建表 SQL  12345678910111213141516171819# 创建用户表CREATE TABLE user (    id BIGINT(20) PRIMARY KEY NOT NULL COMMENT &#x27;主键&#x27;,    name VARCHAR(30) DEFAULT NULL COMMENT &#x27;姓名&#x27;,    age INT(11) DEFAULT NULL COMMENT &#x27;年龄&#x27;,    email VARCHAR(50) DEFAULT NULL COMMENT &#x27;邮箱&#x27;,  ...</div></div></div></a><a class="pagination-related" href="/2024/12/22/springmvc-notes/" title="springmvc-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-22</div><div class="info-item-2">springmvc-notes</div></div><div class="info-2"><div class="info-item-1">SpringMVC笔记SpringMVC简介Spring 为展现层提供的基于 MVC 设计理念的优秀的 Web 框架，是目前最主流的 MVC 框架之一 SpringMVC属于Spring框架中的web模块  HelloWorld流程:1 导包 1234567891011121314日志记录commons-logging-1.1.3.jar支持注解spring-aop-4.0.0.RELEASE.jarSpring核心容器模块spring-beans-4.0.0.RELEASE.jarspring-context-4.0.0.RELEASE.jarspring-core-4.0.0.RELEASE.jarspring-expression-4.0.0.RELEASE.jarSpring Web模块spring-web-4.0.0.RELEASE.jarspring-webmvc-4.0.0.RELEASE.jar  2 写配置 配置springmvc的前端控制器，指定springmvc配置文件位置 WEB-INF&#x2F;web.xml: 12345678910111213141...</div></div></div></a><a class="pagination-related" href="/2024/12/06/character-encode/" title="character-encode"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-06</div><div class="info-item-2">character-encode</div></div><div class="info-2"><div class="info-item-1">Text Encode &amp; DecodeASCIIANSI(美国国家标准学会) 推出了 ASCII ASCII 包括 0-9 a-z A-Z !”#$%… 控制字符 码点 code point每个字符对应的数字 ASCII: 0-127(2^7) 字符集 charset标准所支持的所有字符及其对应码点的集合，称之为字符集 编码 encode从字符到计算机存储的的二进制的过程，称之为编码字符编码规则不一定会把码点直接转换成二进制存储在计算机中 在 ASCII 和 UTF-32 中，会把码点直接转换为二进制 Unicode囊括了各国文字、Emoji、象形文字的字符集 UTF-32每个字符使用 4 字节存储，不够 32 bit 的向前补零 UTF-8Unicode 的可变长度编码，码点越大，编码后的二进制越长 乱码的原因 编码规则与解码规则不同 部分编辑器将 Unicode 中无法识别或展示的字符自动替换为特殊符号，在保存文件时，将 EF BF BD 写入 Unicode 字符集中有一个特殊的替换符号，专门用于表示无法识别或展示的字符    </div></div></div></a><a class="pagination-related" href="/2024/12/09/html-notes/" title="html-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-09</div><div class="info-item-2">html-notes</div></div><div class="info-2"><div class="info-item-1">HTML NotesChore常用HTML标签的英文全称及简单描述   HTML标签 英文全称 中文释义    a Anchor 锚   abbr Abbreviation 缩写词   acronym Acronym 取首字母的缩写词   address Address 地址   alt alter 替用(一般是图片显示不出的提示)   b Bold 粗体（文本）   bdo Direction of Text Display 文本显示方向   big Big 变大（文本）   blockquote Block Quotation 区块引用语   br Break 换行   cell cell 巢   cellpadding cellpadding 巢补白   cellspacing cellspacing 巢空间   center Centered 居中（文本）   cite Citation 引用   code Code 源代码（文本）   dd Definition Description 定义描述   del Deleted 删除（的文本）   dfn Defines a...</div></div></div></a><a class="pagination-related" href="/2024/12/18/mybatis-notes/" title="mybatis-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-18</div><div class="info-item-2">mybatis-notes</div></div><div class="info-2"><div class="info-item-1">Mybatis笔记自定义Mybatis框架配置文件相关类结构及作用 Database Access Object相关类 mybatis核心类 动态代理 Mybatis的配置文件全局配置文件一般放于项目根目录下，名为SqlMapConfig.xml，其中记录了数据库的连接信息(driver url username password)，以及映射文件的位置 配置文档的顶层结构如下：  configuration（配置） properties（属性） settings（设置） typeAliases（类型别名） typeHandlers（类型处理器） objectFactory（对象工厂） plugins（插件） environments（环境配置） environment（环境变量） transactionManager（事务管理器） dataSource（数据源）     databaseIdProvider（数据库厂商标识） mappers（映射器）      示例全局配置文件:  1234567891011121314151617181920212223242526272829...</div></div></div></a><a class="pagination-related" href="/2024/12/04/activemq-note/" title="activemq-note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-04</div><div class="info-item-2">activemq-note</div></div><div class="info-2"><div class="info-item-1">ActiveMQ1. ActiveMQ 的安装Apache ActiveMQ 下载 Linux 版 tarball  运行  1./bin/activemq start   停止  1./bin/activemq stop  2. 接收消息的两种方法recive() 方法1234567891011121314151617181920212223242526272829public class JmsConsumer &#123;    private static final String ACTIVE_MQ_URL = &quot;tcp://192.168.2.200:61616&quot;;    private static final String QUEUE_NAME = &quot;queue01&quot;;    public static void main(String[] args) throws JMSException, IOException &#123;        ActiveMQConnectionFactory activeMQConnec...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">git笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#git%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">git的基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#config%E7%9A%843%E4%B8%AA%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.1.1.</span> <span class="toc-text">config的3个作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9A%84%E5%88%AB%E5%90%8D"><span class="toc-number">1.1.2.</span> <span class="toc-text">git的别名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.3.</span> <span class="toc-text">git常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.4.</span> <span class="toc-text">git的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.5.</span> <span class="toc-text">.git目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.6.</span> <span class="toc-text">git的对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="toc-number">1.1.6.1.</span> <span class="toc-text">结构示意图</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%A6%BBHEAD-%E5%A4%B4%E6%8C%87%E9%92%88"><span class="toc-number">1.1.7.</span> <span class="toc-text">分离HEAD(头指针)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-number">1.1.8.</span> <span class="toc-text">分支的创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E7%9A%84%E5%88%A0%E9%99%A4"><span class="toc-number">1.1.9.</span> <span class="toc-text">分支的删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commit-message%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">1.1.10.</span> <span class="toc-text">commit message的修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AAcommit%E5%90%88%E5%B9%B6%E4%B8%BA%E4%B8%80%E4%B8%AAcommit"><span class="toc-number">1.1.11.</span> <span class="toc-text">多个commit合并为一个commit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E8%BF%9E%E7%BB%AD%E7%9A%84commit%E7%9A%84%E5%90%88%E5%B9%B6"><span class="toc-number">1.1.12.</span> <span class="toc-text">不连续的commit的合并</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-diff"><span class="toc-number">1.1.13.</span> <span class="toc-text">git diff</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-reset-git-checkout"><span class="toc-number">1.1.14.</span> <span class="toc-text">git reset &amp; git checkout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-rm"><span class="toc-number">1.1.15.</span> <span class="toc-text">git rm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-stash"><span class="toc-number">1.1.16.</span> <span class="toc-text">git stash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gitignore"><span class="toc-number">1.1.17.</span> <span class="toc-text">.gitignore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9A%84%E5%A4%87%E4%BB%BD"><span class="toc-number">1.1.18.</span> <span class="toc-text">git的备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-fetch"><span class="toc-number">1.1.19.</span> <span class="toc-text">git fetch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-pull"><span class="toc-number">1.1.20.</span> <span class="toc-text">git pull</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7-from-PegasusWang"><span class="toc-number">1.1.21.</span> <span class="toc-text">git 使用技巧(from PegasusWang)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86"><span class="toc-number">1.1.22.</span> <span class="toc-text">git 设置代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E7%9A%84%E9%BB%98%E8%AE%A4%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8"><span class="toc-number">1.1.23.</span> <span class="toc-text">git的默认文本编辑器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BA%E5%90%88%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text">多人合作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E6%96%B9%E4%BF%AE%E6%94%B9%E4%BA%86%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">双方修改了不同的文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E6%96%B9%E4%BF%AE%E6%94%B9%E4%BA%86%E5%90%8C%E4%B8%80%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%8D%E5%90%8C%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.2.2.</span> <span class="toc-text">双方修改了同一文件的不同区域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E6%96%B9%E4%BF%AE%E6%94%B9%E4%BA%86%E5%90%8C%E4%B8%80%E6%96%87%E4%BB%B6%E7%9A%84%E5%90%8C%E4%B8%80%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">双方修改了同一文件的同一区域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%97%B6%E4%BF%AE%E6%94%B9%E4%BA%86%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%87%E4%BB%B6%E5%90%8D%E5%92%8C%E5%86%85%E5%AE%B9"><span class="toc-number">1.2.4.</span> <span class="toc-text">同时修改了一个文件的文件名和内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E4%B8%80%E6%96%87%E4%BB%B6%E6%94%B9%E6%88%90%E4%BA%86%E4%B8%8D%E5%90%8C%E7%9A%84%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-number">1.2.5.</span> <span class="toc-text">同一文件改成了不同的文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BA%E5%BC%80%E5%8F%91%E4%B8%AD%E5%BA%94%E9%81%BF%E5%85%8D%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.6.</span> <span class="toc-text">多人开发中应避免的操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%91%E9%9B%86%E6%88%90%E5%88%86%E6%94%AF%E6%89%A7%E8%A1%8Cpush-f"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">向集成分支执行push -f</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%91%E9%9B%86%E6%88%90%E5%88%86%E6%94%AF%E6%89%A7%E8%A1%8C%E5%8F%98%E5%9F%BA%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.6.2.</span> <span class="toc-text">向集成分支执行变基操作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Github"><span class="toc-number">1.3.</span> <span class="toc-text">Github</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#search"><span class="toc-number">1.3.1.</span> <span class="toc-text">search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh-key-%E7%94%9F%E6%88%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">ssh key 生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#merge"><span class="toc-number">1.3.3.</span> <span class="toc-text">merge</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#merge-commit"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">merge commit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Squash-and-merge"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">Squash and merge</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rebase-and-merge"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">Rebase and merge</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF%E8%A7%84%E8%8C%83"><span class="toc-number">1.4.</span> <span class="toc-text">git提交信息规范</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-command"><span class="toc-number">1.5.</span> <span class="toc-text">git command</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git-gc"><span class="toc-number">1.5.1.</span> <span class="toc-text">git gc</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

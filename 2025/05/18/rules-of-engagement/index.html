@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>rules-of-engagement | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="渗透测试参与规则ROE 是一份文件，概述了您在整个合作过程中可以做什么和不能做什么，并由您和客户签署并同意。它还定义了双方成员的“角色和责任”。 部分：以下部分列表可能出现在交战规则文件中，也可能不出现。每家公司都有不同的股本回报率计算方式，尽管有些部分绝对应该包括在内，例如范围、披露和接受。 根据客户的评估要求，每次参与的 ROE 也会有所不同。 目标概述交战规则文件意图的一般简介。这里可能出现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rules-of-engagement">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/05/18/rules-of-engagement/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="渗透测试参与规则ROE 是一份文件，概述了您在整个合作过程中可以做什么和不能做什么，并由您和客户签署并同意。它还定义了双方成员的“角色和责任”。 部分：以下部分列表可能出现在交战规则文件中，也可能不出现。每家公司都有不同的股本回报率计算方式，尽管有些部分绝对应该包括在内，例如范围、披露和接受。 根据客户的评估要求，每次参与的 ROE 也会有所不同。 目标概述交战规则文件意图的一般简介。这里可能出现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-05-18T00:32:26.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.463Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Network Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "rules-of-engagement",
+  "url": "https://hzhzxfs.github.io/2025/05/18/rules-of-engagement/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-05-18T00:32:26.000Z",
+  "dateModified": "2026-06-10T02:14:46.463Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/05/18/rules-of-engagement/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'rules-of-engagement',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">rules-of-engagement</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">rules-of-engagement</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-18T00:32:26.000Z" title="发表于 2025-05-18 08:32:26">2025-05-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.463Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="渗透测试参与规则"><a href="#渗透测试参与规则" class="headerlink" title="渗透测试参与规则"></a>渗透测试参与规则</h1><p>ROE 是一份文件，概述了您在整个合作过程中可以做什么和不能做什么，并由您<em>和客户</em>签署并同意。它还定义了双方成员的“角色和责任”。</p>
+<h2 id="部分："><a href="#部分：" class="headerlink" title="部分："></a>部分：</h2><p>以下部分列表可能出现在交战规则文件中，也可能不出现。每家公司都有不同的股本回报率计算方式，尽管有些部分绝对应该包括在内，例如范围、披露和接受。</p>
+<p>根据客户的评估要求，每次参与的 ROE 也会有所不同。</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>概述交战规则文件意图的一般简介。这里可能出现的一句话可能是：</p>
+<blockquote>
+<p>本文件的目的是概述和明确定义各方的角色和责任，以及商定的评估细节。</p>
+</blockquote>
+<h3 id="适用性"><a href="#适用性" class="headerlink" title="适用性"></a>适用性</h3><p>描述该文档具体适用的内容，即该文档可能适用于渗透测试方向客户提供的“评估中涉及的所有要素”。这还包括客户组织的相关联系人</p>
+<h3 id="角色和职责"><a href="#角色和职责" class="headerlink" title="角色和职责"></a>角色和职责</h3><p>本节概述了参与评估的所有各方的角色和责任。这里概述的一些常见角色示例如下：</p>
+<h4 id="渗透测试团队"><a href="#渗透测试团队" class="headerlink" title="渗透测试团队"></a>渗透测试团队</h4><p>本节应包括参与渗透测试团队的所有成员<em>包括来自客户</em>的将参与的团队成员。</p>
+<h4 id="客户"><a href="#客户" class="headerlink" title="客户"></a>客户</h4><p>本节将概述客户的责任。责任的一些例子可能包括：</p>
+<ul>
+<li>观察并记录进攻团队成员（您）的入侵尝试</li>
+<li>防止执法部门介入</li>
+<li>确保参与保密&#x2F;不向员工宣布</li>
+</ul>
+<p>本节还可以为客户团队成员定义特定角色，例如：</p>
+<h5 id="客户联络点-CPOC"><a href="#客户联络点-CPOC" class="headerlink" title="客户联络点 (CPOC)"></a>客户联络点 (CPOC)</h5><p>负责与渗透测试团队进行协调，并且应该能够验证可疑活动并将其与现实世界中巧合的黑客尝试区分开来。如果需要的话还应该能够重新安排活动。</p>
+<p>CPOC 将与渗透测试 POC（渗透测试团队的联系人）保持联系，以确保整个参与过程中的清晰、持续的沟通。</p>
+<ul>
+<li>CPOC名称：假名</li>
+<li>CPOC 电子邮件：<a href="mailto:&#102;&#x61;&#x6b;&#x65;&#x2e;&#x65;&#109;&#x61;&#x69;&#108;&#64;&#x63;&#117;&#115;&#x74;&#111;&#109;&#x65;&#x72;&#46;&#x63;&#x6f;&#x6d;">fake.email@customer.com</a></li>
+</ul>
+<h4 id="渗透测试团队-1"><a href="#渗透测试团队-1" class="headerlink" title="渗透测试团队"></a>渗透测试团队</h4><p>与客户部分一样，此部分将包括组成攻击&#x2F;评估团队的所有团队成员，并概述他们的角色和职责。本节可能包括有关每个团队成员在保密协议下的覆盖范围的简介。这里的一些职责示例可能是：</p>
+<ul>
+<li>记录所有渗透测试活动</li>
+<li>记录成功和失败</li>
+</ul>
+<p>#####渗透测试团队的POC<br>本节将讨论渗透测试团队POC的职责。这些职责可能包括：</p>
+<ul>
+<li>协调客户和渗透测试团队的黑白关系</li>
+<li>安排渗透测试活动，包括取消和重新安排</li>
+<li>向 CPOC 提供他们的联系信息</li>
+<li>等</li>
+</ul>
+<h3 id="交战规则"><a href="#交战规则" class="headerlink" title="交战规则"></a>交战规则</h3><p>本节将更加具体，包括活动的日期和时间、范围、披露等。一些可能的小节包括：</p>
+<h4 id="评估时间和日期"><a href="#评估时间和日期" class="headerlink" title="评估时间和日期"></a>评估时间和日期</h4><p>可能包括禁止的时间&#x2F;日期（例如下班后&#x2F;周末）<br>####公告<br>介绍客户如何向其他员工宣布或不宣布测试的简介。还可能包括描述笔团队在测试期间发现先前&#x2F;恶意受损的资产时应采取的措施。</p>
+<h4 id="披露者"><a href="#披露者" class="headerlink" title="披露者"></a>披露者</h4><p>关于客户端是否已从测试中排除特定资产（例如 IP 地址和主机名）的简介。</p>
+<h4 id="状态更新"><a href="#状态更新" class="headerlink" title="状态更新"></a>状态更新</h4><p>何时以及多久就业务的总体状态进行定期沟通，</p>
+<h4 id="测试方法细节"><a href="#测试方法细节" class="headerlink" title="测试方法细节"></a>测试方法细节</h4><p>ROE 应包括特定于测试的部分，例如正在进行什么类型的渗透测试等。以下是一些示例部分： </p>
+<h5 id="外部渗透测试（或任何类型）"><a href="#外部渗透测试（或任何类型）" class="headerlink" title="外部渗透测试（或任何类型）"></a>外部渗透测试（或任何类型）</h5><p>关于客户端外部网络的范围内或范围外的内容。这可能包括 IP 地址、域、CIDR 等。</p>
+<h5 id="恶意软件模拟测试"><a href="#恶意软件模拟测试" class="headerlink" title="恶意软件模拟测试"></a>恶意软件模拟测试</h5><p>概述将对哪些系统进行恶意软件检测和响应测试。还应包括在交战期间使用的“特定”工具，例如：Meterpreter、Cobalt Strike 等。</p>
+<p>本节还可能包括有关客户在检测到恶意软件活动时与团队进行沟通的责任的简介，以便两个团队都可以确认这一发现。</p>
+<h5 id="保持访问"><a href="#保持访问" class="headerlink" title="保持访问"></a>保持访问</h5><p>描述团队可以在参与期间使用某些技术来保持对网络的访问的简介。</p>
+<h4 id="测试范围"><a href="#测试范围" class="headerlink" title="测试范围"></a>测试范围</h4><p>重申“评估豁免”中包含的所有 IP 地址&#x2F;其他资产都将被扫描是否存在漏洞。还应包括在参与期间“巧合”发现但未在弃权书中概述的资产会发生什么情况（可能它们不会包含在扫描&#x2F;测试中，但指出它们是被发现的）。</p>
+<h4 id="超出范围"><a href="#超出范围" class="headerlink" title="超出范围"></a>超出范围</h4><p>超出评估范围的物品&#x2F;资产清单。这包括 IP 地址、主机名等以及社会工程、DDoS 等技术。</p>
+<h4 id="停止点"><a href="#停止点" class="headerlink" title="停止点"></a>停止点</h4><p>关于约会的确切停止点（时间和日期）的简介。</p>
+<h4 id="项目结束"><a href="#项目结束" class="headerlink" title="项目结束"></a>项目结束</h4><p>与停止点不同。该时间和日期是指双方的整个关系结束的时间，即约定已经完成，笔团队已经交付了他们的调查结果并向客户汇报。</p>
+<h4 id="尸检"><a href="#尸检" class="headerlink" title="尸检"></a>尸检</h4><p>描述笔团队向客户提供事后分析的责任。事后分析应向客户报告并解释所有攻击及其调查结果。</p>
+<h4 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h4><p>本节描述客户同意的“责任假设和限制”。例如，此部分可能包含如下列表：</p>
+<blockquote>
+<p>客户同意以下约定所需的假设和责任限制：</p>
+<ul>
+<li>渗透测试团队可以使用商业或通用工具来执行测试</li>
+<li>客户了解渗透测试团队采取的行动反映或模拟现实世界的恶意黑客活动</li>
+<li>客户了解其中一些活动可能会妨碍系统性能、使生产系统崩溃并允许未经批准的访问</li>
+<li>客户了解渗透测试团队采取的行动可能涉及双方“未知”或不可预见的风险</li>
+</ul>
+</blockquote>
+<h4 id="验收"><a href="#验收" class="headerlink" title="验收"></a>验收</h4><p>这一部分可能是最后的简介，基本上指出，通过签署文件，下面的签名者断言他们被授权代表客户签订协议&#x2F;弃权书。 </p>
+<p>本节还授予笔测试团队按照文件所述进行测试的权限，并声明客户接受其中规定的所有条款。</p>
+<p>**注意：*<em>如果本文件未签署</em>测试不应开始且无法开始*（您可能会被起诉）。</p>
+<blockquote>
+<p>[!资源]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://tcm-sec.com/">TCM安全</a></li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/05/18/rules-of-engagement/">https://hzhzxfs.github.io/2025/05/18/rules-of-engagement/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Network-Security/">Network Security</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/19/scanning-with-nmap/" title="scanning-with-nmap"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">scanning-with-nmap</div></div><div class="info-2"><div class="info-item-1">nmap 扫描：nmap 是一个网络扫描工具，它扫描目标 IP 地址以查找开放端口。 -sS（“隐形”扫描）：这种技术不像以前那样隐秘，但在 nmap 中仍然被称为“隐秘扫描”。  此扫描将 SYN 数据包发送到目标地址上的所有端口（如果未给出端口范围，则为前 1000 个端口）。如果端口以 ACK 响应（就像 TCP 3 次握手一样），则 nmap 会关闭连接而不完成握手，从而使其“隐秘”。 nmap 将响应 ACK 的端口报告为“打开”。 其他选项：-T 计时-T 标志允许您告诉 nmap 您希望扫描完成的速度。您可以给它一个 0 到 5 之间的数字，其中 5 是最快的。 更高&#x2F;更快的设置将不太准确。较慢的设置将更准确并且更难检测（在此检查中不确定Nmap：时序和性能）。 -p 端口您可以使用 -p 标志告诉 nmap 您希望它扫描哪些端口。如果您不提供此标志，则 nmap 将扫描通常分配给特定服务的前 1000 个。 要扫描所有端口，请使用 nmap -p-。 -A 全部-A 标志告诉 nmap 使用所有检测选项进行扫描，其中包括版本控制 -sV、操作系统检测 -...</div></div></div></a><a class="pagination-related" href="/2025/05/17/responder/" title="responder"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">responder</div></div><div class="info-2"><div class="info-item-1">使用 Responder 捕获哈希值Responder 是一个可用于对 活动目录 域执行 LLMNR 中毒 攻击的工具。 LLMNR 并不是响应者可以对其进行中毒攻击的唯一协议。它还可以用于 NBT-NS 和 MDNS。 用法示例针对我们的 AD 实验室，我们将使用 Responder 来执行 LLMNR 中毒。这将使我们能够捕获从受害计算机发送的用于身份验证的哈希值。一旦我们有了哈希值，我们就可以破解它以获取该机器的密码。 随着我们的 AD 实验室启动并处于活动状态，我们将使用以下命令与响应者来攻击 域控制器 1responder -I eth0 -dwP 使用的标志： -I/ --interface：告诉响应者我们要使用哪个网络接口。 -d/ --DHCP：告诉响应者“也响应”DHCP 广播请求。 -w/ --wpad：启动恶意 WPAD 服务器（它将响应主机名解析请求） -P/ --ProxyAuth：告诉响应程序强制 NTLM 身份验证（即使目标网络没有打开 WPAD） 其他：-v/ --verbose：将您已经捕获的哈希添加到输出中。打开这些标志，并且您的攻击框与域和域...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/04/12/email-addresses/" title="email-addresses"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-12</div><div class="info-item-2">email-addresses</div></div><div class="info-2"><div class="info-item-1">发现电子邮件地址电子邮件枚举电子邮件枚举是一种可以通过“暴力破解”电子邮件网站的登录页面来猜测连接到特定域的电子邮件地址的技术。 当用户尝试使用测试电子邮件登录时，可以通过读取服务器的响应来确定电子邮件地址的有效性。根据电子邮件是否存在（无论密码是否正确），服务器可能会做出不同的响应。 登录页面和网站的“忘记密码”页面都可能容易受到这种类型或窥探的攻击。 服务器响应服务器对测试电子邮件的响应可以从页面的 HTML 中抓取，也可以从服务器的 HTTP 响应中抓取。 地址是否有效也可以从服务器响应的时间来推断。通过有效地址与无效地址所需时间的基准，您可以使用响应速度来猜测电子邮件是否合法。 一些专家建议电子邮件枚举是 OSINT 吗？  “开源情报……通常是关于利用公开发布的内容，而当你暴力破解邮件服务器时会出现法律问题。 理论上，“可以”将暴力破解目标服务器称为滥用邮件服务器……并可能构成犯罪。 这是法律解释的问题。在此情况下，您需要由律师审查有关所涉及司法管辖区以及邮件服务器运营商的最终用户许可协议的明确定义的参与规则。 在某些情况下，即使过于激进地抓取网络服务器也会产生法律问题...</div></div></div></a><a class="pagination-related" href="/2025/05/23/subnetting/" title="subnetting"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-23</div><div class="info-item-2">subnetting</div></div><div class="info-2"><div class="info-item-1">Subnetting子网划分是一种用于网络的组织技术，用于将网络划分为子网。子网划分的工作原理是利用 CIDR 表示法 重新委派 IP 地址中的位来为主机或网络提供服务。 Subnet Mask子网掩码告诉您 IP 地址的哪些部分是网络位，哪些部分是主机位。子网掩码中设置为 255 的每个八位字节表示属于网络的整个字节。子网掩码中的每个 0 表示属于主机的位： 1234567IP Address    : 192.168.32.5Subnet Mask   : 255.255.255.0CIDR Notation : 192.168.32.5/24# According to the Subnet mask:Network Bits : 192.168.32.x (total of 24 bits)Host bits    : x.x.x.5      (total of 8 bits) 主机位IP 地址中为主机保留的位数告诉我们网络可以支持多少主机（网络上可以有多少设备拥有自己唯一的 IP 地址）。 在为主机保留 8 位的 /24 网络中，该网络上可以有 2^8 (256) 个...</div></div></div></a><a class="pagination-related" href="/2025/05/10/nessus-vuln-scanning/" title="nessus-vuln-scanning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">nessus-vuln-scanning</div></div><div class="info-2"><div class="info-item-1">使用 Nessus 进行漏洞扫描Nessus 是渗透测试中常用的漏洞扫描器。  安装从 https://www.tenable.com/downloads/nessus?loginAttempted=true 下载该工具。使用 /Downloads 文件夹中的 dpkg -i Nessus... 进行安装。安装该工具时，按照终端中的提示操作，您将需要 Nessus Essentials 的激活码： 1234567Unpacking Nessus Scanner Core Components... - You can start Nessus Scanner by typing /bin/systemctl start nessusd.service - Then go to https://kali:8834/ to configure your scanner┌──(hakcypuppy㉿kali)-[~/Downloads]└─$ /bin/systemctl start nessusd.service    点击链接至 https://kali:8834/: 基本网络扫描...</div></div></div></a><a class="pagination-related" href="/2025/05/03/OSI-model/" title="OSI-model"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-03</div><div class="info-item-2">OSI-model</div></div><div class="info-2"><div class="info-item-1">OSI 参考模型一种网络表示形式，用于将数据必须经过的不同协议和封装层结合起来，才能通过网络从一个设备传输到另一个设备。 肺炎：######请 做不投掷香肠披萨离开L1：身体（请）处理沿物理介质的电信号传输。涉及以太网&#x2F;CAT-5 等数据电缆。 L2：数据链路 (do)处理来自第 1 层的电消息的[复用和解复用](&#x2F;networking&#x2F;OSI&#x2F; Multiplexing.md)。这是最复杂的层，因为它抽象了将电信号转换为有意义的数据的工作。它还分为 2 个子层，即“逻辑链路控制”和“媒体访问控制”层。 使用 MAC 地址 来识别设备以及交换机以在它们之间路由流量。该层中的数据被封装到帧和来自帧的数据。 L3：网络（不是）网络层负责从使用 IP 地址 进行寻址的设备传输数据（封装到数据包中），并使用路由器等 L3 设备进行路由。 L4：传输（抛出）使用 TCP 和 UDP 协议处理网络通信。  L5：会话（香肠）负责创建和维护彼此发送和接收数据的两方之间的连接。一旦建立连接，就会创建会话。每个会话对其连接来说都是唯一的，这意味着数据不应该能...</div></div></div></a><a class="pagination-related" href="/2025/05/15/post-exploitation/" title="post-exploitation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-15</div><div class="info-item-2">post-exploitation</div></div><div class="info-2"><div class="info-item-1">后利用一旦我们利用了一个目标，我们就想知道我们可以访问哪些信息，因为这些“是发现”，客户会想知道他们的资产有多脆弱。因此，后期利用包括对目标的大量侦察。 枚举目标网络拓扑我们想使用常用命令查看一些网络拓扑：  ifconfig - IP 地址 ip a - IP 地址 arp - MAC 地址 route - 路由表  ###须藤作为当前用户，我们可以使用 sudo -l 来查看我们的 sudo 权限是什么。这将向我们展示允许用户以 root 身份运行哪些命令。 /etc/passwd用于列出用户的密码，但现在仅列出带有 x 占位符的用户。 /etc/shadow密码哈希现在保存在 /etc/shadow 中，因此我们可以找到系统上用户密码的哈希值，然后使用 john 等工具破解这些哈希值以获取明文密码。 其他（稍后再说） 文件系统中的文件 连接到计算机的设备 网络上的其他设备 服务运行 开放端口 等   [！我以前的笔记（在文本中链接）]  IP 地址 MAC 地址 路由表 约翰   </div></div></div></a><a class="pagination-related" href="/2025/04/08/common-legal-documents/" title="common-legal-documents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-08</div><div class="info-item-2">common-legal-documents</div></div><div class="info-2"><div class="info-item-1">常用法律笔测试文件一般来说，是这样的过程： 销售客户请求渗透测试服务。首先，客户通常会要求您签署保密协议，这样您就不会在此过程中分享您了解到的有关其平台的信息。 双方坐下来召开“销售会议”，其中整理了两份文件：  主服务协议 工作说明书  相互保密 (NDA)双方同意不会将整个过程中了解到的任何信息透露给第三方。 主服务协议 (MSA)合同文件，规定合作目标并概述双方的责任。涵盖多个合同的一揽子协议。 Rapid7 协议示例Rapid7 有其主服务协议 可供查看。 工作说明书 (SOW)具体到单个合同。涵盖活动、可交付成果、时间表和付款报价。基本上“这就是我们要做的测试类型。这是我们要完成它的时间。我们将向您提供一份报告，这就是整个活动将花费多少钱”。 附加销售文件：报告样本有些客户喜欢看样本报告 推荐信有些客户喜欢在接受您之前查看其他企业&#x2F;客户的推荐。 参与规则（测试前）一旦 SOW、NDA、MSA 等全部签署并达成一致，您和客户将召开“合作规则会议”。在此之前（在销售阶段），您和客户可能已就一般范围和条款达成一致。这次会议将涵盖您的测试的细节。 在签署本文件之前，您...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%8F%82%E4%B8%8E%E8%A7%84%E5%88%99"><span class="toc-number">1.</span> <span class="toc-text">渗透测试参与规则</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E5%88%86%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">部分：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E6%80%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">适用性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%92%E8%89%B2%E5%92%8C%E8%81%8C%E8%B4%A3"><span class="toc-number">1.1.3.</span> <span class="toc-text">角色和职责</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%9B%A2%E9%98%9F"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">渗透测试团队</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">客户</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E8%81%94%E7%BB%9C%E7%82%B9-CPOC"><span class="toc-number">1.1.3.2.1.</span> <span class="toc-text">客户联络点 (CPOC)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%9B%A2%E9%98%9F-1"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">渗透测试团队</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%88%98%E8%A7%84%E5%88%99"><span class="toc-number">1.1.4.</span> <span class="toc-text">交战规则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9F"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">评估时间和日期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8A%AB%E9%9C%B2%E8%80%85"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">披露者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%9B%B4%E6%96%B0"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">状态更新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95%E7%BB%86%E8%8A%82"><span class="toc-number">1.1.4.4.</span> <span class="toc-text">测试方法细节</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%96%E9%83%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%EF%BC%88%E6%88%96%E4%BB%BB%E4%BD%95%E7%B1%BB%E5%9E%8B%EF%BC%89"><span class="toc-number">1.1.4.4.1.</span> <span class="toc-text">外部渗透测试（或任何类型）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%81%B6%E6%84%8F%E8%BD%AF%E4%BB%B6%E6%A8%A1%E6%8B%9F%E6%B5%8B%E8%AF%95"><span class="toc-number">1.1.4.4.2.</span> <span class="toc-text">恶意软件模拟测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BF%9D%E6%8C%81%E8%AE%BF%E9%97%AE"><span class="toc-number">1.1.4.4.3.</span> <span class="toc-text">保持访问</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E8%8C%83%E5%9B%B4"><span class="toc-number">1.1.4.5.</span> <span class="toc-text">测试范围</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B6%85%E5%87%BA%E8%8C%83%E5%9B%B4"><span class="toc-number">1.1.4.6.</span> <span class="toc-text">超出范围</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E7%82%B9"><span class="toc-number">1.1.4.7.</span> <span class="toc-text">停止点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9D%9F"><span class="toc-number">1.1.4.8.</span> <span class="toc-text">项目结束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%B8%E6%A3%80"><span class="toc-number">1.1.4.9.</span> <span class="toc-text">尸检</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E"><span class="toc-number">1.1.4.10.</span> <span class="toc-text">免责声明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E6%94%B6"><span class="toc-number">1.1.4.11.</span> <span class="toc-text">验收</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

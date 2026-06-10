@@ -1,0 +1,692 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>cli-reference | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="CLI 参考 Claude Code 命令行界面的完整参考，包括命令和标志。  CLI 命令您可以使用这些命令启动会话、管道内容、恢复对话和管理更新：    命令 描述 示例    claude 启动交互式会话 claude   claude &quot;query&quot; 使用初始提示启动交互式会话 claude &quot;explain this project&quot;   clau">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cli-reference">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/04/09/cli-reference/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="CLI 参考 Claude Code 命令行界面的完整参考，包括命令和标志。  CLI 命令您可以使用这些命令启动会话、管道内容、恢复对话和管理更新：    命令 描述 示例    claude 启动交互式会话 claude   claude &quot;query&quot; 使用初始提示启动交互式会话 claude &quot;explain this project&quot;   clau">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-04-09T05:46:35.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.591Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "cli-reference",
+  "url": "https://hzhzxfs.github.io/2026/04/09/cli-reference/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-04-09T05:46:35.000Z",
+  "dateModified": "2026-06-10T02:14:46.591Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/04/09/cli-reference/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'cli-reference',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">cli-reference</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">cli-reference</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-09T05:46:35.000Z" title="发表于 2026-04-09 13:46:35">2026-04-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.591Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="CLI-参考"><a href="#CLI-参考" class="headerlink" title="CLI 参考"></a>CLI 参考</h1><blockquote>
+<p>Claude Code 命令行界面的完整参考，包括命令和标志。</p>
+</blockquote>
+<h2 id="CLI-命令"><a href="#CLI-命令" class="headerlink" title="CLI 命令"></a>CLI 命令</h2><p>您可以使用这些命令启动会话、管道内容、恢复对话和管理更新：</p>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>claude</code></td>
+<td align="left">启动交互式会话</td>
+<td align="left"><code>claude</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude &quot;query&quot;</code></td>
+<td align="left">使用初始提示启动交互式会话</td>
+<td align="left"><code>claude &quot;explain this project&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude -p &quot;query&quot;</code></td>
+<td align="left">通过 SDK 查询，然后退出</td>
+<td align="left"><code>claude -p &quot;explain this function&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>cat file | claude -p &quot;query&quot;</code></td>
+<td align="left">处理管道内容</td>
+<td align="left"><code>cat logs.txt | claude -p &quot;explain&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude -c</code></td>
+<td align="left">在当前目录中继续最近的对话</td>
+<td align="left"><code>claude -c</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude -c -p &quot;query&quot;</code></td>
+<td align="left">通过 SDK 继续</td>
+<td align="left"><code>claude -c -p &quot;Check for type errors&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude -r &quot;&lt;session&gt;&quot; &quot;query&quot;</code></td>
+<td align="left">按 ID 或名称恢复会话</td>
+<td align="left"><code>claude -r &quot;auth-refactor&quot; &quot;Finish this PR&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude update</code></td>
+<td align="left">更新到最新版本</td>
+<td align="left"><code>claude update</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude install [version]</code></td>
+<td align="left">安装或重新安装本机二进制文件。接受版本号如 <code>2.1.118</code>、<code>stable</code> 或 <code>latest</code>。请参阅 <a href="/zh-CN/setup#install-a-specific-version">安装特定版本</a></td>
+<td align="left"><code>claude install stable</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude auth login</code></td>
+<td align="left">登录您的 Anthropic 账户。使用 <code>--email</code> 预填充您的电子邮件地址，使用 <code>--sso</code> 强制 SSO 身份验证，使用 <code>--console</code> 使用 Anthropic Console 登录以进行 API 使用计费而不是 Claude 订阅</td>
+<td align="left"><code>claude auth login --console</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude auth logout</code></td>
+<td align="left">从您的 Anthropic 账户登出</td>
+<td align="left"><code>claude auth logout</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude auth status</code></td>
+<td align="left">以 JSON 格式显示身份验证状态。使用 <code>--text</code> 获取人类可读的输出。如果已登录，则以代码 0 退出，如果未登录，则以代码 1 退出</td>
+<td align="left"><code>claude auth status</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude agents</code></td>
+<td align="left">打开 <a href="/zh-CN/agent-view">agent view</a> 以监控和分派并行后台会话。使用 <code>--cwd &lt;path&gt;</code> 仅显示在该目录下启动的会话，或使用 <code>--json</code> 将实时会话打印为 JSON 数组以供脚本使用。传递 <code>--permission-mode</code>、<code>--model</code>、<code>--effort</code> 或 <code>--agent</code> 以设置 <a href="/zh-CN/agent-view#permission-mode-model-and-effort">分派会话的默认值</a>。接受 <code>--settings</code>、<code>--add-dir</code>、<code>--plugin-dir</code> 和 <code>--mcp-config</code>，如顶级 <code>claude</code> 命令。打开 agent view 需要交互式终端</td>
+<td align="left"><code>claude agents --json</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude attach &lt;id&gt;</code></td>
+<td align="left">在此终端中附加到 <a href="/zh-CN/agent-view#manage-sessions-from-the-shell">后台会话</a></td>
+<td align="left"><code>claude attach 7c5dcf5d</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude auto-mode defaults</code></td>
+<td align="left">以 JSON 格式打印内置 <a href="/zh-CN/permission-modes#eliminate-prompts-with-auto-mode">auto mode</a> 分类器规则。使用 <code>claude auto-mode config</code> 查看应用了设置的有效配置</td>
+<td align="left"><code>claude auto-mode defaults &gt; rules.json</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude daemon status</code></td>
+<td align="left">打印后台会话 <a href="/zh-CN/agent-view#the-supervisor-process">supervisor</a> 的状态、版本、套接字目录和工作进程数以进行诊断。如果 supervisor 未运行，则退出代码 1</td>
+<td align="left"><code>claude daemon status</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude daemon stop --any</code></td>
+<td align="left">停止后台会话 <a href="/zh-CN/agent-view#the-supervisor-process">supervisor</a> 及其托管的会话。传递 <code>--keep-workers</code> 以保持后台会话运行，以便下一个 supervisor 重新连接到它们。<code>--any</code> 确认停止按需 supervisor，这是默认值。使用此命令从 <a href="/zh-CN/agent-view#agent-view-says-the-background-service-did-not-respond">无响应的 supervisor</a> 恢复</td>
+<td align="left"><code>claude daemon stop --any --keep-workers</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude logs &lt;id&gt;</code></td>
+<td align="left">从 <a href="/zh-CN/agent-view#manage-sessions-from-the-shell">后台会话</a> 打印最近的输出</td>
+<td align="left"><code>claude logs 7c5dcf5d</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude mcp</code></td>
+<td align="left">配置 Model Context Protocol (MCP) 服务器</td>
+<td align="left">请参阅 <a href="/zh-CN/mcp">Claude Code MCP 文档</a>。</td>
+</tr>
+<tr>
+<td align="left"><code>claude plugin</code></td>
+<td align="left">管理 Claude Code <a href="/zh-CN/plugins">plugins</a>。别名：<code>claude plugins</code>。请参阅 <a href="/zh-CN/plugins-reference#cli-commands-reference">plugin 参考</a> 了解子命令</td>
+<td align="left"><code>claude plugin install code-review@claude-plugins-official</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude project purge [path]</code></td>
+<td align="left">删除项目的所有本地 Claude Code 状态：记录、任务列表、调试日志、文件编辑历史、提示历史行和项目在 <code>~/.claude.json</code> 中的条目。省略 <code>[path]</code> 以从交互式列表中选择。标志：<code>--dry-run</code> 预览，<code>-y</code>&#x2F;<code>--yes</code> 跳过确认，<code>-i</code>&#x2F;<code>--interactive</code> 确认每一项，<code>--all</code> 用于每个项目。请参阅 <a href="/zh-CN/claude-directory#clear-local-data">清除本地数据</a></td>
+<td align="left"><code>claude project purge ~/work/repo --dry-run</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude remote-control</code></td>
+<td align="left">启动 <a href="/zh-CN/remote-control">Remote Control</a> 服务器以从 Claude.ai 或 Claude 应用控制 Claude Code。在服务器模式下运行（无本地交互式会话）。请参阅 <a href="/zh-CN/remote-control#start-a-remote-control-session">服务器模式标志</a></td>
+<td align="left"><code>claude remote-control --name &quot;My Project&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude respawn &lt;id&gt;</code></td>
+<td align="left">重启 <a href="/zh-CN/agent-view#manage-sessions-from-the-shell">后台会话</a>，运行或已停止，保持其对话完整。使用 <code>--all</code> 重启每个运行中的会话，例如以获取更新的 Claude Code 二进制文件</td>
+<td align="left"><code>claude respawn 7c5dcf5d</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude rm &lt;id&gt;</code></td>
+<td align="left">从列表中删除 <a href="/zh-CN/agent-view#manage-sessions-from-the-shell">后台会话</a>。对话记录保留在您的本地计算机上，可通过 <code>claude --resume</code> 访问</td>
+<td align="left"><code>claude rm 7c5dcf5d</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude setup-token</code></td>
+<td align="left">为 CI 和脚本生成长期 OAuth 令牌。将令牌打印到终端而不保存。需要 Claude 订阅。请参阅 <a href="/zh-CN/authentication#generate-a-long-lived-token">生成长期令牌</a></td>
+<td align="left"><code>claude setup-token</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude stop &lt;id&gt;</code></td>
+<td align="left">停止 <a href="/zh-CN/agent-view#manage-sessions-from-the-shell">后台会话</a>。也接受 <code>claude kill</code></td>
+<td align="left"><code>claude stop 7c5dcf5d</code></td>
+</tr>
+<tr>
+<td align="left"><code>claude ultrareview [target]</code></td>
+<td align="left">非交互式运行 <a href="/zh-CN/ultrareview#run-ultrareview-non-interactively">ultrareview</a>。将发现结果打印到标准输出，成功时退出代码 0，失败时退出代码 1。使用 <code>--json</code> 获取原始有效负载，使用 <code>--timeout &lt;minutes&gt;</code> 覆盖 30 分钟的默认值</td>
+<td align="left"><code>claude ultrareview 1234 --json</code></td>
+</tr>
+</tbody></table>
+<p>如果您输入错误的子命令，Claude Code 会建议最接近的匹配项并退出而不启动会话。例如，<code>claude udpate</code> 会打印 <code>Did you mean claude update?</code>。</p>
+<h2 id="CLI-标志"><a href="#CLI-标志" class="headerlink" title="CLI 标志"></a>CLI 标志</h2><p>使用这些命令行标志自定义 Claude Code 的行为。<code>claude --help</code> 不会列出每个标志，因此标志在 <code>--help</code> 中的缺失并不意味着它不可用。</p>
+<table>
+<thead>
+<tr>
+<th align="left">标志</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>--add-dir</code></td>
+<td align="left">为 Claude 添加额外的工作目录以读取和编辑文件。授予文件访问权限；大多数 <code>.claude/</code> 配置 <a href="/zh-CN/permissions#additional-directories-grant-file-access-not-configuration">不会从这些目录中发现</a>。验证每个路径是否存在为目录。要在会话间持久化这些目录，请在设置中设置 <a href="/zh-CN/settings#permission-settings"><code>permissions.additionalDirectories</code></a></td>
+<td align="left"><code>claude --add-dir ../apps ../lib</code></td>
+</tr>
+<tr>
+<td align="left"><code>--agent</code></td>
+<td align="left">为当前会话指定代理（覆盖 <code>agent</code> 设置）</td>
+<td align="left"><code>claude --agent my-custom-agent</code></td>
+</tr>
+<tr>
+<td align="left"><code>--agents</code></td>
+<td align="left">通过 JSON 动态定义自定义 subagents。使用与 subagent <a href="/zh-CN/sub-agents#supported-frontmatter-fields">frontmatter</a> 相同的字段名称，加上代理指令的 <code>prompt</code> 字段</td>
+<td align="left"><code>claude --agents &#39;{&quot;reviewer&quot;:{&quot;description&quot;:&quot;Reviews code&quot;,&quot;prompt&quot;:&quot;You are a code reviewer&quot;}}&#39;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--allow-dangerously-skip-permissions</code></td>
+<td align="left">将 <code>bypassPermissions</code> 添加到 <code>Shift+Tab</code> 模式循环中而不启动它。允许您以不同的模式（如 <code>plan</code>）开始，稍后切换到 <code>bypassPermissions</code>。请参阅 <a href="/zh-CN/permission-modes#skip-all-checks-with-bypasspermissions-mode">权限模式</a></td>
+<td align="left"><code>claude --permission-mode plan --allow-dangerously-skip-permissions</code></td>
+</tr>
+<tr>
+<td align="left"><code>--allowedTools</code></td>
+<td align="left">无需提示权限即可执行的工具。请参阅 <a href="/zh-CN/settings#permission-rule-syntax">权限规则语法</a> 了解模式匹配。要限制哪些工具可用，请改用 <code>--tools</code></td>
+<td align="left"><code>&quot;Bash(git log *)&quot; &quot;Bash(git diff *)&quot; &quot;Read&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--append-system-prompt</code></td>
+<td align="left">将自定义文本附加到默认系统提示的末尾</td>
+<td align="left"><code>claude --append-system-prompt &quot;Always use TypeScript&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--append-system-prompt-file</code></td>
+<td align="left">从文件加载额外的系统提示文本并附加到默认提示</td>
+<td align="left"><code>claude --append-system-prompt-file ./extra-rules.txt</code></td>
+</tr>
+<tr>
+<td align="left"><code>--bare</code></td>
+<td align="left">最小模式：跳过 hooks、skills、plugins、MCP 服务器、自动内存和 CLAUDE.md 的自动发现，以便脚本化调用启动更快。Claude 可以访问 Bash、文件读取和文件编辑工具。设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_SIMPLE</code></a>。请参阅 <a href="/zh-CN/headless#start-faster-with-bare-mode">bare mode</a></td>
+<td align="left"><code>claude --bare -p &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--betas</code></td>
+<td align="left">要包含在 API 请求中的 Beta 标头（仅限 API 密钥用户）</td>
+<td align="left"><code>claude --betas interleaved-thinking</code></td>
+</tr>
+<tr>
+<td align="left"><code>--bg</code></td>
+<td align="left">启动会话作为 <a href="/zh-CN/agent-view">后台代理</a> 并立即返回。打印会话 ID 和管理命令。与 <code>--exec</code> 结合以作为后台作业运行 shell 命令而不是 Claude 会话，或与 <code>--agent</code> 结合以运行特定的 subagent</td>
+<td align="left"><code>claude --bg &quot;investigate the flaky test&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--channels</code></td>
+<td align="left">（研究预览）MCP 服务器，其 <a href="/zh-CN/channels">channel</a> 通知 Claude 应在此会话中侦听。以空格分隔的 <code>plugin:&lt;name&gt;@&lt;marketplace&gt;</code> 条目列表。需要 Claude.ai 身份验证</td>
+<td align="left"><code>claude --channels plugin:my-notifier@my-marketplace</code></td>
+</tr>
+<tr>
+<td align="left"><code>--chrome</code></td>
+<td align="left">启用 <a href="/zh-CN/chrome">Chrome 浏览器集成</a> 以进行网络自动化和测试</td>
+<td align="left"><code>claude --chrome</code></td>
+</tr>
+<tr>
+<td align="left"><code>--continue</code>, <code>-c</code></td>
+<td align="left">加载当前目录中最近的对话。包括使用 <code>/add-dir</code> 添加此目录的会话</td>
+<td align="left"><code>claude --continue</code></td>
+</tr>
+<tr>
+<td align="left"><code>--dangerously-load-development-channels</code></td>
+<td align="left">启用不在批准的允许列表中的 <a href="/zh-CN/channels-reference#test-during-the-research-preview">channels</a>，用于本地开发。接受 <code>plugin:&lt;name&gt;@&lt;marketplace&gt;</code> 和 <code>server:&lt;name&gt;</code> 条目。提示确认</td>
+<td align="left"><code>claude --dangerously-load-development-channels server:webhook</code></td>
+</tr>
+<tr>
+<td align="left"><code>--dangerously-skip-permissions</code></td>
+<td align="left">跳过权限提示。等同于 <code>--permission-mode bypassPermissions</code>。请参阅 <a href="/zh-CN/permission-modes#skip-all-checks-with-bypasspermissions-mode">权限模式</a> 了解此操作跳过和不跳过的内容</td>
+<td align="left"><code>claude --dangerously-skip-permissions</code></td>
+</tr>
+<tr>
+<td align="left"><code>--debug</code></td>
+<td align="left">启用调试模式，可选类别过滤（例如，<code>&quot;api,hooks&quot;</code> 或 <code>&quot;!statsig,!file&quot;</code>）</td>
+<td align="left"><code>claude --debug &quot;api,mcp&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--debug-file &lt;path&gt;</code></td>
+<td align="left">将调试日志写入特定文件路径。隐式启用调试模式。优先于 <code>CLAUDE_CODE_DEBUG_LOGS_DIR</code></td>
+<td align="left"><code>claude --debug-file /tmp/claude-debug.log</code></td>
+</tr>
+<tr>
+<td align="left"><code>--disable-slash-commands</code></td>
+<td align="left">为此会话禁用所有 skills 和命令</td>
+<td align="left"><code>claude --disable-slash-commands</code></td>
+</tr>
+<tr>
+<td align="left"><code>--disallowedTools</code></td>
+<td align="left">拒绝规则。裸工具名称从模型的上下文中删除该工具。作用域规则（如 <code>Bash(rm *)</code> ）使工具保持可用，仅拒绝匹配的调用</td>
+<td align="left"><code>&quot;Bash(git log *)&quot; &quot;Bash(git diff *)&quot; &quot;Edit&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--effort</code></td>
+<td align="left">为当前会话设置 <a href="/zh-CN/model-config#adjust-effort-level">工作量级别</a>。选项：<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code>、<code>max</code>；可用级别取决于模型。覆盖此会话的 <a href="/zh-CN/settings#available-settings"><code>effortLevel</code></a> 设置，不会持久化</td>
+<td align="left"><code>claude --effort high</code></td>
+</tr>
+<tr>
+<td align="left"><code>--enable-auto-mode</code></td>
+<td align="left">{&#x2F;* max-version: 2.1.110 *&#x2F;}在 v2.1.111 中移除。Auto mode 现在默认在 <code>Shift+Tab</code> 循环中；使用 <code>--permission-mode auto</code> 以它开始</td>
+<td align="left"><code>claude --permission-mode auto</code></td>
+</tr>
+<tr>
+<td align="left"><code>--exclude-dynamic-system-prompt-sections</code></td>
+<td align="left">将每台机器的部分从系统提示（工作目录、环境信息、内存路径、git 状态）移到第一条用户消息中。改进在运行相同任务的不同用户和机器之间的提示缓存重用。仅适用于默认系统提示；当设置 <code>--system-prompt</code> 或 <code>--system-prompt-file</code> 时忽略。与 <code>-p</code> 一起用于脚本化的多用户工作负载</td>
+<td align="left"><code>claude -p --exclude-dynamic-system-prompt-sections &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--exec</code></td>
+<td align="left">运行 shell 命令作为 PTY 支持的后台作业而不是启动 Claude 会话。与 <code>--bg</code> 一起使用以从 shell 启动</td>
+<td align="left"><code>claude --bg --exec &#39;pytest -x&#39;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--fallback-model</code></td>
+<td align="left">当默认模型过载或不可用时启用自动回退到指定模型，例如已停用的模型。在打印模式（<code>-p</code>）和 <a href="/zh-CN/agent-view">后台会话</a> 中生效，这些会话以非交互方式运行；在交互式会话中被忽略</td>
+<td align="left"><code>claude -p --fallback-model sonnet &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--fork-session</code></td>
+<td align="left">恢复时，创建新的会话 ID 而不是重用原始 ID（与 <code>--resume</code> 或 <code>--continue</code> 一起使用）</td>
+<td align="left"><code>claude --resume abc123 --fork-session</code></td>
+</tr>
+<tr>
+<td align="left"><code>--from-pr</code></td>
+<td align="left">恢复链接到特定拉取请求的会话。接受 PR 号、GitHub 或 GitHub Enterprise PR URL、GitLab 合并请求 URL 或 Bitbucket 拉取请求 URL。当 Claude 创建拉取请求时会自动链接会话</td>
+<td align="left"><code>claude --from-pr 123</code></td>
+</tr>
+<tr>
+<td align="left"><code>--ide</code></td>
+<td align="left">如果恰好有一个有效的 IDE 可用，则在启动时自动连接到 IDE</td>
+<td align="left"><code>claude --ide</code></td>
+</tr>
+<tr>
+<td align="left"><code>--init</code></td>
+<td align="left">在会话前运行带有 <code>init</code> 匹配器的 <a href="/zh-CN/hooks#setup">Setup hooks</a>（仅打印模式）</td>
+<td align="left"><code>claude -p --init &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--init-only</code></td>
+<td align="left">运行 <a href="/zh-CN/hooks#setup">Setup</a> 和 <code>SessionStart</code> hooks，然后退出而不启动对话</td>
+<td align="left"><code>claude --init-only</code></td>
+</tr>
+<tr>
+<td align="left"><code>--include-hook-events</code></td>
+<td align="left">在输出流中包含所有 hook 生命周期事件。需要 <code>--output-format stream-json</code></td>
+<td align="left"><code>claude -p --output-format stream-json --verbose --include-hook-events &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--include-partial-messages</code></td>
+<td align="left">在输出中包含部分流事件。需要 <code>--print</code> 和 <code>--output-format stream-json</code></td>
+<td align="left"><code>claude -p --output-format stream-json --verbose --include-partial-messages &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--input-format</code></td>
+<td align="left">为打印模式指定输入格式（选项：<code>text</code>、<code>stream-json</code>）</td>
+<td align="left"><code>claude -p --output-format json --input-format stream-json</code></td>
+</tr>
+<tr>
+<td align="left"><code>--json-schema</code></td>
+<td align="left">在代理完成其工作流后获得与 JSON Schema 匹配的验证 JSON 输出（仅打印模式，请参阅 <a href="/zh-CN/agent-sdk/structured-outputs">结构化输出</a>）</td>
+<td align="left"><code>claude -p --json-schema &#39;{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{...}}&#39; &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--maintenance</code></td>
+<td align="left">在会话前运行带有 <code>maintenance</code> 匹配器的 <a href="/zh-CN/hooks#setup">Setup hooks</a>（仅打印模式）</td>
+<td align="left"><code>claude -p --maintenance &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--max-budget-usd</code></td>
+<td align="left">API 调用前停止的最大美元金额（仅打印模式）</td>
+<td align="left"><code>claude -p --max-budget-usd 5.00 &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--max-turns</code></td>
+<td align="left">限制代理转数（仅打印模式）。达到限制时以错误退出。默认无限制</td>
+<td align="left"><code>claude -p --max-turns 3 &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--mcp-config</code></td>
+<td align="left">从 JSON 文件或字符串加载 MCP 服务器（以空格分隔）</td>
+<td align="left"><code>claude --mcp-config ./mcp.json</code></td>
+</tr>
+<tr>
+<td align="left"><code>--model</code></td>
+<td align="left">为当前会话设置模型，使用最新模型的别名（<code>sonnet</code> 或 <code>opus</code>）或模型的完整名称。覆盖 <a href="/zh-CN/settings#available-settings"><code>model</code></a> 设置和 <a href="/zh-CN/model-config#environment-variables"><code>ANTHROPIC_MODEL</code></a></td>
+<td align="left"><code>claude --model claude-sonnet-4-6</code></td>
+</tr>
+<tr>
+<td align="left"><code>--name</code>, <code>-n</code></td>
+<td align="left">为会话设置显示名称，显示在 <code>/resume</code> 和终端标题中。您可以使用 <code>claude --resume &lt;name&gt;</code> 恢复命名会话。<br /><br /><a href="/zh-CN/commands"><code>/rename</code></a> 在会话中更改名称，也会在提示栏中显示</td>
+<td align="left"><code>claude -n &quot;my-feature-work&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--no-chrome</code></td>
+<td align="left">为此会话禁用 <a href="/zh-CN/chrome">Chrome 浏览器集成</a></td>
+<td align="left"><code>claude --no-chrome</code></td>
+</tr>
+<tr>
+<td align="left"><code>--no-session-persistence</code></td>
+<td align="left">禁用会话持久化，以便会话不会保存到磁盘且无法恢复。仅打印模式。<a href="/zh-CN/env-vars"><code>CLAUDE_CODE_SKIP_PROMPT_HISTORY</code></a> 环境变量在任何模式下都做同样的事情</td>
+<td align="left"><code>claude -p --no-session-persistence &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--output-format</code></td>
+<td align="left">为打印模式指定输出格式（选项：<code>text</code>、<code>json</code>、<code>stream-json</code>）</td>
+<td align="left"><code>claude -p &quot;query&quot; --output-format json</code></td>
+</tr>
+<tr>
+<td align="left"><code>--permission-mode</code></td>
+<td align="left">以指定的 <a href="/zh-CN/permission-modes">权限模式</a> 开始。接受 <code>default</code>、<code>acceptEdits</code>、<code>plan</code>、<code>auto</code>、<code>dontAsk</code> 或 <code>bypassPermissions</code>。覆盖设置文件中的 <code>defaultMode</code></td>
+<td align="left"><code>claude --permission-mode plan</code></td>
+</tr>
+<tr>
+<td align="left"><code>--permission-prompt-tool</code></td>
+<td align="left">指定 MCP 工具以在非交互模式下处理权限提示</td>
+<td align="left"><code>claude -p --permission-prompt-tool mcp_auth_tool &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--plugin-dir</code></td>
+<td align="left">仅为此会话从目录或 <code>.zip</code> 存档加载插件。每个标志采用一个路径。重复该标志以获取多个插件：<code>--plugin-dir A --plugin-dir B.zip</code></td>
+<td align="left"><code>claude --plugin-dir ./my-plugin</code></td>
+</tr>
+<tr>
+<td align="left"><code>--plugin-url</code></td>
+<td align="left">仅为此会话从 URL 获取插件 <code>.zip</code> 存档。重复该标志以获取多个插件，或在单个引用值中传递以空格分隔的 URL</td>
+<td align="left"><code>claude --plugin-url https://example.com/plugin.zip</code></td>
+</tr>
+<tr>
+<td align="left"><code>--print</code>, <code>-p</code></td>
+<td align="left">打印响应而不进入交互模式（请参阅 <a href="/zh-CN/agent-sdk/overview">Agent SDK 文档</a> 了解编程使用详情）</td>
+<td align="left"><code>claude -p &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--prompt-suggestions</code></td>
+<td align="left">在每轮后发出 <code>prompt_suggestion</code> 消息，带有预测的下一个用户提示。需要 <code>--print</code>、<code>--output-format stream-json</code> 和 <code>--verbose</code>。请参阅 <a href="/zh-CN/interactive-mode#prompt-suggestions">提示建议</a></td>
+<td align="left"><code>claude -p --prompt-suggestions --output-format stream-json --verbose &quot;query&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--remote</code></td>
+<td align="left">在 claude.ai 上创建新的 <a href="/zh-CN/claude-code-on-the-web">网络会话</a>，提供任务描述</td>
+<td align="left"><code>claude --remote &quot;Fix the login bug&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--remote-control</code>, <code>--rc</code></td>
+<td align="left">启动启用了 <a href="/zh-CN/remote-control#start-a-remote-control-session">Remote Control</a> 的交互式会话，以便您也可以从 claude.ai 或 Claude 应用控制它。可选地为会话传递名称</td>
+<td align="left"><code>claude --remote-control &quot;My Project&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--remote-control-session-name-prefix &lt;prefix&gt;</code></td>
+<td align="left">当未设置显式名称时，<a href="/zh-CN/remote-control">Remote Control</a> 自动生成会话名称的前缀。默认为您的机器的主机名，生成名称如 <code>myhost-graceful-unicorn</code>。设置 <code>CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX</code> 以获得相同效果</td>
+<td align="left"><code>claude remote-control --remote-control-session-name-prefix dev-box</code></td>
+</tr>
+<tr>
+<td align="left"><code>--replay-user-messages</code></td>
+<td align="left">从 stdin 重新发出用户消息到 stdout 以进行确认。需要 <code>--input-format stream-json</code> 和 <code>--output-format stream-json</code></td>
+<td align="left"><code>claude -p --input-format stream-json --output-format stream-json --verbose --replay-user-messages</code></td>
+</tr>
+<tr>
+<td align="left"><code>--resume</code>, <code>-r</code></td>
+<td align="left">按 ID 或名称恢复特定会话，或显示交互式选择器以选择会话。包括使用 <code>/add-dir</code> 添加此目录的会话。截至 v2.1.144，<a href="/zh-CN/agent-view">后台会话</a> 在选择器中显示，标记为 <code>bg</code></td>
+<td align="left"><code>claude --resume auth-refactor</code></td>
+</tr>
+<tr>
+<td align="left"><code>--session-id</code></td>
+<td align="left">为对话使用特定的会话 ID（必须是有效的 UUID）</td>
+<td align="left"><code>claude --session-id &quot;550e8400-e29b-41d4-a716-446655440000&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--setting-sources</code></td>
+<td align="left">逗号分隔的设置源列表以加载（<code>user</code>、<code>project</code>、<code>local</code>）</td>
+<td align="left"><code>claude --setting-sources user,project</code></td>
+</tr>
+<tr>
+<td align="left"><code>--settings</code></td>
+<td align="left">设置 JSON 文件的路径或内联 JSON 字符串。您在此处设置的值会覆盖此会话的 <code>settings.json</code> 文件中的相同键。您省略的键保留其基于文件的值。请参阅 <a href="/zh-CN/settings#settings-precedence">设置优先级</a></td>
+<td align="left"><code>claude --settings ./settings.json</code></td>
+</tr>
+<tr>
+<td align="left"><code>--strict-mcp-config</code></td>
+<td align="left">仅使用来自 <code>--mcp-config</code> 的 MCP 服务器，忽略所有其他 MCP 配置</td>
+<td align="left"><code>claude --strict-mcp-config --mcp-config ./mcp.json</code></td>
+</tr>
+<tr>
+<td align="left"><code>--system-prompt</code></td>
+<td align="left">用自定义文本替换整个系统提示</td>
+<td align="left"><code>claude --system-prompt &quot;You are a Python expert&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--system-prompt-file</code></td>
+<td align="left">从文件加载系统提示，替换默认提示</td>
+<td align="left"><code>claude --system-prompt-file ./custom-prompt.txt</code></td>
+</tr>
+<tr>
+<td align="left"><code>--teleport</code></td>
+<td align="left">在本地终端中恢复 <a href="/zh-CN/claude-code-on-the-web">网络会话</a></td>
+<td align="left"><code>claude --teleport</code></td>
+</tr>
+<tr>
+<td align="left"><code>--teammate-mode</code></td>
+<td align="left">设置 <a href="/zh-CN/agent-teams">agent team</a> 队友的显示方式：<code>auto</code>（默认）、<code>in-process</code> 或 <code>tmux</code>。覆盖此会话的 <a href="/zh-CN/settings#available-settings"><code>teammateMode</code></a> 设置。请参阅 <a href="/zh-CN/agent-teams#choose-a-display-mode">选择显示模式</a></td>
+<td align="left"><code>claude --teammate-mode in-process</code></td>
+</tr>
+<tr>
+<td align="left"><code>--tmux</code></td>
+<td align="left">为 worktree 创建 tmux 会话。需要 <code>--worktree</code>。在可用时使用 iTerm2 原生窗格；传递 <code>--tmux=classic</code> 以使用传统 tmux</td>
+<td align="left"><code>claude -w feature-auth --tmux</code></td>
+</tr>
+<tr>
+<td align="left"><code>--tools</code></td>
+<td align="left">限制 Claude 可以使用的内置工具。使用 <code>&quot;&quot;</code> 禁用所有，<code>&quot;default&quot;</code> 表示全部，或工具名称如 <code>&quot;Bash,Edit,Read&quot;</code></td>
+<td align="left"><code>claude --tools &quot;Bash,Edit,Read&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--verbose</code></td>
+<td align="left">启用详细日志记录，显示完整的逐轮输出。覆盖此会话的 <a href="/zh-CN/settings#available-settings"><code>viewMode</code></a> 设置</td>
+<td align="left"><code>claude --verbose</code></td>
+</tr>
+<tr>
+<td align="left"><code>--version</code>, <code>-v</code></td>
+<td align="left">输出版本号</td>
+<td align="left"><code>claude -v</code></td>
+</tr>
+<tr>
+<td align="left"><code>--worktree</code>, <code>-w</code></td>
+<td align="left">在隔离的 <a href="/zh-CN/worktrees">git worktree</a> 中启动 Claude，位于 <code>&lt;repo&gt;/.claude/worktrees/&lt;name&gt;</code>。如果未给出名称，则自动生成一个。传递 <code>#&lt;number&gt;</code> 或 GitHub 拉取请求 URL 以从 <code>origin</code> 获取该 PR 并从其分支 worktree</td>
+<td align="left"><code>claude -w feature-auth</code></td>
+</tr>
+</tbody></table>
+<h3 id="系统提示标志"><a href="#系统提示标志" class="headerlink" title="系统提示标志"></a>系统提示标志</h3><p>Claude Code 提供四个标志用于自定义系统提示。所有四个都在交互和非交互模式下工作。</p>
+<table>
+<thead>
+<tr>
+<th align="left">标志</th>
+<th align="left">行为</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>--system-prompt</code></td>
+<td align="left">替换整个默认提示</td>
+<td align="left"><code>claude --system-prompt &quot;You are a Python expert&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--system-prompt-file</code></td>
+<td align="left">用文件内容替换</td>
+<td align="left"><code>claude --system-prompt-file ./prompts/review.txt</code></td>
+</tr>
+<tr>
+<td align="left"><code>--append-system-prompt</code></td>
+<td align="left">附加到默认提示</td>
+<td align="left"><code>claude --append-system-prompt &quot;Always use TypeScript&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>--append-system-prompt-file</code></td>
+<td align="left">将文件内容附加到默认提示</td>
+<td align="left"><code>claude --append-system-prompt-file ./style-rules.txt</code></td>
+</tr>
+</tbody></table>
+<p><code>--system-prompt</code> 和 <code>--system-prompt-file</code> 互斥。附加标志可以与任一替换标志组合。</p>
+<p>根据 Claude Code 的默认身份是否仍然适合您的任务来选择。当 Claude 应该保持编码助手身份同时遵循您的额外规则时，使用附加标志：每次调用的指令、输出格式或 <code>-p</code> 脚本的域上下文。附加保留默认工具指导、安全指令和编码约定，因此您只需提供不同的部分。当表面、身份或权限模型与 Claude Code 的不同时，使用替换标志，例如管道中没有人监视的非编码代理。替换会删除整个默认提示，包括工具指导和安全指令，因此您需要对任务仍然需要的任何内容负责。</p>
+<p>这些标志仅适用于当前调用。对于可以在项目中切换和共享的持久化角色，请使用 <a href="/zh-CN/output-styles">输出样式</a>。对于 Claude 应该始终遵循的项目约定，请使用 <a href="/zh-CN/memory">CLAUDE.md</a>。<a href="/zh-CN/agent-sdk/modifying-system-prompts#decide-on-a-starting-point">Agent SDK 系统提示指南</a> 更深入地涵盖了相同的决策。</p>
+<h2 id="另请参阅"><a href="#另请参阅" class="headerlink" title="另请参阅"></a>另请参阅</h2><ul>
+<li><a href="/zh-CN/chrome">Chrome 扩展</a> - 浏览器自动化和网络测试</li>
+<li><a href="/zh-CN/interactive-mode">交互模式</a> - 快捷键、输入模式和交互功能</li>
+<li><a href="/zh-CN/quickstart">快速入门指南</a> - Claude Code 入门</li>
+<li><a href="/zh-CN/common-workflows">常见工作流</a> - 高级工作流和模式</li>
+<li><a href="/zh-CN/settings">设置</a> - 配置选项</li>
+<li><a href="/zh-CN/agent-sdk/overview">Agent SDK 文档</a> - 编程使用和集成</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/04/09/cli-reference/">https://hzhzxfs.github.io/2026/04/09/cli-reference/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/10/code-review/" title="code-review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">code-review</div></div><div class="info-2"><div class="info-item-1">Code Review 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题     Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。   Code Review 分析您的 GitHub pull request，并在发现问题的代码行上发布内联评论。一支由专业代理组成的团队在完整代码库的上下文中检查代码更改，寻找逻辑错误、安全漏洞、破损的边界情况和微妙的回归问题。 发现结果按严重程度标记，不会批准或阻止您的 PR，因此现有的审查工作流保持不变。您可以通过向存储库添加 CLAUDE.md 或 REVIEW.md 文件来调整 Claude 标记的内容。 要在您自己的 CI 基础设施中运行 Claude 而不是使用此托管服务，请参阅 GitHub Actions 或 GitLab ...</div></div></div></a><a class="pagination-related" href="/2026/04/07/claude-code-on-the-web/" title="claude-code-on-the-web"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">claude-code-on-the-web</div></div><div class="info-2"><div class="info-item-1">在网络上使用 Claude Code 配置云环境、设置脚本、网络访问和 Docker，在 Anthropic 的沙箱中运行。使用 --remote 和 --teleport 在网络和终端之间移动会话。     Claude Code on the web 处于研究预览阶段，适用于 Pro、Max 和 Team 用户，以及拥有高级席位或 Chat + Claude Code 席位的 Enterprise 用户。   Claude Code on the web 在 claude.ai&#x2F;code 的 Anthropic 管理的云基础设施上运行任务。会话即使在关闭浏览器后也会持续，你可以从 Claude 移动应用监控它们。    初次使用 Claude Code on the web？从[入门](/zh-CN/web-quickstart)开始，连接你的 GitHub 账户并提交你的第一个任务。   本页涵盖：  GitHub 身份验证选项：两种连接 GitHub 的方式 云环境：哪些配置会保留、安装了哪些工具以及如何配置环境 设置脚本和依赖管理 网络访问：级别、代理和默认允...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/14/features-overview/" title="features-overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">features-overview</div></div><div class="info-2"><div class="info-item-1">扩展 Claude Code 了解何时使用 CLAUDE.md、Skills、subagents、hooks、MCP 和 plugins。  Claude Code 结合了一个能够推理代码的模型和内置工具，用于文件操作、搜索、执行和网络访问。内置工具涵盖了大多数编码任务。本指南涵盖扩展层：您添加的功能，用于自定义 Claude 的知识、将其连接到外部服务以及自动化工作流。    有关核心代理循环如何工作的信息，请参阅 [Claude Code 如何工作](/zh-CN/how-claude-code-works)。   初次使用 Claude Code？ 从 CLAUDE.md 开始了解项目约定，然后根据需要添加其他扩展当特定触发器出现时。 概述扩展插入代理循环的不同部分：  CLAUDE.md 添加 Claude 每个会话都能看到的持久上下文 Skills 添加可重用的知识和可调用的工作流 代码智能 将 Claude 连接到语言服务器，用于符号级导航和实时类型错误 MCP 将 Claude 连接到外部服务和工具 Subagents 在隔离的上下文中运行自己的循环，返回摘要 Ag...</div></div></div></a><a class="pagination-related" href="/2026/02/01/1.Introduction%EF%BC%88%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D%EF%BC%89/" title="1.Introduction（课程介绍）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-01</div><div class="info-item-2">1.Introduction（课程介绍）</div></div><div class="info-2"><div class="info-item-1">第一节：Introduction（课程介绍） 1、课程概述本课程是 DeepLearning.AI 与 Anthropic 合作打造的 Agent Skills 专项课程，由回归讲师 Elie Schoppik 主讲。 在本课程中，我们将探讨 Skills 如何赋能 Claude 及其他 AI 智能体执行复杂任务。技能通过向智能体提供专门的指令和知识来扩展其能力。  理解 Skills 的工作原理 掌握创建 Skills 构建适用于不同场景的 Skills（包括编程、研究、数据分析等）   2、什么是“Skills”？什么是 Agent Skills？Agent Skills 是一种扩展智能体能力的模块化指令集合。通过技能，Claude 和其他 AI 智能体可以获得执行特定任务的新能力。 Skills 是文件夹形式的指令集合，用于扩展智能体的能力，赋予其专门的知识来执行任务。 Skills 的核心特点 开放标准：Skills 现在是一个开放标准，采用标准化格式，可与任何兼容的智能体产品配合使用 一次构建，多处部署：你可以构建一次技能，然后在多个智能体产品中部署使用 渐进式披露：技...</div></div></div></a><a class="pagination-related" href="/2026/05/18/18-Hooks%E7%B3%BB%E7%BB%9F/" title="18-Hooks系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-18</div><div class="info-item-2">18-Hooks系统</div></div><div class="info-2"><div class="info-item-1">第 18 篇：Hooks 系统 — 用 Shell 命令扩展 AI 行为 本篇是《深入 Claude Code 源码》系列第 18 篇。我们将深入 Hooks 系统的完整实现，揭示 Claude Code 如何让用户在 AI 生命周期的关键节点注入自定义逻辑，以及这套系统在安全性、可扩展性和性能上的精巧设计。  为什么需要 Hooks？想象一个场景：你希望 Claude Code 在每次执行 Write 工具后自动运行 prettier 格式化代码，或者在 Session 启动时自动加载项目特定的环境变量，又或者在模型即将结束回答时用一个验证脚本检查代码质量。 这些需求有一个共同特征：它们不是 AI 本身的能力，而是用户希望在 AI 工作流的特定节点注入的自定义行为。 Hooks 系统正是为此而生。它是 Claude Code 的”生命周期钩子”框架 —— 类似于 Git Hooks、Webpack Plugins 或 React 的 useEffect，但面向的是 AI Agent 的执行周期。用户通过 settings.json 声明：在哪个事件（event）、匹配什么条件（...</div></div></div></a><a class="pagination-related" href="/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/" title="9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</div></div><div class="info-2"><div class="info-item-1">第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专家” (Sub-agents) 进行分工协作，最终通过 MCP 将成果交付到外部系统 (Notion)。  1. 核心架构：指挥官与专家团队 (The Architecture)我们使用 SDK 构建的系统架构可以映射为传统的企业组织结构：    架构层级 概念隐喻 (Metaphor) 代码组件 (SDK Component) 本案具体实现 (Implementation)    The Brain 指挥官 &#x2F; 编排者 Main Agent + TaskTool 负责理解需求，加载技能制定计划，分派任务，最后合成报告。   The Arms 专家 &#x2F; 执行者 Age...</div></div></div></a><a class="pagination-related" href="/2026/03/07/prompt-caching/" title="prompt-caching"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-07</div><div class="info-item-2">prompt-caching</div></div><div class="info-2"><div class="info-item-1">Claude Code 如何使用 prompt caching Claude Code 自动管理 prompt caching。了解为什么模型切换会触发缓慢的未缓存回合、/compact 的成本、为什么 CLAUDE.md 编辑在会话中期不适用，以及如何检查缓存命中率。  Prompt caching 使 Claude Code 更快、更经济高效。没有缓存，API 会在每个回合重新处理您的完整历史记录。有了缓存，它会重用已经处理过的内容，只对更改的部分进行新工作。 Claude Code 为您处理 prompt caching，除非您禁用它。了解 prompt caching 的工作原理仍然很有用，因为某些操作会使缓存失效，使下一个响应更慢、更昂贵，同时它重建缓存。本页涵盖哪些操作会这样做、为什么某些设置等待重启才能应用，以及当使用量看起来很高时如何检查缓存性能。 缓存的组织方式每次您在 Claude Code 中发送消息时，它都会发出新的 API 请求。模型在请求之间不记得任何东西，所以 Claude Code 重新发送完整的上下文：系统提示、您的项目上下文、每条先前的消息和工...</div></div></div></a><a class="pagination-related" href="/2026/03/02/mcp/" title="mcp"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-02</div><div class="info-item-2">mcp</div></div><div class="info-2"><div class="info-item-1">通过 MCP 将 Claude Code 连接到工具 了解如何使用 Model Context Protocol 将 Claude Code 连接到您的工具。  Claude Code 可以通过 Model Context Protocol (MCP)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。 当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。 如果您是第一次连接服务器，请从 MCP 快速入门 开始，获取分步演练。本页面是完整参考。 使用 MCP 可以做什么连接 MCP 服务器后，您可以要求 Claude Code：  从问题跟踪器实现功能：”添加 JIRA 问题 ENG-4521 中描述的功能，并在 GitHub 上创建 PR。” 分析监控数据：”检查 Sentry 和 Statsig 以检查 ENG-4521 中描述的功能的使用情况。” 查询数据库：...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CLI-%E5%8F%82%E8%80%83"><span class="toc-number">1.</span> <span class="toc-text">CLI 参考</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CLI-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">CLI 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CLI-%E6%A0%87%E5%BF%97"><span class="toc-number">1.2.</span> <span class="toc-text">CLI 标志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E6%A0%87%E5%BF%97"><span class="toc-number">1.2.1.</span> <span class="toc-text">系统提示标志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%A6%E8%AF%B7%E5%8F%82%E9%98%85"><span class="toc-number">1.3.</span> <span class="toc-text">另请参阅</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

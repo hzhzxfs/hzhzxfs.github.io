@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Qwen3-Omni没有vllm_config属性 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config &#x3D; vllm_config">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qwen3-Omni没有vllm_config属性">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config &#x3D; vllm_config">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-08-07T07:57:07.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.499Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Qwen3-Omni没有vllm_config属性",
+  "url": "https://hzhzxfs.github.io/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-08-07T07:57:07.000Z",
+  "dateModified": "2026-06-10T02:14:46.499Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Qwen3-Omni没有vllm_config属性',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Qwen3-Omni没有vllm_config属性</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Qwen3-Omni没有vllm_config属性</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-07T07:57:07.000Z" title="发表于 2025-08-07 15:57:07">2025-08-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.499Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Qwen3OmniMoeThinkerForConditionalGeneration</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">...</span>):</span><br><span class="line">        <span class="variable language_">self</span>.vllm_config = vllm_config</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/">https://hzhzxfs.github.io/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/" title="Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错</div></div><div class="info-2"><div class="info-item-1">12345678# localscp -P 8333 images.zip root@139.9.155.20:/media/# remotesudo apt updatesudo apt install -y unzipcd /mediaunzip images.zip  准备图片： 12345678910111213141516#!/usr/bin/env bashimage_base64=$(base64 -w 0 /media/b0.jpg)cat &gt; /media/image_request.json &lt;&lt;EOF&#123;    &quot;model&quot;: &quot;/root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct&quot;,    &quot;messages&quot;: [        &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpfu...</div></div></div></a><a class="pagination-related" href="/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/" title="Qwen2.5-VL_RoPE计算流程详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Qwen2.5-VL_RoPE计算流程详解</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程整个流程从 forward(x, grid_thw) 开始，分为以下几个阶段：  第一步：初始化时预计算 cos&#x2F;sin 缓存qwen2_5_vl.py:608-612 123456self.rotary_pos_emb = get_rope(    head_size=head_dim,    max_position=8192,    is_neox_style=True,    rope_parameters=&#123;&quot;partial_rotary_factor&quot;: 0.5&#125;,)  get_rope 最终创建一个 RotaryEmbedding 对象，关键参数：  rotary_dim = head_dim * 0.5 → 只使用一半的 head 维度做旋转 在 _compute_cos_sin_cache 中(base.py:83-92)：  12345# inv_freq 形状: [rotary_dim // 2]inv_fr...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/12/13/%E6%98%87%E8%85%BEempty_cache%E5%8E%9F%E7%90%86/" title="昇腾empty_cache原理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-13</div><div class="info-item-2">昇腾empty_cache原理</div></div><div class="info-2"><div class="info-item-1">这是个非常好的观察，而且你没有看错 👍在 vLLM-Ascend（NPU） 上，torch.npu.empty_cache() 确实可能导致 non-torch 显存下降，这和 CUDA 的行为本质不同。 下面我分「结论 → 原因 → 机制细节 → vLLM 场景」把这件事讲清楚。  一句话结论（先给你） 在 Ascend &#x2F; torch-npu 上：torch.npu.empty_cache() 不仅仅是 PyTorch cache 操作，它会间接触发 Ascend Runtime &#x2F; ACL 的内存回收路径，从而 释放部分 non-torch（runtime &#x2F; kernel &#x2F; workspace）显存。  这在 CUDA 上几乎不会发生，但在 Ascend 上是“设计如此”。  1️⃣ 为什么 CUDA 上不行，Ascend 上却行？CUDA（torch.cuda.empty_cache） 只操作 PyTorch CUDACachingAllocator  不会触发：  CUDA Runtime 内部 pool cuBLAS &#...</div></div></div></a><a class="pagination-related" href="/2025/11/10/vLLM2.md/" title="vLLM2.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-10</div><div class="info-item-2">vLLM2.md</div></div><div class="info-2"><div class="info-item-1">一、引言vLLM V1 是 vLLM 团队基于 V0 的实践经验并参考工业界其它相关工作提出的最新架构，从 vLLM 0.8.x 版本开始，V1 Engine 将作为 vLLM 启动时的默认选项。 相比于 V0，vLLM V1 具有以下优势：  可读性：代码更加简洁易懂、更加模块化； 高性能：提供更好的推理性能，使用双进程异步处理不同的 CPU 操作，极大地降低了推理的时延和开销； 易扩展：可以轻松集成多样化的特性； 易用性：简化了配置，会默认开启一些特性，以提供更好的性能和体验。  下面，本文将揭秘 vLLM V1 从接收请求到算子执行的推理全流程（附超长流程图，画图不易，欢迎点赞 &amp; 收藏~）。 二、整体概览在深入具体细节之前，让我们先从整体上认识下 V1 Engine 的推理流程。 下面是 vLLM 官方博客中提供的 V1 Engine 在线推理架构图。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU 操作，减少了不同步骤之间相互等待的时间，因此能够更好地压榨硬件的计算性能。   Process 0...</div></div></div></a><a class="pagination-related" href="/2025/12/12/%E6%8E%A8%E7%90%86%E6%98%BE%E5%AD%98%E8%AE%A1%E7%AE%97/" title="推理显存计算"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-12</div><div class="info-item-2">推理显存计算</div></div><div class="info-2"><div class="info-item-1">推理显存计算推理所需显存 &#x3D; 模型参数部分 + 激活参数部分 + KVCache 部分  模型参数部分 &#x3D; 模型参数量 × 精度系数 激活参数部分 &#x3D; 激活参数量 × 精度系数 KVCache 部分 &#x3D; 并发数 ×（输入 Token 数 + 输出 Token 数）× 2（K 和 V）× 层数 × hidden_size × 精度系数   参考资料：模型显存计算逻辑  </div></div></div></a><a class="pagination-related" href="/2025/08/09/Qwen3-VL-8B%E6%8E%A8%E7%90%86%E7%BB%93%E6%9E%9C%E4%B8%BA%E7%A9%BA/" title="Qwen3-VL-8B推理结果为空"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-09</div><div class="info-item-2">Qwen3-VL-8B推理结果为空</div></div><div class="info-2"><div class="info-item-1">123456789101112131415161718192021222324252627python -m vllm.entrypoints.openai.api_server \--model /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct \--dtype bfloat16 \--gpu-memory-utilization 0.9 \--max-model-len 8192  \--max_num_batched_tokens 8192--host 0.0.0.0 \--port 8000 \--compilation-config &#x27;&#123;&quot;cudagraph_capture_sizes&quot;: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]&#125;&#x27;curl -X POST http://localhost:8000/v1/chat/completions \    -H &quot;Content-Type: app...</div></div></div></a><a class="pagination-related" href="/2025/10/08/vLLM%20%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8E%A8%E7%90%86%EF%BD%9C%E5%8D%B7%E7%A7%AF%E8%AE%A1%E7%AE%97%E5%8A%A0%E9%80%9F/" title="vLLM 多模态推理｜卷积计算加速"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-08</div><div class="info-item-2">vLLM 多模态推理｜卷积计算加速</div></div><div class="info-2"><div class="info-item-1">vLLM 多模态推理｜卷积计算加速一、引言卷积运算是 VL 等多模态模型在处理图像、视频等数据时的核心步骤之一，使用 img2col 算法可以将输入数据和卷积核展平为两个大的矩阵，并通过一次高效的矩阵乘法得到卷积结果，从而极大地提升计算的效率。本文将详细讲解 img2col 算法的基本原理和代码实现，并对 vLLM 中的卷积算子进行介绍。 二、卷积的基本原理在讲解 img2col 算法之前，我们先简单介绍下什么是卷积运算（Convolution）。 简单来说，卷积运算就是一个小窗口（一般称为“卷积核”或“滤波器”）在一个大的输入数据（如图片）上滑动，并在每个位置计算点积，最终生成一个新的、更精炼的特征图的过程。其中，卷积核一般使用正方形，比如在下图中，使用的就是一个 3 x 3 的卷积核（卷积核的通道数 &#x3D; 输入的通道数，一般为 3，代表图像的红、绿、蓝三种颜色）。  卷积的计算过程：  属于同一输入通道的卷积核在对应的图像数据上进行滑动，并在每一个位置处计算这 9 个数据的点积和； 将每个输入通道的计算结果在每个位置上进行相加，得到形状为 (1, 3, 3) 的输出；...</div></div></div></a><a class="pagination-related" href="/2025/08/14/qwen3_vl_video_cudagraph_implementation/" title="qwen3_vl_video_cudagraph_implementation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-14</div><div class="info-item-2">qwen3_vl_video_cudagraph_implementation</div></div><div class="info-2"><div class="info-item-1">Qwen3-VL 视频模态 Full CUDA Graph 支持实现基于 PR #35963（已合入 main），在其图像 CUDA Graph 支持的基础上，扩展实现视频模态的 Full CUDA Graph 支持。  修改文件总览   文件 改动类型 说明    vllm/v1/worker/gpu/mm/encoder_cudagraph_defs.py 数据结构扩展 新增多模态配置字段和状态字段   vllm/v1/worker/gpu/mm/encoder_cudagraph.py 核心逻辑扩展 per-modality budget 管理、自动模态检测、时序帧约束检查   vllm/model_executor/models/interfaces.py 协议扩展 新增 get_encoder_cudagraph_num_seqs 方法   vllm/model_executor/models/qwen3_vl.py 模型实现 为所有协议方法添加视频支持   tests/v1/cudagraph/test_encoder_cudagraph.py 测试更新 适配新的多模...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

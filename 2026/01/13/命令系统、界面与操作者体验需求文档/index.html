@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>命令系统、界面与操作者体验需求文档 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="05. 命令系统、界面与操作者体验需求文档1. 为什么命令系统是一级产品能力这类产品不是单轮对话工具，而是一个长期运行的操作者界面。因此，命令系统不是附属功能，而是操作面板。 2. 命令系统需求产品需要支持用户快速控制以下对象：  memory permissions hooks mcp skills tasks review &#x2F; plan &#x2F; status 输出风格 mode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令系统、界面与操作者体验需求文档">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/13/%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="05. 命令系统、界面与操作者体验需求文档1. 为什么命令系统是一级产品能力这类产品不是单轮对话工具，而是一个长期运行的操作者界面。因此，命令系统不是附属功能，而是操作面板。 2. 命令系统需求产品需要支持用户快速控制以下对象：  memory permissions hooks mcp skills tasks review &#x2F; plan &#x2F; status 输出风格 mode">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-13T07:55:53.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.558Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "命令系统、界面与操作者体验需求文档",
+  "url": "https://hzhzxfs.github.io/2026/01/13/%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-13T07:55:53.000Z",
+  "dateModified": "2026-06-10T02:14:46.558Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/13/%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '命令系统、界面与操作者体验需求文档',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">命令系统、界面与操作者体验需求文档</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">命令系统、界面与操作者体验需求文档</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-13T07:55:53.000Z" title="发表于 2026-01-13 15:55:53">2026-01-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.558Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="05-命令系统、界面与操作者体验需求文档"><a href="#05-命令系统、界面与操作者体验需求文档" class="headerlink" title="05. 命令系统、界面与操作者体验需求文档"></a>05. 命令系统、界面与操作者体验需求文档</h1><h2 id="1-为什么命令系统是一级产品能力"><a href="#1-为什么命令系统是一级产品能力" class="headerlink" title="1. 为什么命令系统是一级产品能力"></a>1. 为什么命令系统是一级产品能力</h2><p>这类产品不是单轮对话工具，而是一个长期运行的操作者界面。因此，命令系统不是附属功能，而是操作面板。</p>
+<h2 id="2-命令系统需求"><a href="#2-命令系统需求" class="headerlink" title="2. 命令系统需求"></a>2. 命令系统需求</h2><p>产品需要支持用户快速控制以下对象：</p>
+<ul>
+<li>memory</li>
+<li>permissions</li>
+<li>hooks</li>
+<li>mcp</li>
+<li>skills</li>
+<li>tasks</li>
+<li>review &#x2F; plan &#x2F; status</li>
+<li>输出风格</li>
+<li>model</li>
+<li>sandbox</li>
+<li>插件管理</li>
+</ul>
+<h2 id="3-命令系统的产品目标"><a href="#3-命令系统的产品目标" class="headerlink" title="3. 命令系统的产品目标"></a>3. 命令系统的产品目标</h2><ol>
+<li>降低复杂能力的学习成本</li>
+<li>提供清晰的系统控制入口</li>
+<li>把高级功能从自然语言里解耦出来</li>
+<li>为插件和技能提供统一入口面</li>
+</ol>
+<h2 id="4-UI-TUI-的核心需求"><a href="#4-UI-TUI-的核心需求" class="headerlink" title="4. UI &#x2F; TUI 的核心需求"></a>4. UI &#x2F; TUI 的核心需求</h2><h3 id="4-1-任务可见性"><a href="#4-1-任务可见性" class="headerlink" title="4.1 任务可见性"></a>4.1 任务可见性</h3><p>用户需要看到：</p>
+<ul>
+<li>当前在做什么</li>
+<li>后台任务是否运行中</li>
+<li>子 agent 在做什么</li>
+<li>哪些动作在等待权限</li>
+</ul>
+<h3 id="4-2-状态反馈"><a href="#4-2-状态反馈" class="headerlink" title="4.2 状态反馈"></a>4.2 状态反馈</h3><p>系统需要及时反馈：</p>
+<ul>
+<li>进度</li>
+<li>错误</li>
+<li>被阻断原因</li>
+<li>工具运行状态</li>
+</ul>
+<h3 id="4-3-结构化展示"><a href="#4-3-结构化展示" class="headerlink" title="4.3 结构化展示"></a>4.3 结构化展示</h3><p>系统需要把复杂状态结构化展示出来，例如：</p>
+<ul>
+<li>memory 面板</li>
+<li>permissions 面板</li>
+<li>skills 列表</li>
+<li>hooks 状态</li>
+<li>mcp 状态</li>
+<li>tasks 状态</li>
+</ul>
+<h2 id="5-为什么操作者体验是核心需求"><a href="#5-为什么操作者体验是核心需求" class="headerlink" title="5. 为什么操作者体验是核心需求"></a>5. 为什么操作者体验是核心需求</h2><p>如果系统很强，但用户看不懂当前状态，就会产生：</p>
+<ul>
+<li>不信任</li>
+<li>不敢授权</li>
+<li>不知道何时干预</li>
+<li>不知道下一步怎么控制</li>
+</ul>
+<p>因此产品必须让操作者感觉：</p>
+<ul>
+<li>任务是透明的</li>
+<li>系统是可控的</li>
+<li>能力是可发现的</li>
+</ul>
+<h2 id="6-后台任务与通知需求"><a href="#6-后台任务与通知需求" class="headerlink" title="6. 后台任务与通知需求"></a>6. 后台任务与通知需求</h2><p>一旦支持 background agents，系统就必须支持：</p>
+<ul>
+<li>后台任务注册</li>
+<li>进度更新</li>
+<li>完成通知</li>
+<li>输出文件查看</li>
+<li>必要时 kill &#x2F; cancel</li>
+</ul>
+<h2 id="7-命令系统的扩展需求"><a href="#7-命令系统的扩展需求" class="headerlink" title="7. 命令系统的扩展需求"></a>7. 命令系统的扩展需求</h2><p>命令系统还必须允许：</p>
+<ul>
+<li>内建命令</li>
+<li>插件命令</li>
+<li>skill 入口</li>
+<li>条件启用的功能命令</li>
+</ul>
+<h2 id="8-产品经理视角下的总需求句"><a href="#8-产品经理视角下的总需求句" class="headerlink" title="8. 产品经理视角下的总需求句"></a>8. 产品经理视角下的总需求句</h2><blockquote>
+<p>这套产品不仅要有能力，还要有可操作性。命令系统与界面层的目标，是把复杂的 AI 运行时变成用户可发现、可控制、可追踪的操作者体验。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/13/%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/">https://hzhzxfs.github.io/2026/01/13/%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/14/%E5%A4%B1%E8%B4%A5%E5%A4%84%E7%90%86%E4%B8%8E%E6%81%A2%E5%A4%8D%E8%A7%84%E6%A0%BC/" title="失败处理与恢复规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">失败处理与恢复规格</div></div><div class="info-2"><div class="info-item-1">13. 失败处理与恢复规格1. 目标Agent 系统不能把失败当成异常边缘情况。失败是常态，系统必须有明确恢复策略。 2. 失败类型建议至少区分：  tool_input_error permission_denied hook_blocked shell_runtime_error model_api_error prompt_too_long mcp_connect_error task_killed resume_load_error session_storage_error  3. 各类失败处理原则tool_input_error 直接回写错误给模型 不执行真实工具  permission_denied 不重复原样调用 引导模型调整方案  hook_blocked 将阻断原因结构化返回 允许模型或用户后续处理  prompt_too_long 触发 compact &#x2F; reactive compact 必要时重建消息序列后重试  model_api_error 保留错误记录 可尝试有限恢复  4. resume 恢复需求系统必须支持：  读取 transcri...</div></div></div></a><a class="pagination-related" href="/2026/01/12/%E4%BB%BB%E5%8A%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E8%A7%84%E6%A0%BC/" title="任务模型与后台执行规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">任务模型与后台执行规格</div></div><div class="info-2"><div class="info-item-1">11. 任务模型与后台执行规格1. 目标任务系统负责把“一个 agent 在做什么”变成可追踪对象，而不是只存在于对话文本里。 2. 任务类型Python 版建议至少支持：  main_session_task local_agent_task background_agent_task shell_task verification_task remote_task（可后置）  3. 核心任务字段123456789101112131415class TaskRecord:    task_id: str    type: str    session_id: str    parent_task_id: str | None    agent_id: str | None    description: str    status: str    created_at: float    started_at: float | None    finished_at: float | None    output_path: str | None    error: str |...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/03/MCP%20%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98/" title="MCP 解决什么问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-03</div><div class="info-item-2">MCP 解决什么问题</div></div><div class="info-2"><div class="info-item-1">MCP 解决什么问题在 Agent 系统中，让Agent做出重要的决定的一个关键点是构造好的 /chat/completions 请求参数，参数中：  messages 参数：给出对话历史，历史中包含的背景信息质量越高，给出的答案就会更准确； tools 参数：给出模型可用的工具，用于获取动态信息或执行某些动作。  这两个参数都可以认为是我们给模型的上下文信息。（context） message 的内容和问题messages 是一个数组，数组中的 content 的值是 user 给出的信息，或者其他角色的历史输出信息。如果是 user 给出的信息，则一般的做法是用一个 prompt template来组织基本的 prompt 结构，并将一些动态的信息通过其他方式检索到，补充道 prompt template中的占位符，从而形成最终输入模型的 prompt。 要得到最好的解，不同的问题需要不同的 prompt template。这是一个难点 tools 的内容和问题/chat/completions 接受的 tool 是有一定的 schema 规定，而一般的工具（如RESTful...</div></div></div></a><a class="pagination-related" href="/2025/09/13/multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-13</div><div class="info-item-2">multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition</div></div><div class="info-2"><div class="info-item-1">🔀 使用 Azure AI Foundry (.NET) 的条件代理工作流程📋 基于智能决策的工作流程教程本笔记本演示了使用 Azure AI Foundry 和 Microsoft Agent Framework for .NET 的条件工作流模式。您将学习如何构建复杂的、决策驱动的工作流程，根据人工智能分析、业务规则和企业级自动化的动态条件智能地路由处理。 🎯 学习目标🧠 智能决策架构 条件逻辑实现：构建具有多个分支点的复杂决策树 AI 支持的路由：使用 Azure AI Foundry 模型做出智能路由决策 动态工作流程适应：根据运行时分析和条件修改工作流程行为 企业规则集成：将业务逻辑和合规性要求纳入工作流程中  🔀 高级条件模式 多标准决策：评估路由决策的多个因素 上下文感知处理：根据累积的工作流上下文和历史记录做出决策 自适应工作流程修改：根据实时情况动态调整处理路径 规则引擎集成：在工作流程中实施复杂的业务规则引擎  🏢 企业有条件申请 文档分类和路由：自动分类文档并将其路由到适当的工作流程 客户服务分类：将客户询问智能路由至专业处理团队 合规与风险处理...</div></div></div></a><a class="pagination-related" href="/2025/09/05/dotnet-agent-framework/" title="dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-05</div><div class="info-item-2">dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🔍 带有 Azure AI Foundry (.NET) 的企业 RAG📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 Azure AI Foundry 构建企业级检索增强生成 (RAG) 系统。您将学习创建可用于搜索文档并提供准确的上下文感知响应以及企业安全性和可扩展性的生产就绪代理。 您将构建的企业 RAG 功能：  📚 文档智能：使用 Azure AI 服务进行高级文档处理 🔍 语义搜索：具有企业功能的高性能矢量搜索 🛡️ 安全集成：基于角色的访问和数据保护模式 🏢 可扩展架构：具有监控功能的生产就绪 RAG 系统  🎯 企业 RAG 架构核心企业组件 Azure AI Foundry：具有安全性和合规性的托管企业 AI 平台 持久代理：具有对话历史记录和上下文管理的状态代理 矢量存储管理：企业级文档索引和检索 身份集成：Azure AD 身份验证和基于角色的访问控制  .NET 企业优势 类型安全：RAG 操作和数据结构的编译时验证 异步性能：非阻塞文档处理和搜索操作 内存管理：大型文档集合的高效资...</div></div></div></a><a class="pagination-related" href="/2025/09/06/explore-agentic-frameworks__azure-ai-foundry-agent-creation/" title="explore-agentic-frameworks__azure-ai-foundry-agent-creation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-06</div><div class="info-item-2">explore-agentic-frameworks__azure-ai-foundry-agent-creation</div></div><div class="info-2"><div class="info-item-1">Azure AI代理服务开发在本练习中，您将使用 Microsoft Foundry 门户 中的 Azure AI 代理服务工具创建航班预订代理。该代理将能够与用户交互并提供有关航班的信息。 先决条件要完成此练习，您需要具备以下条件：  具有有效订阅的 Azure 帐户。 免费创建帐户。 您需要获得创建 Microsoft Foundry 中心的权限或有人为您创建一个中心。 如果您的角色是贡献者或所有者，您可以按照本教程中的步骤操作。    创建 Microsoft Foundry 中心 注： Microsoft Foundry 以前称为 Azure AI Studio。   请按照 Microsoft Foundry 博客文章中的指南创建 Microsoft Foundry 中心。  创建项目后，关闭显示的所有提示并查看 Microsoft Foundry 门户中的项目页面，该页面应类似于下图：     部署模型 在项目左侧窗格的 我的资产 部分中，选择 模型 + 端点 页面。  在 模型 + 端点 页面的 模型部署 选项卡中，在 + 部署模型 菜单中，选择 部署基础模型。  ...</div></div></div></a><a class="pagination-related" href="/2026/06/03/Multi-Agent/" title="Multi-Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-03</div><div class="info-item-2">Multi-Agent</div></div><div class="info-2"><div class="info-item-1">最近，小J在尝试用 AI Agent 为一个中等规模的代码库完整添加国际化（i18n）支持。 理论上，这是一类非常适合 AI 处理的任务：规则明确，需要识别所有硬编码字符串并替换为t(‘KEY’)的形式，同时在语言文件中补充对应键值；任务重复性高，几乎不需要创造性。 一开始进展顺利。Agent 像一台推土机一样，一个文件接一个文件地处理代码。但几个小时后，情况开始失控。对话历史、数百行代码搜索结果、工具调用日志、Linter 报错、人工补充指令……所有信息都被不断塞进同一个上下文窗口。Agent 的响应速度从秒级下降到分钟级，随后开始“胡言乱语”。它会突然忘记之前已经处理过的文件，在一个无关的函数里问我“这个变量是什么意思”，甚至开始修改一些完全不相关的业务逻辑。 最终，当一个简单的 JSON 配置文件也被改得面目全非时，小宁只能选择终止任务。原本寄予厚望的 AI 助手，变成了一个堆满草稿、废弃代码和错误日志的“垃圾场”。  单一 Agent 模式中，上下文不断堆积，噪声与历史信息会持续侵蚀主流程 这次失败揭示了一个关键问题：当任务复杂度超过一定阈值时，单一 Agent 模式极易...</div></div></div></a><a class="pagination-related" href="/2025/09/03/agentic-protocols__code_samples__github-mcp__event-descriptions/" title="agentic-protocols__code_samples__github-mcp__event-descriptions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-03</div><div class="info-item-2">agentic-protocols__code_samples__github-mcp__event-descriptions</div></div><div class="info-2"><div class="info-item-1">活动名称：使用 Azure AI 代理服务构建代码优先应用程序（欧洲、中东和非洲&#x2F;美国产品）描述Azure AI 代理服务是服务和 SDK 的无缝结合，可简化强大的 AI 驱动解决方案的开发。在本次会议中，你将了解如何使用 Azure 构建自己的代码优先 AI 代理，该代理可以回答问题、执行数据分析以及集成外部数据源。您还将探索更复杂的架构，包括多个代理一起工作。 网址https://developer.microsoft.com/en-us/reactor/events/25325/  活动名称：使用语义内核通过多代理 AI 转变业务流程描述通过现场演示和实践学习，了解多智能体人工智能系统的强大功能，包括群聊、反射、选择器和群体模式。利用语义内核流程框架来自动化和扩展关键业务流程，从客户支持到使用 Python 的项目管理 网址https://developer.microsoft.com/en-us/reactor/events/25313/  活动名称：使用 AutoGen v0.4 构建代理应用程序描述开始使用 AutoGen v0.4 构建代理和多代理团队。我...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#05-%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E3%80%81%E7%95%8C%E9%9D%A2%E4%B8%8E%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3"><span class="toc-number">1.</span> <span class="toc-text">05. 命令系统、界面与操作者体验需求文档</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E6%98%AF%E4%B8%80%E7%BA%A7%E4%BA%A7%E5%93%81%E8%83%BD%E5%8A%9B"><span class="toc-number">1.1.</span> <span class="toc-text">1. 为什么命令系统是一级产品能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E9%9C%80%E6%B1%82"><span class="toc-number">1.2.</span> <span class="toc-text">2. 命令系统需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%A7%E5%93%81%E7%9B%AE%E6%A0%87"><span class="toc-number">1.3.</span> <span class="toc-text">3. 命令系统的产品目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-UI-TUI-%E7%9A%84%E6%A0%B8%E5%BF%83%E9%9C%80%E6%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">4. UI &#x2F; TUI 的核心需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%BB%BB%E5%8A%A1%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 任务可见性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%8A%B6%E6%80%81%E5%8F%8D%E9%A6%88"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 状态反馈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%BB%93%E6%9E%84%E5%8C%96%E5%B1%95%E7%A4%BA"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 结构化展示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%93%8D%E4%BD%9C%E8%80%85%E4%BD%93%E9%AA%8C%E6%98%AF%E6%A0%B8%E5%BF%83%E9%9C%80%E6%B1%82"><span class="toc-number">1.5.</span> <span class="toc-text">5. 为什么操作者体验是核心需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%90%8E%E5%8F%B0%E4%BB%BB%E5%8A%A1%E4%B8%8E%E9%80%9A%E7%9F%A5%E9%9C%80%E6%B1%82"><span class="toc-number">1.6.</span> <span class="toc-text">6. 后台任务与通知需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%89%A9%E5%B1%95%E9%9C%80%E6%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text">7. 命令系统的扩展需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E6%80%BB%E9%9C%80%E6%B1%82%E5%8F%A5"><span class="toc-number">1.8.</span> <span class="toc-text">8. 产品经理视角下的总需求句</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

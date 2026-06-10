@@ -1,0 +1,618 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>best-practices | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Claude Code 最佳实践 从配置环境到跨并行会话扩展，充分利用 Claude Code 的提示和模式。  Claude Code 是一个代理式编码环境。与等待回答问题的聊天机器人不同，Claude Code 可以读取你的文件、运行命令、进行更改，并在你观看、重定向或完全离开的情况下自主解决问题。 这改变了你的工作方式。与其自己编写代码并要求 Claude 审查，不如描述你想要什么，让 Cl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="best-practices">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/04/04/best-practices/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Claude Code 最佳实践 从配置环境到跨并行会话扩展，充分利用 Claude Code 的提示和模式。  Claude Code 是一个代理式编码环境。与等待回答问题的聊天机器人不同，Claude Code 可以读取你的文件、运行命令、进行更改，并在你观看、重定向或完全离开的情况下自主解决问题。 这改变了你的工作方式。与其自己编写代码并要求 Claude 审查，不如描述你想要什么，让 Cl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-04-04T05:32:21.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.587Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "best-practices",
+  "url": "https://hzhzxfs.github.io/2026/04/04/best-practices/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-04-04T05:32:21.000Z",
+  "dateModified": "2026-06-10T02:14:46.587Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/04/04/best-practices/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'best-practices',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">best-practices</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">best-practices</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-04T05:32:21.000Z" title="发表于 2026-04-04 13:32:21">2026-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.587Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Claude-Code-最佳实践"><a href="#Claude-Code-最佳实践" class="headerlink" title="Claude Code 最佳实践"></a>Claude Code 最佳实践</h1><blockquote>
+<p>从配置环境到跨并行会话扩展，充分利用 Claude Code 的提示和模式。</p>
+</blockquote>
+<p>Claude Code 是一个代理式编码环境。与等待回答问题的聊天机器人不同，Claude Code 可以读取你的文件、运行命令、进行更改，并在你观看、重定向或完全离开的情况下自主解决问题。</p>
+<p>这改变了你的工作方式。与其自己编写代码并要求 Claude 审查，不如描述你想要什么，让 Claude 弄清楚如何构建它。Claude 会探索、规划和实现。</p>
+<p>但这种自主性仍然伴随着学习曲线。Claude 在某些约束条件下工作，你需要理解这些约束。</p>
+<p>本指南涵盖了在 Anthropic 内部团队和在各种代码库、语言和环境中使用 Claude Code 的工程师中已被证明有效的模式。有关代理循环如何在幕后工作的信息，请参阅 <a href="/zh-CN/how-claude-code-works">Claude Code 如何工作</a>。</p>
+<hr>
+<p>大多数最佳实践都基于一个约束：Claude 的 context window 填充速度很快，随着填充，性能会下降。</p>
+<p>Claude 的 context window 保存你的整个对话，包括每条消息、Claude 读取的每个文件和每个命令输出。但这可能会很快填满。单个调试会话或代码库探索可能会生成并消耗数万个 token。</p>
+<p>这很重要，因为当 context 填充时，LLM 性能会下降。当 context window 即将满时，Claude 可能会开始”遗忘”早期的指令或犯更多错误。context window 是最重要的资源。要查看会话在实践中如何填充，请 <a href="/zh-CN/context-window">观看交互式演练</a>，了解启动时加载的内容以及每个文件读取的成本。使用 <a href="/zh-CN/statusline">自定义状态行</a> 持续跟踪 context 使用情况，并查看 <a href="/zh-CN/costs#reduce-token-usage">减少 token 使用</a> 了解减少 token 使用的策略。</p>
+<hr>
+<h2 id="给-Claude-一种验证其工作的方式"><a href="#给-Claude-一种验证其工作的方式" class="headerlink" title="给 Claude 一种验证其工作的方式"></a>给 Claude 一种验证其工作的方式</h2><Tip>
+  给 Claude 一个它可以运行的检查：测试、构建、屏幕截图进行比较。这是你观看的会话和你可以离开的会话之间的区别。
+</Tip>
+
+<p>当工作看起来完成时，Claude 会停止。没有它可以运行的检查，”看起来完成”是唯一可用的信号，你成为验证循环：每个错误都在等待你注意到它。给 Claude 一些能产生通过或失败的东西，循环就会自动关闭。Claude 完成工作，运行检查，读取结果，并迭代直到检查通过。</p>
+<p>检查是任何返回 Claude 可以在对话中读取的信号的东西：测试套件、构建退出代码、linter、针对固定装置比较输出的脚本，或与设计进行比较的<a href="/zh-CN/chrome">浏览器屏幕截图</a>。</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>之前</th>
+<th>之后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>提供验证标准</strong></td>
+<td><em>“实现一个验证电子邮件地址的函数”</em></td>
+<td><em>“编写一个 validateEmail 函数。示例测试用例：<a href="mailto:&#117;&#115;&#x65;&#114;&#x40;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#x63;&#x6f;&#109;">user@example.com</a> 为真，invalid 为假，<a href="mailto:&#117;&#115;&#x65;&#x72;&#x40;&#x2e;&#99;&#111;&#x6d;">user@.com</a> 为假。实现后运行测试”</em></td>
+</tr>
+<tr>
+<td><strong>以视觉方式验证 UI 更改</strong></td>
+<td><em>“让仪表板看起来更好”</em></td>
+<td><em>“[粘贴屏幕截图] 实现此设计。对结果进行屏幕截图并与原始设计进行比较。列出差异并修复它们”</em></td>
+</tr>
+<tr>
+<td><strong>解决根本原因，而不是症状</strong></td>
+<td><em>“构建失败”</em></td>
+<td><em>“构建失败，出现此错误：[粘贴错误]。修复它并验证构建成功。解决根本原因，不要抑制错误”</em></td>
+</tr>
+</tbody></table>
+<p>一旦检查存在，决定它对停止的限制有多严格：</p>
+<ul>
+<li><strong>在一个提示中</strong>：要求 Claude 运行检查并在同一消息中迭代，如上表所示。</li>
+<li><strong>在整个会话中</strong>：将检查设置为 <a href="/zh-CN/goal"><code>/goal</code> 条件</a>。单独的评估器在每次转换后重新检查它，Claude 继续工作直到它成立。</li>
+<li><strong>作为确定性门</strong>：<a href="/zh-CN/hooks#stop">Stop hook</a> 作为脚本运行你的检查，并阻止转换结束直到它通过。Claude Code 覆盖 hook 并在 8 次连续阻止后结束转换。</li>
+<li><strong>通过第二意见</strong>：<a href="/zh-CN/sub-agents">验证子代理</a>或<a href="/zh-CN/workflows">动态工作流</a>检查自己的发现，有一个新鲜的模型尝试反驳结果，所以做工作的代理不是给它评分的。</li>
+</ul>
+<p>每一步都用设置换取关注。提示版本适用于今天的任何任务。<code>/goal</code> 和 Stop hook 版本是让无人值守运行正确完成而无需你的东西。</p>
+<p>让 Claude 显示证据而不是声称成功：测试输出、它运行的命令及其返回的内容，或结果的屏幕截图。审查证据比自己重新运行验证要快，并且它适用于你没有观看的会话。</p>
+<hr>
+<h2 id="先探索，再规划，最后编码"><a href="#先探索，再规划，最后编码" class="headerlink" title="先探索，再规划，最后编码"></a>先探索，再规划，最后编码</h2><Tip>
+  将研究和规划与实现分开，以避免解决错误的问题。
+</Tip>
+
+<p>让 Claude 直接跳到编码可能会产生解决错误问题的代码。使用 <a href="/zh-CN/permission-modes#analyze-before-you-edit-with-plan-mode">Plan Mode</a> 将探索与执行分开。</p>
+<p>推荐的工作流有四个阶段：</p>
+<Steps>
+  <Step title="探索">
+    进入 Plan Mode。Claude 读取文件并回答问题，不进行任何更改。
+
+<pre><code><figure class="highlight txt"><figcaption><span>claude (plan mode) theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">read /src/auth and understand how we handle sessions and login.</span><br><span class="line">also look at how we manage environment variables for secrets.</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Step>
+
+  <Step title="规划">
+    要求 Claude 创建详细的实现计划。
+
+<pre><code><figure class="highlight txt"><figcaption><span>claude (plan mode) theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I want to add Google OAuth. What files need to change?</span><br><span class="line">What&#x27;s the session flow? Create a plan.</span><br></pre></td></tr></table></figure>
+
+按 `Ctrl+G` 在文本编辑器中打开计划进行直接编辑，然后 Claude 继续。
+</code></pre>
+  </Step>
+
+  <Step title="实现">
+    切换出 Plan Mode 并让 Claude 编码，根据其计划进行验证。
+
+<pre><code><figure class="highlight txt"><figcaption><span>claude (default mode) theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implement the OAuth flow from your plan. write tests for the</span><br><span class="line">callback handler, run the test suite and fix any failures.</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Step>
+
+  <Step title="提交">
+    要求 Claude 使用描述性消息进行提交并创建 PR。
+
+<pre><code><figure class="highlight txt"><figcaption><span>claude (default mode) theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commit with a descriptive message and open a PR</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Step>
+</Steps>
+
+<Callout>
+  Plan Mode 很有用，但也增加了开销。
+
+<p>  对于范围明确且修复很小的任务（如修复拼写错误、添加日志行或重命名变量），要求 Claude 直接执行。</p>
+<p>  当你对方法不确定、更改修改多个文件或你不熟悉被修改的代码时，规划最有用。如果你能用一句话描述 diff，跳过计划。<br></Callout></p>
+<hr>
+<h2 id="在提示中提供具体的上下文"><a href="#在提示中提供具体的上下文" class="headerlink" title="在提示中提供具体的上下文"></a>在提示中提供具体的上下文</h2><Tip>
+  你的指令越精确，你需要的更正就越少。
+</Tip>
+
+<p>Claude 可以推断意图，但它不能读心术。引用特定文件、提及约束，并指出示例模式。</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>之前</th>
+<th>之后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>限定任务范围。</strong> 指定哪个文件、什么场景和测试偏好。</td>
+<td><em>“为 foo.py 添加测试”</em></td>
+<td><em>“为 foo.py 编写测试，涵盖用户已注销的边界情况。避免 mock。”</em></td>
+</tr>
+<tr>
+<td><strong>指向来源。</strong> 指导 Claude 到可以回答问题的来源。</td>
+<td><em>“为什么 ExecutionFactory 有这样奇怪的 api？”</em></td>
+<td><em>“查看 ExecutionFactory 的 git 历史并总结其 api 是如何形成的”</em></td>
+</tr>
+<tr>
+<td><strong>参考现有模式。</strong> 指向代码库中的模式。</td>
+<td><em>“添加日历小部件”</em></td>
+<td><em>“查看主页上现有小部件的实现方式以了解模式。HotDogWidget.php 是一个很好的例子。按照模式实现一个新的日历小部件，让用户选择月份并向前&#x2F;向后分页以选择年份。从头开始构建，除了代码库中已使用的库外，不使用其他库。”</em></td>
+</tr>
+<tr>
+<td><strong>描述症状。</strong> 提供症状、可能的位置以及”修复”的样子。</td>
+<td><em>“修复登录错误”</em></td>
+<td><em>“用户报告会话超时后登录失败。检查 src&#x2F;auth&#x2F; 中的身份验证流程，特别是 token 刷新。编写一个失败的测试来重现问题，然后修复它”</em></td>
+</tr>
+</tbody></table>
+<p>当你在探索并能够改正方向时，模糊的提示可能很有用。像 <code>&quot;你会改进这个文件的什么？&quot;</code> 这样的提示可以表面你不会想到要问的东西。</p>
+<h3 id="提供丰富的内容"><a href="#提供丰富的内容" class="headerlink" title="提供丰富的内容"></a>提供丰富的内容</h3><Tip>
+  使用 `@` 引用文件、粘贴屏幕截图/图像或直接管道数据。
+</Tip>
+
+<p>你可以通过多种方式向 Claude 提供丰富的数据：</p>
+<ul>
+<li><strong>使用 <code>@</code> 引用文件</strong>，而不是描述代码的位置。Claude 在响应前读取文件。</li>
+<li><strong>直接粘贴图像</strong>。复制&#x2F;粘贴或拖放图像到提示中。</li>
+<li><strong>提供 URL</strong> 用于文档和 API 参考。使用 <code>/permissions</code> 来允许列表经常使用的域。</li>
+<li><strong>管道数据</strong> 通过运行 <code>cat error.log | claude</code> 直接发送文件内容。</li>
+<li><strong>让 Claude 获取它需要的东西</strong>。告诉 Claude 使用 Bash 命令、MCP 工具或通过读取文件来自己拉取上下文。</li>
+</ul>
+<hr>
+<h2 id="配置你的环境"><a href="#配置你的环境" class="headerlink" title="配置你的环境"></a>配置你的环境</h2><p>一些设置步骤使 Claude Code 在所有会话中显著更有效。有关扩展功能的完整概述和何时使用每个功能，请参阅 <a href="/zh-CN/features-overview">扩展 Claude Code</a>。</p>
+<h3 id="编写有效的-CLAUDE-md"><a href="#编写有效的-CLAUDE-md" class="headerlink" title="编写有效的 CLAUDE.md"></a>编写有效的 CLAUDE.md</h3><Tip>
+  运行 `/init` 根据你的当前项目结构生成启动 CLAUDE.md 文件，然后随时间精化。
+</Tip>
+
+<p>CLAUDE.md 是一个特殊文件，Claude 在每次对话开始时读取。包括 Bash 命令、代码风格和工作流规则。这给 Claude 提供了它无法从代码中推断的持久上下文。</p>
+<p><code>/init</code> 命令分析你的代码库以检测构建系统、测试框架和代码模式，为你提供坚实的基础来精化。</p>
+<p>CLAUDE.md 文件没有必需的格式，但保持简短和易读。例如：</p>
+<figure class="highlight markdown"><figcaption><span>CLAUDE.md theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Code style</span></span><br><span class="line"><span class="bullet">-</span> Use ES modules (import/export) syntax, not CommonJS (require)</span><br><span class="line"><span class="bullet">-</span> Destructure imports when possible (eg. import &#123; foo &#125; from &#x27;bar&#x27;)</span><br><span class="line"></span><br><span class="line"><span class="section"># Workflow</span></span><br><span class="line"><span class="bullet">-</span> Be sure to typecheck when you&#x27;re done making a series of code changes</span><br><span class="line"><span class="bullet">-</span> Prefer running single tests, and not the whole test suite, for performance</span><br></pre></td></tr></table></figure>
+
+<p>CLAUDE.md 在每个会话中加载，所以只包括广泛适用的东西。对于仅有时相关的域知识或工作流，改用 <a href="/zh-CN/skills">skills</a>。Claude 按需加载它们，不会使每次对话都膨胀。</p>
+<p>保持简洁。对于每一行，问自己：<em>“删除这个会导致 Claude 犯错吗？”</em> 如果不会，删除它。膨胀的 CLAUDE.md 文件会导致 Claude 忽略你的实际指令！</p>
+<table>
+<thead>
+<tr>
+<th>✅ 包括</th>
+<th>❌ 排除</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Claude 无法猜测的 Bash 命令</td>
+<td>Claude 可以通过读取代码弄清楚的任何东西</td>
+</tr>
+<tr>
+<td>与默认值不同的代码风格规则</td>
+<td>Claude 已经知道的标准语言约定</td>
+</tr>
+<tr>
+<td>测试指令和首选测试运行器</td>
+<td>详细的 API 文档（改为链接到文档）</td>
+</tr>
+<tr>
+<td>存储库礼仪（分支命名、PR 约定）</td>
+<td>经常变化的信息</td>
+</tr>
+<tr>
+<td>特定于你的项目的架构决策</td>
+<td>长解释或教程</td>
+</tr>
+<tr>
+<td>开发者环境怪癖（必需的环境变量）</td>
+<td>自明的实践，如”编写干净的代码”</td>
+</tr>
+<tr>
+<td>常见陷阱或非显而易见的行为</td>
+<td>文件逐个描述代码库</td>
+</tr>
+</tbody></table>
+<p>如果 Claude 继续做你不想要的事情，尽管有反对的规则，该文件可能太长，规则被遗漏了。如果 Claude 问你在 CLAUDE.md 中回答的问题，措辞可能不明确。像对待代码一样对待 CLAUDE.md：当事情出错时审查它，定期修剪它，并通过观察 Claude 的行为是否实际改变来测试更改。</p>
+<p>你可以通过添加强调（例如”IMPORTANT”或”YOU MUST”）来调整指令以改进遵守。将文件检入 git，以便你的团队可以贡献。该文件随时间增加价值。</p>
+<p>CLAUDE.md 文件可以使用 <code>@path/to/import</code> 语法导入其他文件：</p>
+<figure class="highlight markdown"><figcaption><span>CLAUDE.md theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">See @README.md for project overview and @package.json for available npm commands.</span><br><span class="line"></span><br><span class="line"><span class="section"># Additional Instructions</span></span><br><span class="line"><span class="bullet">-</span> Git workflow: @docs/git-instructions.md</span><br><span class="line"><span class="bullet">-</span> Personal overrides: @~/.claude/my-project-instructions.md</span><br></pre></td></tr></table></figure>
+
+<p>你可以在多个位置放置 CLAUDE.md 文件：</p>
+<ul>
+<li><strong>主文件夹（<code>~/.claude/CLAUDE.md</code>）</strong>：适用于所有 Claude 会话</li>
+<li><strong>项目根目录（<code>./CLAUDE.md</code>）</strong>：检入 git 以与你的团队共享</li>
+<li><strong>项目根目录（<code>./CLAUDE.local.md</code>）</strong>：个人项目特定的笔记；将此文件添加到你的 <code>.gitignore</code>，以便它不会与你的团队共享</li>
+<li><strong>父目录</strong>：对于 monorepos 有用，其中 <code>root/CLAUDE.md</code> 和 <code>root/foo/CLAUDE.md</code> 都会自动拉入</li>
+<li><strong>子目录</strong>：当处理这些目录中的文件时，Claude 按需拉入子 CLAUDE.md 文件</li>
+</ul>
+<h3 id="配置权限"><a href="#配置权限" class="headerlink" title="配置权限"></a>配置权限</h3><Tip>
+  使用 [auto mode](/zh-CN/permission-modes#eliminate-prompts-with-auto-mode) 让分类器处理批准，使用 `/permissions` 来允许列表特定命令，或使用 `/sandbox` 进行操作系统级隔离。每种方式都减少中断，同时让你保持控制。
+</Tip>
+
+<p>默认情况下，Claude Code 请求可能修改你的系统的操作的权限：文件写入、Bash 命令、MCP 工具等。这是安全的但繁琐。在第十次批准后，你不是真的在审查，你只是点击通过。有三种方式来减少这些中断：</p>
+<ul>
+<li><strong>Auto mode</strong>：一个单独的分类器模型审查命令并仅阻止看起来有风险的东西：范围升级、未知基础设施或由敌对内容驱动的操作。最适合当你信任任务的总体方向但不想点击通过每一步时</li>
+<li><strong>权限允许列表</strong>：允许你知道是安全的特定工具，如 <code>npm run lint</code> 或 <code>git commit</code></li>
+<li><strong>沙箱</strong>：启用操作系统级隔离，限制文件系统和网络访问，允许 Claude 在定义的边界内更自由地工作</li>
+</ul>
+<p>阅读更多关于 <a href="/zh-CN/permission-modes">权限模式</a>、<a href="/zh-CN/permissions">权限规则</a> 和 <a href="/zh-CN/sandboxing">沙箱</a>。</p>
+<h3 id="使用-CLI-工具"><a href="#使用-CLI-工具" class="headerlink" title="使用 CLI 工具"></a>使用 CLI 工具</h3><Tip>
+  告诉 Claude Code 在与外部服务交互时使用 CLI 工具，如 `gh`、`aws`、`gcloud` 和 `sentry-cli`。
+</Tip>
+
+<p>CLI 工具是与外部服务交互的最 context 高效的方式。如果你使用 GitHub，安装 <code>gh</code> CLI。Claude 知道如何使用它来创建问题、打开拉取请求和读取评论。没有 <code>gh</code>，Claude 仍然可以使用 GitHub API，但未认证的请求经常会触发速率限制。</p>
+<p>Claude 也有效地学习它不知道的 CLI 工具。尝试像 <code>Use &#39;foo-cli-tool --help&#39; to learn about foo tool, then use it to solve A, B, C.</code> 这样的提示。</p>
+<h3 id="连接-MCP-服务器"><a href="#连接-MCP-服务器" class="headerlink" title="连接 MCP 服务器"></a>连接 MCP 服务器</h3><Tip>
+  运行 `claude mcp add` 来连接外部工具，如 Notion、Figma 或你的数据库。
+</Tip>
+
+<p>使用 <a href="/zh-CN/mcp">MCP servers</a>，你可以要求 Claude 从问题跟踪器实现功能、查询数据库、分析监控数据、集成来自 Figma 的设计并自动化工作流。</p>
+<h3 id="设置-hooks"><a href="#设置-hooks" class="headerlink" title="设置 hooks"></a>设置 hooks</h3><Tip>
+  使用 hooks 来处理必须每次发生且没有例外的操作。
+</Tip>
+
+<p><a href="/zh-CN/hooks-guide">Hooks</a> 在 Claude 工作流中的特定点自动运行脚本。与 CLAUDE.md 指令不同，hooks 是确定性的，保证操作发生。</p>
+<p>Claude 可以为你编写 hooks。尝试像 <em>“编写一个在每次文件编辑后运行 eslint 的 hook”</em> 或 <em>“编写一个阻止写入迁移文件夹的 hook”</em> 这样的提示。编辑 <code>.claude/settings.json</code> 直接配置 hooks，并运行 <code>/hooks</code> 来浏览配置的内容。</p>
+<h3 id="创建-skills"><a href="#创建-skills" class="headerlink" title="创建 skills"></a>创建 skills</h3><Tip>
+  在 `.claude/skills/` 中创建 `SKILL.md` 文件，为 Claude 提供域知识和可重用工作流。
+</Tip>
+
+<p><a href="/zh-CN/skills">Skills</a> 使用特定于你的项目、团队或域的信息扩展 Claude 的知识。Claude 在相关时自动应用它们，或者你可以使用 <code>/skill-name</code> 直接调用它们。</p>
+<p>通过向 <code>.claude/skills/</code> 添加带有 <code>SKILL.md</code> 的目录来创建 skill：</p>
+<figure class="highlight markdown"><figcaption><span>.claude/skills/api-conventions/SKILL.md theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: api-conventions</span><br><span class="line"><span class="section">description: REST API design conventions for our services</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"><span class="section"># API Conventions</span></span><br><span class="line"><span class="bullet">-</span> Use kebab-case for URL paths</span><br><span class="line"><span class="bullet">-</span> Use camelCase for JSON properties</span><br><span class="line"><span class="bullet">-</span> Always include pagination for list endpoints</span><br><span class="line"><span class="bullet">-</span> Version APIs in the URL path (/v1/, /v2/)</span><br></pre></td></tr></table></figure>
+
+<p>Skills 也可以定义你直接调用的可重复工作流：</p>
+<figure class="highlight markdown"><figcaption><span>.claude/skills/fix-issue/SKILL.md theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: fix-issue</span><br><span class="line">description: Fix a GitHub issue</span><br><span class="line"><span class="section">disable-model-invocation: true</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line">Analyze and fix the GitHub issue: $ARGUMENTS.</span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> Use <span class="code">`gh issue view`</span> to get the issue details</span><br><span class="line"><span class="bullet">2.</span> Understand the problem described in the issue</span><br><span class="line"><span class="bullet">3.</span> Search the codebase for relevant files</span><br><span class="line"><span class="bullet">4.</span> Implement the necessary changes to fix the issue</span><br><span class="line"><span class="bullet">5.</span> Write and run tests to verify the fix</span><br><span class="line"><span class="bullet">6.</span> Ensure code passes linting and type checking</span><br><span class="line"><span class="bullet">7.</span> Create a descriptive commit message</span><br><span class="line"><span class="bullet">8.</span> Push and create a PR</span><br></pre></td></tr></table></figure>
+
+<p>运行 <code>/fix-issue 1234</code> 来调用它。对于具有你想手动触发的副作用的工作流，使用 <code>disable-model-invocation: true</code>。</p>
+<h3 id="创建自定义-subagents"><a href="#创建自定义-subagents" class="headerlink" title="创建自定义 subagents"></a>创建自定义 subagents</h3><Tip>
+  在 `.claude/agents/` 中定义专门的助手，Claude 可以委托给它们来处理隔离的任务。
+</Tip>
+
+<p><a href="/zh-CN/sub-agents">Subagents</a> 在自己的 context 中运行，拥有自己的一组允许的工具。它们对于读取许多文件或需要专门关注而不会使你的主对话混乱的任务很有用。</p>
+<figure class="highlight markdown"><figcaption><span>.claude/agents/security-reviewer.md theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: security-reviewer</span><br><span class="line">description: Reviews code for security vulnerabilities</span><br><span class="line">tools: Read, Grep, Glob, Bash</span><br><span class="line"><span class="section">model: opus</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line">You are a senior security engineer. Review code for:</span><br><span class="line"><span class="bullet">-</span> Injection vulnerabilities (SQL, XSS, command injection)</span><br><span class="line"><span class="bullet">-</span> Authentication and authorization flaws</span><br><span class="line"><span class="bullet">-</span> Secrets or credentials in code</span><br><span class="line"><span class="bullet">-</span> Insecure data handling</span><br><span class="line"></span><br><span class="line">Provide specific line references and suggested fixes.</span><br></pre></td></tr></table></figure>
+
+<p>明确告诉 Claude 使用 subagents：<em>“使用 subagent 来审查此代码的安全问题。”</em></p>
+<h3 id="安装-plugins"><a href="#安装-plugins" class="headerlink" title="安装 plugins"></a>安装 plugins</h3><Tip>
+  运行 `/plugin` 来浏览市场。Plugins 添加 skills、工具和集成，无需配置。
+</Tip>
+
+<p><a href="/zh-CN/plugins">Plugins</a> 将 skills、hooks、subagents 和 MCP 服务器捆绑到来自社区和 Anthropic 的单个可安装单元中。如果你使用类型化语言，安装 <a href="/zh-CN/discover-plugins#code-intelligence">代码智能 plugin</a> 来为 Claude 提供精确的符号导航和编辑后的自动错误检测。</p>
+<p>有关在 skills、subagents、hooks 和 MCP 之间选择的指导，请参阅 <a href="/zh-CN/features-overview#match-features-to-your-goal">扩展 Claude Code</a>。</p>
+<hr>
+<h2 id="有效沟通"><a href="#有效沟通" class="headerlink" title="有效沟通"></a>有效沟通</h2><p>你与 Claude Code 沟通的方式显著影响结果的质量。</p>
+<h3 id="提出代码库问题"><a href="#提出代码库问题" class="headerlink" title="提出代码库问题"></a>提出代码库问题</h3><Tip>
+  问 Claude 你会问资深工程师的问题。
+</Tip>
+
+<p>当加入新代码库时，使用 Claude Code 进行学习和探索。你可以问 Claude 你会问另一个工程师的相同类型的问题：</p>
+<ul>
+<li>日志如何工作？</li>
+<li>我如何创建新的 API 端点？</li>
+<li><code>foo.rs</code> 第 134 行的 <code>async move { ... }</code> 做什么？</li>
+<li><code>CustomerOnboardingFlowImpl</code> 处理哪些边界情况？</li>
+<li>为什么这段代码在第 333 行调用 <code>foo()</code> 而不是 <code>bar()</code>？</li>
+</ul>
+<p>以这种方式使用 Claude Code 是一个有效的入职工作流，改进了加入时间并减少了对其他工程师的负担。无需特殊提示：直接提问。</p>
+<h3 id="让-Claude-采访你"><a href="#让-Claude-采访你" class="headerlink" title="让 Claude 采访你"></a>让 Claude 采访你</h3><Tip>
+  对于更大的功能，让 Claude 先采访你。从最小的提示开始，要求 Claude 使用 `AskUserQuestion` 工具采访你。
+</Tip>
+
+<p>Claude 会问你可能还没有考虑过的东西，包括技术实现、UI&#x2F;UX、边界情况和权衡。</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">I want to build [brief description]. Interview me in detail using the AskUserQuestion tool.</span><br><span class="line"></span><br><span class="line">Ask about technical implementation, UI/UX, edge cases, concerns, and tradeoffs. Don&#x27;t ask obvious questions, dig into the hard parts I might not have considered.</span><br><span class="line"></span><br><span class="line">Keep interviewing until we&#x27;ve covered everything, then write a complete spec to SPEC.md.</span><br></pre></td></tr></table></figure>
+
+<p>一旦规范完成，启动新会话来执行它。新会话有干净的 context，完全专注于实现，你有一个书面规范可以参考。</p>
+<p>最有用的规范是自包含的：它们命名涉及的文件和接口，说明什么在范围之外，并以端到端验证步骤结束，证明该功能有效。花在使规范精确上的时间比花在观看实现上的时间收益更大。</p>
+<hr>
+<h2 id="管理你的会话"><a href="#管理你的会话" class="headerlink" title="管理你的会话"></a>管理你的会话</h2><p>对话是持久的和可逆的。利用这一点！</p>
+<h3 id="尽早且经常改正方向"><a href="#尽早且经常改正方向" class="headerlink" title="尽早且经常改正方向"></a>尽早且经常改正方向</h3><Tip>
+  一旦你注意到 Claude 偏离轨道，立即改正它。
+</Tip>
+
+<p>最好的结果来自紧密的反馈循环。虽然 Claude 有时会在第一次尝试时完美地解决问题，但快速改正它通常会更快地产生更好的解决方案。</p>
+<ul>
+<li><strong><code>Esc</code></strong>：使用 <code>Esc</code> 键在中途停止 Claude。Context 被保留，所以你可以重定向。</li>
+<li><strong><code>Esc + Esc</code> 或 <code>/rewind</code></strong>：按 <code>Esc</code> 两次或运行 <code>/rewind</code> 来打开 rewind 菜单并恢复之前的对话和代码状态，或从选定的消息进行总结。</li>
+<li><strong><code>&quot;撤销那个&quot;</code></strong>：让 Claude 恢复其更改。</li>
+<li><strong><code>/clear</code></strong>：在不相关的任务之间重置 context。长会话与无关的 context 可能会降低性能。</li>
+</ul>
+<p>如果你在一个会话中对同一问题改正了 Claude 两次以上，context 就充满了失败的方法。运行 <code>/clear</code> 并使用更具体的提示重新开始，该提示包含你学到的东西。干净的会话与更好的提示几乎总是优于长会话与累积的改正。</p>
+<h3 id="积极管理-context"><a href="#积极管理-context" class="headerlink" title="积极管理 context"></a>积极管理 context</h3><Tip>
+  在不相关的任务之间频繁运行 `/clear` 来重置 context。
+</Tip>
+
+<p>Claude Code 在你接近 context 限制时自动压缩对话历史，这保留了重要的代码和决策，同时释放空间。</p>
+<p>在长会话中，Claude 的 context window 可能会充满无关的对话、文件内容和命令。这可能会降低性能，有时会分散 Claude 的注意力。</p>
+<ul>
+<li>在任务之间频繁使用 <code>/clear</code> 来完全重置 context window</li>
+<li>当自动压缩触发时，Claude 总结最重要的东西，包括代码模式、文件状态和关键决策</li>
+<li>为了更多控制，运行 <code>/compact &lt;instructions&gt;</code>，如 <code>/compact Focus on the API changes</code></li>
+<li>要仅压缩对话的一部分，使用 <code>Esc + Esc</code> 或 <code>/rewind</code>，选择消息检查点，并选择 <strong>从这里总结</strong> 或 <strong>总结到这里</strong>。第一个会压缩从该点开始的消息，同时保持早期 context 完整；第二个会压缩早期消息，同时保持最近的消息完整。请参阅 <a href="/zh-CN/checkpointing#restore-vs-summarize">恢复与总结</a>。</li>
+<li>在 CLAUDE.md 中使用像 <code>&quot;When compacting, always preserve the full list of modified files and any test commands&quot;</code> 这样的指令来自定义压缩行为，以确保关键 context 在总结中存活</li>
+<li>对于不需要留在 context 中的快速问题，使用 <a href="/zh-CN/interactive-mode#side-questions-with-/btw"><code>/btw</code></a>。答案出现在可关闭的覆盖层中，永远不会进入对话历史，所以你可以检查细节而不增加 context。</li>
+</ul>
+<h3 id="使用-subagents-进行调查"><a href="#使用-subagents-进行调查" class="headerlink" title="使用 subagents 进行调查"></a>使用 subagents 进行调查</h3><Tip>
+  使用 `"use subagents to investigate X"` 委托研究。它们在单独的 context 中探索，为实现保持你的主对话干净。
+</Tip>
+
+<p>由于 context 是你的基本约束，subagents 是可用的最强大的工具之一。当 Claude 研究代码库时，它读取许多文件，所有这些都消耗你的 context。Subagents 在单独的 context windows 中运行并报告摘要：</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Use subagents to investigate how our authentication system handles token</span><br><span class="line">refresh, and whether we have any existing OAuth utilities I should reuse.</span><br></pre></td></tr></table></figure>
+
+<p>subagent 探索代码库、读取相关文件并报告发现，所有这些都不会使你的主对话混乱。</p>
+<p>你也可以在 Claude 实现某些东西后使用 subagents 进行验证：</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use a subagent to review this code for edge cases</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用检查点进行-Rewind"><a href="#使用检查点进行-Rewind" class="headerlink" title="使用检查点进行 Rewind"></a>使用检查点进行 Rewind</h3><Tip>
+  Claude 进行的每个提示都会创建一个检查点。你可以将对话、代码或两者恢复到任何之前的检查点。
+</Tip>
+
+<p>Claude 在每次更改前自动对文件进行快照，以便检查点可以恢复它们。双击 <code>Escape</code> 或运行 <code>/rewind</code> 来打开 rewind 菜单。你可以仅恢复对话、仅恢复代码、恢复两者或从选定的消息进行总结。有关详细信息，请参阅 <a href="/zh-CN/checkpointing">Checkpointing</a>。</p>
+<p>与其仔细规划每一步，你可以告诉 Claude 尝试一些冒险的事情。如果不起作用，rewind 并尝试不同的方法。检查点在会话中持续，所以你可以关闭你的终端并稍后仍然 rewind。</p>
+<Warning>
+  检查点仅跟踪 Claude 进行的更改，不跟踪外部进程。这不是 git 的替代品。
+</Warning>
+
+<h3 id="恢复对话"><a href="#恢复对话" class="headerlink" title="恢复对话"></a>恢复对话</h3><Tip>
+  使用 `/rename` 给会话命名，并像对待分支一样对待它们：每个工作流都有自己的持久 context。
+</Tip>
+
+<p>Claude Code 在本地保存对话，所以当任务跨越多个会话时，你不必重新解释 context。运行 <code>claude --continue</code> 来继续最近的会话，或 <code>claude --resume</code> 来从列表中选择。给会话起描述性名称，如 <code>oauth-migration</code>，以便你稍后可以找到它们。有关完整的恢复、分支和命名控制集，请参阅 <a href="/zh-CN/sessions">管理会话</a>。</p>
+<hr>
+<h2 id="自动化和扩展"><a href="#自动化和扩展" class="headerlink" title="自动化和扩展"></a>自动化和扩展</h2><p>一旦你对一个 Claude 有效，通过并行会话、非交互模式和扇出模式来增加你的输出。</p>
+<p>到目前为止，一切都假设一个人、一个 Claude 和一个对话。但 Claude Code 水平扩展。本部分中的技术展示了你如何能做更多。</p>
+<h3 id="运行非交互模式"><a href="#运行非交互模式" class="headerlink" title="运行非交互模式"></a>运行非交互模式</h3><Tip>
+  在 CI、pre-commit hooks 或脚本中使用 `claude -p "prompt"`。添加 `--output-format stream-json --verbose` 用于流式 JSON 输出。
+</Tip>
+
+<p>使用 <code>claude -p &quot;your prompt&quot;</code>，你可以非交互地运行 Claude，不需要会话。<a href="/zh-CN/headless">非交互模式</a>是你将 Claude 集成到 CI 管道、pre-commit hooks 或任何自动化工作流中的方式。输出格式让你以编程方式解析结果：纯文本、JSON 或流式 JSON。</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># One-off queries</span></span><br><span class="line">claude -p <span class="string">&quot;Explain what this project does&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Structured output for scripts</span></span><br><span class="line">claude -p <span class="string">&quot;List all API endpoints&quot;</span> --output-format json</span><br><span class="line"></span><br><span class="line"><span class="comment"># Streaming for real-time processing</span></span><br><span class="line">claude -p <span class="string">&quot;Analyze this log file&quot;</span> --output-format stream-json --verbose</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行多个-Claude-会话"><a href="#运行多个-Claude-会话" class="headerlink" title="运行多个 Claude 会话"></a>运行多个 Claude 会话</h3><Tip>
+  并行运行多个 Claude 会话以加快开发、运行隔离的实验或启动复杂的工作流。
+</Tip>
+
+<p>选择适合你想要自己进行多少协调的并行方法：</p>
+<ul>
+<li><a href="/zh-CN/worktrees">Worktrees</a>：在隔离的 git 检出中运行单独的 CLI 会话，以便编辑不会冲突</li>
+<li><a href="/zh-CN/desktop#work-in-parallel-with-sessions">桌面应用</a>：以视觉方式管理多个本地会话，每个会话都在自己的 worktree 中</li>
+<li><a href="/zh-CN/claude-code-on-the-web">Claude Code 在网络上</a>：在 Anthropic 管理的云基础设施中的隔离虚拟机上运行会话</li>
+<li><a href="/zh-CN/agent-teams">Agent teams</a>：具有共享任务、消息和团队主管的多个会话的自动协调</li>
+</ul>
+<p>除了并行化工作，多个会话启用了质量关注的工作流。新鲜的 context 改进了代码审查，因为 Claude 不会偏向于它刚刚编写的代码。</p>
+<p>例如，使用 Writer&#x2F;Reviewer 模式：</p>
+<table>
+<thead>
+<tr>
+<th>会话 A（Writer）</th>
+<th>会话 B（Reviewer）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>为我们的 API 端点实现速率限制器</code></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>审查 @src/middleware/rateLimiter.ts 中的速率限制器实现。查找边界情况、竞态条件和与我们现有中间件模式的一致性。</code></td>
+</tr>
+<tr>
+<td><code>这是审查反馈：[会话 B 输出]。解决这些问题。</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>你可以用测试做类似的事情：让一个 Claude 编写测试，然后另一个编写代码来通过它们。</p>
+<h3 id="跨文件扇出"><a href="#跨文件扇出" class="headerlink" title="跨文件扇出"></a>跨文件扇出</h3><Tip>
+  循环遍历任务，为每个调用 `claude -p`。使用 `--allowedTools` 来限定批量操作的权限。
+</Tip>
+
+<p>对于大型迁移或分析，你可以跨许多并行 Claude 调用分配工作：</p>
+<Steps>
+  <Step title="生成任务列表">
+    让 Claude 列出所有需要迁移的文件（例如，`list all 2,000 Python files that need migrating`）
+  </Step>
+
+  <Step title="编写脚本来循环遍历列表">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> $(<span class="built_in">cat</span> files.txt); <span class="keyword">do</span></span><br><span class="line">  claude -p <span class="string">&quot;Migrate <span class="variable">$file</span> from React to Vue. Return OK or FAIL.&quot;</span> \</span><br><span class="line">    --allowedTools <span class="string">&quot;Edit,Bash(git commit *)&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+  </Step>
+
+  <Step title="在几个文件上测试，然后大规模运行">
+    根据前 2-3 个文件出错的情况精化你的提示，然后在完整集合上运行。`--allowedTools` 标志限制 Claude 能做什么，这在你无人值守运行时很重要。
+  </Step>
+</Steps>
+
+<p>你也可以将 Claude 集成到现有的数据&#x2F;处理管道中：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude -p <span class="string">&quot;&lt;your prompt&gt;&quot;</span> --output-format json | your_command</span><br></pre></td></tr></table></figure>
+
+<p>在开发期间使用 <code>--verbose</code> 进行调试，在生产中关闭它。</p>
+<h3 id="使用-auto-mode-自主运行"><a href="#使用-auto-mode-自主运行" class="headerlink" title="使用 auto mode 自主运行"></a>使用 auto mode 自主运行</h3><p>为了不间断的执行和后台安全检查，使用 <a href="/zh-CN/permission-modes#eliminate-prompts-with-auto-mode">auto mode</a>。分类器模型在命令运行前审查它们，阻止范围升级、未知基础设施和由敌对内容驱动的操作，同时让常规工作无提示进行。</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --permission-mode auto -p <span class="string">&quot;fix all lint errors&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于使用 <code>-p</code> 标志的非交互运行，如果分类器重复阻止操作，auto mode 会中止，因为没有用户可以回退到。请参阅 <a href="/zh-CN/permission-modes#when-auto-mode-falls-back">auto mode 何时回退</a> 了解阈值。</p>
+<h3 id="添加对抗性审查步骤"><a href="#添加对抗性审查步骤" class="headerlink" title="添加对抗性审查步骤"></a>添加对抗性审查步骤</h3><Tip>
+  在将任务视为完成之前，让一个子代理在新鲜的 context 中审查差异并报告缺陷。
+</Tip>
+
+<p>Claude 无人值守工作的时间越长，在你将工作视为完成之前进行独立检查就越重要。在新鲜的 <a href="/zh-CN/sub-agents">subagent</a> context 中运行的审查者只看到差异和你给它的标准，而不是产生更改的推理，所以它按自己的条件评估结果。</p>
+<p>对于正确性检查，运行捆绑的 <a href="/zh-CN/commands"><code>/code-review</code> skill</a>，它在新鲜的子代理中审查当前差异以查找错误，并将发现返回到会话。要检查差异是否符合你的计划，请自己编写审查提示。命名要检查的工作、要检查的计划以及什么算作发现：</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">使用子代理根据 PLAN.md 审查速率限制器差异。检查每个要求是否已实现、列出的边界情况是否有测试，以及任务范围之外是否有任何更改。报告缺陷，而不是风格偏好。</span><br></pre></td></tr></table></figure>
+
+<p>因为审查者作为子代理运行，实现会话直接接收缺陷，可以修复它们并重新审查，而无需你在窗口之间复制发现。对于更长的自主运行，<a href="/zh-CN/agent-teams">agent team</a> 可以在许多任务中保持这个循环进行，而你可以对记录的发现进行抽查。</p>
+<Callout>
+  被提示查找缺陷的审查者通常会报告一些，即使工作是健全的，因为那是它被要求做的。追逐每个发现会导致过度工程：额外的抽象层、防御性代码和针对无法发生的情况的测试。告诉审查者只标记影响正确性或陈述要求的缺陷，将其余的视为可选。
+</Callout>
+
+<hr>
+<h2 id="避免常见失败模式"><a href="#避免常见失败模式" class="headerlink" title="避免常见失败模式"></a>避免常见失败模式</h2><p>这些是常见的错误。尽早识别它们可以节省时间：</p>
+<ul>
+<li><strong>厨房水槽会话。</strong> 你从一个任务开始，然后问 Claude 一些不相关的东西，然后回到第一个任务。Context 充满了无关的信息。<blockquote>
+<p><strong>修复</strong>：在不相关的任务之间 <code>/clear</code>。</p>
+</blockquote>
+</li>
+<li><strong>一次又一次地改正。</strong> Claude 做错了什么，你改正它，它仍然是错的，你再改正。Context 被失败的方法污染。<blockquote>
+<p><strong>修复</strong>：在两次失败的改正后，<code>/clear</code> 并编写一个更好的初始提示，包含你学到的东西。</p>
+</blockquote>
+</li>
+<li><strong>过度指定的 CLAUDE.md。</strong> 如果你的 CLAUDE.md 太长，Claude 会忽略一半，因为重要的规则在噪音中丢失。<blockquote>
+<p><strong>修复</strong>：无情地修剪。如果 Claude 已经在没有指令的情况下正确地做某事，删除它或将其转换为 hook。</p>
+</blockquote>
+</li>
+<li><strong>信任然后验证的差距。</strong> Claude 产生一个看起来合理的实现，但不处理边界情况。<blockquote>
+<p><strong>修复</strong>：始终提供验证（测试、脚本、屏幕截图）。如果你不能验证它，不要发布它。</p>
+</blockquote>
+</li>
+<li><strong>无限探索。</strong> 你要求 Claude “调查”某些东西而不限定范围。Claude 读取数百个文件，填充 context。<blockquote>
+<p><strong>修复</strong>：狭隘地限定调查或使用 subagents，以便探索不会消耗你的主 context。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="培养你的直觉"><a href="#培养你的直觉" class="headerlink" title="培养你的直觉"></a>培养你的直觉</h2><p>本指南中的模式不是一成不变的。它们是通常效果很好的起点，但可能不是每种情况的最优选择。</p>
+<p>有时你_应该_让 context 累积，因为你深入一个复杂的问题，历史很有价值。有时你应该跳过规划，让 Claude 弄清楚，因为任务是探索性的。有时模糊的提示正是你想要的，因为你想看看 Claude 如何解释问题，然后再限制它。</p>
+<p>注意什么有效。当 Claude 产生很好的输出时，注意你做了什么：提示结构、你提供的 context、你所在的模式。当 Claude 遇到困难时，问为什么。Context 太嘈杂了吗？提示太模糊了吗？任务对于一次通过来说太大了吗？</p>
+<p>随着时间的推移，你会培养没有指南能捕捉的直觉。你会知道何时具体，何时开放，何时规划，何时探索，何时清除 context，何时让它累积。</p>
+<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><ul>
+<li><a href="/zh-CN/how-claude-code-works">Claude Code 如何工作</a>：代理循环、工具和 context 管理</li>
+<li><a href="/zh-CN/features-overview">扩展 Claude Code</a>：skills、hooks、MCP、subagents 和 plugins</li>
+<li><a href="/zh-CN/common-workflows">常见工作流</a>：调试、测试、PR 等的分步配方</li>
+<li><a href="/zh-CN/memory">CLAUDE.md</a>：存储项目约定和持久 context</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/04/04/best-practices/">https://hzhzxfs.github.io/2026/04/04/best-practices/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/05/channels/" title="channels"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">channels</div></div><div class="info-2"><div class="info-item-1">使用 channels 将事件推送到运行中的会话 使用 channels 从 MCP 服务器将消息、警报和 webhooks 推送到您的 Claude Code 会话中。转发 CI 结果、聊天消息和监控事件，以便 Claude 在您离开时做出反应。     Channels 处于[研究预览](#research-preview)阶段，需要 Claude Code v2.1.80 或更高版本。它们需要通过 claude.ai 或控制台 API 密钥进行 Anthropic 身份验证，在 Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry 上不可用。Team 和 Enterprise 组织必须[明确启用它们](#enterprise-controls)。   Channel 是一个 MCP 服务器，它将事件推送到您运行中的 Claude Code 会话中，以便 Claude 可以对您不在终端时发生的事情做出反应。Channels 可以是双向的：Claude 读取事件并通过同一 channel 回复，就像聊天桥接一样。事件仅在会话打开...</div></div></div></a><a class="pagination-related" href="/2026/04/03/agents/" title="agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">agents</div></div><div class="info-2"><div class="info-item-1">并行运行代理 比较 Claude Code 同时处理多个任务的方式：子代理、代理视图、代理团队和动态工作流。  子代理、代理视图、代理团队 和 动态工作流 各自以不同的方式并行化工作。正确的选择取决于您是否想在每个对话中保持参与、交付任务并稍后检查，或让 Claude 为您协调一组工作人员。    方法 它提供什么 何时使用    子代理 在一个会话内的委派工作人员，在自己的上下文中执行辅助任务并返回摘要 辅助任务会用搜索结果、日志或文件内容淹没您的主对话，而您不会再次引用这些内容   代理视图 一个屏幕来分派和监控在后台运行的会话，使用 claude agents 打开。研究预览 您有多个独立任务，想要交付它们，一目了然地检查状态，并仅在需要时介入   代理团队 多个协调的会话，具有共享任务列表和代理间消息传递，由主导者管理。实验性功能，默认禁用 您希望 Claude 将项目分成多个部分、分配它们，并保持工作人员同步   动态工作流 一个脚本，运行许多子代理并交叉检查其结果，用于一个太大而无法一次协调的工作或需要多次处理的工作。研究预览 一个任务对于少数几个子代理来说太大了，或...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/07/07-Prompt-Cache/" title="07-Prompt-Cache"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-07</div><div class="info-item-2">07-Prompt-Cache</div></div><div class="info-2"><div class="info-item-1">第 7 篇：Prompt Cache — 跨模块的缓存策略如何降低 API 成本 本篇是《深入 Claude Code 源码》系列的第 7 篇。我们将从一个横切视角，解析 Prompt Cache 机制如何贯穿 System Prompt、对话循环、上下文管理三大模块，以及 Fork Agent 如何通过精密的参数对齐实现跨进程缓存共享。  为什么需要理解 Prompt Cache？调用大模型 API 最大的成本来自 input tokens。在一个典型的 Claude Code 交互式会话中，每次用户提问都会把完整的 System Prompt（约 2 万 token）、工具定义（几千 token）、以及之前所有的对话历史一起发送给 API。如果对话进行了 50 轮，每轮平均 5 万 input tokens，那一个会话就消耗 250 万 input tokens。 Anthropic 的 Prompt Caching 机制可以将 重复前缀 的成本降低 90%。服务端会缓存请求前缀（System Prompt + 工具定义 + 消息历史前缀），只要下次请求的前缀字节完全一致，就...</div></div></div></a><a class="pagination-related" href="/2026/03/07/prompt-caching/" title="prompt-caching"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-07</div><div class="info-item-2">prompt-caching</div></div><div class="info-2"><div class="info-item-1">Claude Code 如何使用 prompt caching Claude Code 自动管理 prompt caching。了解为什么模型切换会触发缓慢的未缓存回合、/compact 的成本、为什么 CLAUDE.md 编辑在会话中期不适用，以及如何检查缓存命中率。  Prompt caching 使 Claude Code 更快、更经济高效。没有缓存，API 会在每个回合重新处理您的完整历史记录。有了缓存，它会重用已经处理过的内容，只对更改的部分进行新工作。 Claude Code 为您处理 prompt caching，除非您禁用它。了解 prompt caching 的工作原理仍然很有用，因为某些操作会使缓存失效，使下一个响应更慢、更昂贵，同时它重建缓存。本页涵盖哪些操作会这样做、为什么某些设置等待重启才能应用，以及当使用量看起来很高时如何检查缓存性能。 缓存的组织方式每次您在 Claude Code 中发送消息时，它都会发出新的 API 请求。模型在请求之间不记得任何东西，所以 Claude Code 重新发送完整的上下文：系统提示、您的项目上下文、每条先前的消息和工...</div></div></div></a><a class="pagination-related" href="/2026/03/15/setup/" title="setup"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">setup</div></div><div class="info-2"><div class="info-item-1">高级设置 Claude Code 的系统要求、特定平台安装、版本管理和卸载。  本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅快速入门。如果您从未使用过终端，请参阅终端指南。 系统要求Claude Code 在以下平台和配置上运行：  操作系统： macOS 13.0+ Windows 10 1809+ 或 Windows Server 2019+ Ubuntu 20.04+ Debian 10+ Alpine Linux 3.19+   硬件：4 GB+ RAM、x64 或 ARM64 处理器 网络：需要互联网连接。请参阅网络配置。 Shell：Bash、Zsh、PowerShell 或 CMD。 位置：Anthropic 支持的国家&#x2F;地区  其他依赖项 ripgrep：通常包含在 Claude Code 中。如果搜索失败，请参阅搜索故障排除。  安装 Claude Code   更喜欢图形界面？[桌面应用](/zh-CN/desktop-quickstart)让您无需使用终端即可使用 Claude Code。下载适用于 [macO...</div></div></div></a><a class="pagination-related" href="/2026/05/21/21-Ink%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E5%AE%9A%E5%88%B6/" title="21-Ink框架深度定制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">21-Ink框架深度定制</div></div><div class="info-2"><div class="info-item-1">第 21 篇：Ink 框架深度定制 — 在终端中运行 React 本篇深入 Claude Code 的 forked Ink 框架（ink/ 目录，约 90 个文件），揭示如何在终端中构建一个完整的 React 渲染引擎：从自定义 Reconciler、Yoga 布局、双缓冲渲染管线，到虚拟滚动、鼠标事件、文本选择等深度定制。  为什么要 Fork Ink？Ink 是一个开源框架，让你在终端中使用 React 组件编写 UI。官方 Ink 适合简单的 CLI 工具 —— 但 Claude Code 不是简单的 CLI。它需要：  全屏模式：Alt Screen 下的完整 UI，不是”追加式”输出 虚拟滚动：对话历史可能有上千行，不能全部渲染 鼠标交互：点击、拖拽选择文本、滚轮滚动 60fps 渲染：流式输出时每 16ms 刷新一帧，不能闪烁 IME 支持：CJK 输入法需要物理光标精确定位  官方 Ink 不支持这些。Claude Code 团队 fork 了 Ink 并进行了大量深度定制，最终形成了一个功能完备的终端 React 渲染引擎。  一、架构全景：从 React 到终...</div></div></div></a><a class="pagination-related" href="/2026/02/02/10.Conclusion%EF%BC%88%E6%80%BB%E7%BB%93%EF%BC%89/" title="10.Conclusion（总结）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-02</div><div class="info-item-2">10.Conclusion（总结）</div></div><div class="info-2"><div class="info-item-1">第十节：Conclusion（总结） 作为本课程的回归讲师，Elie Schoppik 在本节中全面回顾了整套 agent-skills-with-anthropic 课程的核心内容和学习要点。 从基础概念到实践应用，从内置 Skills 探索到自定义 Skills 开发，课程系统地介绍了如何利用 Skills 扩展 AI agent 的能力边界，构建智能化、专业化的工作流程。  课程深度回顾：构建智能体的“第二大脑”回顾整门课程，我们不仅仅是在学习一个名为 “Skills” 的功能，更是在探索大模型时代下“知识工程”的新形态。 1. 从指令到资产 (From Instructions to Assets)我们在 Chapter 2 和 Chapter 3 中定义了 Skills 的本质：它不是一次性的 Prompt，而是标准化的领域认知。通过 YAML 元数据与 Markdown 正文的解耦，我们将“业务逻辑”封装为可复用、可迁移的数字资产。这正是将人类隐性知识显性化的过程。 2. 系统架构的演进 (Evolution of Architecture)Chapter 4 揭示了...</div></div></div></a><a class="pagination-related" href="/2026/03/03/memory_1/" title="memory"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-03</div><div class="info-item-2">memory</div></div><div class="info-2"><div class="info-item-1">Claude 如何记住你的项目 使用 CLAUDE.md 文件为 Claude 提供持久指令，并让 Claude 通过自动记忆功能自动积累学习内容。  每个 Claude Code 会话都从一个全新的上下文窗口开始。两种机制可以跨会话传递知识：  CLAUDE.md 文件：你编写的指令，为 Claude 提供持久上下文 自动记忆：Claude 根据你的更正和偏好自己编写的笔记  本页面涵盖以下内容：  编写和组织 CLAUDE.md 文件 使用 .claude/rules/ 将规则范围限定到特定文件类型 配置自动记忆，使 Claude 自动记笔记 故障排除，当指令未被遵循时  CLAUDE.md 与自动记忆Claude Code 有两个互补的记忆系统。两者都在每次对话开始时加载。Claude 将它们视为上下文，而不是强制配置。要阻止某个操作，无论 Claude 决定什么，请改用 PreToolUse hook。你的指令越具体和简洁，Claude 遵循它们的一致性就越高。     CLAUDE.md 文件 自动记忆    谁编写 你 Claude   包含内容 指令和规则 学习和模...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Claude-Code-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.</span> <span class="toc-text">Claude Code 最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%99-Claude-%E4%B8%80%E7%A7%8D%E9%AA%8C%E8%AF%81%E5%85%B6%E5%B7%A5%E4%BD%9C%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">给 Claude 一种验证其工作的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%8E%A2%E7%B4%A2%EF%BC%8C%E5%86%8D%E8%A7%84%E5%88%92%EF%BC%8C%E6%9C%80%E5%90%8E%E7%BC%96%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text">先探索，再规划，最后编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%8F%90%E7%A4%BA%E4%B8%AD%E6%8F%90%E4%BE%9B%E5%85%B7%E4%BD%93%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">1.3.</span> <span class="toc-text">在提示中提供具体的上下文</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BE%9B%E4%B8%B0%E5%AF%8C%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.3.1.</span> <span class="toc-text">提供丰富的内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E4%BD%A0%E7%9A%84%E7%8E%AF%E5%A2%83"><span class="toc-number">1.4.</span> <span class="toc-text">配置你的环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E6%9C%89%E6%95%88%E7%9A%84-CLAUDE-md"><span class="toc-number">1.4.1.</span> <span class="toc-text">编写有效的 CLAUDE.md</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%9D%83%E9%99%90"><span class="toc-number">1.4.2.</span> <span class="toc-text">配置权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-CLI-%E5%B7%A5%E5%85%B7"><span class="toc-number">1.4.3.</span> <span class="toc-text">使用 CLI 工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5-MCP-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">连接 MCP 服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE-hooks"><span class="toc-number">1.4.5.</span> <span class="toc-text">设置 hooks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-skills"><span class="toc-number">1.4.6.</span> <span class="toc-text">创建 skills</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89-subagents"><span class="toc-number">1.4.7.</span> <span class="toc-text">创建自定义 subagents</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-plugins"><span class="toc-number">1.4.8.</span> <span class="toc-text">安装 plugins</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E6%95%88%E6%B2%9F%E9%80%9A"><span class="toc-number">1.5.</span> <span class="toc-text">有效沟通</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%87%BA%E4%BB%A3%E7%A0%81%E5%BA%93%E9%97%AE%E9%A2%98"><span class="toc-number">1.5.1.</span> <span class="toc-text">提出代码库问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A9-Claude-%E9%87%87%E8%AE%BF%E4%BD%A0"><span class="toc-number">1.5.2.</span> <span class="toc-text">让 Claude 采访你</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E4%BC%9A%E8%AF%9D"><span class="toc-number">1.6.</span> <span class="toc-text">管理你的会话</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%BD%E6%97%A9%E4%B8%94%E7%BB%8F%E5%B8%B8%E6%94%B9%E6%AD%A3%E6%96%B9%E5%90%91"><span class="toc-number">1.6.1.</span> <span class="toc-text">尽早且经常改正方向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%AF%E6%9E%81%E7%AE%A1%E7%90%86-context"><span class="toc-number">1.6.2.</span> <span class="toc-text">积极管理 context</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-subagents-%E8%BF%9B%E8%A1%8C%E8%B0%83%E6%9F%A5"><span class="toc-number">1.6.3.</span> <span class="toc-text">使用 subagents 进行调查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%A3%80%E6%9F%A5%E7%82%B9%E8%BF%9B%E8%A1%8C-Rewind"><span class="toc-number">1.6.4.</span> <span class="toc-text">使用检查点进行 Rewind</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.6.5.</span> <span class="toc-text">恢复对话</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E5%92%8C%E6%89%A9%E5%B1%95"><span class="toc-number">1.7.</span> <span class="toc-text">自动化和扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E9%9D%9E%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.7.1.</span> <span class="toc-text">运行非交互模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AA-Claude-%E4%BC%9A%E8%AF%9D"><span class="toc-number">1.7.2.</span> <span class="toc-text">运行多个 Claude 会话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E6%96%87%E4%BB%B6%E6%89%87%E5%87%BA"><span class="toc-number">1.7.3.</span> <span class="toc-text">跨文件扇出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-auto-mode-%E8%87%AA%E4%B8%BB%E8%BF%90%E8%A1%8C"><span class="toc-number">1.7.4.</span> <span class="toc-text">使用 auto mode 自主运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%AF%B9%E6%8A%97%E6%80%A7%E5%AE%A1%E6%9F%A5%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.7.5.</span> <span class="toc-text">添加对抗性审查步骤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E5%B8%B8%E8%A7%81%E5%A4%B1%E8%B4%A5%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.</span> <span class="toc-text">避免常见失败模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%B9%E5%85%BB%E4%BD%A0%E7%9A%84%E7%9B%B4%E8%A7%89"><span class="toc-number">1.9.</span> <span class="toc-text">培养你的直觉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90"><span class="toc-number">1.10.</span> <span class="toc-text">相关资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

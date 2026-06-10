@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Errorhandling | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="错误处理和容错系统 后端工程师实用参考——技术深度、浅显易懂   1. 心态错误是不可避免的您无法阻止每个错误 - 目标是快速检测、遏制和恢复。停止思考*“我如何阻止它损坏？”并开始思考“当*损坏时会发生什么？” 容错心态在最坏的情况发生之前就进行设计。即使内部组件出现故障，构建良好的系统也能保证用户交易无缝进行。  2. 常见错误类型A. 逻辑错误 🔴 最危险的类型 — 无声故障，没有崩溃或异">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Errorhandling">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/01/07/Errorhandling/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="错误处理和容错系统 后端工程师实用参考——技术深度、浅显易懂   1. 心态错误是不可避免的您无法阻止每个错误 - 目标是快速检测、遏制和恢复。停止思考*“我如何阻止它损坏？”并开始思考“当*损坏时会发生什么？” 容错心态在最坏的情况发生之前就进行设计。即使内部组件出现故障，构建良好的系统也能保证用户交易无缝进行。  2. 常见错误类型A. 逻辑错误 🔴 最危险的类型 — 无声故障，没有崩溃或异">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-01-07T11:38:39.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.399Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Errorhandling",
+  "url": "https://hzhzxfs.github.io/2025/01/07/Errorhandling/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-01-07T11:38:39.000Z",
+  "dateModified": "2026-06-10T02:14:46.399Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/01/07/Errorhandling/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Errorhandling',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Errorhandling</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Errorhandling</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-01-07T11:38:39.000Z" title="发表于 2025-01-07 19:38:39">2025-01-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.399Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="错误处理和容错系统"><a href="#错误处理和容错系统" class="headerlink" title="错误处理和容错系统"></a>错误处理和容错系统</h1><blockquote>
+<p>后端工程师实用参考——技术深度、浅显易懂</p>
+</blockquote>
+<hr>
+<h2 id="1-心态"><a href="#1-心态" class="headerlink" title="1. 心态"></a>1. 心态</h2><h3 id="错误是不可避免的"><a href="#错误是不可避免的" class="headerlink" title="错误是不可避免的"></a>错误是不可避免的</h3><p>您无法阻止每个错误 - 目标是快速<strong>检测、遏制和恢复</strong>。停止思考*“我如何阻止它损坏？”<em>并开始思考</em>“当*<em>损坏时会发生什么？”</em></p>
+<h3 id="容错心态"><a href="#容错心态" class="headerlink" title="容错心态"></a>容错心态</h3><p>在最坏的情况发生之前就进行设计。即使内部组件出现故障，构建良好的系统也能保证用户交易无缝进行。</p>
+<hr>
+<h2 id="2-常见错误类型"><a href="#2-常见错误类型" class="headerlink" title="2. 常见错误类型"></a>2. 常见错误类型</h2><h3 id="A-逻辑错误"><a href="#A-逻辑错误" class="headerlink" title="A. 逻辑错误"></a>A. 逻辑错误</h3><blockquote>
+<p>🔴 <strong>最危险的类型</strong> — 无声故障，没有崩溃或异常</p>
+</blockquote>
+<p>系统继续运行——没有崩溃，没有例外——但它产生<strong>错误的结果</strong>。这些都是无声的杀手：表面上一切看起来都很好，但实际上却有错误的数据流过。</p>
+<p><strong>为什么它们很难捕捉：</strong></p>
+<ul>
+<li>没有可见的崩溃或堆栈跟踪</li>
+<li>该应用程序似乎运行正常</li>
+<li>通常是通过错误的输出或用户投诉发现的——为时已晚</li>
+</ul>
+<p><strong>现实世界的例子：</strong></p>
+<blockquote>
+<p>电子商务折扣计算中的错误导致系统“向用户付款”而不是向他们收费——负交易价值仅出现在财务报告中。</p>
+</blockquote>
+<p><strong>根本原因：</strong></p>
+<ul>
+<li>误解业务需求</li>
+<li>算法实现不正确</li>
+<li>未考虑边缘情况</li>
+</ul>
+<p><strong>预防策略：</strong></p>
+<ul>
+<li>强大的单元+集成测试</li>
+<li>边缘情况验证（例如最低价格 &#x3D; 0）</li>
+<li>专注于业务逻辑的代码审查</li>
+<li>监控异常输出值（例如负交易金额）</li>
+</ul>
+<p><strong>影响：</strong> 直接财务损失，削弱用户信任，比运行时错误更难调试</p>
+<hr>
+<h3 id="B-约束违规（数据库错误）"><a href="#B-约束违规（数据库错误）" class="headerlink" title="B. 约束违规（数据库错误）"></a>B. 约束违规（数据库错误）</h3><blockquote>
+<p>🟡 <strong>数据库层</strong> - 在数据库级别暴露的应用程序验证差距</p>
+</blockquote>
+<p>当违反应用程序级规则时数据库抛出的错误 - 例如插入重复值、违反外键或将必填字段留空。这些通常表明您的<strong>输入验证层</strong>中存在差距。</p>
+<p><strong>数据库错误类型：</strong></p>
+<ul>
+<li><strong>连接错误：</strong> 当应用程序由于凭据错误、服务器停机或网络问题等问题而无法连接到数据库时发生。  </li>
+<li><strong>约束违规：</strong> 当数据库规则（如主键、外键或唯一约束）在数据插入或更新过程中被破坏时就会发生。  </li>
+<li><strong>验证失败：</strong> 当输入数据在存储到数据库之前不满足所需的格式、范围或条件时出现。  </li>
+<li><strong>查询错误：</strong> 当 SQL 查询语法或逻辑存在错误，导致数据库无法执行时发生。</li>
+</ul>
+<p><strong>常见示例：</strong></p>
+<ul>
+<li>将重复项插入 <code>UNIQUE</code> 列（例如，同一电子邮件注册两次）</li>
+<li>添加父表中不存在外键的记录</li>
+<li>将 <code>NULL</code> 插入 <code>NOT NULL</code> 列</li>
+</ul>
+<p><strong>根本原因：</strong></p>
+<ul>
+<li>输入验证缺失或较弱</li>
+<li>竞争条件（例如并发注册时重复的电子邮件）</li>
+<li>交易管理不善</li>
+</ul>
+<p><strong>预防策略：</strong></p>
+<ul>
+<li>在前端和后端级别进行验证</li>
+<li>使用数据库约束作为<strong>安全网</strong>——而不是作为主要验证</li>
+<li>使用正确的事务并在失败时回滚</li>
+<li>返回用户友好的错误消息，而不是原始数据库错误</li>
+</ul>
+<hr>
+<h3 id="C-外部服务错误"><a href="#C-外部服务错误" class="headerlink" title="C. 外部服务错误"></a>C. 外部服务错误</h3><blockquote>
+<p>🟡 <strong>第三方&#x2F;网络</strong> — 超出您控制范围的故障</p>
+</blockquote>
+<p>源自“系统外部”的故障 — 第三方 API 宕机、达到速率限制或网络基础设施中断。您无法控制这些，但您需要<strong>优雅地处理它们</strong>。</p>
+<p><strong>常见故障模式：</strong></p>
+<ul>
+<li><strong>网络故障</strong> — 服务器和外部服务之间的物理或路由级连接丢失</li>
+<li><strong>连接超时</strong> — 外部服务接受了连接，但响应时间过长</li>
+<li><strong>DNS 解析失败</strong> — 您的服务器无法解析外部服务的主机名（例如 <code>api.stripe.com</code> 不返回 IP）</li>
+<li><strong>网络分区</strong> — 网络分裂会导致您的服务器和外部服务失去彼此的可见性，即使两者都在运行</li>
+<li><strong>速率限制 (<code>HTTP 429</code>)</strong> — 您已超出给定时间窗口内允许的请求数量；外部 API 暂时拒绝您</li>
+<li><strong>全面服务中断</strong> — 第三方提供商完全关闭（例如 AWS us-east-1 中断、Stripe 事件）</li>
+</ul>
+<p><strong>现实世界的例子：</strong></p>
+<blockquote>
+<p>您的支付服务调用 Stripe 的 API 向用户收费。 Stripe 遇到事件并返回 <code>503 Service Unavailable</code>。如果没有正确的处理，您的应用程序会崩溃或在重试时向用户收取两次费用，从而造成财务和信任损失。</p>
+</blockquote>
+<p><strong>根本原因：</strong></p>
+<ul>
+<li>过度依赖外部服务且没有后备计划</li>
+<li>没有重试逻辑或重试执行不力（例如，敲击速率受限的 API）</li>
+<li>出站 HTTP 调用缺少超时 — 您的线程无限期挂起</li>
+<li>当依赖关系下降时没有监控或警报</li>
+</ul>
+<p><strong>为什么它们至关重要：</strong></p>
+<ul>
+<li>可以降低面向用户的核心功能（例如支付、身份验证、通知）</li>
+<li>很难在本地复制——通常只是在生产中表现出来</li>
+<li>如果不隔离，可能会级联成内部故障（请参阅：断路器模式）</li>
+</ul>
+<p><strong>预防策略：</strong></p>
+<ul>
+<li>在每个出站 HTTP 调用上设置明确的 <strong>连接和读取超时</strong></li>
+<li>实施<strong>具有指数退避的重试逻辑</strong> - 每次重试之间等待更长的时间（例如 1 秒 → 2 秒 → 4 秒 → 放弃）</li>
+<li>使用<strong>断路器模式</strong>——连续N次失败后，停止调用服务一段时间并立即返回回退响应</li>
+<li>将关键操作（例如发送电子邮件、处理网络钩子）存储在<strong>队列</strong>中，以便稍后重试而不会丢失数据</li>
+<li>通过状态页面监控第三方正常运行时间并就错误率升高发出警报</li>
+<li>设计<strong>优雅降级</strong> — 如果推荐服务关闭，则显示默认列表而不是空白屏幕</li>
+</ul>
+<hr>
+<h3 id="D-输入验证错误"><a href="#D-输入验证错误" class="headerlink" title="D. 输入验证错误"></a>D. 输入验证错误</h3><blockquote>
+<p>🔵 <strong>API 入口点</strong> — 在造成损坏之前捕获不良数据</p>
+</blockquote>
+<p>客户端发送到您的 API 的数据不正确或格式错误 — 类型错误、缺少必填字段、格式无效或值超出范围。这些应该在系统的边界**被捕获，并在数据接触您的业务逻辑或数据库之前立即使用明确的 <code>HTTP 400 Bad Request</code> 拒绝。</p>
+<p>将输入验证视为 API 的保镖：它在门口检查凭据，以便垃圾数据永远不会有机会从内部破坏您的系统。</p>
+<p><strong>现实世界的例子：</strong></p>
+<blockquote>
+<p>用户使用 <code>age: &quot;twenty-three&quot;</code> 而不是 <code>age: 23</code> 提交注册表单。如果没有验证，该字符串就会传播到您的数据库中，破坏下游分析查询，并破坏基于年龄的资格逻辑 - 所有这些都来自一个错误的输入。</p>
+</blockquote>
+<p><strong>常见示例：</strong></p>
+<ul>
+<li>当字段需要数字时发送 <code>&quot;price&quot;: &quot;free&quot;</code></li>
+<li>在注册请求中省略 <code>email</code> 等必填字段</li>
+<li>将日期传递为 <code>&quot;31-13-2024&quot;</code> — 无效月份</li>
+<li>提交超出允许范围的值（例如订单上的 <code>quantity: -5</code>）</li>
+<li>传递无效的枚举值（例如，当仅存在 <code>&quot;admin&quot;</code> 和 <code>&quot;user&quot;</code> 时，使用 <code>role: &quot;superadmin&quot;</code>）</li>
+</ul>
+<p><strong>根本原因：</strong></p>
+<ul>
+<li>没有服务器端验证（仅依赖于前端验证 - 永远不安全）</li>
+<li>盲目信任客户端输入——客户端可以被完全操纵或绕过（例如通过 Postman 或curl）</li>
+<li>模糊或缺失的 API 合同（没有模式，没有可接受格式的文档）</li>
+<li>验证逻辑分散在代码库中，而不是集中在入口点</li>
+</ul>
+<p><strong>为什么它们至关重要：</strong></p>
+<ul>
+<li>未经验证的输入是许多安全漏洞（SQL 注入、XSS、缓冲区溢出）的根本原因</li>
+<li>混入的坏数据清理起来代价高昂——你可能不会发现它，直到它破坏了下游的某些东西</li>
+<li>不一致的验证会导致不可预测的系统行为</li>
+<li>糟糕的错误消息会阻碍开发人员与您的 API 集成</li>
+</ul>
+<p><strong>预防策略：</strong></p>
+<ul>
+<li>始终在<strong>服务器端</strong>进行验证，无论前端做什么——前端验证是用户体验，服务器端验证是安全</li>
+<li>使用<strong>模式验证库</strong>（例如 Zod、Joi、Pydantic、Yup）来定义和强制每个传入请求的形状</li>
+<li>在 API 入口点验证<strong>数据类型、必填字段、字符串格式、数值范围和枚举值</strong></li>
+<li>返回<strong>描述性错误消息</strong>，告诉调用者到底出了什么问题：<code>&quot;field &#39;email&#39; must be a valid email address&quot;</code> 而不仅仅是 <code>&quot;invalid input&quot;</code></li>
+<li>使用 OpenAPI&#x2F;Swagger 等工具记录您的 API 合同，以便客户在发送请求之前就知道期望的内容</li>
+</ul>
+<hr>
+<h3 id="E-配置错误"><a href="#E-配置错误" class="headerlink" title="E. 配置错误"></a>E. 配置错误</h3><blockquote>
+<p>⚪ <strong>服务器启动</strong> — 启动时发现错误配置的环境</p>
+</blockquote>
+<p>由于<strong>环境变量</strong>、机密、功能标志或基础设施设置缺失、不正确或配置错误而导致的服务器端问题。这些通常在<strong>启动时</strong>出现 - 在您的应用程序准备好服务任何流量之前 - 尽管结构不良的应用程序有时会让它们溜到运行时，在那里它们会导致难以诊断的故障。</p>
+<p>将配置视为墙后的布线。当它做得正确时，没有人会注意到。当错误出现时，一切都不起作用——而且错误消息通常与实际问题毫无关系。</p>
+<p><strong>现实世界的例子：</strong></p>
+<blockquote>
+<p>您的应用程序已成功部署到生产环境，但从未在环境中设置 <code>DATABASE_URL</code> 。服务器启动，接受传入流量，然后在第一次数据库调用时抛出一个神秘的 <code>connection refused</code> 错误 - 影响每个用户，而团队则忙着找出它在暂存中工作良好的原因。</p>
+</blockquote>
+<p><strong>常见示例：</strong></p>
+<ul>
+<li>缺少 <code>DATABASE_URL</code> — 应用程序启动但在第一个数据库查询时崩溃</li>
+<li>生产中的 <code>JWT_SECRET</code> 错误 — 在生产中签名的令牌在生产中被拒绝，将所有人注销</li>
+<li><code>NODE_ENV</code> 在生产中设置为 <code>development</code> — 调试日志公开，禁用优化</li>
+<li>缺少第三方 API 密钥（例如 <code>STRIPE_SECRET_KEY</code>、<code>SENDGRID_API_KEY</code>） — 付款或电子邮件功能默默失败</li>
+<li>错误的端口绑定 — 应用程序在端口 <code>3000</code> 上启动，但负载均衡器需要 <code>8080</code></li>
+<li>云存储存储桶名称不正确 - 文件上传看似成功，但写入不存在或错误的存储桶</li>
+</ul>
+<p><strong>根本原因：</strong></p>
+<ul>
+<li>启动时不验证环境变量</li>
+<li>本地、临时和生产环境之间的差异未记录或强制执行</li>
+<li>手动管理的秘密不一致（复制粘贴错误、忘记变量）</li>
+<li>没有新团队成员或部署的 <code>.env.example</code> 文件或环境变量文档</li>
+</ul>
+<p><strong>为什么它们至关重要：</strong></p>
+<ul>
+<li>当应用程序看起来“正在运行”时，可以悄悄地破坏生产中的整个功能</li>
+<li>错误配置的机密（例如在生产中使用测试 Stripe 密钥）可能会导致真正的财务或数据后果</li>
+<li>如果没有正确的启动日志记录，则很难进行调试 - 错误通常会远离错误配置的变量</li>
+<li>影响整个应用程序，而不仅仅是一个用户或一个请求</li>
+</ul>
+<p><strong>预防策略：</strong></p>
+<ul>
+<li><strong>在启动时验证所有必需的环境变量</strong>并快速失败并出现描述性错误：<code>Missing required env var: DATABASE_URL</code>。启动时发生严重崩溃比运行缺少配置的应用程序要好得多</li>
+<li>使用 <strong>配置验证库</strong>（例如 Node.js 的 <code>envalid</code>，Python 的 <code>pydantic-settings</code>）在启动时强制执行类型、必填字段和允许的值</li>
+<li>在您的存储库中维护一个 <strong><code>.env.example</code> 文件</strong> — 一个列出每个所需变量和占位符值的模板，因此部署不会意外丢失变量</li>
+<li>使用<strong>秘密管理器</strong>（例如 AWS Secrets Manager、HashiCorp Vault、Doppler），而不是跨环境手动复制秘密</li>
+<li>保持登台和生产之间的<strong>环境对等</strong>尽可能接近——生产中的意外通常来自登台中未发现的差异</li>
+<li>在启动时记录加载的配置摘要（已编辑机密），以便您可以立即确认应用程序正在运行的值</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/01/07/Errorhandling/">https://hzhzxfs.github.io/2025/01/07/Errorhandling/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/01/08/HTTP/" title="HTTP"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">HTTP</div></div><div class="info-2"><div class="info-item-1">HTTP 基础知识HTTP（超文本传输协议）是网络上的交流。 HTTP 的核心基于两个基本思想：  无状态模型 客户端-服务器模型  1.无状态模型HTTP 遵循 无状态 通信模型。 无状态意味着服务器不记得之前与客户的任何互动。每个 HTTP 请求都被视为一个全新的请求。 无状态意味着什么？ 每个请求都包含所有必需的信息 信息通过以下方式发送： 标题 网址 方法（GET、POST 等） 身体（如果需要）   一旦服务器发送响应，它就会丢弃该请求 下一个请求被认为是独立的  换句话说，HTTP 请求是独立的。 无状态模型的好处1. 简单无状态系统更容易设计和维护因为服务器不需要存储客户端会话数据。 2. 可扩展性由于服务器上没有存储会话状态，请求可以分布在多个服务器上使用负载平衡器。 3. 可靠性如果一台服务器出现故障，另一台服务器可以处理请求而不丢失会话数据。 4. 状态管理的灵活性虽然HTTP本身是无状态的，应用程序可以使用以下方式保持连续性：  饼干 会议 令牌（JWT、OAuth）  这些机制构建于HTTP之上，不是 HTTP 本身的一部分。 2. 客户端-服务器模型HT...</div></div></div></a><a class="pagination-related" href="/2025/01/06/Elasticsearch/" title="ElasticSearch"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">ElasticSearch</div></div><div class="info-2"><div class="info-item-1">1. 问题：关系数据库的限制⚠️ 效率低下带通配符的标准 LIKE 查询（例如 %laptop%）会触发全表扫描，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。 ⚠️缺乏相关性传统的 SQL 查询返回匹配没有排名或相关性评分。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。 ⚠️ 可扩展性问题随着系统扩展（例如，亚马逊或谷歌等平台），需要亚毫秒级搜索延迟。传统的关系数据库很难有效地满足这些性能需求。 用于搜索的关系数据库的其他限制⚠️ 全文搜索支持不佳关系数据库并非专为高级全文搜索功能而设计，例如：  代币化 词干提取（例如，“运行”→“运行”） 同义词处理与专用搜索引擎相比，这使得搜索不太智能。  ⚠️没有内置排名算法没有对相关性评分算法（例如 TF-IDF 或 BM25）的本机支持，而这些算法对于对搜索结果进行有意义的排名至关重要。 ⚠️ 难以处理拼写错误和模糊搜索关系数据库面临以下问题：  拼写错误（例如，“laptpo”而不是“laptop”） 近似匹配实现模糊搜索既复杂又低效。  ⚠️ 有限的水平可扩展性...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/02/05/JavaScript%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" title="JavaScript基础笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-05</div><div class="info-item-2">JavaScript基础笔记</div></div><div class="info-2"><div class="info-item-1">今日内容1. JavaScript基础  JavaScript：* 概念：	一门客户端脚本语言 	* 运行在客户端浏览器中的。每一个浏览器都有JavaScript的解析引擎 	* 脚本语言：不需要编译，直接就可以被浏览器解析执行了  * 功能： 	* 可以来增强用户和html页面的交互过程，可以来控制html元素，让页面有一些动态的效果，增强用户的体验。  * JavaScript发展史： 	1. 1992年，Nombase公司，开发出第一门客户端脚本语言，专门用于表单的校验。命名为 ： C--	，后来更名为：ScriptEase 	2. 1995年，Netscape(网景)公司，开发了一门客户端脚本语言：LiveScript。后来，请来SUN公司的专家，修改LiveScript，命名为JavaScript 	3. 1996年，微软抄袭JavaScript开发出JScript语言 	4. 1997年，ECMA(欧洲计算机制造商协会)，制定出客户端脚本语言的标准：ECMAScript，就是统一了所有客户端脚本语言的编码方式。  	* JavaScript = ECMAScript ...</div></div></div></a><a class="pagination-related" href="/2025/03/16/9_http_request_lifecycle/" title="9_http_request_lifecycle"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-16</div><div class="info-item-2">9_http_request_lifecycle</div></div><div class="info-2"><div class="info-item-1">HTTP 和请求生命周期（后端基础） 1.什么是HTTP？HTTP（超文本传输​​协议）是客户端和服务器之间使用的通信协议。 型号： 客户端→请求→服务器服务器→响应→客户端 HTTP 是无状态，这意味着每个请求都是独立的。  2. HTTP 请求的结构HTTP 请求包含： 1. 方法 GET（读取数据） POST（创建数据） PUT（替换数据） 补丁（部分更新） 删除（删除数据）  2.网址示例： 12/notes/notes/123 3. 标题额外的元数据，例如：  内容类型 授权 饼干  4. 正文（可选）主要用于 POST &#x2F; PUT &#x2F; PATCH 请求。  3. HTTP 响应的结构服务器响应包含：  状态代码（200、201、400、404、500） 标题 正文（JSON、文本等）  JSON 响应示例： 123&#123;  &quot;message&quot;: &quot;success&quot;&#125;  4. Node.js 请求生命周期（深入理解）第 1 步：服务器启动1app.listen(3000) 内部： 1http.c...</div></div></div></a><a class="pagination-related" href="/2025/06/01/01.Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" title="01.Go语言入门——基本语法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-01</div><div class="info-item-2">01.Go语言入门——基本语法</div></div><div class="info-2"><div class="info-item-1">Go语言上手 - 基础语言｜青训营笔记 这是我参与「第三届青训营 -后端场」笔记创作活动的的第 1 篇笔记。 一、本堂课内容重点 Go 语言基本语法 猜数字游戏 简易字典 SOCKS 5 代理  二、详细知识点介绍1. Go 语言基本语法（1）基本结构 main 包中的 main 函数是程序开始执行的地方。 import 导入函数包。  123456789package mainimport (	&quot;fmt&quot;)func main() &#123;	fmt.Println(&quot;hello world&quot;)&#125;  （2）变量 go 语言可以自动识别变量的数据类型。 var 变量名 数据类型 &#x3D; 值 var 变量名 &#x3D; 值 变量名 :&#x3D; 值  12345678910111213141516171819202122232425262728package mainimport (   &quot;fmt&quot;   &quot;math&quot;)func main() &#123;   var a = &quo...</div></div></div></a><a class="pagination-related" href="/2025/06/06/CUDA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="CUDA学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-06</div><div class="info-item-2">CUDA学习笔记</div></div><div class="info-2"><div class="info-item-1">CUDA 学习笔记 学习资料：  代码仓库：https://github.com/RussWong/CUDATutorial   01-02. hello world123456789101112131415#include &lt;stdio.h&gt;#include &lt;cuda.h&gt;#include &lt;cuda_runtime.h&gt;__global__ void hello_cuda() &#123;    // 泛指当前线程在所有block范围内的全局id    unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;    printf(&quot;block id = [ %d ], thread id = [ %d ] hello cuda\n&quot;, blockIdx.x, idx);&#125;int main() &#123;    hello_cuda&lt;&lt;&lt; 1, 1 &gt;&gt;&gt;();    cudaDeviceSynchronize();...</div></div></div></a><a class="pagination-related" href="/2025/01/01/AuthenticationAndAuthorization/" title="AuthenticationAndAuthorization"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-01</div><div class="info-item-2">AuthenticationAndAuthorization</div></div><div class="info-2"><div class="info-item-1">基础 身份验证（AuthN）：“你是谁？” （身份）。 授权 (AuthZ): “你可以做什么？” （权限）。  📦 关键技术1. 会话（有状态） 它是什么：会话是一种服务器端机制，用于在无状态协议中跨多个 HTTP 请求记住用户。  它是如何工作的：    用户使用凭据登录。   服务器验证凭据并创建会话。   服务器将会话数据（例如，用户 ID、角色、登录状态）存储在 Redis&#x2F;DB&#x2F;内存中。   服务器通过 cookie 向客户端发送 session_id。   对于每个后续请求（例如，/profile），浏览器会自动通过 cookie 将 session_id 发送回服务器。   服务器验证 session_id、检索会话数据并授权用户。   机制：服务器将会话数据存储在Redis&#x2F;DB&#x2F;内存中；客户端仅将 session_id 存储在 cookie 中。  用例：需要高安全性、服务器端控制和即时会话撤销的 Web 应用程序（例如登录系统、管理面板、仪表板）。  优点：    安全（敏感数据保留在服务器上）   易于使会话失效（...</div></div></div></a><a class="pagination-related" href="/2025/06/12/epd_interaction_analysis/" title="epd_interaction_analysis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-12</div><div class="info-item-2">epd_interaction_analysis</div></div><div class="info-2"><div class="info-item-1">SGLang EPD 场景：encode_server 与 encode_receiver 交互分析 分析范围：python/sglang/srt/disaggregation/encode_server.py &#x2F; encode_receiver.py聚焦：以 Mooncake 作为传输后端（encoder_transfer_backend=mooncake）时的消息通知与数据传输机制生成日期：2026-04-09   目录 EPD 架构概览 关键组件与模块 传输后端对比 Mooncake 后端核心交互流程 详细时序图 关键代码解析 多 Encoder 与多 Part 机制 技术原理深度解析 zmq_to_scheduler 后端对比 性能分析与优势   1. EPD 架构概览EPD（Encode-Prefill-Decode）是 SGLang 为多模态大模型设计的三级算力分离架构： 123456789101112131415161718192021222324252627282930313233┌────────────────────────────────────...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E5%92%8C%E5%AE%B9%E9%94%99%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">错误处理和容错系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BF%83%E6%80%81"><span class="toc-number">1.1.</span> <span class="toc-text">1. 心态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E6%98%AF%E4%B8%8D%E5%8F%AF%E9%81%BF%E5%85%8D%E7%9A%84"><span class="toc-number">1.1.1.</span> <span class="toc-text">错误是不可避免的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E9%94%99%E5%BF%83%E6%80%81"><span class="toc-number">1.1.2.</span> <span class="toc-text">容错心态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.</span> <span class="toc-text">2. 常见错误类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E9%80%BB%E8%BE%91%E9%94%99%E8%AF%AF"><span class="toc-number">1.2.1.</span> <span class="toc-text">A. 逻辑错误</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E7%BA%A6%E6%9D%9F%E8%BF%9D%E8%A7%84%EF%BC%88%E6%95%B0%E6%8D%AE%E5%BA%93%E9%94%99%E8%AF%AF%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">B. 约束违规（数据库错误）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E5%A4%96%E9%83%A8%E6%9C%8D%E5%8A%A1%E9%94%99%E8%AF%AF"><span class="toc-number">1.2.3.</span> <span class="toc-text">C. 外部服务错误</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-%E8%BE%93%E5%85%A5%E9%AA%8C%E8%AF%81%E9%94%99%E8%AF%AF"><span class="toc-number">1.2.4.</span> <span class="toc-text">D. 输入验证错误</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#E-%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AF"><span class="toc-number">1.2.5.</span> <span class="toc-text">E. 配置错误</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

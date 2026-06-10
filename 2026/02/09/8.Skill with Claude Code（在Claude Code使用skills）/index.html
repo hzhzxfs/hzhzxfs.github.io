@@ -1,0 +1,419 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>8.Skill with Claude Code（在Claude Code使用skills） | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Skill with Claude Code(熟练运用 Claude Code)引言Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。 Claude Code 工作原理当您给 Cl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.Skill with Claude Code（在Claude Code使用skills）">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Skill with Claude Code(熟练运用 Claude Code)引言Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。 Claude Code 工作原理当您给 Cl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-02-09T01:21:00.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.568Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "8.Skill with Claude Code（在Claude Code使用skills）",
+  "url": "https://hzhzxfs.github.io/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-02-09T01:21:00.000Z",
+  "dateModified": "2026-06-10T02:14:46.568Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '8.Skill with Claude Code（在Claude Code使用skills）',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">8.Skill with Claude Code（在Claude Code使用skills）</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">8.Skill with Claude Code（在Claude Code使用skills）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-02-09T01:21:00.000Z" title="发表于 2026-02-09 09:21:00">2026-02-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.568Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Skill-with-Claude-Code-熟练运用-Claude-Code"><a href="#Skill-with-Claude-Code-熟练运用-Claude-Code" class="headerlink" title="Skill with Claude Code(熟练运用 Claude Code)"></a>Skill with Claude Code(熟练运用 Claude Code)</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。</p>
+<h2 id="Claude-Code-工作原理"><a href="#Claude-Code-工作原理" class="headerlink" title="Claude Code 工作原理"></a>Claude Code 工作原理</h2><p>当您给 Claude Code 一个任务时，它会经历三个阶段：<strong>收集上下文</strong>、<strong>采取行动</strong>和<strong>验证结果</strong>。这些阶段相互融合，Claude 在整个过程中使用工具，无论是搜索文件以理解您的代码，编辑文件以进行更改，还是运行测试以检查其工作。这个循环会根据您的需求进行调整。对代码库的提问可能只需要收集上下文。修复错误则会反复经历所有三个阶段。重构可能涉及广泛的验证。Claude 根据从上一步中学到的内容决定每一步需要什么，将数十个操作串联起来并在过程中进行纠正。您也是这个循环的一部分。您可以随时中断以引导 Claude 走向不同的方向，提供额外的上下文，或要求它尝试不同的方法。Claude 自主工作，但对您的输入保持响应。智能体循环由两个组件驱动：<strong>模型</strong>（负责推理）和<strong>工具</strong>（负责行动）。Claude Code 充当 Claude 的<strong>智能体框架</strong>：它提供工具、上下文管理和执行环境，将语言模型转变为一个有能力的编码智能体。</p>
+<p><img src="/./image/8.1.png"></p>
+<h3 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h3><p>Claude Code 使用 Claude 模型来理解您的代码并对任务进行推理。Claude 可以阅读任何语言的代码，理解组件如何连接，并找出需要更改什么才能实现您的目标。对于复杂的任务，它会将工作分解为多个步骤，执行它们，并根据所学到的内容进行调整。有多种模型可供选择，它们在权衡方面有所不同。Sonnet 在大多数编码任务中表现良好。Opus 为复杂的架构决策提供更强的推理能力。您可以在会话期间使用 <code>/model</code> 切换模型，或使用 <code>claude --model &lt;name&gt;</code> 启动会话。当本指南提到“Claude 选择”或“Claude 决定”时，指的是模型正在进行推理。</p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p>工具是使 Claude Code 具有智能体能力的关键。没有工具，Claude 只能以文本形式响应。有了工具，Claude 就可以采取行动：阅读您的代码、编辑文件、运行命令、搜索网络以及与外部服务交互。每次工具使用都会返回信息，这些信息会反馈到循环中，为 Claude 的下一个决策提供依据。内置工具通常分为四类，每类代表一种不同类型的智能体能力。这些是主要功能。Claude 还拥有用于生成子智能体、向您提问以及其他编排任务的工具。Claude 会根据您的提示以及它在过程中学到的内容来选择使用哪些工具。例如，当您说“修复失败的测试”时，Claude 可能会：</p>
+<ol>
+<li><p>运行测试套件以查看哪些测试失败</p>
+</li>
+<li><p>阅读错误输出</p>
+</li>
+<li><p>搜索相关的源文件</p>
+</li>
+<li><p>阅读这些文件以理解代码</p>
+</li>
+<li><p>编辑文件以修复问题</p>
+</li>
+<li><p>再次运行测试以进行验证</p>
+</li>
+</ol>
+<p>每次工具使用都会为 Claude 提供新的信息，从而指导下一步。这就是智能体循环的运作方式。<strong>扩展基本功能：</strong> 内置工具是基础。您可以使用<strong>技能</strong>扩展 Claude 的知识，使用 <strong>MCP</strong> 连接到外部服务，使用<strong>钩子</strong>自动化工作流程，并将任务卸载到<strong>子智能体</strong>。这些扩展在核心智能体循环之上形成了一个层。有关如何根据您的需求选择正确扩展的指导，请参阅“扩展 Claude Code”部分。</p>
+<h3 id="Claude-可访问的内容"><a href="#Claude-可访问的内容" class="headerlink" title="Claude 可访问的内容"></a>Claude 可访问的内容</h3><p>本指南主要关注终端。Claude Code 也可以在 VS Code、JetBrains IDE 和其他环境中运行。当您在目录中运行 <code>claude</code> 时，Claude Code 可以访问：</p>
+<ul>
+<li><p><strong>您的项目。</strong> 您目录及其子目录中的文件，以及经过您许可的其他位置的文件。</p>
+</li>
+<li><p><strong>您的终端。</strong> 您可以运行的任何命令：构建工具、git、包管理器、系统实用程序、脚本。如果您可以通过命令行完成，Claude 也可以。</p>
+</li>
+<li><p><strong>您的 Git 状态。</strong> 当前分支、未提交的更改和最近的提交历史记录。</p>
+</li>
+<li><p><strong>您的 CLAUDE.md 文件。</strong> 一个 Markdown 文件，您可以在其中存储 Claude 在每个会话中应了解的项目特定说明、约定和上下文。</p>
+</li>
+<li><p><strong>您配置的扩展。</strong> 用于外部服务的 MCP 服务器、用于工作流程的技能、用于委托工作的子智能体以及用于浏览器交互的 Chrome 中的 Claude。</p>
+</li>
+</ul>
+<p>因为 Claude 可以看到您的整个项目，所以它可以在整个项目中工作。当您要求 Claude“修复身份验证错误”时，它会搜索相关文件，阅读多个文件以理解上下文，在它们之间进行协调编辑，运行测试以验证修复，并在您要求时提交更改。这与只查看当前文件的内联代码助手不同。</p>
+<h3 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h3><p>Claude Code 会在您工作时将您的对话本地保存。每条消息、工具使用和结果都会被存储，这使得<strong>回溯</strong>、<strong>恢复</strong>和<strong>分叉</strong>会话成为可能。在 Claude 进行代码更改之前，它还会对受影响的文件进行快照，以便您在需要时可以恢复。<strong>会话是短暂的。</strong> 与 claude.ai 不同，Claude Code 在会话之间没有持久内存。每个新会话都从头开始。Claude 不会随着时间的推移“学习”您的偏好，也不会记住您上周处理过什么。如果您希望 Claude 在会话之间了解某些内容，请将其放入您的 CLAUDE.md 文件中。</p>
+<h4 id="跨分支工作"><a href="#跨分支工作" class="headerlink" title="跨分支工作"></a>跨分支工作</h4><p>每个 Claude Code 对话都是一个与您当前目录绑定的会话。当您恢复时，您只会看到该目录中的会话。Claude 会查看您当前分支的文件。当您切换分支时，Claude 会看到新分支的文件，但您的对话历史记录保持不变。即使切换后，Claude 也会记住您讨论过的内容。由于会话与目录绑定，您可以通过使用 <strong>git worktrees</strong> 运行并行 Claude 会话，这会为各个分支创建单独的目录。</p>
+<h4 id="恢复或分叉会话"><a href="#恢复或分叉会话" class="headerlink" title="恢复或分叉会话"></a>恢复或分叉会话</h4><p>当您使用 <code>claude --continue</code> 或 <code>claude --resume</code> 恢复会话时，您将使用相同的会话 ID 从上次中断的地方继续。新消息会附加到现有对话中。您的完整对话历史记录会恢复，但会话范围的权限不会。您需要重新批准这些权限。</p>
+<p><img src="/./image/8.2.png"></p>
+<p>要分支并尝试不同的方法而不影响原始会话，请使用 <code>--fork-session</code> 标志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --<span class="built_in">continue</span> --fork-session</span><br></pre></td></tr></table></figure>
+
+<p>这会创建一个新的会话 ID，同时保留到该点为止的对话历史记录。原始会话保持不变。与恢复一样，分叉会话不会继承会话范围的权限。<strong>在多个终端中使用相同的会话</strong>：如果您在多个终端中恢复相同的会话，两个终端都会写入同一个会话文件。来自两者的消息会交错显示，就像两个人写在同一个笔记本上一样。不会损坏任何内容，但对话会变得混乱。每个终端在会话期间只看到自己的消息，但如果您稍后恢复该会话，您将看到所有交错的消息。对于从相同起点进行的并行工作，请使用 <code>--fork-session</code> 为每个终端提供自己的干净会话。</p>
+<h3 id="上下文窗口"><a href="#上下文窗口" class="headerlink" title="上下文窗口"></a>上下文窗口</h3><p>Claude 的上下文窗口包含您的对话历史记录、文件内容、命令输出、CLAUDE.md 文件、加载的技能和系统指令。随着您的工作，上下文会逐渐填满。Claude 会自动压缩，但对话早期的一些指令可能会丢失。将持久规则放入 CLAUDE.md 文件中，并运行 <code>/context</code> 以查看哪些内容占用了空间。</p>
+<h4 id="当上下文填满时"><a href="#当上下文填满时" class="headerlink" title="当上下文填满时"></a>当上下文填满时</h4><p>当您接近限制时，Claude Code 会自动管理上下文。</p>
+<h2 id="扩展-Claude-Code"><a href="#扩展-Claude-Code" class="headerlink" title="扩展 Claude Code"></a>扩展 Claude Code</h2><p>Claude Code 将一个能够理解您代码的模型与用于文件操作、搜索、执行和 Web 访问的<strong>内置工具</strong>相结合。内置工具涵盖了大多数编码任务。本指南涵盖了扩展层：您添加的功能可以自定义 Claude 的知识、将其连接到外部服务并自动化工作流程。</p>
+<p>有关核心智能体循环的工作原理，请参阅“Claude Code 工作原理”部分。</p>
+<p><strong>Claude Code 新手？</strong> 从 CLAUDE.md 开始，了解项目约定。根据需要添加其他扩展。</p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>扩展功能插入到智能体循环的不同部分：</p>
+<ul>
+<li><p><strong>CLAUDE.md</strong> 添加了 Claude 在每个会话中都会看到的持久上下文</p>
+</li>
+<li><p><strong>技能</strong> 添加了可重用的知识和可调用的工作流程</p>
+</li>
+<li><p><strong>MCP</strong> 将 Claude 连接到外部服务和工具</p>
+</li>
+<li><p><strong>子智能体</strong> 在隔离的上下文中运行自己的循环，并返回摘要</p>
+</li>
+<li><p><strong>智能体团队</strong> 协调多个独立的会话，共享任务和点对点消息传递</p>
+</li>
+<li><p><strong>钩子</strong> 完全在循环之外作为确定性脚本运行</p>
+</li>
+<li><p><strong>插件</strong> 和<strong>市场</strong> 打包和分发这些功能</p>
+</li>
+</ul>
+<p><strong>技能</strong> 是最灵活的扩展。技能是一个包含知识、工作流程或指令的 Markdown 文件。您可以使用斜杠命令（例如 <code>/deploy</code>）调用技能，或者 Claude 可以在相关时自动加载它们。技能可以在您当前的对话中运行，也可以通过子智能体在隔离的上下文中运行。</p>
+<h3 id="将功能与您的目标匹配"><a href="#将功能与您的目标匹配" class="headerlink" title="将功能与您的目标匹配"></a>将功能与您的目标匹配</h3><p>功能范围从 Claude 在每个会话中都会看到的常驻上下文，到您或 Claude 可以调用的按需功能，再到在特定事件上运行的后台自动化。下表显示了可用的功能以及何时使用它们。</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>作用</th>
+<th>何时使用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CLAUDE.md</strong></td>
+<td>每个对话都会加载的持久上下文</td>
+<td>项目约定，“总是做 X”规则</td>
+<td>“使用 pnpm，而不是 npm。在提交前运行测试。”</td>
+</tr>
+<tr>
+<td><strong>技能</strong></td>
+<td>Claude 可以使用的指令、知识和工作流程</td>
+<td>可重用内容、参考文档、可重复任务</td>
+<td><code>/review</code> 运行您的代码审查清单；带有端点模式的 API 文档技能</td>
+</tr>
+<tr>
+<td><strong>子智能体</strong></td>
+<td>返回摘要结果的隔离执行上下文</td>
+<td>上下文隔离、并行任务、专业工作者</td>
+<td>读取许多文件但只返回关键发现的研究任务</td>
+</tr>
+<tr>
+<td><strong>智能体团队</strong></td>
+<td>协调多个独立的 Claude Code 会话</td>
+<td>并行研究、新功能开发、使用竞争假设进行调试</td>
+<td>生成审阅者以同时检查安全性、性能和测试</td>
+</tr>
+<tr>
+<td><strong>MCP</strong></td>
+<td>连接到外部服务</td>
+<td>外部数据或操作</td>
+<td>查询您的数据库、发布到 Slack、控制浏览器</td>
+</tr>
+<tr>
+<td><strong>钩子</strong></td>
+<td>在事件上运行的确定性脚本</td>
+<td>可预测的自动化，不涉及 LLM</td>
+<td>每次文件编辑后运行 ESLint</td>
+</tr>
+</tbody></table>
+<p><strong>插件</strong> 是打包层。插件将技能、钩子、子智能体和 MCP 服务器捆绑到一个可安装的单元中。插件技能是<strong>命名空间</strong>的（例如 <code>/my-plugin:review</code>），因此多个插件可以共存。当您希望在多个存储库中重用相同的设置或通过<strong>市场</strong>分发给其他人时，请使用插件。</p>
+<h3 id="比较类似功能"><a href="#比较类似功能" class="headerlink" title="比较类似功能"></a>比较类似功能</h3><p>有些功能可能看起来相似。以下是区分它们的方法。</p>
+<ul>
+<li><p>技能与子智能体</p>
+</li>
+<li><p>CLAUDE.md 与技能</p>
+</li>
+<li><p>子智能体与智能体团队</p>
+</li>
+<li><p>MCP 与技能</p>
+</li>
+</ul>
+<p>技能和子智能体解决不同的问题：</p>
+<ul>
+<li><p><strong>技能</strong> 是您可以加载到任何上下文中的可重用内容</p>
+</li>
+<li><p><strong>子智能体</strong> 是与您的主对话分开运行的隔离工作者</p>
+</li>
+</ul>
+<p><strong>技能可以是参考或行动。</strong> 参考技能提供 Claude 在整个会话中使用的知识（例如您的 API 样式指南）。行动技能告诉 Claude 做一些特定的事情（例如 <code>/deploy</code> 运行您的部署工作流程）。当您需要上下文隔离或上下文窗口即将填满时，<strong>使用子智能体</strong>。子智能体可能会读取数十个文件或进行广泛的搜索，但您的主对话只会收到摘要。由于子智能体的工作不会消耗您的主上下文，因此当您不需要中间工作保持可见时，这也很有用。自定义子智能体可以有自己的指令并可以预加载技能。<strong>它们可以结合。</strong> 子智能体可以预加载特定的技能（<code>skills:</code> 字段）。技能可以使用 <code>context: fork</code> 在隔离的上下文中运行。</p>
+<h3 id="理解功能层"><a href="#理解功能层" class="headerlink" title="理解功能层"></a>理解功能层</h3><p>功能可以在多个级别定义：用户范围、每个项目、通过插件或通过托管策略。您还可以在子目录中嵌套 CLAUDE.md 文件，或将技能放置在单体仓库的特定包中。当同一功能存在于多个级别时，它们的分层方式如下：</p>
+<ul>
+<li><p><strong>CLAUDE.md 文件</strong> 是累加的：所有级别同时向 Claude 的上下文贡献内容。来自您的工作目录及以上的文件在启动时加载；子目录在您使用它们时加载。当指令冲突时，Claude 会根据判断进行协调，通常更具体的指令优先。</p>
+</li>
+<li><p><strong>技能和子智能体</strong> 按名称覆盖：当同一名称存在于多个级别时，一个定义会根据优先级获胜（托管 &gt; 用户 &gt; 项目用于技能；托管 &gt; CLI 标志 &gt; 项目 &gt; 用户 &gt; 插件用于子智能体）。插件技能是<strong>命名空间</strong>的，以避免冲突。</p>
+</li>
+<li><p><strong>MCP 服务器</strong> 按名称覆盖：本地 &gt; 项目 &gt; 用户。</p>
+</li>
+<li><p><strong>钩子</strong> 合并：所有注册的钩子都会触发其匹配事件，无论来源如何。</p>
+</li>
+</ul>
+<h3 id="组合功能"><a href="#组合功能" class="headerlink" title="组合功能"></a>组合功能</h3><p>每个扩展都解决了不同的问题：CLAUDE.md 处理常驻上下文，技能处理按需知识和工作流程，MCP 处理外部连接，子智能体处理隔离，钩子处理自动化。实际设置会根据您的工作流程将它们组合起来。例如，您可以使用 CLAUDE.md 进行项目约定，使用技能进行部署工作流程，使用 MCP 连接到数据库，并使用钩子在每次编辑后运行 linting。每个功能都发挥其最佳作用。</p>
+<h3 id="理解上下文成本"><a href="#理解上下文成本" class="headerlink" title="理解上下文成本"></a>理解上下文成本</h3><p>您添加的每个功能都会消耗 Claude 的部分上下文。太多可能会填满您的上下文窗口，但也可能增加噪音，使 Claude 的效率降低；技能可能无法正确触发，或者 Claude 可能会忘记您的约定。了解这些权衡有助于您构建有效的设置。</p>
+<h3 id="按功能划分的上下文成本"><a href="#按功能划分的上下文成本" class="headerlink" title="按功能划分的上下文成本"></a>按功能划分的上下文成本</h3><p>每个功能都有不同的加载策略和上下文成本。默认情况下，技能描述在会话开始时加载，以便 Claude 可以决定何时使用它们。在技能的 frontmatter 中设置 <code>disable-model-invocation: true</code> 可以完全将其隐藏，直到您手动调用它。这会将您自己触发的技能的上下文成本降至零。</p>
+<h3 id="理解功能如何加载"><a href="#理解功能如何加载" class="headerlink" title="理解功能如何加载"></a>理解功能如何加载</h3><p><img src="/./image/8.3.png"></p>
+<p>每个功能在会话的不同时间点加载。下面的选项卡解释了每个功能何时加载以及哪些内容进入上下文。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#claude-md">CLAUDE.md</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#skills">技能</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#mcp-servers">MCP 服务器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#subagents">子智能体</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview#hooks">钩子</a></p>
+</li>
+</ul>
+<p><strong>何时：</strong> 会话开始<strong>加载内容：</strong> 所有 CLAUDE.md 文件的完整内容（托管、用户和项目级别）。<strong>继承：</strong> Claude 从您的工作目录向上读取 CLAUDE.md 文件到根目录，并在访问子目录中的文件时发现嵌套的文件。</p>
+<p>将 CLAUDE.md 保持在约 500 行以下。将参考资料移动到按需加载的技能中。</p>
+<h3 id="了解更多"><a href="#了解更多" class="headerlink" title="了解更多"></a>了解更多</h3><p>每个功能都有自己的指南，其中包含设置说明、示例和配置选项。</p>
+<h2 id="在-VS-Code-中使用-Claude-Code"><a href="#在-VS-Code-中使用-Claude-Code" class="headerlink" title="在 VS Code 中使用 Claude Code"></a>在 VS Code 中使用 Claude Code</h2><p>VS Code 扩展为 Claude Code 提供了原生的图形界面，直接集成到您的 IDE 中。这是在 VS Code 中使用 Claude Code 的推荐方式。通过该扩展，您可以在接受 Claude 的计划之前审查和编辑它们，自动接受所做的编辑，使用您的选择 @-提及具有特定行范围的文件，访问对话历史记录，并在单独的选项卡或窗口中打开多个对话。</p>
+<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/t1trxwlj9Q3l8b8998GQFI/sandbox/tI5BemmroAZHqTh7uPB9Nt-images_1770339426192_na1fn_L2hvbWUvdWJ1bnR1L2ltYWdlcy9jbGF1ZGVfdnNjb2RlX2ludGVyZmFjZQ.webp?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdDF0cnh3bGo5UTNsOGI4OTk4R1FGSS9zYW5kYm94L3RJNUJlbW1yb0FaSHFUaDd1UEI5TnQtaW1hZ2VzXzE3NzAzMzk0MjYxOTJfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwybHRZV2RsY3k5amJHRjFaR1ZmZG5OamIyUmxYMmx1ZEdWeVptRmpaUS53ZWJwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=c7c9xQvFGU-Op8uHKeYlnuTFFTVkYMfo~HqggncTBt0c32HOUxTJ5HBbeipHimG7tWg1zebTdaC3wWvwpo2hTMLXbjKAQUj-6yVN89Qcvv1AKCzkrWLZOEWYkrGDIK4OzllQUD-1rmHF7FuQxL~SyR4l9UQ5dn0PYwVFHHnc5PmF4Ybg0GVNXimwa~p00hOMexnKGRcxzPANk-Ff5TeOxHbpYkbeODF9qJEWBGFqVbYqlhs19GZyJj57SmceSv1LCRqMLzf5UV32N3XePnxdUrxrRZwHjyXDYWSxGeCzXQVnTqEXvN4RP9gQUEHq1Pf9UHXvLbAoWunyzUbitp6Bcw__" alt="Claude Code VS Code 界面"></p>
+<h3 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h3><ul>
+<li><p>VS Code 1.98.0 或更高版本</p>
+</li>
+<li><p>一个 Anthropic 帐户（首次打开扩展时需要登录）。如果您使用的是 Amazon Bedrock 或 Google Vertex AI 等第三方提供商，请参阅“使用第三方提供商”部分。</p>
+</li>
+</ul>
+<p>该扩展包括 CLI（命令行界面），您可以从 VS Code 的集成终端访问它以获取高级功能。有关详细信息，请参阅“VS Code 扩展与 Claude Code CLI”部分。</p>
+<h3 id="安装扩展"><a href="#安装扩展" class="headerlink" title="安装扩展"></a>安装扩展</h3><p>单击您的 IDE 链接直接安装：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Anthropic.claude-code">安装到 VS Code</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Anthropic.claude-code">安装到 Cursor</a></p>
+</li>
+</ul>
+<p>或者在 VS Code 中，按 <code>Cmd+Shift+X</code> (Mac) 或 <code>Ctrl+Shift+X</code> (Windows&#x2F;Linux) 打开扩展视图，搜索“Claude Code”，然后单击<strong>安装</strong>。</p>
+<p>如果安装后扩展未出现，请重新启动 VS Code 或从命令面板运行“Developer: Reload Window”。</p>
+<h3 id="开始使用"><a href="#开始使用" class="headerlink" title="开始使用"></a>开始使用</h3><p>安装后，您可以通过 VS Code 界面开始使用 Claude Code：</p>
+<ol>
+<li><p><strong>打开 Claude Code 面板</strong></p>
+<p>在整个 VS Code 中，Spark 图标表示 Claude Code：打开 Claude 最快的方法是单击<strong>编辑器工具栏</strong>（编辑器右上角）中的 Spark 图标。该图标仅在您打开文件时出现。</p>
+<p>打开 Claude Code 的其他方式：</p>
+<p>首次打开面板时，会出现一个<strong>学习 Claude Code</strong> 清单。通过单击<strong>显示我</strong>来完成每个项目，或单击 X 关闭它。要稍后重新打开它，请在 VS Code 设置的“扩展 → Claude Code”下取消选中<strong>隐藏入门</strong>。您可以将 Claude 面板拖动到 VS Code 中的任何位置。</p>
+</li>
+</ol>
+<ul>
+<li><p><strong>命令面板</strong>：<code>Cmd+Shift+P</code> (Mac) 或 <code>Ctrl+Shift+P</code> (Windows&#x2F;Linux)，键入“Claude Code”，然后选择一个选项，例如“在新选项卡中打开”</p>
+</li>
+<li><p><strong>状态栏</strong>：单击窗口右下角的 <strong>✱ Claude Code</strong>。即使没有打开文件，这也有效。</p>
+</li>
+</ul>
+<ol>
+<li><p><strong>发送提示</strong></p>
+<p>请求 Claude 帮助您的代码或文件，无论是解释工作原理、调试问题还是进行更改。</p>
+<p>Claude 会自动查看您选择的文本。按 <code>Option+K</code> (Mac) &#x2F; <code>Alt+K</code> (Windows&#x2F;Linux) 也可以在您的提示中插入 @-提及引用（例如 <code>@file.ts#5-10</code>）。</p>
+</li>
+<li><p><strong>审查更改</strong></p>
+<p>当 Claude 想要编辑文件时，它会显示原始更改和建议更改的并排比较，然后请求权限。您可以接受、拒绝或告诉 Claude 应该怎么做。</p>
+</li>
+</ol>
+<h3 id="使用提示框"><a href="#使用提示框" class="headerlink" title="使用提示框"></a>使用提示框</h3><p>提示框支持以下功能：</p>
+<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/t1trxwlj9Q3l8b8998GQFI/sandbox/tI5BemmroAZHqTh7uPB9Nt-images_1770339426192_na1fn_L2hvbWUvdWJ1bnR1L2ltYWdlcy9jbGF1ZGVfdnNjb2RlX3Byb21wdF9ib3g.webp?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdDF0cnh3bGo5UTNsOGI4OTk4R1FGSS9zYW5kYm94L3RJNUJlbW1yb0FaSHFUaDd1UEI5TnQtaW1hZ2VzXzE3NzAzMzk0MjYxOTJfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwybHRZV2RsY3k5amJHRjFaR1ZmZG5OamIyUmxYM0J5YjIxd2RGOWliM2cud2VicCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=C1aL3zJAPFwCFs9U8ef3VVkILIvsH6TCj6zmFGT-a-IjU7aK6zlZe4ErtgqjkL0kMoWEs2D6xYhOmpGgWBg5Of6BxCVwE24aws0cV3s3Jw0kCRGJLfwxaGh-iQKNG9GPYH~TV7D1tC~3ODjb1kKF0ql2bD5Ovb4JHK8TDl-O4ZSHNxf--ATV8BJ8UoD9RDptc1afL-~s2ATxbSsIyCt6qzWTgaBuUaL72shCLhXxbM74qfmxE33wQJnFTHCqmvJBKMCUAzWJ19U9jwh1j7nQBoaQaCEGjsIRRZ9Etsc9HjX4~4sPa~vpyODOIRWCnyIJdQYB0G-KPE0NEZCn9knDlg__" alt="Claude Code VS Code 提示框"></p>
+<ul>
+<li><p><strong>权限模式</strong>：单击提示框底部的模式指示器以切换模式。在正常模式下，Claude 在每次操作前都会请求权限。在计划模式下，Claude 会描述它将做什么，并在进行更改前等待批准。在自动接受模式下，Claude 会在不询问的情况下进行编辑。在 VS Code 设置的 <code>claudeCode.initialPermissionMode</code> 下设置默认值。</p>
+</li>
+<li><p><strong>命令菜单</strong>：单击 <code>/</code> 或键入 <code>/</code> 以打开命令菜单。选项包括附加文件、切换模型、切换扩展思考和查看计划使用情况（<code>/usage</code>）。“自定义”部分提供对 MCP 服务器、钩子、内存、权限和插件的访问。带有终端图标的项目在集成终端中打开。</p>
+</li>
+<li><p><strong>上下文指示器</strong>：提示框显示您正在使用多少 Claude 的上下文窗口。Claude 会在需要时自动压缩，或者您可以手动运行 <code>/compact</code>。</p>
+</li>
+<li><p><strong>扩展思考</strong>：让 Claude 花更多时间思考复杂问题。通过命令菜单（<code>/</code>）将其打开。</p>
+</li>
+<li><p><strong>多行输入</strong>：按 <code>Shift+Enter</code> 添加新行而不发送。这在问题对话框的“其他”自由文本输入中也有效。</p>
+</li>
+</ul>
+<h3 id="引用文件和文件夹"><a href="#引用文件和文件夹" class="headerlink" title="引用文件和文件夹"></a>引用文件和文件夹</h3><p>使用 @-提及向 Claude 提供有关特定文件或文件夹的上下文。当您键入 <code>@</code> 后跟文件或文件夹名称时，Claude 会读取该内容并可以回答有关它的问题或对其进行更改。Claude Code 支持模糊匹配，因此您可以键入部分名称以查找所需内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)</span><br><span class="line">&gt; What&#x27;s in @src/components/ (include a trailing slash for folders)</span><br></pre></td></tr></table></figure>
+
+<p>对于大型 PDF，您可以要求 Claude 阅读特定页面而不是整个文件：单个页面、1-10 页的范围或从第 3 页开始的开放范围。当您在编辑器中选择文本时，Claude 可以自动看到您突出显示的代码。提示框底部显示选择了多少行。按 <code>Option+K</code> (Mac) &#x2F; <code>Alt+K</code> (Windows&#x2F;Linux) 插入带有文件路径和行号的 @-提及（例如 <code>@app.ts#5-10</code>）。单击选择指示器以切换 Claude 是否可以看到您突出显示的文本 - 带斜杠的眼睛图标表示选择对 Claude 隐藏。您还可以按住 <code>Shift</code> 并将文件拖到提示框中，将其作为附件添加。单击任何附件上的 X 可以将其从上下文中删除。</p>
+<h3 id="恢复过去的对话"><a href="#恢复过去的对话" class="headerlink" title="恢复过去的对话"></a>恢复过去的对话</h3><p>单击 Claude Code 面板顶部的下拉菜单以访问您的对话历史记录。您可以按关键字搜索或按时间（今天、昨天、过去 7 天等）浏览。单击任何对话以恢复它并查看完整的消息历史记录。</p>
+<h3 id="从-Claude-ai-恢复远程会话"><a href="#从-Claude-ai-恢复远程会话" class="headerlink" title="从 Claude.ai 恢复远程会话"></a>从 Claude.ai 恢复远程会话</h3><p>如果您使用 <a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/claude-code-on-the-web">Web 版 Claude Code</a>，您可以直接在 VS Code 中恢复这些远程会话。这需要使用 <strong>Claude.ai 订阅</strong>登录，而不是 Anthropic Console。</p>
+<ol>
+<li><p><strong>打开过去的对话</strong></p>
+<p>单击 Claude Code 面板顶部的<strong>过去的对话</strong>下拉菜单。</p>
+</li>
+<li><p><strong>选择远程选项卡</strong></p>
+<p>对话框显示两个选项卡：本地和远程。单击<strong>远程</strong>以查看来自 claude.ai 的会话。</p>
+</li>
+<li><p><strong>选择要恢复的会话</strong></p>
+<p>浏览或搜索您的远程会话。单击任何会话以下载它并在本地继续对话。</p>
+<p>只有使用 GitHub 存储库启动的 Web 会话才会出现在“远程”选项卡中。恢复会将对话历史记录加载到本地；更改不会同步回 claude.ai。</p>
+</li>
+</ol>
+<h3 id="自定义您的工作流程"><a href="#自定义您的工作流程" class="headerlink" title="自定义您的工作流程"></a>自定义您的工作流程</h3><p>启动并运行后，您可以重新定位 Claude 面板、运行多个会话或切换到终端模式。</p>
+<h4 id="选择-Claude-的位置"><a href="#选择-Claude-的位置" class="headerlink" title="选择 Claude 的位置"></a>选择 Claude 的位置</h4><p>您可以将 Claude 面板拖动到 VS Code 中的任何位置。抓住面板的选项卡或标题栏并将其拖动到：</p>
+<ul>
+<li><p><strong>辅助侧边栏</strong>：窗口的右侧。在您编码时保持 Claude 可见。</p>
+</li>
+<li><p><strong>主侧边栏</strong>：左侧边栏，带有资源管理器、搜索等图标。</p>
+</li>
+<li><p><strong>编辑器区域</strong>：将 Claude 作为选项卡与您的文件一起打开。适用于辅助任务。</p>
+</li>
+</ul>
+<p>使用侧边栏作为您的主要 Claude 会话，并为辅助任务打开额外的选项卡。Claude 会记住您的首选位置。请注意，Spark 图标仅在 Claude 面板停靠在左侧时才会出现在活动栏中。由于 Claude 默认位于右侧，因此请使用编辑器工具栏图标打开 Claude。</p>
+<h4 id="运行多个对话"><a href="#运行多个对话" class="headerlink" title="运行多个对话"></a>运行多个对话</h4><p>使用命令面板中的<strong>在新选项卡中打开</strong>或<strong>在新窗口中打开</strong>来启动额外的对话。每个对话都维护自己的历史记录和上下文，允许您并行处理不同的任务。当使用选项卡时，Spark 图标上会有一个小的彩色点…</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/how-claude-code-works">How Claude Code works - Claude Code Docs</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/features-overview">Extend Claude Code - Claude Code Docs</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/vs-code">Use Claude Code in VS Code - Claude Code Docs</a></p>
+</li>
+</ol>
+<p><a href="./README.md">返回目录</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/">https://hzhzxfs.github.io/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/" title="9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</div></div><div class="info-2"><div class="info-item-1">第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专家” (Sub-agents) 进行分工协作，最终通过 MCP 将成果交付到外部系统 (Notion)。  1. 核心架构：指挥官与专家团队 (The Architecture)我们使用 SDK 构建的系统架构可以映射为传统的企业组织结构：    架构层级 概念隐喻 (Metaphor) 代码组件 (SDK Component) 本案具体实现 (Implementation)    The Brain 指挥官 &#x2F; 编排者 Main Agent + TaskTool 负责理解需求，加载技能制定计划，分派任务，最后合成报告。   The Arms 专家 &#x2F; 执行者 Age...</div></div></div></a><a class="pagination-related" href="/2026/02/08/7.Skill%20with%20the%20Claude%20API%EF%BC%88%E5%9C%A8Claude%20API%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="7.Skill with the Claude API（在Claude API使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">7.Skill with the Claude API（在Claude API使用skills）</div></div><div class="info-2"><div class="info-item-1">7.Skill with the Claude API.md Introduce Skills with the Claude API(通过 Claude API 介绍技能功能) 在第一课中，你已经了解了技能（Skills）在 Claude AI 中的运作方式。 现在，我们将开始使用 Claude API 来测试我们在上一课中创建了两个技能。 要在 Claude API 中使用技能，我们需要用到代码执行工具和文件 API。 这将让 Claude 获得文件系统的访问权限，使其能够读写文件，并通过 bash 执行代码。  我们开始吧。之前我们已经聊了很多关于技能的运作原理以及创建方法。 我们也简单提到了技能在 Claude 生态系统不同环境下的可移植性，以及在其他众多智能代理类应用中的表现。 我们先从 Claude AI 和 Claude Desktop 中的技能讲起，现在我们要转向介绍如何通过 Claude Messages API 使用技能。   重要注意事项有两点需要重点注意。 第一，你在 Claude AI 和 Claude Desktop 中创建的技能不会在 Claude ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/20/20-API%E8%B0%83%E7%94%A8%E4%B8%8E%E9%94%99%E8%AF%AF%E6%81%A2%E5%A4%8D/" title="20-API调用与错误恢复"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-20</div><div class="info-item-2">20-API调用与错误恢复</div></div><div class="info-2"><div class="info-item-1">第 20 篇：API 调用与错误恢复 — 面向不可靠网络的鲁棒设计 本篇是《深入 Claude Code 源码》系列第 20 篇。我们将深入 API 调用层的错误恢复机制，看看一个生产级 AI CLI 如何在不可靠的网络环境下保持稳定运行。  为什么需要如此复杂的错误恢复？当你在本地调用一个 REST API 时，最简单的做法是失败就报错。但 Claude Code 面对的是一个远比这复杂的现实：  网络不可靠 — 用户可能在咖啡馆 WiFi、企业代理、VPN 隧道后面使用 API 容量波动 — 529 过载和 429 限流是 LLM API 的常态，不是异常 认证令牌过期 — OAuth token、AWS credential、GCP credential 都有 TTL 流式连接脆弱 — SSE 流可能在中途断开、超时、或被代理截断 多 Provider 差异 — 同一份代码要兼容 Anthropic 直连、AWS Bedrock、GCP Vertex、Azure Foundry 四种后端  如果每种错误都让用户手动重试，用户体验将是灾难性的 —— 想象你在一个需要 10 分...</div></div></div></a><a class="pagination-related" href="/2026/04/03/agents/" title="agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-03</div><div class="info-item-2">agents</div></div><div class="info-2"><div class="info-item-1">并行运行代理 比较 Claude Code 同时处理多个任务的方式：子代理、代理视图、代理团队和动态工作流。  子代理、代理视图、代理团队 和 动态工作流 各自以不同的方式并行化工作。正确的选择取决于您是否想在每个对话中保持参与、交付任务并稍后检查，或让 Claude 为您协调一组工作人员。    方法 它提供什么 何时使用    子代理 在一个会话内的委派工作人员，在自己的上下文中执行辅助任务并返回摘要 辅助任务会用搜索结果、日志或文件内容淹没您的主对话，而您不会再次引用这些内容   代理视图 一个屏幕来分派和监控在后台运行的会话，使用 claude agents 打开。研究预览 您有多个独立任务，想要交付它们，一目了然地检查状态，并仅在需要时介入   代理团队 多个协调的会话，具有共享任务列表和代理间消息传递，由主导者管理。实验性功能，默认禁用 您希望 Claude 将项目分成多个部分、分配它们，并保持工作人员同步   动态工作流 一个脚本，运行许多子代理并交叉检查其结果，用于一个太大而无法一次协调的工作或需要多次处理的工作。研究预览 一个任务对于少数几个子代理来说太大了，或...</div></div></div></a><a class="pagination-related" href="/2026/04/14/features-overview/" title="features-overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">features-overview</div></div><div class="info-2"><div class="info-item-1">扩展 Claude Code 了解何时使用 CLAUDE.md、Skills、subagents、hooks、MCP 和 plugins。  Claude Code 结合了一个能够推理代码的模型和内置工具，用于文件操作、搜索、执行和网络访问。内置工具涵盖了大多数编码任务。本指南涵盖扩展层：您添加的功能，用于自定义 Claude 的知识、将其连接到外部服务以及自动化工作流。    有关核心代理循环如何工作的信息，请参阅 [Claude Code 如何工作](/zh-CN/how-claude-code-works)。   初次使用 Claude Code？ 从 CLAUDE.md 开始了解项目约定，然后根据需要添加其他扩展当特定触发器出现时。 概述扩展插入代理循环的不同部分：  CLAUDE.md 添加 Claude 每个会话都能看到的持久上下文 Skills 添加可重用的知识和可调用的工作流 代码智能 将 Claude 连接到语言服务器，用于符号级导航和实时类型错误 MCP 将 Claude 连接到外部服务和工具 Subagents 在隔离的上下文中运行自己的循环，返回摘要 Ag...</div></div></div></a><a class="pagination-related" href="/2026/05/10/10-BashTool-%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/" title="10-BashTool-深度剖析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-10</div><div class="info-item-2">10-BashTool-深度剖析</div></div><div class="info-2"><div class="info-item-1">第 10 篇：BashTool 深度剖析 — 最复杂的单个工具 本篇是《深入 Claude Code 源码》系列第 10 篇。BashTool 是 Claude Code 中代码量最大、安全逻辑最复杂的单个工具，总计约 12,400 行代码。我们将从命令语义分析、多层安全防线、沙箱执行、输出处理、权限匹配五个维度，完整剖析它如何让 AI 安全地执行 Shell 命令。  为什么 BashTool 是最复杂的工具？在第 9 篇中我们了解了 buildTool() 的抽象体系和 Tool 接口的设计。所有工具都遵循相同的 name / inputSchema / call() / checkPermissions() 协议。但 BashTool 的特殊之处在于：它是唯一一个允许 AI 在用户机器上执行任意代码的工具。 这意味着它必须同时解决两个相互矛盾的需求：  足够强大 — AI 需要通过 Shell 命令完成 git 操作、运行测试、安装依赖、查看日志等几乎一切任务 足够安全 — 绝不能让 AI（或通过 prompt injection 操控 AI 的攻击者）执行破坏性操作  这...</div></div></div></a><a class="pagination-related" href="/2026/05/12/12-Agent-%E7%B3%BB%E7%BB%9F/" title="12-Agent-系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-12</div><div class="info-item-2">12-Agent-系统</div></div><div class="info-2"><div class="info-item-1">第 12 篇：Agent 系统 — 从单体到多智能体协作 本篇是《深入 Claude Code 源码》系列的第 12 篇。我们将深入剖析 Agent 子系统的完整架构：从 Agent 定义的数据结构与加载机制，到 runAgent() 的完整生命周期，再到 createSubagentContext() 如何实现 context 隔离与选择性共享。  为什么需要多 Agent？当你让 Claude Code 帮你”重构整个模块的测试”时，一个单体 Agent 会怎么做？它会搜索文件、阅读代码、编写测试、运行验证——所有步骤串行执行，上下文窗口迅速膨胀。更糟糕的是，搜索过程中产生的大量中间输出（grep 结果、文件内容）会永久占据上下文，挤压真正有价值的信息空间。 Claude Code 的解决方案是多 Agent 协作：主 Agent 可以按需生成子 Agent，每个子 Agent 拥有独立的上下文窗口和对话循环，完成任务后只返回精炼的结果。这就像一个团队 lead 把任务分派给专人，每个人独立工作后汇报结论。 这个设计解决了三个核心问题：  上下文污染：搜索类任务的海量中间输出...</div></div></div></a><a class="pagination-related" href="/2026/03/15/setup/" title="setup"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">setup</div></div><div class="info-2"><div class="info-item-1">高级设置 Claude Code 的系统要求、特定平台安装、版本管理和卸载。  本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅快速入门。如果您从未使用过终端，请参阅终端指南。 系统要求Claude Code 在以下平台和配置上运行：  操作系统： macOS 13.0+ Windows 10 1809+ 或 Windows Server 2019+ Ubuntu 20.04+ Debian 10+ Alpine Linux 3.19+   硬件：4 GB+ RAM、x64 或 ARM64 处理器 网络：需要互联网连接。请参阅网络配置。 Shell：Bash、Zsh、PowerShell 或 CMD。 位置：Anthropic 支持的国家&#x2F;地区  其他依赖项 ripgrep：通常包含在 Claude Code 中。如果搜索失败，请参阅搜索故障排除。  安装 Claude Code   更喜欢图形界面？[桌面应用](/zh-CN/desktop-quickstart)让您无需使用终端即可使用 Claude Code。下载适用于 [macO...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Skill-with-Claude-Code-%E7%86%9F%E7%BB%83%E8%BF%90%E7%94%A8-Claude-Code"><span class="toc-number">1.</span> <span class="toc-text">Skill with Claude Code(熟练运用 Claude Code)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">Claude Code 工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.2.</span> <span class="toc-text">工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Claude-%E5%8F%AF%E8%AE%BF%E9%97%AE%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.2.3.</span> <span class="toc-text">Claude 可访问的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86"><span class="toc-number">1.2.4.</span> <span class="toc-text">会话管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%A8%E5%88%86%E6%94%AF%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">跨分支工作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E6%88%96%E5%88%86%E5%8F%89%E4%BC%9A%E8%AF%9D"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">恢复或分叉会话</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AA%97%E5%8F%A3"><span class="toc-number">1.2.5.</span> <span class="toc-text">上下文窗口</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E4%B8%8A%E4%B8%8B%E6%96%87%E5%A1%AB%E6%BB%A1%E6%97%B6"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">当上下文填满时</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%B1%95-Claude-Code"><span class="toc-number">1.3.</span> <span class="toc-text">扩展 Claude Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E5%8A%9F%E8%83%BD%E4%B8%8E%E6%82%A8%E7%9A%84%E7%9B%AE%E6%A0%87%E5%8C%B9%E9%85%8D"><span class="toc-number">1.3.2.</span> <span class="toc-text">将功能与您的目标匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E7%B1%BB%E4%BC%BC%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.3.</span> <span class="toc-text">比较类似功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E5%8A%9F%E8%83%BD%E5%B1%82"><span class="toc-number">1.3.4.</span> <span class="toc-text">理解功能层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E5%90%88%E5%8A%9F%E8%83%BD"><span class="toc-number">1.3.5.</span> <span class="toc-text">组合功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E4%B8%8A%E4%B8%8B%E6%96%87%E6%88%90%E6%9C%AC"><span class="toc-number">1.3.6.</span> <span class="toc-text">理解上下文成本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E5%8A%9F%E8%83%BD%E5%88%92%E5%88%86%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E6%88%90%E6%9C%AC"><span class="toc-number">1.3.7.</span> <span class="toc-text">按功能划分的上下文成本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E5%8A%9F%E8%83%BD%E5%A6%82%E4%BD%95%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.3.8.</span> <span class="toc-text">理解功能如何加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%86%E8%A7%A3%E6%9B%B4%E5%A4%9A"><span class="toc-number">1.3.9.</span> <span class="toc-text">了解更多</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-VS-Code-%E4%B8%AD%E4%BD%BF%E7%94%A8-Claude-Code"><span class="toc-number">1.4.</span> <span class="toc-text">在 VS Code 中使用 Claude Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.4.1.</span> <span class="toc-text">先决条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%89%A9%E5%B1%95"><span class="toc-number">1.4.2.</span> <span class="toc-text">安装扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">开始使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8F%90%E7%A4%BA%E6%A1%86"><span class="toc-number">1.4.4.</span> <span class="toc-text">使用提示框</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E6%96%87%E4%BB%B6%E5%92%8C%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">1.4.5.</span> <span class="toc-text">引用文件和文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E8%BF%87%E5%8E%BB%E7%9A%84%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.4.6.</span> <span class="toc-text">恢复过去的对话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E-Claude-ai-%E6%81%A2%E5%A4%8D%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D"><span class="toc-number">1.4.7.</span> <span class="toc-text">从 Claude.ai 恢复远程会话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%82%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.8.</span> <span class="toc-text">自定义您的工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E6%8B%A9-Claude-%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">选择 Claude 的位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.4.8.2.</span> <span class="toc-text">运行多个对话</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">1.5.</span> <span class="toc-text">参考文献</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

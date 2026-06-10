@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>wsl-learning | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="blog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wsl-learning">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/02/25/wsl-learning/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-02-25T09:19:13.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.425Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "wsl-learning",
+  "url": "https://hzhzxfs.github.io/2025/02/25/wsl-learning/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-02-25T09:19:13.000Z",
+  "dateModified": "2026-06-10T02:14:46.425Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/02/25/wsl-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'wsl-learning',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">wsl-learning</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">wsl-learning</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-25T09:19:13.000Z" title="发表于 2025-02-25 17:19:13">2025-02-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.425Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://blessing.studio/wsl-guide/">blog</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/02/25/wsl-learning/">https://hzhzxfs.github.io/2025/02/25/wsl-learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/26/youtube-dl-note/" title="youtube-dl-note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">youtube-dl-note</div></div><div class="info-2"><div class="info-item-1">youtube-dl0x00 Github Repository ForkGithub Repository 0x01 Installation12sudo curl -L https://github.com/l1ving/youtube-dl/releases/latest/download/youtube-dl -o /usr/local/bin/youtube-dlsudo chmod a+rx /usr/local/bin/youtube-dl  0x02 Usage1youtube-dl [OPTIONS] URL [URL...]  0x03 how-to-select-video-quality-from-youtube-dlhow-to-select-video-quality-from-youtube-dl 1youtube-dl -F &#x27;http://www.youtube.com/watch?v=P9pzm5b6FFY&#x27;  Here is the output: 123456789101112131415161718[youtube] ...</div></div></div></a><a class="pagination-related" href="/2025/02/24/vue-learning/" title="vue-learning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">vue-learning</div></div><div class="info-2"><div class="info-item-1">vue笔记1.声明式渲染html: 123&lt;div id=&quot;app&quot;&gt;  &#123;&#123; message &#125;&#125;&lt;/div&gt;  js: 123456var app = new Vue(&#123;  el: &#x27;#app&#x27;,  data: &#123;    message: &#x27;Hello Vue!&#x27;  &#125;&#125;)  2.常用vue指令v-bind:attribute html属性绑定v-bind:attribute&#x3D;”data中的变量”对html标签的属性进行绑定 12345&lt;div id=&quot;app-2&quot;&gt;  &lt;span v-bind:title=&quot;message&quot;&gt;    鼠标悬停几秒钟查看此处动态绑定的提示信息！  &lt;/span&gt;&lt;/div&gt;  123456var app2 = new Vue(&#123;  el: &#x27;#app-2&#x27;...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/01/14/SerializationAndDeserialization/" title="SerializationAndDeserialization"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-14</div><div class="info-item-2">SerializationAndDeserialization</div></div><div class="info-2"><div class="info-item-1">🔍 这是什么？序列化将内存中对象（如 Java 类或 JS 对象）转换为传输格式（如字符串或字节流）的过程。 反序列化将传输格式转回程序可以使用的本机对象的过程。  💡为什么我们需要它？想象一下 JavaScript 前端 将“User”对象发送到 Rust 后端：  JavaScript 将数据视为动态对象。 Rust 将数据视为严格的结构。 他们不能共享内存。他们需要一个通用标准（如 JSON）来充当桥梁。  现实生活中的类比： 想想宜家的家具。   序列化： 工厂将成品办公桌拆成扁平包装箱（紧凑型运输）。 传输： 盒子被运送到您家。 反序列化： 您将部件从盒子中取出并重建桌子，以便您可以使用它。   🛠 流行标准   类型 示例 最适合    基于文本 JSON、XML、YAML Web API、配置、人类可读性   基于二进制 Protobuf、Avro 高性能微服务，内部通信    🏗 JSON 深入探究JSON（JavaScript 对象表示法）是最流行的 Web 通信标准。 规则： 大括号： 必须括在 {} 中。 键： 必须位于 &quot;double q...</div></div></div></a><a class="pagination-related" href="/2025/01/06/Elasticsearch/" title="ElasticSearch"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-06</div><div class="info-item-2">ElasticSearch</div></div><div class="info-2"><div class="info-item-1">1. 问题：关系数据库的限制⚠️ 效率低下带通配符的标准 LIKE 查询（例如 %laptop%）会触发全表扫描，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。 ⚠️缺乏相关性传统的 SQL 查询返回匹配没有排名或相关性评分。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。 ⚠️ 可扩展性问题随着系统扩展（例如，亚马逊或谷歌等平台），需要亚毫秒级搜索延迟。传统的关系数据库很难有效地满足这些性能需求。 用于搜索的关系数据库的其他限制⚠️ 全文搜索支持不佳关系数据库并非专为高级全文搜索功能而设计，例如：  代币化 词干提取（例如，“运行”→“运行”） 同义词处理与专用搜索引擎相比，这使得搜索不太智能。  ⚠️没有内置排名算法没有对相关性评分算法（例如 TF-IDF 或 BM25）的本机支持，而这些算法对于对搜索结果进行有意义的排名至关重要。 ⚠️ 难以处理拼写错误和模糊搜索关系数据库面临以下问题：  拼写错误（例如，“laptpo”而不是“laptop”） 近似匹配实现模糊搜索既复杂又低效。  ⚠️ 有限的水平可扩展性...</div></div></div></a><a class="pagination-related" href="/2025/06/04/03.%E7%BD%91%E7%BB%9C%E4%B8%8E%E9%83%A8%E7%BD%B2%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/" title="03.网络与部署学习资料"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-04</div><div class="info-item-2">03.网络与部署学习资料</div></div><div class="info-2"><div class="info-item-1">第七节：从需求到上线全流程概述课程背景： 作为后端研发同学，在一个完整的需求交付周期内究竟要做哪些事情？在各个阶段需要跟不同的角色和平台打交道。介绍常见的研发模式和迭代流程，以实际的例子让同学感受一下后端研发的日常，能够提升大家在团队中协作的能力。 课程目标：  提升对流程的认知 熟悉在公司大团队中协作开发 对职业生涯的日常有更直观的理解  课前 （必须）词汇表   分类 英文 中文 解释    研发模式 Waterfall Model 瀑布模型 瀑布模型（Waterfall Model）最早强调软件或系统开发应有完整之周期，且必须完整的经历周期之每一开发阶段，并系统化的考量分析与设计的技术、时间与资源之投入等。由于该模式强调系统开发过程需有完整的规划、分析、设计、测试及文件等管理与控制，因此能有效的确保系统质量，它已经成为软体业界大多数软件开发的最初标准   The Scaled Agile Framework(SAFe) 规模化敏捷框架     Scrum Scrum 在软件工程中，Scrum是以经验过程为依据，采用迭代、增量的方法来提高产品开发的可预见性并控制风险的理论，S...</div></div></div></a><a class="pagination-related" href="/2025/03/02/11_mongo_db_notes/" title="11_mongo_db_notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-02</div><div class="info-item-2">11_mongo_db_notes</div></div><div class="info-2"><div class="info-item-1">MongoDB + ImageKit 集成（后端架构笔记） 目标允许用户上传图像。将图像存储在云存储（ImageKit）中。将返回的图像 URL 保存在 MongoDB 中。返回正确的响应给客户端。  完整的系统流程客户端（颤振&#x2F;邮递员）→ HTTP 请求（多部分&#x2F;表单数据）→ 快速路线→ Multer 中间件（解析文件）→ ImageKit 上传服务→ 云存储→ 返回的 URL→ MongoDB（存储 URL）→ 回复已发回  1. 为什么需要 MulterExpress 默认可以解析 JSON。但是，图像上传不是 JSON。它们被发送为： 内容类型：多部分&#x2F;表单数据 此格式包含原始二进制数据。仅 Express 无法从此格式提取文件。 穆特解决了这个问题。 穆尔特：  读取传入的请求流 检测文件边界 将文件数据与文本字段分开 将文件附加到 req.file 将文本字段附加到 req.body  多路复用器配置123456const multer = require(&quot;multer&quot;);const upload = multer...</div></div></div></a><a class="pagination-related" href="/2025/01/08/HTTP/" title="HTTP"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-08</div><div class="info-item-2">HTTP</div></div><div class="info-2"><div class="info-item-1">HTTP 基础知识HTTP（超文本传输协议）是网络上的交流。 HTTP 的核心基于两个基本思想：  无状态模型 客户端-服务器模型  1.无状态模型HTTP 遵循 无状态 通信模型。 无状态意味着服务器不记得之前与客户的任何互动。每个 HTTP 请求都被视为一个全新的请求。 无状态意味着什么？ 每个请求都包含所有必需的信息 信息通过以下方式发送： 标题 网址 方法（GET、POST 等） 身体（如果需要）   一旦服务器发送响应，它就会丢弃该请求 下一个请求被认为是独立的  换句话说，HTTP 请求是独立的。 无状态模型的好处1. 简单无状态系统更容易设计和维护因为服务器不需要存储客户端会话数据。 2. 可扩展性由于服务器上没有存储会话状态，请求可以分布在多个服务器上使用负载平衡器。 3. 可靠性如果一台服务器出现故障，另一台服务器可以处理请求而不丢失会话数据。 4. 状态管理的灵活性虽然HTTP本身是无状态的，应用程序可以使用以下方式保持连续性：  饼干 会议 令牌（JWT、OAuth）  这些机制构建于HTTP之上，不是 HTTP 本身的一部分。 2. 客户端-服务器模型HT...</div></div></div></a><a class="pagination-related" href="/2025/03/12/5_async_await/" title="5_async_await"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-12</div><div class="info-item-2">5_async_await</div></div><div class="info-2"><div class="info-item-1">JS 异步&#x2F;等待1. 异步&#x2F;等待Async&#x2F;Await 是一种使用 Promise 的更简洁的方式。它不会取代承诺——它在内部使用它们。 规则： 12async function → always returns Promiseawait → pauses function until promise resolves 示例 1：基本异步123456789101112function getData() &#123;  return new Promise(resolve =&gt; &#123;    setTimeout(() =&gt; resolve(&quot;User loaded&quot;), 1000);  &#125;);&#125;async function main() &#123;  const data = await getData();  console.log(data);&#125;main();  示例2：顺序执行123456789function step1() &#123; return Promise.r...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

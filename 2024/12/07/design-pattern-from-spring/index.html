@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>design-pattern-from-spring | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="跟着 Spring 学设计模式观察者模式定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并自动更新 又称：发布订阅、消息通知机制、事件监听、事件驱动编程 利用 Spring 事件机制改造，利用观察者模式设计高扩展性的代码 Spring 中的 ApplicationListener(ApplicationEvent) 案例：  3个监听器，在 Underwr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="design-pattern-from-spring">
+<meta property="og:url" content="https://hzhzxfs.github.io/2024/12/07/design-pattern-from-spring/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="跟着 Spring 学设计模式观察者模式定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并自动更新 又称：发布订阅、消息通知机制、事件监听、事件驱动编程 利用 Spring 事件机制改造，利用观察者模式设计高扩展性的代码 Spring 中的 ApplicationListener(ApplicationEvent) 案例：  3个监听器，在 Underwr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2024-12-07T00:13:37.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.379Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "design-pattern-from-spring",
+  "url": "https://hzhzxfs.github.io/2024/12/07/design-pattern-from-spring/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2024-12-07T00:13:37.000Z",
+  "dateModified": "2026-06-10T02:14:46.379Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2024/12/07/design-pattern-from-spring/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'design-pattern-from-spring',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">design-pattern-from-spring</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">design-pattern-from-spring</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-12-07T00:13:37.000Z" title="发表于 2024-12-07 08:13:37">2024-12-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.379Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="跟着-Spring-学设计模式"><a href="#跟着-Spring-学设计模式" class="headerlink" title="跟着 Spring 学设计模式"></a>跟着 Spring 学设计模式</h1><h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><p>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并自动更新</p>
+<p><strong>又称</strong>：发布订阅、消息通知机制、事件监听、事件驱动编程</p>
+<p>利用 Spring 事件机制改造，利用观察者模式设计高扩展性的代码</p>
+<p>Spring 中的 ApplicationListener(ApplicationEvent)</p>
+<p><strong>案例</strong>：</p>
+<p><img src="/imgs/observer-pattern-1.svg" alt="observer-pattern-1"></p>
+<p>3个监听器，在 <code>UnderwritingEvent</code> 被触发的时候，执行 <code>onApplicationEvent()</code> 方法</p>
+<p>App Listener:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppListener</span> <span class="keyword">implements</span> <span class="title class_">ApplicationListener</span>&lt;UnderwritingEvent&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onApplicationEvent</span><span class="params">(UnderwritingEvent event)</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;App start...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Message Listener:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MessageListener</span> <span class="keyword">implements</span> <span class="title class_">ApplicationListener</span>&lt;UnderwritingEvent&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onApplicationEvent</span><span class="params">(UnderwritingEvent event)</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;message start...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>WeChat Listener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeChatListener</span> <span class="keyword">implements</span> <span class="title class_">ApplicationListener</span>&lt;UnderwritingEvent&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onApplicationEvent</span><span class="params">(UnderwritingEvent event)</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;WeChat start...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>事件类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnderwritingEvent</span> <span class="keyword">extends</span> <span class="title class_">ApplicationEvent</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UnderwritingEvent</span><span class="params">(Object source)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(source);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>承保业务类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnderWritingServiceImpl</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UnderWritingServiceImpl</span><span class="params">(ApplicationContext applicationContext)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.applicationContext = applicationContext;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">underWriting</span><span class="params">()</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;start underwriting...&quot;</span>);</span><br><span class="line">        applicationContext.publishEvent(<span class="keyword">new</span> <span class="title class_">UnderwritingEvent</span>(<span class="string">&quot;underwriting finish&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>UnderWritingServiceImpl.underWriting()</code> 后，输出如下</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2020-08-15 21:27:54.641  INFO 5108 --- [           main] c.w.d.u.UnderWritingServiceImpl          : start underwriting...</span><br><span class="line">2020-08-15 21:27:54.643  INFO 5108 --- [           main] com.wuyue.design.listener.AppListener    : App start...</span><br><span class="line">2020-08-15 21:27:54.644  INFO 5108 --- [           main] c.wuyue.design.listener.MessageListener  : message start...</span><br><span class="line">2020-08-15 21:27:54.644  INFO 5108 --- [           main] c.wuyue.design.listener.WeChatListener   : WeChat start...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>监听器方法默认同步执行，若使用了线程池则异步执行。如下方 Spring 代码所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">multicastEvent</span><span class="params">(<span class="keyword">final</span> ApplicationEvent event, <span class="meta">@Nullable</span> ResolvableType eventType)</span> &#123;</span><br><span class="line">    <span class="type">ResolvableType</span> <span class="variable">type</span> <span class="operator">=</span> (eventType != <span class="literal">null</span> ? eventType : resolveDefaultEventType(event));</span><br><span class="line">    <span class="type">Executor</span> <span class="variable">executor</span> <span class="operator">=</span> getTaskExecutor();</span><br><span class="line">    <span class="keyword">for</span> (ApplicationListener&lt;?&gt; listener : getApplicationListeners(event, type)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (executor != <span class="literal">null</span>) &#123;</span><br><span class="line">            executor.execute(() -&gt; invokeListener(listener, event));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            invokeListener(listener, event);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终执行 Listener 的 <code>onApplicationEvent()</code> 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(&#123;&quot;rawtypes&quot;, &quot;unchecked&quot;&#125;)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">doInvokeListener</span><span class="params">(ApplicationListener listener, ApplicationEvent event)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        listener.onApplicationEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (ClassCastException ex) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">msg</span> <span class="operator">=</span> ex.getMessage();</span><br><span class="line">        <span class="keyword">if</span> (msg == <span class="literal">null</span> || matchesClassCastMessage(msg, event.getClass())) &#123;</span><br><span class="line">            <span class="comment">// Possibly a lambda-defined listener which we could not resolve the generic event type for</span></span><br><span class="line">            <span class="comment">// -&gt; let&#x27;s suppress the exception and just log a debug message.</span></span><br><span class="line">            <span class="type">Log</span> <span class="variable">logger</span> <span class="operator">=</span> LogFactory.getLog(getClass());</span><br><span class="line">            <span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">                logger.trace(<span class="string">&quot;Non-matching event type for listener: &quot;</span> + listener, ex);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="模板方法模式"><a href="#模板方法模式" class="headerlink" title="模板方法模式"></a>模板方法模式</h2><p>定义<strong>一个算法</strong>的骨架，将骨架中的<strong>特定步骤延迟到子类</strong>中（特定步骤由子类实现）。模板方法模式使得子类可以<strong>不改变</strong>算法的结构即可重新定义该算法的某些特定步骤。</p>
+<p>又称：回调方法、钩子函数</p>
+<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>Spring AOP 中 <strong>JDK 动态代理</strong>就是利用代理模式技术实现的</p>
+<h2 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h2><p><strong>FactoryBean 接口</strong>，实现了该接口的 Bean 是一类特殊的 Bean。Spring在使用 getBean() 方法获得这个 Bean 时，返回的不是 factory 这个 Bean 本身，而是这个 Bean.getObject() 方法的返回值对象。</p>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p><strong>Bean 实例</strong>模式就是单例，这个单例是基于 IOC 容器，而非 JVM。</p>
+<h2 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h2><p>SpringMVC 中的处理器适配器 <strong>HandlerAdapter</strong>，让 Handler 的扩展变得容易。</p>
+<h2 id="简单工厂"><a href="#简单工厂" class="headerlink" title="简单工厂"></a>简单工厂</h2><p>BeanFactory</p>
+<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>Resource</p>
+<p>定义了<strong>一系列的算法</strong>，并将每一个算法<strong>封装</strong>起来，而且使得他们<strong>可以相互替换</strong>，让算法独立于使用它的客户而独立变换。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2024/12/07/design-pattern-from-spring/">https://hzhzxfs.github.io/2024/12/07/design-pattern-from-spring/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/12/08/git-learning/" title="git-learning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">git-learning</div></div><div class="info-2"><div class="info-item-1">git笔记git的基本操作config的3个作用域local:只对当前仓库有效global:对登录用户所有仓库有效system:对系统的所有用户有效 3个作用域的优先级： 12345678git config --list --local                       # 查看版本库范围的所有设置(若不指定local，则显示所有范围的设置)git config --list --global                      # 查看global范围的设置参数git config --list --system                      # 查看system范围的设置git config --list user.name                     # 只显示user.name的值git config --local user.name &#x27;username&#x27;         # 修改local(版本库)范围的user.name(若不加变量作用域，则默认为local)git config --global use...</div></div></div></a><a class="pagination-related" href="/2024/12/06/character-encode/" title="character-encode"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">character-encode</div></div><div class="info-2"><div class="info-item-1">Text Encode &amp; DecodeASCIIANSI(美国国家标准学会) 推出了 ASCII ASCII 包括 0-9 a-z A-Z !”#$%… 控制字符 码点 code point每个字符对应的数字 ASCII: 0-127(2^7) 字符集 charset标准所支持的所有字符及其对应码点的集合，称之为字符集 编码 encode从字符到计算机存储的的二进制的过程，称之为编码字符编码规则不一定会把码点直接转换成二进制存储在计算机中 在 ASCII 和 UTF-32 中，会把码点直接转换为二进制 Unicode囊括了各国文字、Emoji、象形文字的字符集 UTF-32每个字符使用 4 字节存储，不够 32 bit 的向前补零 UTF-8Unicode 的可变长度编码，码点越大，编码后的二进制越长 乱码的原因 编码规则与解码规则不同 部分编辑器将 Unicode 中无法识别或展示的字符自动替换为特殊符号，在保存文件时，将 EF BF BD 写入 Unicode 字符集中有一个特殊的替换符号，专门用于表示无法识别或展示的字符    </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/12/13/jdbc-notes/" title="jdbc-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-13</div><div class="info-item-2">jdbc-notes</div></div><div class="info-2"><div class="info-item-1">JDBC驱动类加载1Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);  Connection与特定数据库的连接（会话）。 执行SQL语句并在连接的上下文中返回结果。Connection对象的数据库能够提供描述其表，其支持的SQL语法，其存储过程，此连接的功能等的信息。 1Connection connection = DriverManager.getConnection(&quot;jdbc:mysql://localhost:3306/db4&quot;, &quot;deltav&quot;, &quot;testpass&quot;);  Statement接口用于向数据库提交SQL语句 Statement123Statement statement = connection.createStatement();String sql = &quot;SQL_STATEMENT&quot;;statement.execute(sql);  使用addBatch(SQL)批量添加数据到Statement对象中，使用exe...</div></div></div></a><a class="pagination-related" href="/2024/12/09/html-notes/" title="html-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-09</div><div class="info-item-2">html-notes</div></div><div class="info-2"><div class="info-item-1">HTML NotesChore常用HTML标签的英文全称及简单描述   HTML标签 英文全称 中文释义    a Anchor 锚   abbr Abbreviation 缩写词   acronym Acronym 取首字母的缩写词   address Address 地址   alt alter 替用(一般是图片显示不出的提示)   b Bold 粗体（文本）   bdo Direction of Text Display 文本显示方向   big Big 变大（文本）   blockquote Block Quotation 区块引用语   br Break 换行   cell cell 巢   cellpadding cellpadding 巢补白   cellspacing cellspacing 巢空间   center Centered 居中（文本）   cite Citation 引用   code Code 源代码（文本）   dd Definition Description 定义描述   del Deleted 删除（的文本）   dfn Defines a...</div></div></div></a><a class="pagination-related" href="/2024/12/03/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-03</div><div class="info-item-2">Spring学习笔记</div></div><div class="info-2"><div class="info-item-1">Spring基本概念四个核心依赖：  spring-core：核心 jar 包 spring-beans：对象创建 jar 包 spring-context：上下文容器 jar 包（包含了其它 3 个依赖） spring-expression：表达式 jar 包  IOC1. 基本概念IOC：控制反转。 创建对象的权利，或者是控制的位置，由 Java 代码转移到 spring 容器，由 spring 的容器控制对象的创建，就是控制反转。 「对象的创建交给容器」 spring 创建对象时，会读取配置文件中的信息，然后使用反射给我们创建好对象之后在容器中存储起来，当我们需要某个对象时，通过 id 获取对象即可，不需要我们自己去 new。 2. 配置文件 文件位置：resources 文件名：xxx.xml  配置 bean 对象：&lt;bean id=&quot;...&quot; class=&quot;...&quot;&gt;&lt;/bean&gt; 3. 获取对象 创建一个容器（IOC）对象并解析 xml 配置文件。 实例化配置文件中的 bean 对象（反射）并发放入容器...</div></div></div></a><a class="pagination-related" href="/2024/12/01/ANSI-escape-sequences/" title="ANSI-escape-sequences"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-01</div><div class="info-item-2">ANSI-escape-sequences</div></div><div class="info-2"><div class="info-item-1">ANSI Escape SequencesANSI转义序列（ANSI escape sequences） 是一种带内信号的转义序列标准，用于控制视频文本终端上的光标位置、颜色和其他选项。在文本中嵌入确定的字节序列，大部分以ESC转义字符和”[“字符开始，终端会把这些字节序列解释为相应的指令，而不是普通的字符编码。 </div></div></div></a><a class="pagination-related" href="/2024/12/12/java-notes/" title="java-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-12</div><div class="info-item-2">java-notes</div></div><div class="info-2"><div class="info-item-1">Java学习笔记[TOC] 学习路线1. 语言的入门和进阶  Java基础语法  OO编程思想  集合  IO  异常  泛型  反射  多线程  函数式  Core Java   lambada   1D  内部类    1D  代理      1D  异常      1D  日志      1D  泛型      2D  集合      3D  部署      2D  并发      4D  JDBC  2.Web基础和工具  前端基础(html&#x2F;javascript&#x2F;css) jquery, ajax, jsp, cookie, session  http基础  servlet基础  git,svn代码管理工具  3.企业级应用框架  maven&#x2F;gradle项目管理工具  Spring全家桶(Spring, Spring MVC, Spring Boot)  关系型数据库相关(MySQL, jdbc, MyBatis, Hibernate)  非关系型数据库(Redis)  模板引擎(thymeleaf, freemarker)  4.高级应...</div></div></div></a><a class="pagination-related" href="/2024/12/20/spring-notes/" title="spring-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-12-20</div><div class="info-item-2">spring-notes</div></div><div class="info-2"><div class="info-item-1">Spring 笔记Spring模块 pom配置1234567&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework&lt;/groupId&gt;        &lt;artifactId&gt;spring-context&lt;/artifactId&gt;        &lt;version&gt;5.2.4.RELEASE&lt;/version&gt;    &lt;/dependency&gt;&lt;/dependencies&gt;  IOC&#x2F;DIIOC:(Inversion(反转) Of Control) 控制反转 控制:  资源的获取方式:主动式：创建需要的对象 1Person person = new Person();  被动式：资源的获取不是我们自己创建，而是交给一个容器来创建和设置   123456BookServlet&#123;        BookService bs;        public void test0...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%9F%E7%9D%80-Spring-%E5%AD%A6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">跟着 Spring 学设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">观察者模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">模板方法模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">代理模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">工厂方法模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.5.</span> <span class="toc-text">单例模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">适配器模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82"><span class="toc-number">1.7.</span> <span class="toc-text">简单工厂</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.</span> <span class="toc-text">策略模式</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

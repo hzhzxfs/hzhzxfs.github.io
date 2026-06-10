@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/23/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/23/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/11/network-commands/" title="network-commands">network-commands</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-11T06:48:33.000Z" title="发表于 2025-05-11 14:48:33">2025-05-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">Linux 网络命令The ip and ifconfig commands are similar. They list and configure current network interfaces on the device. ifconfig is the older of the two and may not be present on all machines. 使用 ip a 将列出无线和硬连线&#x2F;以太网连接，而 ifconfig 将仅列出以太网。另一个可用于列出无线连接的命令是 iwconfig。 ARP（地址解析协议）地址解析协议是第 3 层(&#x2F;networking&#x2F;OSI&#x2F;network-layer.md) 协议，可帮助主机将 IP 地址解析为关联设备的 MAC 地址。  arp -a 和 ip n （n 代表 neighbor）命令可在 Linux 中使用来列出与网络中本地 IP 地址关联的 MAC 地址。 您还可以使用带有 -r 标志的 netdiscover 来执行实时 ARP 数据包捕获： 123456sudo...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/10/nessus-vuln-scanning/" title="nessus-vuln-scanning">nessus-vuln-scanning</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-10T00:38:35.000Z" title="发表于 2025-05-10 08:38:35">2025-05-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">使用 Nessus 进行漏洞扫描Nessus 是渗透测试中常用的漏洞扫描器。  安装从 https://www.tenable.com/downloads/nessus?loginAttempted=true 下载该工具。使用 /Downloads 文件夹中的 dpkg -i Nessus... 进行安装。安装该工具时，按照终端中的提示操作，您将需要 Nessus Essentials 的激活码： 1234567Unpacking Nessus Scanner Core Components... - You can start Nessus Scanner by typing /bin/systemctl start nessusd.service - Then go to https://kali:8834/ to configure your scanner┌──(hakcypuppy㉿kali)-[~/Downloads]└─$ /bin/systemctl start nessusd.service    点击链接至 https://kali:8834/: 基本网络扫描...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/09/memory/" title="memory">memory</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-09T00:45:45.000Z" title="发表于 2025-05-09 08:45:45">2025-05-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">内存解剖计算机内存可以分为易失性和非易失性类型。两者之间的区别在于所存储的信息是否在设备断电后仍然保留。 缓冲区溢出 在 RAM 中的易失性内存上执行。具体来说，它们的目标是将内存“临时分配”给正在运行的程序。从基本意义上讲，缓冲区溢出允许攻击者“将数据写入超出易受攻击的代码中的函数调用或变量的预期存储边界”。 堆栈堆栈内存是程序执行期间在 RAM 中分配的内存。它用于运行程序并跟踪代码中的函数和变量。 堆栈具有后进先出 (LIFO) 结构，这意味着其单元按字面量堆栈进行组织。如果堆栈上有三个对象，则第二个对象无法执行或引用，直到其上方的对象消失。 堆栈帧堆栈帧也称为“激活帧”，是程序执行期间组成堆栈的单元。它们包含程序中定义和使用的子例程&#x2F;函数和变量。堆栈上的第一帧是程序的“主”函数（无论执行进入何处）。 当程序被编译为机器代码&#x2F;汇编时，它会生成CPU在执行程序时遵循的指令。这些指令的一部分包括*在执行期间调用函数时应如何创建和管理堆栈帧。 执行时，CPU 遵循这些指令并在 RAM 中分配内存以创建堆栈帧。每个堆栈帧对应一个函数调用并包含所有所需的信息（包括...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/08/linux-services/" title="linux-services">linux-services</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-08T14:41:02.000Z" title="发表于 2025-05-08 22:41:02">2025-05-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">启动和停止 Linux 服务Linux 进程 每个进程都有一个由内核根据启动后启动的顺序分配给它们的进程 ID。 系统控制：systemctl 是 Linux 中的一个命令，它允许您与 systemd 交互，当 Linux 机器启动时，该命令（通常）是 PID 1。 systemd 是 Linux 的服务管理器，由于它的 PID 为 1，因此启动后计算机上运行的大多数进程都是 systemd** 的子进程。 因为我们想要在 Linux 上交互或使用的大多数进程都是 systemd 的子进程，所以我们可以使用 systemd 来控制它们。这是因为它们共享相同的命名空间。 要与 systemd 交互，我们必须使用 systemctl 命令。您可以为 systemctl 提供四个选项来管理进程：  start：启动一个或多个已经加载到内存中的单元（单元是系统启动和维护所需的对象的封装） stop：停用一个或多个单元 enable：启用一个或多个单元实例 disable：禁用一个或多个单元实例。  在启动时启动进程：要使用 systemctl 在启动时启动特定进程，请使用： 1234sy...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/07/linux-filesystem/" title="linux-filesystem">linux-filesystem</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-07T09:51:26.000Z" title="发表于 2025-05-07 17:51:26">2025-05-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">Linux 文件系统层次结构： [！我之前的笔记：]  Linux 文件系统   </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/06/kioptrix/" title="kioptrix">kioptrix</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-06T08:26:50.000Z" title="发表于 2025-05-06 16:26:50">2025-05-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">KioptrixKioptrix 是一个易受攻击的虚拟机，您可以从 VulnHub 下载。有多个演练来攻击这个盒子。以下是我自己的 Kioptrix 活动的笔记： 1. 使用 nmap 扫描kioptrix_nmap.txt： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061sudo nmap -A -p- 10.0.3.5Starting Nmap 7.94 ( https://nmap.org ) at 2023-08-05 18:15 EDTNmap scan report for 10.0.3.5Host is up (0.00068s latency).Not shown: 65529 closed tcp ports (reset)PORT      STATE SERVICE     VERSION22/tcp    open  ssh         OpenSSH 2.9p2 (prot...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/05/SSH-enum/" title="SSH-enum">SSH-enum</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-05T12:49:30.000Z" title="发表于 2025-05-05 20:49:30">2025-05-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">枚举 SSH在处理 SSH 时，任何登录尝试都被视为利用。 基奥普特里克斯由于 Kioptrix 已过时，因此尝试 SSH 连接时返回的错误会告诉我们有关目标的信息。 12ssh 10.0.2.5Unable to negotiate with 10.0.2.5 port 22: no matching key exchange method found. Their offer: diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1 使用未设置标志的 ssh 命令，目标会向我们返回不应该的信息。这是一个发现。上述错误告诉我们，目标没有找到与我们匹配的已知主机，并且只要密钥交换是Diffie-Hellman，就会提供无论如何连接。 W&#x2F;从目标返回此错误，我们可以尝试将 -o 标志（选项）设置为 KexAlgorithms=+diffie-hellman-group1-sha1 再次进行 ssh，以匹配他们提供的密钥交换方法。 12ssh 10.0.2.5 -o KexAlgorithms=+diffi...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/04/SMB-relay/" title="SMB-relay">SMB-relay</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-04T08:21:09.000Z" title="发表于 2025-05-04 16:21:09">2025-05-04</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">SMB 中继攻击在 SMB-中继攻击中，攻击者不会尝试使用 Responder 破解从网络收集的哈希值，而是将这些哈希值中继到其他计算机，希望一台计算机能够允许它们获得访问权限。 基本流程SMB 中继利用网络上常见自动化系统的定期身份验证尝试。这些自动化系统对网络上的设备执行常规管理任务。为此，他们尝试使用 NTLM 连接到网络的任何设备进行登录&#x2F;身份验证。 正常功能该服务尝试向服务器进行身份验证。服务器以质询进行响应，通常“如果您确实是您所说的用户，则使用用户的密码哈希加密该质询并将其发回。” 客户端上的服务使用用户的密码对质询进行加密，并将新值发送回服务器。服务器使用用户的密码解密答案，如果解密为发送的原始质询，则对服务进行身份验证。 剥削攻击者可以通过捕获服务和服务器之间的流量、修改它，并实质上劫持服务服务器的身份验证（攻击机器得到身份验证）来利用此易受攻击的交换。 通过劫持身份验证，攻击者可以获得*发送挑战的目标服务器的访问权限。  Cowdex  要求： SMB 签名已禁用 管理员凭据：中继的用户凭据必须是管理员凭据，否则您不会从获取它们中获得太多好处。  此...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/03/OSI-model/" title="OSI-model">OSI-model</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-03T10:13:20.000Z" title="发表于 2025-05-03 18:13:20">2025-05-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">OSI 参考模型一种网络表示形式，用于将数据必须经过的不同协议和封装层结合起来，才能通过网络从一个设备传输到另一个设备。 肺炎：######请 做不投掷香肠披萨离开L1：身体（请）处理沿物理介质的电信号传输。涉及以太网&#x2F;CAT-5 等数据电缆。 L2：数据链路 (do)处理来自第 1 层的电消息的[复用和解复用](&#x2F;networking&#x2F;OSI&#x2F; Multiplexing.md)。这是最复杂的层，因为它抽象了将电信号转换为有意义的数据的工作。它还分为 2 个子层，即“逻辑链路控制”和“媒体访问控制”层。 使用 MAC 地址 来识别设备以及交换机以在它们之间路由流量。该层中的数据被封装到帧和来自帧的数据。 L3：网络（不是）网络层负责从使用 IP 地址 进行寻址的设备传输数据（封装到数据包中），并使用路由器等 L3 设备进行路由。 L4：传输（抛出）使用 TCP 和 UDP 协议处理网络通信。  L5：会话（香肠）负责创建和维护彼此发送和接收数据的两方之间的连接。一旦建立连接，就会创建会话。每个会话对其连接来说都是唯一的，这意味着数据不应该能...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/05/02/MAC-addresses/" title="MAC-addresses">MAC-addresses</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-05-02T07:05:23.000Z" title="发表于 2025-05-02 15:05:23">2025-05-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="content">MAC 地址MAC 地址与 OSI 参考模型 的第二层相关。它们针对本地网络中的物理设备进行寻址。 MAC 地址是一个 48 位硬件编号，对于其所连接的设备来说是“唯一”的（在制造过程中分配）。 网络接口卡：在网络的第 2 层中，每个能够连接到网络的设备都将拥有自己的网络接口卡 (NIC)。 MAC 地址标识网络上的设备，交换机使用它在设备之间路由帧。 MAC 地址查找：MAC 地址被格式化为 12 位十六进制数。地址中的字节可以用连字符、冒号或句点分隔，具体取决于操作系统。 号码的前六位数字标识设备的制造商。 MAC 地址查找工具可用于查明该设备的制造商。 示例：00:0C:29 解析为制造商 VMware, Inc  [！我以前的笔记（在文本中链接）]  MAC 地址 OSI 参考模型   </div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/22/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/#content-inner">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/#content-inner">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/24/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

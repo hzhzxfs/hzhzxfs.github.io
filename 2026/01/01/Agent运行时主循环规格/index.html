@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Agent运行时主循环规格 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="08. Agent 运行时主循环规格 目标：定义 Python 版本实现时最核心的运行时循环。该文档不是源码解释，而是实现规格。  1. 设计目标主循环必须满足以下目标：  能持续推进任务，而不是只做一次回答 能在每轮后根据工具结果重新决策 能在权限阻断、上下文压缩、工具失败时继续可控运行 能触发子 agent、后台任务、验证任务 能生成可追踪的消息流与 transcript  2. 主循环的输入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent运行时主循环规格">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/01/Agent%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="08. Agent 运行时主循环规格 目标：定义 Python 版本实现时最核心的运行时循环。该文档不是源码解释，而是实现规格。  1. 设计目标主循环必须满足以下目标：  能持续推进任务，而不是只做一次回答 能在每轮后根据工具结果重新决策 能在权限阻断、上下文压缩、工具失败时继续可控运行 能触发子 agent、后台任务、验证任务 能生成可追踪的消息流与 transcript  2. 主循环的输入">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-01T03:18:39.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.548Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Agent运行时主循环规格",
+  "url": "https://hzhzxfs.github.io/2026/01/01/Agent%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-01T03:18:39.000Z",
+  "dateModified": "2026-06-10T02:14:46.548Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/01/Agent%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Agent运行时主循环规格',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Agent运行时主循环规格</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Agent运行时主循环规格</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-01T03:18:39.000Z" title="发表于 2026-01-01 11:18:39">2026-01-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.548Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="08-Agent-运行时主循环规格"><a href="#08-Agent-运行时主循环规格" class="headerlink" title="08. Agent 运行时主循环规格"></a>08. Agent 运行时主循环规格</h1><blockquote>
+<p>目标：定义 Python 版本实现时最核心的运行时循环。该文档不是源码解释，而是实现规格。</p>
+</blockquote>
+<h2 id="1-设计目标"><a href="#1-设计目标" class="headerlink" title="1. 设计目标"></a>1. 设计目标</h2><p>主循环必须满足以下目标：</p>
+<ol>
+<li>能持续推进任务，而不是只做一次回答</li>
+<li>能在每轮后根据工具结果重新决策</li>
+<li>能在权限阻断、上下文压缩、工具失败时继续可控运行</li>
+<li>能触发子 agent、后台任务、验证任务</li>
+<li>能生成可追踪的消息流与 transcript</li>
+</ol>
+<h2 id="2-主循环的输入"><a href="#2-主循环的输入" class="headerlink" title="2. 主循环的输入"></a>2. 主循环的输入</h2><p>一次主循环至少需要以下输入：</p>
+<ul>
+<li><code>messages</code>: 当前消息序列</li>
+<li><code>system_prompt</code>: 已组装完成的系统提示词</li>
+<li><code>tool_registry</code>: 当前可用工具集合</li>
+<li><code>tool_use_context</code>: 执行上下文（cwd、权限、session、任务状态）</li>
+<li><code>memory_context</code>: 注入后的记忆内容</li>
+<li><code>user_context</code>: 用户态上下文</li>
+<li><code>system_context</code>: 系统态上下文</li>
+<li><code>can_use_tool</code>: 权限判断函数</li>
+<li><code>max_turns</code>: 最大回合数</li>
+<li><code>task_budget</code>: 本轮任务预算（可选）</li>
+</ul>
+<h2 id="3-主循环的输出"><a href="#3-主循环的输出" class="headerlink" title="3. 主循环的输出"></a>3. 主循环的输出</h2><p>主循环每轮可能产出：</p>
+<ul>
+<li>普通 assistant 消息</li>
+<li>tool_use 请求</li>
+<li>tool_result 回写</li>
+<li>progress 消息</li>
+<li>compact &#x2F; summary 边界消息</li>
+<li>子任务启动事件</li>
+<li>terminal state（完成 &#x2F; 失败 &#x2F; 中断）</li>
+</ul>
+<h2 id="4-循环状态"><a href="#4-循环状态" class="headerlink" title="4. 循环状态"></a>4. 循环状态</h2><p>实现时必须维护显式状态，而不是散落在局部变量中。</p>
+<p>建议状态字段：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">QueryState</span>:</span><br><span class="line">    messages: <span class="built_in">list</span></span><br><span class="line">    turn_count: <span class="built_in">int</span></span><br><span class="line">    auto_compact_tracking: <span class="built_in">dict</span> | <span class="literal">None</span></span><br><span class="line">    pending_tool_summary: <span class="built_in">object</span> | <span class="literal">None</span></span><br><span class="line">    stop_hook_active: <span class="built_in">bool</span></span><br><span class="line">    max_output_recovery_count: <span class="built_in">int</span></span><br><span class="line">    has_attempted_reactive_compact: <span class="built_in">bool</span></span><br><span class="line">    transition_reason: <span class="built_in">str</span> | <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-标准单轮流程"><a href="#5-标准单轮流程" class="headerlink" title="5. 标准单轮流程"></a>5. 标准单轮流程</h2><p>每轮执行顺序建议固定为：</p>
+<ol>
+<li>预处理当前消息</li>
+<li>计算 token &#x2F; budget 状态</li>
+<li>调用模型</li>
+<li>解析返回内容</li>
+<li>如有工具调用，进入工具执行链</li>
+<li>将工具结果追加回消息</li>
+<li>如需压缩，执行 compact</li>
+<li>决定是否继续下一轮</li>
+<li>达到终止条件则返回 terminal state</li>
+</ol>
+<h2 id="6-终止条件"><a href="#6-终止条件" class="headerlink" title="6. 终止条件"></a>6. 终止条件</h2><p>至少支持以下终止条件：</p>
+<ul>
+<li>模型明确结束任务</li>
+<li>达到 <code>max_turns</code></li>
+<li>用户中断</li>
+<li>权限阻断且无可行替代方案</li>
+<li>发生不可恢复异常</li>
+<li>任务被后台化或移交</li>
+</ul>
+<h2 id="7-工具调用处理要求"><a href="#7-工具调用处理要求" class="headerlink" title="7. 工具调用处理要求"></a>7. 工具调用处理要求</h2><p>如果模型返回一个或多个工具调用：</p>
+<ul>
+<li>必须按顺序或编排策略执行</li>
+<li>必须将每个 tool_result 写回消息流</li>
+<li>如果工具失败，失败信息也必须结构化回写</li>
+<li>严禁只在 UI 层显示，不回写到模型上下文</li>
+</ul>
+<h2 id="8-压缩与恢复点"><a href="#8-压缩与恢复点" class="headerlink" title="8. 压缩与恢复点"></a>8. 压缩与恢复点</h2><p>主循环必须内建以下钩子点：</p>
+<ul>
+<li>调用模型前检查是否需要压缩</li>
+<li>工具结果过长时应用 result budget</li>
+<li>prompt 过长时触发 compact &#x2F; reactive compact</li>
+<li>resume 时从 compact boundary 后恢复有效消息</li>
+</ul>
+<h2 id="9-子-agent-与后台任务接入点"><a href="#9-子-agent-与后台任务接入点" class="headerlink" title="9. 子 agent 与后台任务接入点"></a>9. 子 agent 与后台任务接入点</h2><p>主循环必须允许以下事件打断常规路径：</p>
+<ul>
+<li>启动 foreground subagent</li>
+<li>启动 background subagent</li>
+<li>接收 task notification</li>
+<li>继续 resume 某个已有 agent</li>
+</ul>
+<h2 id="10-Python-版推荐伪代码"><a href="#10-Python-版推荐伪代码" class="headerlink" title="10. Python 版推荐伪代码"></a>10. Python 版推荐伪代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">query_loop</span>(<span class="params">params</span>):</span><br><span class="line">    state = init_state(params)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> should_stop(state, params):</span><br><span class="line">            <span class="keyword">return</span> terminal_result(state)</span><br><span class="line"></span><br><span class="line">        state = maybe_compact(state, params)</span><br><span class="line">        request = build_model_request(state, params)</span><br><span class="line">        response = call_model(request)</span><br><span class="line">        state.messages.append(response.assistant_message)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> response.tool_calls:</span><br><span class="line">            tool_events = run_tools(response.tool_calls, params)</span><br><span class="line">            state.messages.extend(tool_events)</span><br><span class="line">            state.transition_reason = <span class="string">&#x27;tool_round&#x27;</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> response.should_launch_subagent:</span><br><span class="line">            launch_subagent(response, params)</span><br><span class="line">            state.transition_reason = <span class="string">&#x27;subagent&#x27;</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> response.is_terminal:</span><br><span class="line">            <span class="keyword">return</span> terminal_result(state)</span><br><span class="line"></span><br><span class="line">        state.turn_count += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="11-实现边界"><a href="#11-实现边界" class="headerlink" title="11. 实现边界"></a>11. 实现边界</h2><p>Python 第一版务必保证：</p>
+<ul>
+<li>单主循环是清晰、可测试的</li>
+<li>每轮状态可序列化</li>
+<li>每轮输出可回放</li>
+<li>每轮失败可定位</li>
+</ul>
+<p>不要把主循环写成大量隐式副作用的脚本式逻辑。</p>
+<h2 id="12-验收标准"><a href="#12-验收标准" class="headerlink" title="12. 验收标准"></a>12. 验收标准</h2><p>程序员实现完成后，应满足：</p>
+<ol>
+<li>可以连续多轮处理任务</li>
+<li>工具结果能回流并影响下一轮</li>
+<li>超长上下文会压缩而不是直接崩溃</li>
+<li>子任务可以插入主流程</li>
+<li>transcript 可完整记录轮次</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/01/Agent%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC/">https://hzhzxfs.github.io/2026/01/01/Agent%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/02/MCP%20%E4%B8%89%E5%A4%A7%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" title="MCP 三大核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MCP 三大核心概念</div></div><div class="info-2"><div class="info-item-1">MCP 三大核心概念MCP（Model Context Protocol）的三大核心概念——Resources、Tools 和 Prompts。MCP 是 2024 年底由 Anthropic 搞出来的一个开放协议，目的是让大语言模型（LLM）能更顺畅地跟外部数据和工具对接。以下是我的解读： 1. Resources（资源）本质：Resources 是 MCP 里用来暴露数据的核心机制，相当于给 LLM 提供“原材料”。你可以把它想象成一个只读的数据库接口或者文件系统，里面装的是静态或者半动态的信息，比如日志文件、用户配置文件、股票价格啥的。 怎么用：服务器（MCP Server）把这些数据暴露出来，客户端（比如 LLM 应用）可以读取它们，然后塞进模型的上下文里去推理或者生成内容。比如你有个日志文件 app.log，通过 Resources 就能让 LLM 直接看到里面的错误信息。 特点：  • 应用控制：客户端决定啥时候用、怎么用这些资源。有的客户端像 Claude Desktop 得用户手动选，有的可能自动挑，灵活得很。 • 实时性：支持订阅更新，比如资源变了，服务器能通知...</div></div></div></a><a class="pagination-related" href="/2025/12/15/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="线性代数基本概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">线性代数基本概念</div></div><div class="info-2"><div class="info-item-1">线性代数基本概念 特征值和特征向量 值域空间 零空间 行空间与列空间 正交补 基 标准正交基 奇异值分解 Matrix Norm (矩阵范数) Frobenius Norm (弗罗贝尼乌斯范数)   奇异值分解在统计中的主要应用为主成分分析（PCA）。数据集的特征值（在 SVD 中用奇异值表征）按照重要性排列，降维的过程就是舍弃不重要的特征向量的过程，而剩下的特征向量张成空间为降维后的空间。 </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/08/intro-to-ai-agents__code_samples__01-dotnet-agent-framework/" title="intro-to-ai-agents__code_samples__01-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-08</div><div class="info-item-2">intro-to-ai-agents__code_samples__01-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🌍 带有 Microsoft Agent Framework (.NET) 的 AI 旅行代理📋 场景概述此示例演示如何使用 Microsoft Agent Framework for .NET 构建智能旅行规划代理。该代理可以自动生成世界各地随机目的地的个性化一日游行程。 关键功能： 🎲 随机目的地选择：使用自定义工具选择度假地点 🗺️ 智能旅行规划：创建详细的每日行程 🔄 实时流式传输：支持即时响应和流式响应 🛠️ 自定义工具集成：演示如何扩展代理功能  🔧 技术架构核心技术 Microsoft Agent Framework：用于 AI 代理开发的最新 .NET 实现 GitHub 模型集成：使用 GitHub 的 AI 模型推理服务 OpenAI API 兼容性：利用具有自定义端点的 OpenAI 客户端库 安全配置：基于环境的API密钥管理  关键组件 AIAgent：处理会话流的主要代理协调器 自定义工具：代理可用的 GetRandomDestination() 函数 聊天客户端：GitHub 模型支持的对话界面 Streaming Support：实时...</div></div></div></a><a class="pagination-related" href="/2026/01/09/Skills%E3%80%81Plugins%E4%B8%8EMCP%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/" title="Skills、Plugins与MCP需求文档"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-09</div><div class="info-item-2">Skills、Plugins与MCP需求文档</div></div><div class="info-2"><div class="info-item-1">03. Skills、Plugins 与 MCP 需求文档1. 为什么产品不能只靠内置能力如果产品所有能力都硬编码在主程序里，会遇到几个问题：  难以扩展 难以适配不同团队 难以承载领域知识 难以形成生态  因此，这套产品必须支持可扩展能力面。 2. Skills 的需求本质Skill 不是普通帮助文档，而是一种可复用的工作流能力包。 2.1 Skill 需要承载什么 某类任务的使用规则 某类任务的上下文说明 某类任务的执行 SOP 该任务适用的工具边界  2.2 为什么 Skill 必须是 first-class primitive因为产品需要让模型在遇到特定任务时，优先加载相应能力，而不是每次都重新即兴发挥。 3. Skill 的产品需求 系统要能列出当前可用技能 模型要能在合适时调用技能 skill 内容要能注入会话 skill 要能带 frontmatter 元信息 skill 可以约束 allowed-tools skill 需要避免重复加载  4. Plugin 的需求本质Plugin 的角色不是给程序员加脚本，而是为模型注入新的行为表面。 Plugin 至少要支持 ...</div></div></div></a><a class="pagination-related" href="/2026/01/11/%E4%BA%A7%E5%93%81%E6%80%BB%E8%A7%88%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/" title="产品总览需求文档"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-11</div><div class="info-item-2">产品总览需求文档</div></div><div class="info-2"><div class="info-item-1">00. 产品总览需求文档1. 产品定义这是一款面向软件工程任务的交互式 AI 执行系统。它不是单纯的聊天机器人，也不是只会调用几个工具的脚本外壳，而是一套把推理、工具、权限、任务拆解、记忆、扩展机制与用户交互统一起来的产品系统。 2. 产品目标产品需要满足以下目标：  帮助用户完成真实的软件工程任务，而不只是提供建议 在执行过程中保持安全、可控、可恢复 让复杂任务可以分解、委派、验证、追踪 让系统可以扩展新的技能、插件与外部工具能力 让长期使用形成可积累的记忆和工作习惯  3. 核心用户3.1 主要用户 独立开发者 工程师 技术产品经理 有代码任务但希望借助 AI 提升效率的操作者  3.2 用户的核心诉求 我不只想问问题，我想让系统帮我做事 我不只想生成代码，我想让它真正改动项目并验证结果 我不只想要一次回答，我想让它持续推进任务 我不只想在一个固定产品里工作，我希望它能接入我自己的工具和工作流  4. 产品要解决的核心问题4.1 普通聊天模型的问题普通聊天模型的核心局限是：  只做一次性回答 没有稳定执行能力 没有工具治理 没有任务状态 没有长期上下文管理 无法形成可扩展工作...</div></div></div></a><a class="pagination-related" href="/2026/01/18/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%8A%B6%E6%80%81%E8%A7%84%E6%A0%BC/" title="消息模型与状态规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">消息模型与状态规格</div></div><div class="info-2"><div class="info-item-1">09. 消息模型与状态规格1. 为什么消息模型必须先定义这类 Agent 系统的核心不是“函数调用”，而是“结构化消息驱动状态变化”。如果消息模型不稳定，后面的 memory、resume、工具执行、agent 任务都会混乱。 2. 顶层消息类型Python 版本建议至少定义以下消息类型：  system user assistant tool_use tool_result progress attachment summary compact_boundary notification tombstone（可选，用于删除&#x2F;隐藏历史消息后的链修复）  3. 核心消息字段所有消息建议共享： 123456class BaseMessage:    id: str    type: str    created_at: float    parent_id: str | None    session_id: str  assistant 消息1234class AssistantMessage(BaseMessage):    content_blocks: list  ...</div></div></div></a><a class="pagination-related" href="/2025/09/13/multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-13</div><div class="info-item-2">multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition</div></div><div class="info-2"><div class="info-item-1">🔀 使用 Azure AI Foundry (.NET) 的条件代理工作流程📋 基于智能决策的工作流程教程本笔记本演示了使用 Azure AI Foundry 和 Microsoft Agent Framework for .NET 的条件工作流模式。您将学习如何构建复杂的、决策驱动的工作流程，根据人工智能分析、业务规则和企业级自动化的动态条件智能地路由处理。 🎯 学习目标🧠 智能决策架构 条件逻辑实现：构建具有多个分支点的复杂决策树 AI 支持的路由：使用 Azure AI Foundry 模型做出智能路由决策 动态工作流程适应：根据运行时分析和条件修改工作流程行为 企业规则集成：将业务逻辑和合规性要求纳入工作流程中  🔀 高级条件模式 多标准决策：评估路由决策的多个因素 上下文感知处理：根据累积的工作流上下文和历史记录做出决策 自适应工作流程修改：根据实时情况动态调整处理路径 规则引擎集成：在工作流程中实施复杂的业务规则引擎  🏢 企业有条件申请 文档分类和路由：自动分类文档并将其路由到适当的工作流程 客户服务分类：将客户询问智能路由至专业处理团队 合规与风险处理...</div></div></div></a><a class="pagination-related" href="/2026/01/17/%E6%9E%B6%E6%9E%84%E8%83%BD%E5%8A%9B%E5%9C%B0%E5%9B%BE/" title="架构能力地图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-17</div><div class="info-item-2">架构能力地图</div></div><div class="info-2"><div class="info-item-1">07. 架构能力地图1. 顶层能力区A. 入口层对应需求：  提供 CLI 入口 提供初始化流程 提供 SDK 接入方式 提供 MCP 入口  B. Prompt 编排层对应需求：  动态生成系统提示词 注入环境信息 注入语言与输出风格 注入记忆、MCP 说明、会话局部规则  C. 工具执行层对应需求：  工具发现 工具输入校验 权限判断 Hook 拦截 执行记录 输出回流  D. Agent 调度层对应需求：  启动子 agent 支持 fork &#x2F; background &#x2F; remote &#x2F; teammate 模式 管理 agent 生命周期 管理 agent 上下文边界  E. 扩展生态层对应需求：  Skills Plugins MCP 命令扩展 插件变量替换与配置注入  F. Memory &#x2F; Session 层对应需求：  项目记忆 用户记忆 会话摘要 transcript resume  G. 任务与后台层对应需求：  本地任务 后台 agent 任务 远程 agent 任务 shell 任务 进度追踪与通知  H. 质量保证...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#08-Agent-%E8%BF%90%E8%A1%8C%E6%97%B6%E4%B8%BB%E5%BE%AA%E7%8E%AF%E8%A7%84%E6%A0%BC"><span class="toc-number">1.</span> <span class="toc-text">08. Agent 运行时主循环规格</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">1. 设计目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BB%E5%BE%AA%E7%8E%AF%E7%9A%84%E8%BE%93%E5%85%A5"><span class="toc-number">1.2.</span> <span class="toc-text">2. 主循环的输入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%B8%BB%E5%BE%AA%E7%8E%AF%E7%9A%84%E8%BE%93%E5%87%BA"><span class="toc-number">1.3.</span> <span class="toc-text">3. 主循环的输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%BE%AA%E7%8E%AF%E7%8A%B6%E6%80%81"><span class="toc-number">1.4.</span> <span class="toc-text">4. 循环状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%A0%87%E5%87%86%E5%8D%95%E8%BD%AE%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">5. 标准单轮流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%BB%88%E6%AD%A2%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.6.</span> <span class="toc-text">6. 终止条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E8%A6%81%E6%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text">7. 工具调用处理要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%8E%8B%E7%BC%A9%E4%B8%8E%E6%81%A2%E5%A4%8D%E7%82%B9"><span class="toc-number">1.8.</span> <span class="toc-text">8. 压缩与恢复点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%AD%90-agent-%E4%B8%8E%E5%90%8E%E5%8F%B0%E4%BB%BB%E5%8A%A1%E6%8E%A5%E5%85%A5%E7%82%B9"><span class="toc-number">1.9.</span> <span class="toc-text">9. 子 agent 与后台任务接入点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-Python-%E7%89%88%E6%8E%A8%E8%8D%90%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="toc-number">1.10.</span> <span class="toc-text">10. Python 版推荐伪代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%AE%9E%E7%8E%B0%E8%BE%B9%E7%95%8C"><span class="toc-number">1.11.</span> <span class="toc-text">11. 实现边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E9%AA%8C%E6%94%B6%E6%A0%87%E5%87%86"><span class="toc-number">1.12.</span> <span class="toc-text">12. 验收标准</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

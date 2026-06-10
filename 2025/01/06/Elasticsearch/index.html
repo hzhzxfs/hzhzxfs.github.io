@@ -1,0 +1,465 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ElasticSearch | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 问题：关系数据库的限制⚠️ 效率低下带通配符的标准 LIKE 查询（例如 %laptop%）会触发全表扫描，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。 ⚠️缺乏相关性传统的 SQL 查询返回匹配没有排名或相关性评分。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。 ⚠️ 可扩展性问题随着系统扩展（例如，亚马逊或谷歌等平台）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/01/06/Elasticsearch/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="1. 问题：关系数据库的限制⚠️ 效率低下带通配符的标准 LIKE 查询（例如 %laptop%）会触发全表扫描，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。 ⚠️缺乏相关性传统的 SQL 查询返回匹配没有排名或相关性评分。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。 ⚠️ 可扩展性问题随着系统扩展（例如，亚马逊或谷歌等平台）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-01-06T12:14:26.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.398Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ElasticSearch",
+  "url": "https://hzhzxfs.github.io/2025/01/06/Elasticsearch/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-01-06T12:14:26.000Z",
+  "dateModified": "2026-06-10T02:14:46.398Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/01/06/Elasticsearch/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ElasticSearch',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">ElasticSearch</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ElasticSearch</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-01-06T12:14:26.000Z" title="发表于 2025-01-06 20:14:26">2025-01-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.398Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="1-问题：关系数据库的限制"><a href="#1-问题：关系数据库的限制" class="headerlink" title="1. 问题：关系数据库的限制"></a>1. 问题：关系数据库的限制</h2><h3 id="⚠️-效率低下"><a href="#⚠️-效率低下" class="headerlink" title="⚠️ 效率低下"></a>⚠️ 效率低下</h3><p>带通配符的标准 <code>LIKE</code> 查询（例如 <code>%laptop%</code>）会触发<strong>全表扫描</strong>，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。</p>
+<h3 id="⚠️缺乏相关性"><a href="#⚠️缺乏相关性" class="headerlink" title="⚠️缺乏相关性"></a>⚠️缺乏相关性</h3><p>传统的 SQL 查询返回匹配<strong>没有排名或相关性评分</strong>。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。</p>
+<h3 id="⚠️-可扩展性问题"><a href="#⚠️-可扩展性问题" class="headerlink" title="⚠️ 可扩展性问题"></a>⚠️ 可扩展性问题</h3><p>随着系统扩展（例如，亚马逊或谷歌等平台），需要<strong>亚毫秒级搜索延迟</strong>。传统的关系数据库很难有效地满足这些性能需求。</p>
+<h2 id="用于搜索的关系数据库的其他限制"><a href="#用于搜索的关系数据库的其他限制" class="headerlink" title="用于搜索的关系数据库的其他限制"></a>用于搜索的关系数据库的其他限制</h2><h3 id="⚠️-全文搜索支持不佳"><a href="#⚠️-全文搜索支持不佳" class="headerlink" title="⚠️ 全文搜索支持不佳"></a>⚠️ 全文搜索支持不佳</h3><p>关系数据库并非专为高级<strong>全文搜索</strong>功能而设计，例如：</p>
+<ul>
+<li>代币化</li>
+<li>词干提取（例如，“运行”→“运行”）</li>
+<li>同义词处理<br>与专用搜索引擎相比，这使得搜索不太智能。</li>
+</ul>
+<h3 id="⚠️没有内置排名算法"><a href="#⚠️没有内置排名算法" class="headerlink" title="⚠️没有内置排名算法"></a>⚠️没有内置排名算法</h3><p>没有对相关性评分算法（例如 <strong>TF-IDF</strong> 或 <strong>BM25</strong>）的本机支持，而这些算法对于对搜索结果进行有意义的排名至关重要。</p>
+<h3 id="⚠️-难以处理拼写错误和模糊搜索"><a href="#⚠️-难以处理拼写错误和模糊搜索" class="headerlink" title="⚠️ 难以处理拼写错误和模糊搜索"></a>⚠️ 难以处理拼写错误和模糊搜索</h3><p>关系数据库面临以下问题：</p>
+<ul>
+<li>拼写错误（例如，“laptpo”而不是“laptop”）</li>
+<li>近似匹配<br>实现模糊搜索既复杂又低效。</li>
+</ul>
+<h3 id="⚠️-有限的水平可扩展性"><a href="#⚠️-有限的水平可扩展性" class="headerlink" title="⚠️ 有限的水平可扩展性"></a>⚠️ 有限的水平可扩展性</h3><p>扩展关系数据库通常意味着<strong>垂直扩展</strong>（为一台机器添加更多功能），而现代搜索系统需要<strong>水平扩展</strong>（分布式系统）。</p>
+<h3 id="⚠️-复杂查询的高延迟"><a href="#⚠️-复杂查询的高延迟" class="headerlink" title="⚠️ 复杂查询的高延迟"></a>⚠️ 复杂查询的高延迟</h3><p>结合过滤器+排序+文本搜索会导致：</p>
+<ul>
+<li>查询执行速度慢</li>
+<li>增加数据库负载</li>
+</ul>
+<h3 id="⚠️-未针对读取繁重的工作负载进行优化"><a href="#⚠️-未针对读取繁重的工作负载进行优化" class="headerlink" title="⚠️ 未针对读取繁重的工作负载进行优化"></a>⚠️ 未针对读取繁重的工作负载进行优化</h3><p>搜索系统<strong>读取繁重</strong>，但关系数据库针对**事务工作负载（CRUD）**进行优化，而不是针对高速搜索查询。</p>
+<h3 id="⚠️-索引限制"><a href="#⚠️-索引限制" class="headerlink" title="⚠️ 索引限制"></a>⚠️ 索引限制</h3><p>虽然存在索引（B 树等），但它们并未针对以下方面进行优化：</p>
+<ul>
+<li>全文搜索</li>
+<li>倒排索引（用于搜索引擎）</li>
+</ul>
+<h3 id="⚠️-实时搜索挑战"><a href="#⚠️-实时搜索挑战" class="headerlink" title="⚠️ 实时搜索挑战"></a>⚠️ 实时搜索挑战</h3><p>与 Elasticsearch 等系统相比，更新索引并在搜索结果中立即反映变化更加困难。</p>
+<hr>
+<h2 id="2-解决方案：倒排索引-8-48-16-12"><a href="#2-解决方案：倒排索引-8-48-16-12" class="headerlink" title="2. 解决方案：倒排索引 (8:48 - 16:12)"></a>2. 解决方案：倒排索引 (8:48 - 16:12)</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>该系统不是为每个搜索查询扫描整个文档，而是使用<strong>倒排索引</strong> - 一种专门的数据结构，将每个术语（单词）映射到它出现的文档列表。</p>
+<p>👉 将其视为书籍索引：</p>
+<ul>
+<li>不必阅读整本书来查找单词  </li>
+<li>直接在索引中查找单词并跳转到页面</li>
+</ul>
+<h4 id="传统方法（效率低下）"><a href="#传统方法（效率低下）" class="headerlink" title="传统方法（效率低下）"></a>传统方法（效率低下）</h4><p>扫描每个文档 → 检查它是否包含“laptop</p>
+<p>####倒排索引方法（高效）<br>“笔记本电脑”→ [doc1、doc7、doc21、doc105]</p>
+<p>因此，系统不会搜索所有文档，而是直接检索相关文档。</p>
+<hr>
+<h3 id="内部如何运作"><a href="#内部如何运作" class="headerlink" title="内部如何运作"></a>内部如何运作</h3><ol>
+<li><p><strong>代币化</strong></p>
+<ul>
+<li>文本被分解为单独的术语（标记）  </li>
+<li>示例：<code>&quot;Gaming Laptop under 50k&quot;</code> → <code>[&quot;gaming&quot;, &quot;laptop&quot;, &quot;under&quot;, &quot;50k&quot;]</code></li>
+</ul>
+</li>
+<li><p><strong>标准化</strong></p>
+<ul>
+<li>转换为小写，删除标点符号等。  </li>
+<li><code>&quot;Laptop&quot;</code> → <code>&quot;laptop&quot;</code></li>
+</ul>
+</li>
+<li><p><strong>索引创建</strong></p>
+<ul>
+<li>每个令牌都存储有文档 ID 列表<br>笔记本电脑 → [doc1、doc3、doc10]<br>游戏 → [doc1, doc8]</li>
+</ul>
+</li>
+<li><p><strong>搜索</strong></p>
+</li>
+</ol>
+<ul>
+<li>查询也被标记化  </li>
+<li>立即从索引中获取匹配的文档</li>
+</ul>
+<hr>
+<h3 id="🚀-为什么它如此强大"><a href="#🚀-为什么它如此强大" class="headerlink" title="🚀 为什么它如此强大"></a>🚀 为什么它如此强大</h3><ul>
+<li><p><strong>极速搜索</strong><br>无需全表扫描——直接查找</p>
+</li>
+<li><p><strong>大规模高效</strong><br>即使处理数百万&#x2F;数十亿的文档也能正常工作  </p>
+</li>
+<li><p><strong>支持高级功能</strong></p>
+</li>
+<li><p>全文搜索  </p>
+</li>
+<li><p>排名（TF-IDF、BM25）  </p>
+</li>
+<li><p>模糊搜索（拼写错误）  </p>
+</li>
+<li><p>短语匹配</p>
+</li>
+</ul>
+<hr>
+<h3 id="⚙️技术"><a href="#⚙️技术" class="headerlink" title="⚙️技术"></a>⚙️技术</h3><p><strong>Elasticsearch</strong> 使用 <strong>Apache Lucene</strong> 作为其核心引擎。</p>
+<ul>
+<li><p><strong>Apache Lucene</strong> 处理：</p>
+</li>
+<li><p>倒排索引创建  </p>
+</li>
+<li><p>查询处理  </p>
+</li>
+<li><p>排名和评分  </p>
+</li>
+<li><p><strong>Elasticsearch</strong> 添加：</p>
+</li>
+<li><p>REST API  </p>
+</li>
+<li><p>分布式架构  </p>
+</li>
+<li><p>横向可扩展性</p>
+</li>
+</ul>
+<hr>
+<h3 id="🆚-与关系型数据库的比较"><a href="#🆚-与关系型数据库的比较" class="headerlink" title="🆚 与关系型数据库的比较"></a>🆚 与关系型数据库的比较</h3><table>
+<thead>
+<tr>
+<th>特色</th>
+<th>关系数据库 (<code>LIKE</code>)</th>
+<th>倒排索引</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>搜索方法</td>
+<td>全面扫描</td>
+<td>直接查找</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>慢</td>
+<td>快⚡</td>
+</tr>
+<tr>
+<td>相关性排名</td>
+<td>❌ 否</td>
+<td>✅ 是的</td>
+</tr>
+<tr>
+<td>可扩展性</td>
+<td>有限公司</td>
+<td>高🚀</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-搜索智能-16-12-22-05"><a href="#3-搜索智能-16-12-22-05" class="headerlink" title="3. 搜索智能 (16:12 - 22:05)"></a>3. 搜索智能 (16:12 - 22:05)</h2><p>现代搜索引擎不仅仅是寻找匹配，它们还专注于提供<strong>最相关的结果</strong>。这是通过先进的排名算法和智能查询处理来实现的。</p>
+<hr>
+<h3 id="🧠-相关性评分（BM25-算法）"><a href="#🧠-相关性评分（BM25-算法）" class="headerlink" title="🧠 相关性评分（BM25 算法）"></a>🧠 相关性评分（BM25 算法）</h3><p>Elasticsearch 等搜索引擎使用 <strong>BM25（最佳匹配 25）</strong> 算法根据文档与查询的相关程度对文档进行排名。</p>
+<p>BM25 没有平等对待所有匹配项，而是使用多个因素为每个文档分配 <strong>分数</strong>：</p>
+<h4 id="📌-1-词频-TF"><a href="#📌-1-词频-TF" class="headerlink" title="📌 1. 词频 (TF)"></a>📌 1. 词频 (TF)</h4><ul>
+<li>测量搜索词在文档中出现的频率  </li>
+<li>更高的频率→更高的相关性</li>
+</ul>
+<p>👉 示例：</p>
+<ul>
+<li>文档 A：“笔记本电脑笔记本电脑”→ 更相关  </li>
+<li>Doc B：“笔记本电脑”（仅一次）→ 不太相关</li>
+</ul>
+<hr>
+<h4 id="📌-2-文档频率-DF"><a href="#📌-2-文档频率-DF" class="headerlink" title="📌 2. 文档频率 (DF)"></a>📌 2. 文档频率 (DF)</h4><ul>
+<li>衡量某个术语在所有文档中的常见程度  </li>
+<li>稀有术语比常见术语<strong>更有价值</strong></li>
+</ul>
+<p>👉 示例：</p>
+<ul>
+<li>“笔记本电脑”（常用词）→ 影响较小  </li>
+<li>“ultrabook”（罕见词）→ 更高的影响力</li>
+</ul>
+<p>这有助于系统避免高估通用词。</p>
+<hr>
+<h4 id="📌-3-场增强"><a href="#📌-3-场增强" class="headerlink" title="📌 3. 场增强"></a>📌 3. 场增强</h4><ul>
+<li>并非所有领域都同等重要  </li>
+<li>某些领域的比赛被赋予<strong>更高的权重</strong></li>
+</ul>
+<p>👉 示例：</p>
+<ul>
+<li>匹配<strong>标题</strong> → 非常重要  </li>
+<li>匹配<strong>描述&#x2F;内容</strong> → 不太重要</li>
+</ul>
+<p>标题：“最佳游戏笔记本电脑” ✅ 高优先级<br>描述：“…包括笔记本电脑…” ❌ 较低优先级</p>
+<hr>
+<h3 id="🤖-拼写错误容错和查询智能"><a href="#🤖-拼写错误容错和查询智能" class="headerlink" title="🤖 拼写错误容错和查询智能"></a>🤖 拼写错误容错和查询智能</h3><p>现代搜索引擎可以<strong>理解用户意图</strong>，即使查询不完美。</p>
+<h4 id="🔍特点："><a href="#🔍特点：" class="headerlink" title="🔍特点："></a>🔍特点：</h4><ul>
+<li><p><strong>模糊搜索（拼写错误处理）</strong><br>检测并纠正拼写错误<br> “笔记本电脑”→“笔记本电脑”</p>
+</li>
+<li><p><strong>“您是说”建议</strong><br>输入错误时建议更正查询  </p>
+</li>
+<li><p><strong>自动完成&#x2F;建议</strong><br>实时预测用户正在输入的内容</p>
+</li>
+</ul>
+<hr>
+<h3 id="🚀-为什么这很重要"><a href="#🚀-为什么这很重要" class="headerlink" title="🚀 为什么这很重要"></a>🚀 为什么这很重要</h3><ul>
+<li>用户立即获得<strong>准确的结果</strong>  </li>
+<li>显着改善<strong>用户体验</strong>  </li>
+<li>对于以下平台至关重要：</li>
+<li>电子商务（亚马逊）  </li>
+<li>搜索引擎（谷歌）  </li>
+<li>求职门户、博客、SaaS 应用程序</li>
+</ul>
+<hr>
+<h3 id="🆚-没有搜索智能"><a href="#🆚-没有搜索智能" class="headerlink" title="🆚 没有搜索智能"></a>🆚 没有搜索智能</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>没有BM25</th>
+<th>与BM25</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关键词精准匹配</td>
+<td>同等级</td>
+<td>排名</td>
+</tr>
+<tr>
+<td>重要字段（标题与正文）</td>
+<td>被忽略</td>
+<td>优先</td>
+</tr>
+<tr>
+<td>罕见词与常见词</td>
+<td>相同重量</td>
+<td>平衡</td>
+</tr>
+<tr>
+<td>打字错误</td>
+<td>❌ 失败</td>
+<td>✅ 已处理</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="4-实际基准测试"><a href="#4-实际基准测试" class="headerlink" title="4. 实际基准测试"></a>4. 实际基准测试</h2><h3 id="🧪-测试用例"><a href="#🧪-测试用例" class="headerlink" title="🧪 测试用例"></a>🧪 测试用例</h3><p><strong>PostgreSQL</strong> 和 <strong>Elasticsearch</strong> 之间的性能比较是使用 <strong>50,000 条记录</strong>的数据集进行的。</p>
+<h4 id="⏱️-结果："><a href="#⏱️-结果：" class="headerlink" title="⏱️ 结果："></a>⏱️ 结果：</h4><ul>
+<li><strong>PostgreSQL</strong> → ~7.5 秒  </li>
+<li><strong>Elasticsearch</strong> → ~500 毫秒</li>
+</ul>
+<p>👉 这表明使用 Elasticsearch 等搜索优化引擎时<strong>性能大幅提升</strong>。</p>
+<hr>
+<h3 id="为什么有区别？"><a href="#为什么有区别？" class="headerlink" title="为什么有区别？"></a>为什么有区别？</h3><ul>
+<li><p><strong>PostgreSQL</strong></p>
+<ul>
+<li>使用传统查询（<code>LIKE</code>、连接等）</li>
+<li>经常执行完整或部分扫描</li>
+<li>未针对大规模全文搜索进行优化</li>
+</ul>
+</li>
+<li><p><strong>弹性搜索</strong></p>
+<ul>
+<li>使用<strong>倒排索引</strong></li>
+<li>执行直接查找而不是扫描  </li>
+<li>针对快速、实时搜索查询进行了优化</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h3><ul>
+<li><p>一、<strong>掌握SQL和数据库优化</strong></p>
+<ul>
+<li>索引</li>
+<li>查询优化</li>
+<li>架构设计</li>
+</ul>
+</li>
+<li><p>然后，在以下情况下使用 <strong>Elasticsearch（或类似工具）</strong>：</p>
+<ul>
+<li>您的应用程序<strong>搜索量较大</strong></li>
+<li>您需要以下功能：<ul>
+<li>提前输入（自动完成）</li>
+<li>全文搜索  </li>
+<li>高级过滤和排名  </li>
+<li>实时搜索体验</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="何时使用什么？"><a href="#何时使用什么？" class="headerlink" title="何时使用什么？"></a>何时使用什么？</h3><table>
+<thead>
+<tr>
+<th>使用案例</th>
+<th>PostgreSQL</th>
+<th>弹性搜索</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CRUD 操作</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>交易系统</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>简单搜索</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>全文检索</td>
+<td>⚠️ 有限公司</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>高性能搜索</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>自动完成&#x2F;建议</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/01/06/Elasticsearch/">https://hzhzxfs.github.io/2025/01/06/Elasticsearch/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/01/07/Errorhandling/" title="Errorhandling"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Errorhandling</div></div><div class="info-2"><div class="info-item-1">错误处理和容错系统 后端工程师实用参考——技术深度、浅显易懂   1. 心态错误是不可避免的您无法阻止每个错误 - 目标是快速检测、遏制和恢复。停止思考*“我如何阻止它损坏？”并开始思考“当*损坏时会发生什么？” 容错心态在最坏的情况发生之前就进行设计。即使内部组件出现故障，构建良好的系统也能保证用户交易无缝进行。  2. 常见错误类型A. 逻辑错误 🔴 最危险的类型 — 无声故障，没有崩溃或异常  系统继续运行——没有崩溃，没有例外——但它产生错误的结果。这些都是无声的杀手：表面上一切看起来都很好，但实际上却有错误的数据流过。 为什么它们很难捕捉：  没有可见的崩溃或堆栈跟踪 该应用程序似乎运行正常 通常是通过错误的输出或用户投诉发现的——为时已晚  现实世界的例子：  电子商务折扣计算中的错误导致系统“向用户付款”而不是向他们收费——负交易价值仅出现在财务报告中。  根本原因：  误解业务需求 算法实现不正确 未考虑边缘情况  预防策略：  强大的单元+集成测试 边缘情况验证（例如最低价格 &#x3D; 0） 专注于业务逻辑的代码审查 监控异常输出值（例如负交易金额）  影...</div></div></div></a><a class="pagination-related" href="/2025/01/05/Databases/" title="Databases"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Databases</div></div><div class="info-2"><div class="info-item-1">使用 PostgreSQL 掌握数据库核心概念为什么选择数据库？从本质上讲，数据库是一个旨在跨不同会话保留信息的系统。持久性确保数据即使在创建数据的程序或进程终止后也能继续存在。 存储层次结构：RAM 与磁盘现代后端系统通过利用不同的存储介质来平衡速度和成本：    特色 内存中 (RAM) 磁盘（SSD&#x2F;HDD）    速度 极快 比 RAM 慢   成本 贵 相对便宜   坚持 易失性（断电后丢失） 非易失性（持久）   示例 Redis、Memcached PostgreSQL、MongoDB、MySQL    数据库管理系统 (DBMS)DBMS 是一个软件层，其唯一职责是高效地向客户端提供 CRUD 操作：  Create：插入新数据。 Read：查询现有数据。 Update：修改当前记录。 Delete：删除数据。  DBMS 的职责：1）数据的组织——DBMS 定义了数据的结构方式（通常为表、行和列），以确保数据以逻辑方式存储并可以有效地检索。它管理磁盘上的物理存储，因此开发人员不必担心原始文件管理。 2）访问——CRUD操作该系统提供标准化接口（如 SQ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/03/03/12_mongodb_imagekit_integration_project/" title="12_mongodb_imagekit_integration_project"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="info-item-2">12_mongodb_imagekit_integration_project</div></div><div class="info-2"><div class="info-item-1">MongoDB + ImageKit集成（完整流程笔记） 🎯 目标用户图片上传kare →服务器文件接收kare →ImageKit 帕上传ho →网址里程 →MongoDB 我的存储ho →客户响应里程  🧠 完整架构流程客户端（颤振&#x2F;邮递员）        ↓HTTP 多部分&#x2F;表单数据        ↓快速路线        ↓Multer（解析文件）        ↓请求文件缓冲区        ↓ImageKit上传服务        ↓返回图片网址        ↓MongoDB（已保存 URL）        ↓回复已发送  1️⃣ 为什么选择穆特？默认情况下表达 JSON samajhta hai。 图片上传 JSON nahi hota.它发送为： 内容类型：多部分&#x2F;表单数据 穆尔特：  原始HTTP流解析karta hai 文件 aur 文本字段分开 karta hai req.file aur req.body banata hai  设置示例： const multer = require(&quot;multer&quot...</div></div></div></a><a class="pagination-related" href="/2025/06/05/C++%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="C++学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-05</div><div class="info-item-2">C++学习笔记</div></div><div class="info-2"><div class="info-item-1">C++基础入门1  C++初识1.1  第一个C++程序1234567891011#include&lt;iostream&gt;#include&lt;string&gt;using namespace std;int main()&#123;    // ...    system(&quot;pause&quot;);    return 0;&#125;  1.2  注释1.3  变量1.4  常量12#define 常量名 常量值const 数据类型 常量名 = 常量值  1.5  关键字1.6  标识符命名规则 不能是关键字； 只能由字母、数字、下划线组成； 第一个字符必须为字母或下划线； 区分大小写。  2  数据类型2.1  整型   数据类型 占用空间    short 2 字节   int 4 字节   long Win 4 字节，Linux 4 字节（32 位）或 8 字节（64 位）   long long 8 字节   2.2  sizeof()作用：返回当前数据的类型长度（字节）。 2.3  浮点型   数据类型 占用空间    float 4 字节 ...</div></div></div></a><a class="pagination-related" href="/2025/01/11/Middlerwares/" title="Middlerwares"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="info-item-2">Middlerwares</div></div><div class="info-2"><div class="info-item-1">中间件：请求管道 什么是中间件？中间件是位于传入请求和控制器&#x2F;处理程序之间的函数（或组件）。 它可以：  检查请求   修改请求   阻止请求   修改响应   记录请求   添加安全检查  在你的控制器运行之前。 将中间件视为：  进入主楼前的安全检查站。   🏗 中间件在流程中的位置客户↓中间件1↓中间件2↓中间件3↓控制器（处理程序）↓服务↓存储库↓数据库 每个请求在到达控制器之前都会经过中间件。  为什么需要中间件？没有中间件：  控制器过载 安全逻辑被重复 记录逻辑到处重复 难以执行全球政策  中间件解决：  集中安全 集中记录 集中验证 更清洁的控制器 更好的可扩展性   它解决了什么问题？重复问题而不是在每个控制器中编写身份验证逻辑： 12if not verify_token():    return 401 真实示例流程用户发送请求： 12GET /profileAuthorization: Bearer eyJhbGciOiJIUzI1NiIs... 步骤 1️⃣ CORS 中间件 检查：此前端域是否允许？ 如果不是：立即拒绝请求 步骤 2️⃣ 速...</div></div></div></a><a class="pagination-related" href="/2025/03/02/11_mongo_db_notes/" title="11_mongo_db_notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-02</div><div class="info-item-2">11_mongo_db_notes</div></div><div class="info-2"><div class="info-item-1">MongoDB + ImageKit 集成（后端架构笔记） 目标允许用户上传图像。将图像存储在云存储（ImageKit）中。将返回的图像 URL 保存在 MongoDB 中。返回正确的响应给客户端。  完整的系统流程客户端（颤振&#x2F;邮递员）→ HTTP 请求（多部分&#x2F;表单数据）→ 快速路线→ Multer 中间件（解析文件）→ ImageKit 上传服务→ 云存储→ 返回的 URL→ MongoDB（存储 URL）→ 回复已发回  1. 为什么需要 MulterExpress 默认可以解析 JSON。但是，图像上传不是 JSON。它们被发送为： 内容类型：多部分&#x2F;表单数据 此格式包含原始二进制数据。仅 Express 无法从此格式提取文件。 穆特解决了这个问题。 穆尔特：  读取传入的请求流 检测文件边界 将文件数据与文本字段分开 将文件附加到 req.file 将文本字段附加到 req.body  多路复用器配置123456const multer = require(&quot;multer&quot;);const upload = multer...</div></div></div></a><a class="pagination-related" href="/2025/02/26/youtube-dl-note/" title="youtube-dl-note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-26</div><div class="info-item-2">youtube-dl-note</div></div><div class="info-2"><div class="info-item-1">youtube-dl0x00 Github Repository ForkGithub Repository 0x01 Installation12sudo curl -L https://github.com/l1ving/youtube-dl/releases/latest/download/youtube-dl -o /usr/local/bin/youtube-dlsudo chmod a+rx /usr/local/bin/youtube-dl  0x02 Usage1youtube-dl [OPTIONS] URL [URL...]  0x03 how-to-select-video-quality-from-youtube-dlhow-to-select-video-quality-from-youtube-dl 1youtube-dl -F &#x27;http://www.youtube.com/watch?v=P9pzm5b6FFY&#x27;  Here is the output: 123456789101112131415161718[youtube] ...</div></div></div></a><a class="pagination-related" href="/2025/02/19/server-software/" title="server-software"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">server-software</div></div><div class="info-2"><div class="info-item-1">服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服务器，可做反向代理、负载均衡，一般放在最前面直面用户，和后端Tomcat打配合；纯C写的，性能贼高、内存消耗极少、稳定性也相当好，互联网公司重度使用2、Tengine：阿里出品，基于Nginx服务器做的改造(加强和封装)，对大流量场景做了很多高级功能，性能、稳定性优秀3、Apache http server：也是静态服务器，但是不如Nginx3、IIS：微软开发，只能用在Windows下，具有应用服务器能力的http服务器4、Tomcat：Apache出品，典型的应用服务器软件，符合Servlet标准的应用容器，也可以提供http服务，但一般不会作为http服务器；是Spring Boo...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%EF%BC%9A%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">1. 问题：关系数据库的限制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E6%95%88%E7%8E%87%E4%BD%8E%E4%B8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">⚠️ 效率低下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F%E7%BC%BA%E4%B9%8F%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">⚠️缺乏相关性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">⚠️ 可扩展性问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E4%BA%8E%E6%90%9C%E7%B4%A2%E7%9A%84%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%85%B6%E4%BB%96%E9%99%90%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">用于搜索的关系数据库的其他限制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%85%A8%E6%96%87%E6%90%9C%E7%B4%A2%E6%94%AF%E6%8C%81%E4%B8%8D%E4%BD%B3"><span class="toc-number">2.1.</span> <span class="toc-text">⚠️ 全文搜索支持不佳</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F%E6%B2%A1%E6%9C%89%E5%86%85%E7%BD%AE%E6%8E%92%E5%90%8D%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">⚠️没有内置排名算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E9%9A%BE%E4%BB%A5%E5%A4%84%E7%90%86%E6%8B%BC%E5%86%99%E9%94%99%E8%AF%AF%E5%92%8C%E6%A8%A1%E7%B3%8A%E6%90%9C%E7%B4%A2"><span class="toc-number">2.3.</span> <span class="toc-text">⚠️ 难以处理拼写错误和模糊搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E6%9C%89%E9%99%90%E7%9A%84%E6%B0%B4%E5%B9%B3%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="toc-number">2.4.</span> <span class="toc-text">⚠️ 有限的水平可扩展性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%A4%8D%E6%9D%82%E6%9F%A5%E8%AF%A2%E7%9A%84%E9%AB%98%E5%BB%B6%E8%BF%9F"><span class="toc-number">2.5.</span> <span class="toc-text">⚠️ 复杂查询的高延迟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E6%9C%AA%E9%92%88%E5%AF%B9%E8%AF%BB%E5%8F%96%E7%B9%81%E9%87%8D%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%B4%9F%E8%BD%BD%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96"><span class="toc-number">2.6.</span> <span class="toc-text">⚠️ 未针对读取繁重的工作负载进行优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E7%B4%A2%E5%BC%95%E9%99%90%E5%88%B6"><span class="toc-number">2.7.</span> <span class="toc-text">⚠️ 索引限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%A0%EF%B8%8F-%E5%AE%9E%E6%97%B6%E6%90%9C%E7%B4%A2%E6%8C%91%E6%88%98"><span class="toc-number">2.8.</span> <span class="toc-text">⚠️ 实时搜索挑战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95-8-48-16-12"><span class="toc-number">3.</span> <span class="toc-text">2. 解决方案：倒排索引 (8:48 - 16:12)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">3.1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%EF%BC%88%E6%95%88%E7%8E%87%E4%BD%8E%E4%B8%8B%EF%BC%89"><span class="toc-number">3.1.1.</span> <span class="toc-text">传统方法（效率低下）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%A6%82%E4%BD%95%E8%BF%90%E4%BD%9C"><span class="toc-number">3.2.</span> <span class="toc-text">内部如何运作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9A%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E5%A6%82%E6%AD%A4%E5%BC%BA%E5%A4%A7"><span class="toc-number">3.3.</span> <span class="toc-text">🚀 为什么它如此强大</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%9A%99%EF%B8%8F%E6%8A%80%E6%9C%AF"><span class="toc-number">3.4.</span> <span class="toc-text">⚙️技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%86%9A-%E4%B8%8E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">3.5.</span> <span class="toc-text">🆚 与关系型数据库的比较</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%90%9C%E7%B4%A2%E6%99%BA%E8%83%BD-16-12-22-05"><span class="toc-number">4.</span> <span class="toc-text">3. 搜索智能 (16:12 - 22:05)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A7%A0-%E7%9B%B8%E5%85%B3%E6%80%A7%E8%AF%84%E5%88%86%EF%BC%88BM25-%E7%AE%97%E6%B3%95%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">🧠 相关性评分（BM25 算法）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%93%8C-1-%E8%AF%8D%E9%A2%91-TF"><span class="toc-number">4.1.1.</span> <span class="toc-text">📌 1. 词频 (TF)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%93%8C-2-%E6%96%87%E6%A1%A3%E9%A2%91%E7%8E%87-DF"><span class="toc-number">4.1.2.</span> <span class="toc-text">📌 2. 文档频率 (DF)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%93%8C-3-%E5%9C%BA%E5%A2%9E%E5%BC%BA"><span class="toc-number">4.1.3.</span> <span class="toc-text">📌 3. 场增强</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A4%96-%E6%8B%BC%E5%86%99%E9%94%99%E8%AF%AF%E5%AE%B9%E9%94%99%E5%92%8C%E6%9F%A5%E8%AF%A2%E6%99%BA%E8%83%BD"><span class="toc-number">4.2.</span> <span class="toc-text">🤖 拼写错误容错和查询智能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%94%8D%E7%89%B9%E7%82%B9%EF%BC%9A"><span class="toc-number">4.2.1.</span> <span class="toc-text">🔍特点：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%9A%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E5%BE%88%E9%87%8D%E8%A6%81"><span class="toc-number">4.3.</span> <span class="toc-text">🚀 为什么这很重要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%86%9A-%E6%B2%A1%E6%9C%89%E6%90%9C%E7%B4%A2%E6%99%BA%E8%83%BD"><span class="toc-number">4.4.</span> <span class="toc-text">🆚 没有搜索智能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9E%E9%99%85%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95"><span class="toc-number">5.</span> <span class="toc-text">4. 实际基准测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%A7%AA-%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="toc-number">5.1.</span> <span class="toc-text">🧪 测试用例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E2%8F%B1%EF%B8%8F-%E7%BB%93%E6%9E%9C%EF%BC%9A"><span class="toc-number">5.1.1.</span> <span class="toc-text">⏱️ 结果：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">5.2.</span> <span class="toc-text">为什么有区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E7%82%B9"><span class="toc-number">5.3.</span> <span class="toc-text">要点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">5.4.</span> <span class="toc-text">何时使用什么？</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

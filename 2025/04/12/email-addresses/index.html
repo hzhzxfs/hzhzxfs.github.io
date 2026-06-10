@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>email-addresses | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="发现电子邮件地址电子邮件枚举电子邮件枚举是一种可以通过“暴力破解”电子邮件网站的登录页面来猜测连接到特定域的电子邮件地址的技术。 当用户尝试使用测试电子邮件登录时，可以通过读取服务器的响应来确定电子邮件地址的有效性。根据电子邮件是否存在（无论密码是否正确），服务器可能会做出不同的响应。 登录页面和网站的“忘记密码”页面都可能容易受到这种类型或窥探的攻击。 服务器响应服务器对测试电子邮件的响应可以从">
+<meta property="og:type" content="article">
+<meta property="og:title" content="email-addresses">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/04/12/email-addresses/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="发现电子邮件地址电子邮件枚举电子邮件枚举是一种可以通过“暴力破解”电子邮件网站的登录页面来猜测连接到特定域的电子邮件地址的技术。 当用户尝试使用测试电子邮件登录时，可以通过读取服务器的响应来确定电子邮件地址的有效性。根据电子邮件是否存在（无论密码是否正确），服务器可能会做出不同的响应。 登录页面和网站的“忘记密码”页面都可能容易受到这种类型或窥探的攻击。 服务器响应服务器对测试电子邮件的响应可以从">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-04-12T07:18:31.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.445Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Network Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "email-addresses",
+  "url": "https://hzhzxfs.github.io/2025/04/12/email-addresses/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-04-12T07:18:31.000Z",
+  "dateModified": "2026-06-10T02:14:46.445Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/04/12/email-addresses/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'email-addresses',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">email-addresses</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">email-addresses</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-12T07:18:31.000Z" title="发表于 2025-04-12 15:18:31">2025-04-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.445Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="发现电子邮件地址"><a href="#发现电子邮件地址" class="headerlink" title="发现电子邮件地址"></a>发现电子邮件地址</h1><h2 id="电子邮件枚举"><a href="#电子邮件枚举" class="headerlink" title="电子邮件枚举"></a>电子邮件枚举</h2><p>电子邮件枚举是一种可以通过“暴力破解”电子邮件网站的登录页面来猜测连接到特定域的电子邮件地址的技术。</p>
+<p>当用户尝试使用测试电子邮件登录时，可以通过读取服务器的响应来确定电子邮件地址的有效性。根据电子邮件是否存在（无论密码是否正确），服务器可能会做出不同的响应。</p>
+<p>登录页面和网站的“忘记密码”页面都可能容易受到这种类型或窥探的攻击。</p>
+<h3 id="服务器响应"><a href="#服务器响应" class="headerlink" title="服务器响应"></a>服务器响应</h3><p>服务器对测试电子邮件的响应可以从页面的 HTML 中抓取，也可以从服务器的 HTTP 响应中抓取。</p>
+<p>地址是否有效也可以从服务器响应的时间来推断。通过有效地址与无效地址所需时间的基准，您可以使用响应速度来猜测电子邮件是否合法。</p>
+<h3 id="一些专家建议"><a href="#一些专家建议" class="headerlink" title="一些专家建议"></a>一些<em>专家</em>建议</h3><p>电子邮件枚举是 OSINT 吗？</p>
+<blockquote>
+<p>“开源情报……通常是关于利用公开发布的内容，而当你暴力破解邮件服务器时会出现法律问题。</p>
+<p>理论上，“可以”将暴力破解目标服务器称为滥用邮件服务器……并可能构成犯罪。</p>
+<p>这是法律解释的问题。在此情况下，您需要由律师审查有关所涉及司法管辖区以及邮件服务器运营商的最终用户许可协议的明确定义的参与规则。</p>
+<p>在某些情况下，即使过于激进地抓取网络服务器也会产生法律问题。”</p>
+</blockquote>
+<h3 id="一些更多专家建议"><a href="#一些更多专家建议" class="headerlink" title="一些更多专家建议"></a>一些<em>更多专家建议</em></h3><blockquote>
+<p>“这是一个好问题！因此，任何技术上不“触及”目标的内容都被视为被动信息收集，因此我认为属于 OSINT 类别。Harvester 使用大量外部资源来尝试枚举可能属于某个组织的电子邮件，因此它属于该类别</p>
+<p>OSINT 曾经有点被动，但我认为现在已经发展到包括被动和主动组件，所以就像被动 OSINT 与主动 OSINT</p>
+<p>当我第一次进入这个行业时，我们称之为被动信息收集与主动信息收集。名字似乎随着时间的推移而演变</p>
+<p>我真的不认为暴力破解服务器是开源情报。这绝对是一次直接攻击，旨在枚举有效用户，特别是如果您的目标是他们的 Office365、Gmail，甚至是本地门户。”</p>
+</blockquote>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><h3 id="收割机"><a href="#收割机" class="headerlink" title="收割机"></a><a target="_blank" rel="noopener" href="http://www.edge-security.com/theharvester.php">收割机</a></h3><h3 id="ClearBit"><a href="#ClearBit" class="headerlink" title="ClearBit"></a><a target="_blank" rel="noopener" href="https://chrome.google.com/webstore/detail/clearbit-connect-free-ver/pmnhcgfcafcnkbengdcanjablaabjplo">ClearBit</a></h3><h3 id="Hunter-io"><a href="#Hunter-io" class="headerlink" title="Hunter.io"></a><a target="_blank" rel="noopener" href="https://hunter.io/email-finder">Hunter.io</a></h3><blockquote>
+<p>[！资源：]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.hackers-arise.com/post/osint-scraping-email-addresses-with-theharvester">黑客崛起：使用 theHarvester 进行 OSINT 抓取</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.rapid7.com/blog/post/2017/06/15/about-user-enumeration/">Rapid7：关于用户枚举</a></li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/04/12/email-addresses/">https://hzhzxfs.github.io/2025/04/12/email-addresses/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Network-Security/">Network Security</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/04/13/enumerating-HTTP-HTTPS/" title="enumerating-HTTP-HTTPS"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">enumerating-HTTP-HTTPS</div></div><div class="info-2"><div class="info-item-1">枚举 HTTP 和 HTTPS端口 80 和 443 通常分配给使用 HTTP 和 HTTPS 协议（分别）的主机 Web 服务。这些协议用于 Web 服务器和 Web 浏览器之间通过 OSI 模型的应用层 进行通信。 信息收集目标扫描中出现的端口 80 和 443 表明该目标可能托管 Web 服务。调查这些端口是收集目标信息的好方法。你可以找到很多关于他们的架构、他们使用的服务&#x2F;应用程序等的信息。 通过航站楼如果目标可能不稳定，或者您想留下更少的痕迹，则可以从使用 curl 开始。通过curl，你可以获得整个网站的HTML。您还可以使用 -I 命令来请求标头，该命令比较隐蔽，因为来自目标的响应携带的数据较少。 12345678# Headers only: using wordcount command:curl -I http://10.0.3.5:80 | wc -c  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current  								  Dload  Up...</div></div></div></a><a class="pagination-related" href="/2025/04/11/effective-notekeeping/" title="effective-notekeeping"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">effective-notekeeping</div></div><div class="info-2"><div class="info-item-1">有效的笔记客户评估：截取并保存客户参与的屏幕截图是包含评估结果证据的简单方法。屏幕截图应包括目标的证明以及 IP 地址、日期等。 对评估进行详细记录对于报告撰写很重要，对于_历史记录_也很重要。例如：客户可能会在几个月或几年后再次联系您，询问有关他们的评估的信息。 资源：窗口：KeepNote Linux：CherryTree 麦克：乔普林 注意事项：安全：您在订婚时所做的笔记应该受到保护。这些注释可能包括有关客户网络的敏感信息以及可用于攻击他们的详细信息。 注释中还应删除所有 P.I.I.因此，如果它们落入坏人之手，它们所包含的信息就不能直接与个人或组织联系起来。####朋友的建议：  “我更喜欢加密存储我的笔记，这样我就不必担心我的笔记落入坏人之手并成为责任。我也尽量不记录除了证明调查结果所需的内容之外的任何内容。几乎在所有情况下，PII、PFI、PHI 或其他敏感信息都不能证明。在我看来，记录这些信息是鲁莽的，因为笔记可能会被破坏，或者信息被复制到不同的系统可能会引发公司的罚款和其他合同和监管责任。 此外，我知道很多经理在谈到指责游戏时都被[编辑了]。我从来不想把某人扔到公...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/24/sudo/" title="sudo"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-24</div><div class="info-item-2">sudo</div></div><div class="info-2"><div class="info-item-1">Linux sudo 命令sudo 代表“超级用户执行”，允许您以 root 用户身份运行命令。 权限提升仅在运行命令时存在。某些发行版（例如 Ubuntu）会将超级用户权限保留 15 分钟。 “sudoers”组中的用户拥有超级用户权限。 根用户：Linux 发行版中“sudoers”组中的默认用户的一个示例是 root 用户。要以 root 用户身份登录，请使用 sudo su - 并且 shell 的上下文将更改为您作为 root 用户。退出或终止当前 shell 将终止该 shell 的 root 用户权限。 </div></div></div></a><a class="pagination-related" href="/2025/04/17/file-permissions/" title="file-permissions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-17</div><div class="info-item-2">file-permissions</div></div><div class="info-2"><div class="info-item-1">Linux 中的权限和权限：ls -al 的输出是当前&#x2F;父目录中所有文件和目录的列表并添加一些元数据。 -l 标志表示“长”形式，或“列出有关每个文件&#x2F;目录的更多信息”。这包括文件类型、大小、时间戳、权限、所有者、上次访问日期&#x2F;时间等。 -a 标志表示 all 或列出所有文件&#x2F;目录，包括隐藏的文件&#x2F;目录（其名称开头有 . ）。 输出如下所示： 1234567trshpuppy@trshheap:~$ ls -altotal 100drwxr-xr-x 16 trshpuppy trshpuppy 4096 May 17 11:21 .drwxr-xr-x  3 root      root      4096 Sep 18  2022 ..-rw-------  1 trshpuppy trshpuppy 2546 May 19 14:32 .bash_history-rw-r--r--  1 trshpuppy trshpuppy  220 Sep 18  2022 .bash_logout... 在 &#39; &#39; 上...</div></div></div></a><a class="pagination-related" href="/2025/04/02/active-directory-overview/" title="active-directory-overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-02</div><div class="info-item-2">active-directory-overview</div></div><div class="info-2"><div class="info-item-1">活动目录概述Active Directory 是 Microsoft 创建的一项身份服务，用于管理 Windows“域网络”。它存储的有关网络、用户和服务的信息被组织成不同类型的对象，包括“计算机”、“用户”、“打印机”等。 使用 AD 进行身份验证通过名为 kerberos 的协议完成，该协议使用票证系统和客户端-服务器架构。  ‘目录是存储有关网络上对象的信息的分层结构。目录服务（例如 Active Directory 域服务 (AD DS)）提供了存储目录数据并使该数据可供网络用户和管理员使用的方法。例如，AD DS 存储有关用户帐户的信息，例如姓名、密码、电话号码等，并允许同一网络上的其他授权用户访问此信息。  -微软 注意： 尽管 AD 主要在 Windows 环境中使用，但它也可以在其他操作系统（例如 Linux）上使用。 为什么 AD 对于渗透测试很重要？ 它是全世界**最常用的身份管理服务。  可以利用它无需使用可修补的漏洞（附带通常来自错误配置等的漏洞）。 在多台计算机和服务中使用相同的凭据。  物理组件组成 AD 的组件可以分为物理组件和逻辑组件。 域控制器如...</div></div></div></a><a class="pagination-related" href="/2025/04/16/file-management/" title="file-management"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-16</div><div class="info-item-2">file-management</div></div><div class="info-2"><div class="info-item-1">查看、创建和编辑 Linux 文件创建文件要在 Linux 中创建文件，您可以使用 touch 或将 echo 内容添加到文件中： 1234# touch creates an empty filetouch hey.txt# echo will create a new file AND fill it with content:echo &quot;hello&quot; &gt; hey.txt 编辑和附加文件要在 Linux 中编辑或附加到文件，可以使用 &gt; 和 &gt;&gt;。单个 &gt; 将覆盖该文件，并用您在 &gt; 右侧键入&#x2F;放置的任何内容替换其中的任何数据。 &gt;&gt; 也会编辑该文件，但会将其右侧的内容附加到文件末尾。 1234567echo &quot;hello&quot; &gt; hey.txtcat hey.txthelloecho &quot;hello again&quot; &gt;&gt; hey.txtcat hey.txthellohello again 文本编辑器：终端文本编辑器除了使用 touch 和 ec...</div></div></div></a><a class="pagination-related" href="/2025/04/23/intro/" title="intro"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-23</div><div class="info-item-2">intro</div></div><div class="info-2"><div class="info-item-1">实用道德黑客简介：渗透测试的类型：外网渗透测试最常见的类型是从外部（通常是远程位置）评估和测试组织的安全性。这种类型的渗透测试是“最常见的”，因为合规组织每年都需要进行外部网络渗透测试。 它们也往往比其他类型的渗透测试便宜。这使得公司更容易开始采用渗透测试作为其安全实践。 方法论重点关注 OSINT，收集有关公司及其员工的开源信息。通常需要约 32-40 小时 + 8-16 小时来撰写报告。 开源情报可以收集哪些数据（公开的）来帮助闯入&#x2F;利用组织的网络并访问受限空间&#x2F;信息？ *漏洞扫描：*外部网络端点始终被机器人扫描。通过被动扫描发现漏洞的可能性相对较低。大多数公司都有足够的保护措施来通过修补等方式来覆盖这方面的安全性。 相反，OSINT 专注于“收集情报”，例如网络的拓扑结构是什么？登录面板在哪里？用户是谁？ 内网渗透测试从网络内部评估组织的安全性。网络已经被破坏，并且&#x2F;或与客户达成的协议的一部分是允许将笔记本电脑&#x2F;设备带入内部并连接到网络（然后渗透测试人员可以远程进入以执行评估）。 方法论重点关注 Active Directory 攻击...</div></div></div></a><a class="pagination-related" href="/2025/04/04/blue/" title="blue"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-04</div><div class="info-item-2">blue</div></div><div class="info-2"><div class="info-item-1">蓝色演练将这些框视为 CTF（实际上不是笔测试）。 侦察我们的第一次 nmap 扫描为我们提供了一些端口和一些操作系统版本控制： 1234567891011121314151617181920212223nmap -Pn $t 	Starting Nmap 7.94 ( https://nmap.org ) at 2023-10-04 13:59 EDT	Nmap scan report for 10.0.2.6	Host is up (0.00077s latency).	Not shown: 991 closed tcp ports (conn-refused)	PORT      STATE SERVICE	135/tcp   open  msrpc	139/tcp   open  netbios-ssn	445/tcp   open  microsoft-ds	49152/tcp open  unknown	49153/tcp open  unknown	49154/tcp open  unknown	49155/tcp open  unknown	49156/tcp o...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%91%E7%8E%B0%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6%E5%9C%B0%E5%9D%80"><span class="toc-number">1.</span> <span class="toc-text">发现电子邮件地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6%E6%9E%9A%E4%B8%BE"><span class="toc-number">1.1.</span> <span class="toc-text">电子邮件枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%93%8D%E5%BA%94"><span class="toc-number">1.1.1.</span> <span class="toc-text">服务器响应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E4%B8%93%E5%AE%B6%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.1.2.</span> <span class="toc-text">一些专家建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%9B%B4%E5%A4%9A%E4%B8%93%E5%AE%B6%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.1.3.</span> <span class="toc-text">一些更多专家建议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E5%89%B2%E6%9C%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">收割机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ClearBit"><span class="toc-number">1.2.2.</span> <span class="toc-text">ClearBit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hunter-io"><span class="toc-number">1.2.3.</span> <span class="toc-text">Hunter.io</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

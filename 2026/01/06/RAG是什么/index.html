@@ -1,0 +1,644 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>RAG是什么 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是 RAG？AI 大模型有一些硬伤，比如：  知识有截止日期 会一本正经地胡说八道，也就是我们常说的幻觉 缺乏私有知识，了解不到内部的文档写了什么  比如问 DeepSeek：程序员鱼皮的最新项目是什么？ 结果它给我扯了个两年半以前的项目出来，技术栈也完全不对！ 解决这个问题就可以用 RAG。RAG 的核心思想是 先搜再答 ，让大模型在回答之前先去搜一遍相关资料，再基于搜到的知识来组织答案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG是什么">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="什么是 RAG？AI 大模型有一些硬伤，比如：  知识有截止日期 会一本正经地胡说八道，也就是我们常说的幻觉 缺乏私有知识，了解不到内部的文档写了什么  比如问 DeepSeek：程序员鱼皮的最新项目是什么？ 结果它给我扯了个两年半以前的项目出来，技术栈也完全不对！ 解决这个问题就可以用 RAG。RAG 的核心思想是 先搜再答 ，让大模型在回答之前先去搜一遍相关资料，再基于搜到的知识来组织答案。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-06T04:48:26.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.553Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "RAG是什么",
+  "url": "https://hzhzxfs.github.io/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-06T04:48:26.000Z",
+  "dateModified": "2026-06-10T02:14:46.553Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RAG是什么',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">RAG是什么</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">RAG是什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-06T04:48:26.000Z" title="发表于 2026-01-06 12:48:26">2026-01-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.553Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="什么是-RAG？"><a href="#什么是-RAG？" class="headerlink" title="什么是 RAG？"></a>什么是 RAG？</h2><p>AI 大模型有一些硬伤，比如：</p>
+<ol>
+<li>知识有截止日期</li>
+<li>会一本正经地胡说八道，也就是我们常说的幻觉</li>
+<li>缺乏私有知识，了解不到内部的文档写了什么</li>
+</ol>
+<p>比如问 DeepSeek：程序员鱼皮的最新项目是什么？</p>
+<p>结果它给我扯了个两年半以前的项目出来，技术栈也完全不对！</p>
+<p>解决这个问题就可以用 RAG。RAG 的核心思想是 <strong>先搜再答</strong> ，让大模型在回答之前先去搜一遍相关资料，再基于搜到的知识来组织答案。</p>
+<p>就跟考试的时候偷偷翻书一样，遇到不会的先翻一翻书，再根据书里的知识答题。</p>
+<p>还是问 AI 同样的问题，我们主动给 AI 一些参考资料，他的回答就会准确一些：</p>
+<p>这个思路听起来简单，但在实际工程上 RAG 已经演化出了很多种不同的实现方法，从最初的「切块 → 搜索 → 生成」，到让 AI Agent 自主决策检索策略的 Agentic RAG，复杂度和能力天差地别。</p>
+<p>有朋友可能会问：现在的大模型不是已经支持百万 token 的上下文窗口了，还需要 RAG 吗？</p>
+<p>答案是：<strong>需要，而且用得比以前更多了！</strong></p>
+<p>因为把所有文档塞进上下文窗口，既贵又不靠谱。上下文越长 token 费用越高，而且大模型普遍存在 “Lost in the Middle” 问题，顾名思义，就是对超长上下文中间部分的注意力会明显下降。</p>
+<p>这个也不难理解，就像听别人说话一样，我们对开头和结尾的印象会相对深刻一些，中间的总是容易忘记。</p>
+<p>不过呢，RAG 和长上下文也不是互斥的关系，现在一般的最佳实践是先用 RAG 给 AI 提供相对精确的资料，再利用长上下文窗口进行有针对性的分析推理，两者互补。</p>
+<p>好，背景交代完了。下面我们正式进入主题，挨个讲讲每种 RAG 方案。</p>
+<p>我们先从最基础的 RAG 讲起，如果你之前完全没接触过 RAG，看完这一节就能理解它的核心原理。</p>
+<h2 id="主流-RAG-方案"><a href="#主流-RAG-方案" class="headerlink" title="主流 RAG 方案"></a>主流 RAG 方案</h2><h3 id="标准-RAG-及变体"><a href="#标准-RAG-及变体" class="headerlink" title="标准 RAG 及变体"></a>标准 RAG 及变体</h3><h4 id="Naive-RAG"><a href="#Naive-RAG" class="headerlink" title="Naive RAG"></a>Naive RAG</h4><p>Naive RAG 这个词听起来就很牛对不对？</p>
+<p>但其实，Naive 是朴素的意思，Naive RAG 是最基本的 RAG 实现方案。</p>
+<p>假设你有一份 200 页的公司员工手册，怎么让 AI 基于里面的内容回答员工的提问呢？</p>
+<p>最简单粗暴的做法就是每次提问都把整本手册塞给 AI 大模型。</p>
+<p>但是一本手册可能几十万字，全塞进去又贵又慢，而且上下文一长，大模型还容易犯前面提到的 “Lost in the Middle” 的毛病，导致回答质量下降。</p>
+<p>所以更合理的思路是：员工问什么，我们就只把相关的几段内容塞给 AI。</p>
+<p>那问题又来了，怎么定位到相关的那几段呢？</p>
+<p>如果用关键词匹配，很容易出现问题和文档里的关键词不一致的问题，比如员工问 “老板不批假怎么办”，文档里写的是 “请假审批流程”，关键词对不上，就搜不到。</p>
+<p>这就需要用到 <strong>向量</strong> 了。</p>
+<p>所谓向量，就是把一段文字用一串数字表示出来，让计算机可以比较语义上的相似度。</p>
+<p>举几个例子感受一下：</p>
+<table>
+<thead>
+<tr>
+<th>文本</th>
+<th>向量（简化示意）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>我喜欢吃鱼</td>
+<td>[0.21, 0.85, 0.13, …]</td>
+</tr>
+<tr>
+<td>我爱吃海鲜</td>
+<td>[0.23, 0.82, 0.15, …]</td>
+</tr>
+<tr>
+<td>今天天气真好</td>
+<td>[0.88, 0.12, 0.41, …]</td>
+</tr>
+</tbody></table>
+<p>语义越接近的句子，它们的向量在数学空间里离得越近。</p>
+<p>负责把文字转成向量的模型，叫 Embedding 模型；存储这些向量并支持快速相似度搜索的数据库，叫向量数据库，比如 Milvus、Chroma、Qdrant 等。</p>
+<p>理解了向量，Naive RAG 的做法就很好理解了，主要分为两步。</p>
+<p>第一步是离线索引：</p>
+<ol>
+<li>把文档切成小块（chunk），每块几百字</li>
+<li>用 Embedding 模型把每个小块转成向量</li>
+<li>把向量和对应原文都存进向量数据库</li>
+</ol>
+<p>第二步是在线查询问答：</p>
+<ol>
+<li>把用户问题也用 Embedding 模型转成向量</li>
+<li>去向量库里搜最相似的几个文档块（比如 Top 5）</li>
+<li>把这几个块和用户问题拼成 Prompt，交给大模型生成回答</li>
+</ol>
+<p>回到开头那份 200 页的员工手册。我们先把它切成几百个小块并向量化入库，当员工问 “年假有多少天？” 的时候，RAG 的执行流程是这样的：</p>
+<ol>
+<li>系统把问题转成向量</li>
+<li>在向量库里找到最相似的 5 个文档块（比如某块写着 “入职满一年享有 10 天年假，满三年 15 天…”）</li>
+<li>把这 5 个块连同问题一起交给大模型</li>
+<li>大模型回答：“入职满一年享有 10 天年假”</li>
+</ol>
+<p>不过 Naive RAG 也有一些比较明显的问题：</p>
+<ul>
+<li>切块方式粗暴，可能把一段完整的语义从中间截断</li>
+<li>检索质量完全依赖 embedding 模型，搜不到就没辙</li>
+<li>搜到了垃圾文档也不管，导致输出错误答案</li>
+</ul>
+<p>这些局限，就是后面所有进阶方法要解决的问题。</p>
+<p>下面我用伪代码来帮助大家理解，不熟悉编程的同学可以跳过，不影响后续的学习~</p>
+<p>1）离线索引阶段：<br>[code]<br>    # 1. 把文档切成小块，chunk_size&#x3D;500 表示每块 500 字，<br>    #    chunk_overlap&#x3D;50 表示相邻块之间重叠 50 字，避免关键信息被切断<br>    chunks &#x3D; split_into_chunks(documents, chunk_size&#x3D;500, chunk_overlap&#x3D;50)</p>
+<pre><code># 2. 把每个小块转成向量，连同原文一起存入向量数据库
+for each chunk in chunks:
+    vector = embedding_model.encode(chunk)   # 调用 Embedding 模型编码
+    vector_store.insert(vector, chunk)       # 向量和原文一起入库
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>2）在线查询阶段：<br>[code]<br>    # 1. 用同一个 Embedding 模型把用户问题也转成向量<br>    query_vector &#x3D; embedding_model.encode(user_query)</p>
+<pre><code># 2. 在向量库里搜最相似的 Top 5 文档块
+top_k_chunks = vector_store.search(query_vector, k=5)
+
+# 3. 把检索到的文档块拼进 Prompt，作为参考资料
+prompt = &quot;基于以下参考资料回答问题：\n&quot; + join(top_k_chunks) + &quot;\n问题：&quot; + user_query
+
+# 4. 交给大模型生成最终回答
+answer = LLM.generate(prompt)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="Multi-Query-RAG"><a href="#Multi-Query-RAG" class="headerlink" title="Multi-Query RAG"></a>Multi-Query RAG</h4><p>用户提问的方式千奇百怪。比如同样是想知道公司报销流程，有人会问怎么报销，有人会问费用审批流程是什么，还有人会问花了钱怎么找公司要回来。</p>
+<p>但文档里可能只写了 “报销申请流程” 这个表述，如果用户的措辞和文档差距太大，向量检索就可能搜不到正确的内容。</p>
+<p>Multi-Query 的思路就是：既然一种问法搜不全，那就让大模型把原始问题改成多种不同的表述，分别去搜，最后把结果合并去重。</p>
+<p>这种方法的代价就是每次提问要多调用一次 LLM 做改写，再多跑 N 次向量检索，延迟和成本都会增加。</p>
+<p>而且如果 LLM 改写出的问题方向跑偏，会把无关文档也带进来，影响答案质量。</p>
+<p>所以它比较适合 <strong>面向普通用户的客服、电商等场景</strong> ，用户表述口语化、和文档术语差距大，多花这点成本还是有必要的。但是在术语规范的专业领域，Multi-Query 的收益就很有限了。</p>
+<p>Multi-Query RAG 的代码实现如下：<br>[code]<br>    # 1. 让 LLM 把原问题改写成多个表述<br>    queries &#x3D; LLM.generate(“请将以下问题改写成 3 个不同的表述：” + user_query)<br>    &#x2F;&#x2F; 例如 AI 返回: [“报销流程是什么”, “费用审批怎么操作”, “如何提交报销申请”]</p>
+<pre><code># 2. 每个表述分别走一次向量检索
+all_results = []
+for each query in queries:
+    results = vector_store.search(embed(query), k=5)
+    all_results.append(results)
+
+# 3. 合并去重，得到覆盖面更广的候选文档
+merged_chunks = deduplicate(all_results)
+# 4. 把合并后的文档 + 原始问题交给大模型生成回答
+answer = LLM.generate(merged_chunks + user_query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="HyDE"><a href="#HyDE" class="headerlink" title="HyDE"></a>HyDE</h4><p>AI 回复的效果不好，可能不是因为用户的问法不好，而是用户的问题和文档的语义空间不一致。</p>
+<p>用户的提问往往很短，比如 “KV Cache 是什么？”，就这么几个字。</p>
+<p>但文档里关于 KV Cache 的描述可能是一大段技术解释。一短一长，在 embedding 空间中可能离得很远，就检索不到了。</p>
+<p>HyDE 的做法就是让大模型凭空写一个答案（不必完全准确），然后用这段假答案的向量去检索。因为假答案和真文档的文体更接近，两者在向量空间中离得也更近。</p>
+<p>还是上面的例子，用户问：“KV Cache 是什么？”</p>
+<p>LLM 先编一段假答案：“KV Cache 是一种在 Transformer 推理过程中缓存 Key 和 Value 矩阵的优化技术，可以避免重复计算…”</p>
+<p>这段假答案虽然不一定完全准确，但它的向量和真实文档里关于 KV Cache 的那段描述非常接近，所以能精准命中正确的文档。</p>
+<p>不过 HyDE 也有一个风险，如果 LLM 编的假答案方向完全跑偏了（比如把 KV Cache 理解成了 Redis 缓存），那检索结果就会更差。所以它比较适合 LLM 对问题领域有基本认知的场景，冷门领域或企业私有术语慎用。</p>
+<p>HyDE 的代码示例如下：<br>[code]<br>    # 1. 让 LLM 先凭空生成一段“假答案”（不必完全准确）<br>    hypothetical_answer &#x3D; LLM.generate(“请回答：” + user_query)</p>
+<pre><code># 2. 用假答案的向量去检索，因为它的文体更接近真实文档
+hyp_vector = embedding_model.encode(hypothetical_answer)
+top_k_chunks = vector_store.search(hyp_vector, k=5)
+
+# 3. 把检索到的真实文档 + 原始问题交给大模型生成最终回答
+answer = LLM.generate(top_k_chunks + user_query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>上面这三种方法，解决的是「能不能搜到」的问题。但搜到之后，资料的质量好不好呢？这就是下面要处理的了。</p>
+<h3 id="提升检索质量"><a href="#提升检索质量" class="headerlink" title="提升检索质量"></a>提升检索质量</h3><h4 id="语义分块（Semantic-Chunking）"><a href="#语义分块（Semantic-Chunking）" class="headerlink" title="语义分块（Semantic Chunking）"></a>语义分块（Semantic Chunking）</h4><p>Naive RAG 里最粗暴的一步就是切块，每 500 个字切一刀，管你是不是正好切在一句话中间。</p>
+<p>比如某块文本是 “员工请假需要提前 3 天申请，超过 5 天需要”</p>
+<p>刚好在这里被截断了，下一个块从 “部门经理审批” 开始。</p>
+<p>这两个块单独看都不完整，检索和 AI 的理解都会打折扣。</p>
+<p>虽然可以通过 chunk_overlap 设置相邻块之间重复内容的长度，但是效果相对有限。</p>
+<p>语义分块的做法是先把文档按句子拆开，计算相邻句子的 embedding 相似度，当相似度突然下降时，说明话题变了，就在这里切一刀，尽量保证每个句子的语义都是完整的：</p>
+<p>其余的步骤就跟 Naive RAG 一致了。</p>
+<p>不过这种方式代价也不小，首先要为每一句话都算一次 embedding，成本和耗时比按字数切分要高。</p>
+<p>而且相似度阈值非常难调，所以它比较适合结构松散、话题变化比较快的文档，像会议纪要、访谈记录这些。</p>
+<p>对于本身就有清晰章节结构的技术手册、产品说明文档，直接按标题切效果也不差，还更便宜。</p>
+<p>语义分块的伪代码示例如下：<br>[code]<br>    # 1. 把文档拆成单句<br>    sentences &#x3D; split_into_sentences(document)<br>    chunks &#x3D; []<br>    current_chunk &#x3D; [sentences[0]]</p>
+<pre><code># 2. 遍历相邻句子，计算 embedding 相似度
+for i from 1 to len(sentences) - 1:
+    similarity = cosine_similarity(embed(sentences[i-1]), embed(sentences[i]))
+    # 相似度骤降，话题切换
+    if similarity &lt; threshold:    
+        chunks.append(join(current_chunk))
+        current_chunk = []
+    current_chunk.append(sentences[i])
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="层级索引（Parent-Child-Retrieval）"><a href="#层级索引（Parent-Child-Retrieval）" class="headerlink" title="层级索引（Parent-Child Retrieval）"></a>层级索引（Parent-Child Retrieval）</h4><p>切块这件事有一个天然矛盾。切得小吧，检索精度高但上下文不足；切得大吧，上下文丰富但噪声也大。</p>
+<p>Parent-Child Retrieval 的策略则是 <strong>两层都要</strong> 。</p>
+<p>先把文档切成大块，再把每个大块细分成小块。检索时用小块匹配，命中后返回它所属的大块。</p>
+<p>相当于在书里搜到了某一句话时，读的时候把它所在的整个章节都拿过来看：</p>
+<p>学过数据库的朋友们应该对这种思路不陌生吧？</p>
+<p>这种方案就很适合长文档场景，比如技术手册、法律合同、产品文档这些内容，往往需要连带上下文一起看才能理解。</p>
+<p>层级索引的伪代码实现如下：<br>[code]<br>    # 1. 离线阶段：文档先切大块，再在大块内切小块<br>    for each document:<br>        parent_chunks &#x3D; split_into_sections(document)<br>        for each parent in parent_chunks:<br>            child_chunks &#x3D; split_into_paragraphs(parent)<br>            # 只对小块建向量索引，但保留它属于哪个大块<br>            for each child in child_chunks:<br>                index.insert(embed(child), child, parent_id&#x3D;parent.id)</p>
+<pre><code># 2. 在线阶段：用小块做精确匹配
+matched_children = index.search(embed(query), k=5)
+# 3. 但返回的是小块所属的大块，保证上下文完整
+parent_ids = unique([child.parent_id for child in matched_children])
+context = [get_parent_chunk(pid) for pid in parent_ids]
+# 4. 把大块作为上下文交给大模型
+answer = LLM.generate(context + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="Hybrid-Search-混合检索"><a href="#Hybrid-Search-混合检索" class="headerlink" title="Hybrid Search 混合检索"></a>Hybrid Search 混合检索</h4><p>纯向量检索有一个缺点，就是无法精确术语匹配。</p>
+<p>比如用户问：“ERROR_CODE_4012 是什么意思？”</p>
+<p>向量检索会去找语义相似的内容。</p>
+<p>但这种编码本身没什么语义，向量搜索可能找到一堆讲错误处理的段落，就是找不到那个精确提到 4012 的段落。</p>
+<p>而传统的关键词搜索擅长精确匹配，但不理解语义。</p>
+<p>比如搜 “如何退款”，就搜不到写着 “退货及返还货款流程” 的文档，类似数据库里的 like 操作。</p>
+<p>Hybrid Search 就是同时使用两种搜索，然后合并排序。向量搜索负责语义理解，BM25 负责精确匹配，通过 RRF（Reciprocal Rank Fusion 倒数排序融合）算法，把两边的结果合并成一个排序。</p>
+<p>几乎所有生产环境都建议用 Hybrid Search 替代纯向量搜索，尤其是像技术文档、医疗、法律等术语密集的领域。</p>
+<p>Hybrid Search 混合检索的实现代码如下：<br>[code]<br>    # 1. 同时跑两路检索，各自召回 Top 20<br>    semantic_results &#x3D; vector_store.search(embed(query), k&#x3D;20)<br>    keyword_results  &#x3D; bm25_index.search(query, k&#x3D;20)</p>
+<pre><code># 2. 用 RRF 算法融合两路结果，公式：1 / (60 + 排名)，分数越高越相关
+for each doc in (semantic_results ∪ keyword_results):
+    score = 0
+    if doc in semantic_results: score += 1 / (60 + rank_in_semantic)
+    if doc in keyword_results:  score += 1 / (60 + rank_in_keyword)
+
+# 3. 按融合后的分数排序，取 Top 5 交给大模型
+final_results = sort_by_score(all_docs, top_k=5)
+answer = LLM.generate(final_results + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="Reranking-精排"><a href="#Reranking-精排" class="headerlink" title="Reranking 精排"></a>Reranking 精排</h4><p>不管是向量搜索还是 Hybrid Search，检索回来的候选文档里总会混着一些看起来相关但实际没用的噪声。</p>
+<p>Reranking 的做法是在检索和生成之间加一个精排步骤：用 Reranker 模型给每对 (query, doc) 重新打分。</p>
+<p>前面提到的 embedding 模型是分别给 query 和 doc 算向量再比较距离，快但粗糙，Reranker 是把它们拼在一起送进模型打分，慢但精准。</p>
+<p>在实际生产中，如果语料库有十万级以上的 chunk，一般会采用级联检索方案，分层筛选：</p>
+<p>为什么分这么多层呢？</p>
+<p>如果使用粗检索，只捞 20 个内容，在大型语料库里很容易漏掉关键文档；但如果一次性捞 150 个，全送进 Cross-Encoder 交叉编码器来精确计算两个文本片段的相关性分数，算力又扛不住。</p>
+<p>分层筛选则是在召回率和计算成本之间找平衡。当语料库里的 chunk 比较多时，Reranking 的效果提升会非常显著。</p>
+<p>可以这么理解，粗检索负责不遗漏，精排负责不掺假，跟推荐系统里的粗排和精排很像。</p>
+<p>分层筛选的实现代码如下：<br>[code]<br>    # 第一层：粗检索，保证召回率<br>    candidates &#x3D; hybrid_search(query, k&#x3D;150)</p>
+<pre><code># 第二层：轻量 Reranker 初筛
+semi_final = lightweight_reranker.rank(query, candidates, top_k=20)
+
+# 第三层：Cross-Encoder 精排，只处理 20 个
+scored = []
+for each doc in semi_final:
+    score = cross_encoder.score(query, doc)
+    scored.append((doc, score))
+
+top_docs = top_k(scored, k=5)
+answer = LLM.generate(top_docs + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>到这里，我们已经能搭出一个相当不错的 RAG 系统了，语义分块 + Hybrid Search + Reranking，这三板斧组合起来，就是大多数生产级 RAG 系统的基础配置。</p>
+<p>前面的方法都在优化怎么搜得更准，但有一个更根本的问题没解决：如果搜到的全是垃圾，大模型还是会一本正经地基于这些垃圾内容生成答案。</p>
+<p>这就像开卷考试带错了书，还照着抄了上去……</p>
+<p>所以接下来我们要聊一聊，怎么让 RAG 学会自我纠错。</p>
+<h3 id="RAG-反思机制"><a href="#RAG-反思机制" class="headerlink" title="RAG 反思机制"></a>RAG 反思机制</h3><h4 id="Corrective-RAG（CRAG）"><a href="#Corrective-RAG（CRAG）" class="headerlink" title="Corrective RAG（CRAG）"></a>Corrective RAG（CRAG）</h4><p>不管我们怎么优化检索，总会有搜不到或者搜歪了的情况，这时候大模型如果还硬着头皮拿这些内容去回答，那就避免不了一本正经地胡说八道。</p>
+<p>而 CRAG 就是 <strong>把搜到的资料过滤一遍</strong> 来解决这个问题的。</p>
+<p>具体做法就是在检索和生成之间插一个质检员，逐个审查检索到的文档是否和问题相关，然后根据审查结果走不同的分支。</p>
+<ul>
+<li>打分高的，说明资料靠谱，直接喂给大模型生成答案</li>
+<li>打分低的，说明内部知识库里压根没找着相关内容，干脆回退到 Web 搜索兜底</li>
+<li>打分模糊的，就两边的结果合一起送进去</li>
+</ul>
+<p>Corrective RAG 的示例实现代码如下：<br>[code]<br>    # 1. 先跑一遍常规检索<br>    docs &#x3D; retriever.search(query, k&#x3D;5)</p>
+<pre><code># 2. 逐个让 LLM 判断文档是否和问题相关
+relevant_docs = []
+for each doc in docs:
+    score = LLM.judge(&quot;这段内容和问题相关吗？&quot;, query, doc)
+    if score &gt; threshold:
+        relevant_docs.append(doc)
+
+# 3. 根据审查结果走不同分支
+if len(relevant_docs) &gt; 0:
+    answer = LLM.generate(relevant_docs + query)
+else:
+    new_query = LLM.rewrite(query)
+    web_results = web_search(new_query)
+    answer = LLM.generate(web_results + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>最关键的是那个 <code>else</code> 分支，如果内部知识库完全搜不到有用信息，CRAG 会自动回退到 Web 搜索（当然也可以是其他策略）。</p>
+<h4 id="Self-RAG"><a href="#Self-RAG" class="headerlink" title="Self-RAG"></a>Self-RAG</h4><p>CRAG 在检索阶段做了质检，但是生成阶段呢？</p>
+<p>大模型完全有可能拿到了正确的参考资料，但回答的时候夹带私货，在答案里掺入了参考资料中根本没提到的内容。这就是生成阶段的幻觉。</p>
+<p>Self-RAG 的思路是在整个流程中设置四个检查点，每一步都让模型自我审视：</p>
+<ul>
+<li>这个问题需要检索吗（Retrieve）？</li>
+<li>检索到的文档相关吗（IsRel）？</li>
+<li>我的回答有文档支撑吗（IsSup）？</li>
+<li>这个答案对用户有用吗（IsUse）？</li>
+</ul>
+<p>Self-RAG 的示例实现代码如下：<br>[code]<br>    # 1. 判断这个问题需不需要检索<br>    need_retrieval &#x3D; LLM.judge(“这个问题需要外部知识吗？”, query)<br>    if not need_retrieval:<br>        return LLM.generate(query)</p>
+<pre><code># 2. 检索 + 逐个过滤相关文档
+docs = retriever.search(query, k=5)
+relevant_docs = filter(docs, where LLM.judge(&quot;和问题相关吗？&quot;) == true)
+
+# 3. 生成初步答案
+answer = LLM.generate(relevant_docs + query)
+
+# 4. 检查答案的每个论断是否都有文档依据
+is_supported = LLM.judge(&quot;答案中的每个论断都能在文档中找到依据吗？&quot;, answer, relevant_docs)
+if not is_supported:
+    answer = LLM.regenerate(relevant_docs + query + &quot;请严格基于参考资料回答&quot;)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>一般来说第三个检查点的价值相对较高，能在一定程度上避免 AI 的幻觉。</p>
+<h4 id="Adaptive-RAG"><a href="#Adaptive-RAG" class="headerlink" title="Adaptive RAG"></a>Adaptive RAG</h4><p>CRAG 和 Self-RAG 都在给 RAG 加流程来解决问题，但这样多了好几次 LLM 调用，增加了成本。</p>
+<p>如果用户问的是 “你好” 或者 “今天星期几”，还要跑一遍完整的检索 + 质检 + 生成流程，有点开着坦克去买菜的意思，纯属浪费。</p>
+<p>Adaptive RAG 在最前面加了一个路由器（分类器），先判断问题的复杂度，然后决定走哪条路线：</p>
+<p>Adaptive RAG 的实现代码很简单：<br>[code]<br>    complexity &#x3D; classifier.predict(query)</p>
+<pre><code># 简单问题直接答
+if complexity == &quot;simple&quot;:
+    answer = LLM.generate(query)
+# 一般问题检索一次
+else if complexity == &quot;moderate&quot;:
+    docs = retriever.search(query)
+    answer = LLM.generate(docs + query)
+# 复杂问题采用 crag
+else:
+    answer = run_full_crag_pipeline(query)            
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>这个分类器可以是一个微调的小模型，也可以用 LLM 的 few-shot 少样本提示来实现，关键是让简单问题和复杂问题分别处理。</p>
+<p>这种方案适合流量混杂的场景，比如既有 “公司地址在哪” 这种一句话能答的问题，又有 “对比 A 和 B 两个方案的优缺点” 这种需要多文档综合分析的复杂问题。</p>
+<hr>
+<p>上面这些方法处理的都是非结构化文本，但如果我们的数据是关系网络或者表格呢？那就需要下面的方法了。</p>
+<h3 id="结构化知识增强"><a href="#结构化知识增强" class="headerlink" title="结构化知识增强"></a>结构化知识增强</h3><h4 id="GraphRAG"><a href="#GraphRAG" class="headerlink" title="GraphRAG"></a>GraphRAG</h4><p>前面这些方法都有一个共同的问题，就是答案必须落在某一个文档块里。</p>
+<p>但现实里经常有一类问题：答案散落在多个文档中，需要串起来推理。</p>
+<p>举个例子，假设文档库里有两段话。</p>
+<ul>
+<li>文档 A 写着 “张三是 AI 部门的负责人”</li>
+<li>文档 B 写着 “AI 部门属于技术中心”</li>
+</ul>
+<p>用户问：“张三属于哪个中心？”</p>
+<p>传统向量检索大概率只能搜到文档 A，但要回答这个问题，必须把 A 和 B 连起来推理：张三 → AI 部门 → 技术中心。</p>
+<p>这种跨文档的多跳推理，纯向量搜索就很难搞定了。</p>
+<p>GraphRAG 就是用来解决这种问题的，这是 Microsoft Research 在 2024 年提出的方法。</p>
+<p>它的思路是先把文档变成知识图谱，再基于图谱来检索和推理。</p>
+<p>具体做法分为 3 步：</p>
+<ol>
+<li>用 LLM 逐篇读文档，抽取里面的实体（人、部门、产品等）和关系，构建成一张图谱</li>
+<li>用 Leiden 算法对图谱做社区划分，把关联紧密的实体聚成一团，然后让 LLM 为每个社区生成一段摘要</li>
+<li>提问时先定位到相关实体，沿着关系拿到子图</li>
+</ol>
+<p>根据微软的评测，在全局语义理解类问题上，GraphRAG 答案的全面性和多样性显著优于传统向量 RAG。</p>
+<p>但对于简单的事实查询，两者效果差不多，就没必要用了。</p>
+<p>需要注意的是，GraphRAG 要用 LLM 逐篇抽实体关系，图谱构建成本比向量索引高得多，查询延迟也更大，所以使用 GraphRAG 之前一定要评估是否必要！</p>
+<p>GraphRAG 的伪代码实现如下：<br>[code]<br>    # 1. 离线阶段：用 LLM 从每篇文档里抽取实体和关系，构建知识图谱<br>    for each document:<br>        entities, relations &#x3D; LLM.extract(“请抽取文中的实体和关系”, document)<br>        knowledge_graph.add(entities, relations)</p>
+<pre><code># 2. 用 Leiden 算法做社区划分，并为每个社区生成摘要（用于回答全局性问题）
+communities = leiden_algorithm(knowledge_graph)
+for each community:
+    summary = LLM.summarize(community.entities, community.relations)
+
+# 3. 在线阶段：先定位相关实体，沿关系遍历 2 跳拿子图
+relevant_entities = knowledge_graph.search(&quot;张三&quot;)
+subgraph = knowledge_graph.traverse(relevant_entities, hops=2)
+
+# 4. 把子图和社区摘要作为上下文交给大模型生成回答
+answer = LLM.generate(subgraph + community_summaries + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="Text-to-SQL-RAG"><a href="#Text-to-SQL-RAG" class="headerlink" title="Text-to-SQL RAG"></a>Text-to-SQL RAG</h4><p>如果我们的数据本身就是结构化的表格，比如销售数据、用户行为日志、财务报表这些，就不合适传统的 RAG 了，因为对表格数据做 embedding 是非常低效的。</p>
+<p>用户问：“上个月销售额最高的产品是哪个？”</p>
+<p>这本质上就是一条 SQL，向量搜索对这种聚合、排序、筛选类的需求完全没招。</p>
+<p>Text-to-SQL RAG 的做法是让 LLM 直接把自然语言翻译成 SQL，执行查询，再把查询结果作为上下文来回答：</p>
+<p>这个方案适合所有数据分析类需求，比如 BI 看板问答、数据库运维助手、财务报表查询等等，本质上是用 LLM 替代了手写 SQL。</p>
+<p>不过要特别提醒，生产环境中绝对不能让 LLM 生成的 SQL 直接执行，必须配备只读权限控制、SQL 语法审计、沙盒隔离等安全措施，防止 SQL 注入。</p>
+<p>Text-to-SQL RAG 的伪代码实现很简单：<br>[code]<br>    # 1. 准备表结构（schema）作为提示，让 LLM 知道有哪些表、字段<br>    schema &#x3D; “表 sales: product(产品名), amount(金额), month(月份), region(地区)”<br>    # 2. 让 LLM 把自然语言问题翻译成 SQL<br>    sql &#x3D; LLM.generate(“根据以下表结构，将问题转为 SQL：\n” + schema + “\n问题：” + query)</p>
+<pre><code># 3. 在数据库中执行 SQL，拿到结构化结果
+result = database.execute(sql)
+# 4. 把查询结果喂给 LLM，让它用自然语言组织成最终回答
+answer = LLM.generate(&quot;查询结果：&quot; + result + &quot;\n请用自然语言回答：&quot; + query)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>到这里，我们已经讲了很多种 RAG 方法了。有的小伙伴可能已经注意到一个问题：前面提到的大多数方法都是预定义好的 pipeline，流程是死的，不管什么问题进来，处理方式都差不多。</p>
+<p>但现实世界的问题千变万化。有的需要搜向量库，有的该查数据库，有的应该搜 Web，甚至有的根本不需要检索。</p>
+<p>好复杂啊…… 有没有一种方法能让系统自己判断该怎么做？</p>
+<p>答案就是 Agentic RAG。</p>
+<h3 id="智能体驱动-RAG"><a href="#智能体驱动-RAG" class="headerlink" title="智能体驱动 RAG"></a>智能体驱动 RAG</h3><h4 id="Agentic-RAG"><a href="#Agentic-RAG" class="headerlink" title="Agentic RAG"></a>Agentic RAG</h4><p>前面每种方法都有自己擅长的场景：Hybrid Search 擅长术语密集的文档，GraphRAG 擅长多跳推理，Text-to-SQL 擅长结构化数据。</p>
+<p>但在一个真实的系统中，这些场景可能同时存在。</p>
+<p>比如用户问 “张三上个月的考勤记录” 得查数据库，问 “公司的远程办公政策” 得搜文档，问 “张三属于哪个部门的哪个中心” 得走知识图谱，但是为每种问题硬编码一条 pipeline 太麻烦了。</p>
+<p>Agentic RAG 的做法是让一个 AI Agent 来自动调度，根据问题自主决定每一步该怎么做。给这个 Agent 配备一组检索工具，它会先搜搜看 → 看看结果够不够 → 不够就换个方式 &#x2F; 换个关键词再搜 → 结果够了就生成回答。</p>
+<p>Agentic RAG 虽然是很灵活的方案，但是代码实现很简单，核心是 Agent Loop 循环：<br>[code]<br>    # 1. 给 Agent 配一组工具（向量检索、Web 搜索、SQL 查询、图谱遍历……）<br>    tools &#x3D; {<br>        “vector_search”:  query -&gt; vector_store.search(embed(query)),<br>        “web_search”:     query -&gt; search_engine.search(query),<br>        “sql_query”:      query -&gt; database.execute(LLM.to_sql(query)),<br>        “graph_traverse”: query -&gt; knowledge_graph.traverse(query),<br>    }</p>
+<pre><code># 2. 进入 ReAct 循环：思考 → 行动 → 观察，直到信息足够为止
+context = []
+while true:
+    # 让 LLM 基于已知信息，决定下一步用哪个工具，或者直接回答
+    thought = LLM.reason(&quot;问题：&quot; + query + &quot;\n已知信息：&quot; + context +
+                         &quot;\n我应该使用哪个工具？还是信息已经足够可以回答了？&quot;)
+    # 决定作答，跳出循环
+    if thought.action == &quot;answer&quot;:
+        return LLM.generate(context + query)
+    # 否则调用对应工具，把结果追加到上下文，进入下一轮
+    result = tools[thought.tool](thought.tool_input)
+    context.append(result)
+</code></pre>
+<p>[&#x2F;code]</p>
+<p>以前 Agent 的概念刚火起来的时候，大家还在争论 “Agent 自主决策靠不靠谱”。</p>
+<p>到了今天，Agentic RAG 已经是比较主流的生产范式了，知名的 AI 编程工具 Cursor 用的就是这种方式，AI 自主决定使用什么方式来搜集信息：</p>
+<h4 id="Multi-Agent-RAG"><a href="#Multi-Agent-RAG" class="headerlink" title="Multi-Agent RAG"></a>Multi-Agent RAG</h4><p>单个 Agent 处理复杂任务时，可能有个问题：当它要同时兼顾理解意图、选择策略、验证质量、生成答案时，Prompt 变得又长又复杂，决策质量就会下降。这就像一个人又当程序员、又教人打篮球、又当说唱歌手，忙不过来。</p>
+<p>Multi-Agent RAG 的做法是拆分为多个专职 Agent，各自负责一些任务。</p>
+<p>比如 Router Agent 负责分发、各 RAG Agent 负责对应领域的检索和推理、Verification Agent 负责质检、Generation Agent 负责润色输出。</p>
+<p>这种方案适合数据源多、权限复杂、语言多样的企业级知识库。每个环节可以独立优化和扩展，不会牵一发而动全身。</p>
+<p>Multi-Agent RAG 的代码示例如下：<br>[code]<br>    # 1. Router Agent 先识别问题意图，决定分给哪个专职 Agent<br>    intent &#x3D; router_agent.analyze(query)</p>
+<pre><code># 2. 各领域 Agent 各管一摊，独立完成检索和推理
+if intent == &quot;document_qa&quot;:
+    raw_answer = doc_agent.run(query)
+else if intent == &quot;data_analysis&quot;:
+    raw_answer = sql_agent.run(query)
+else:
+    raw_answer = graph_agent.run(query)
+
+# 3. Verifier Agent 做质检，发现问题则提出修改建议
+verified = verifier_agent.check(query, raw_answer)
+if not verified.passed:
+    raw_answer = verifier_agent.suggest_fix(raw_answer)
+
+# 4. Writer Agent 做最终润色，统一输出风格
+final_answer = writer_agent.polish(query, raw_answer)
+</code></pre>
+<p>[&#x2F;code]</p>
+<h3 id="RAG-能力扩展"><a href="#RAG-能力扩展" class="headerlink" title="RAG 能力扩展"></a>RAG 能力扩展</h3><h4 id="多模态-RAG（Multimodal-RAG）"><a href="#多模态-RAG（Multimodal-RAG）" class="headerlink" title="多模态 RAG（Multimodal RAG）"></a>多模态 RAG（Multimodal RAG）</h4><p>传统 RAG 只处理文本，但现实中的企业文档里面充斥着大量的图表、流程图、架构图、产品照片等。</p>
+<p>如果用纯文本 RAG 去处理一份真实文档，那些流程图、架构图里的信息就全丢了。</p>
+<p>多模态 RAG 的做法是把图片、表格和文本统一到一个向量空间里，这样检索时就能跨模态匹配：</p>
+<p>最后一步生成阶段，需要用视觉语言模型来处理混合模态的上下文，因为普通的纯文本 LLM 看不懂图片。</p>
+<p>多模态 RAG 的代码实现比较复杂：<br>[code]<br>    &#x2F;&#x2F; 离线：文本和图片统一编码到同一个向量空间<br>    for each page in document:<br>        text_chunks &#x3D; extract_text(page)<br>        images &#x3D; extract_images(page)<br>        tables &#x3D; extract_tables(page)</p>
+<pre><code>    for each chunk in text_chunks:
+        index.insert(text_encoder.encode(chunk), chunk, type=&quot;text&quot;)
+    for each image in images:
+        index.insert(vision_encoder.encode(image), image, type=&quot;image&quot;)
+    for each table in tables:
+        index.insert(table_encoder.encode(table), table, type=&quot;table&quot;)
+
+// 在线：统一检索，跨模态匹配
+results = index.search(text_encoder.encode(query), k=5)
+// results 中可能混合了文本块、图片、表格
+
+answer = vision_LLM.generate(results + query)  // 用视觉语言模型处理混合内容
+</code></pre>
+<p>[&#x2F;code]</p>
+<h4 id="Speculative-RAG"><a href="#Speculative-RAG" class="headerlink" title="Speculative RAG"></a>Speculative RAG</h4><p>普通的 RAG 还有一个问题：如果把检索到的所有文档都塞进同一个 Prompt，不仅增加了推理延迟、响应速度，而且如果某个文档是噪声，整个生成都会被带偏。</p>
+<p>Speculative RAG（假设性检索增强生成）借鉴了推测性解码（Speculative Decoding）的思想，核心目标是降低延迟，把检索到的文档分成多个子集，用多个专家小模型从每个子集 <strong>并行</strong> 生成候选草稿，最后由一个更强的大模型做一次验证，选出最佳答案。</p>
+<p>这就有点像团队共同做个大项目，多位前端和后端开发一起干活和仔细验证，最后产品经理只需要简单验证就好，能大幅缩短工作总时长，有问题也更容易发现。</p>
+<p>Speculative RAG 的实现代码如下：<br>[code]<br>    # 1. 检索阶段召回较多的候选文档<br>    docs &#x3D; retriever.search(query, k&#x3D;15)<br>    # 2. 把候选文档拆成 n 个子集，准备并行处理<br>    subsets &#x3D; split_into_subsets(docs, n&#x3D;5)</p>
+<pre><code># 3. 多个小模型并行生成候选草稿，每个草稿只看一部分文档
+drafts = parallel_run(
+    for each subset in subsets:
+        draft = small_LM.generate(subset + query)
+        return { draft, subset, confidence }
+)
+
+# 4. 大模型做一次验证，从多个草稿中选出最佳答案
+best = large_LM.verify_and_select(drafts, query)
+return best.answer
+</code></pre>
+<p>[&#x2F;code]</p>
+<h2 id="方法选择"><a href="#方法选择" class="headerlink" title="方法选择"></a>方法选择</h2><p>看到这里，你可能已经被这十几种 RAG 方案搞晕了。</p>
+<p>我到底该用哪一种啊啊啊啊？！</p>
+<p>没事，我给大家梳理了一张表格，直接根据自己的项目情况来选方案：</p>
+<table>
+<thead>
+<tr>
+<th>你的情况</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>标准文本知识库，追求基本可用</td>
+<td>Naive RAG</td>
+</tr>
+<tr>
+<td>用户提问风格多变、口语化</td>
+<td>Multi-Query RAG 或 HyDE</td>
+</tr>
+<tr>
+<td>生产环境，追求检索质量</td>
+<td>Hybrid Search + Reranking</td>
+</tr>
+<tr>
+<td>对准确率要求高，不能容忍幻觉</td>
+<td>Corrective RAG 或 Self-RAG</td>
+</tr>
+<tr>
+<td>查询复杂度差异大</td>
+<td>Adaptive RAG 路由</td>
+</tr>
+<tr>
+<td>需要跨文档多跳推理</td>
+<td>GraphRAG</td>
+</tr>
+<tr>
+<td>数据以结构化表格为主</td>
+<td>Text-to-SQL RAG</td>
+</tr>
+<tr>
+<td>文档包含大量图表&#x2F;图片</td>
+<td>多模态 RAG</td>
+</tr>
+<tr>
+<td>多数据源、多类型混合</td>
+<td>Agentic RAG &#x2F; Multi-Agent RAG</td>
+</tr>
+<tr>
+<td>延迟敏感</td>
+<td>Speculative RAG</td>
+</tr>
+</tbody></table>
+<p>对于正在动手搭建 RAG 系统的初学者来说，我建议 <strong>从简单开始，逐步完善。</strong></p>
+<p>先跑通 Naive RAG，发现哪个环节出了问题，就针对性地选用前面的 RAG 方案。</p>
+<p>千万别一上来就搞 Multi-Agent + GraphRAG + 多模态全家桶，不仅实现成本高，效果也不一定更好。</p>
+<p>那怎么知道 RAG 系统效果好不好呢？</p>
+<p>其实有个评估框架 RAGAS，就是用来做这个的。它有四个核心指标：</p>
+<ul>
+<li>忠实度（回答有没有瞎编）</li>
+<li>答案相关性（答的是不是你问的）</li>
+<li>上下文精确率（搜到的有多少是有用的）</li>
+<li>上下文召回率（该搜到的搜到了吗）</li>
+</ul>
+<p>这样你就能先评估效果再优化，而不是仅凭感觉调参数。</p>
+<p>除此之外，RAG 相关的主流技术还有编排框架 LangChain &#x2F; LangGraph、LlamaIndex、一体化平台 Dify 、RAGFlow、向量数据库 Chroma、Milvus、Qdrant 等，大家感兴趣的话可以自行学习了解一下。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/">https://hzhzxfs.github.io/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/07/RAG%EF%BC%88%E6%A3%80%E7%B4%A2%E3%80%81%E5%A2%9E%E5%BC%BA%E3%80%81%E7%94%9F%E6%88%90%EF%BC%89/" title="RAG（检索、增强、生成）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">RAG（检索、增强、生成）</div></div><div class="info-2"><div class="info-item-1">RAG（检索、增强、生成） RAG（Retrieval-Augmented Generation，检索增强生成） 是一种结合了信息检索技术与语言生成模型的人工智能技术。该技术通过从外部知识库中检索相关信息，并将其作为提示（Prompt）输入给大型语言模型（LLMs），以增强模型处理知识密集型任务的能力，如问答、文本摘要、内容生成等。RAG模型由Facebook AI Research（FAIR）团队于2020年首次提出，并迅速成为大模型应用中的热门方案。 一、检索增强生成（RAG）什么是RAG？RAG（Retrieval-Augmented Generation，检索增强生成），RAG是一种 AI 框架，它将传统信息检索系统（例如数据库）的优势与生成式大语言模型 (LLM) 的功能结合在一起。 LLM通过将这些额外的知识与自己的语言技能相结合，可以撰写更准确、更具时效性且更贴合具体需求的文字。 如何理解RAG？通过上一个问题，我们知道了什么是RAG？了解到RAG是一种结合了信息检索、文本增强和文本生成的自然语言处理（NLP）的技术。 RAG的目的是通过从外部知识库检索相关信息来辅...</div></div></div></a><a class="pagination-related" href="/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/" title="Python版本MVP范围"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Python版本MVP范围</div></div><div class="info-2"><div class="info-item-1">15. Python 版本 MVP 范围1. 目标避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。 2. MVP 必须包含2.1 主循环 多轮 query loop tool call -&gt; tool result -&gt; next turn  2.2 基础工具 read file write file edit file grep&#x2F;search bash  2.3 基础权限系统 allow &#x2F; ask &#x2F; deny 被拒后不原样重试  2.4 基础 transcript &#x2F; session 消息持久化 resume 会话  2.5 基础 memory 用户 &#x2F; 项目记忆注入 简单记忆文件结构  2.6 基础 agent orchestration main agent 至少一个 verification agent 可选一个 explore &#x2F; plan agent  2.7 基础 compact 超长消息时压缩历史 工具结果 budget 裁剪  3. MVP 可以后置的能力...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/02/MCP%20%E4%B8%89%E5%A4%A7%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/" title="MCP 三大核心概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-02</div><div class="info-item-2">MCP 三大核心概念</div></div><div class="info-2"><div class="info-item-1">MCP 三大核心概念MCP（Model Context Protocol）的三大核心概念——Resources、Tools 和 Prompts。MCP 是 2024 年底由 Anthropic 搞出来的一个开放协议，目的是让大语言模型（LLM）能更顺畅地跟外部数据和工具对接。以下是我的解读： 1. Resources（资源）本质：Resources 是 MCP 里用来暴露数据的核心机制，相当于给 LLM 提供“原材料”。你可以把它想象成一个只读的数据库接口或者文件系统，里面装的是静态或者半动态的信息，比如日志文件、用户配置文件、股票价格啥的。 怎么用：服务器（MCP Server）把这些数据暴露出来，客户端（比如 LLM 应用）可以读取它们，然后塞进模型的上下文里去推理或者生成内容。比如你有个日志文件 app.log，通过 Resources 就能让 LLM 直接看到里面的错误信息。 特点：  • 应用控制：客户端决定啥时候用、怎么用这些资源。有的客户端像 Claude Desktop 得用户手动选，有的可能自动挑，灵活得很。 • 实时性：支持订阅更新，比如资源变了，服务器能通知...</div></div></div></a><a class="pagination-related" href="/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/" title="工具、权限与执行链需求文档"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-16</div><div class="info-item-2">工具、权限与执行链需求文档</div></div><div class="info-2"><div class="info-item-1">02. 工具、权限与执行链需求文档1. 为什么工具系统是产品核心如果模型不能操作环境，它只是建议生成器。这个产品的目标是帮助用户推进真实工程任务，因此必须具备正式的工具系统。 2. 工具系统需求2.1 基础工具能力产品至少需要以下工具类别：  读文件 改文件 写文件 搜索文件 搜索内容 shell &#x2F; 命令执行 todo &#x2F; 任务管理 用户追问 启动子 agent 调用外部 MCP 工具  2.2 工具使用规范系统必须对模型明确规定工具使用优先级，避免：  用 shell 替代专用文件工具 误删或误改文件 低效重复操作  3. 权限系统需求3.1 用户控制边界用户必须能控制哪些工具自动允许，哪些要询问，哪些禁止。 3.2 权限决策来源权限决策至少可能来自：  当前模式 用户规则 项目规则 Hook 决策 特殊工具安全策略  3.3 被拒后的行为要求如果某次工具调用被拒绝，系统不能机械重试，而应：  理解拒绝信号 调整方案 必要时向用户澄清  4. 执行链路需求工具执行不能是“模型决定 -&gt; 直接运行”。产品需要一条正式执行链：  找到工具 校验输入结构 ...</div></div></div></a><a class="pagination-related" href="/2026/01/08/Skill%20%E6%8A%80%E8%83%BD/" title="Skill 技能"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-08</div><div class="info-item-2">Skill 技能</div></div><div class="info-2"><div class="info-item-1">一、定义Skill 是一种可复用的 Prompt 增强包，通过渐进式加载机制为 Agent 注入领域知识和工作流程。 Anthropic 将 Skill 规范作为开放标准发布，目前已被多个 Agent 产品采纳，包括 Claude Code、OpenAI Codex、GitHub Copilot、VS Code、Cursor、Gemini CLI、Kiro 等。 按照我的理解，Skill 就是将一个固定的 Prompt 提示词进行打包，省去每次编写，供模型调用。 比如，我经常使用 AI 工具将工作内容进行汇总并生成报告，报告的要求包括字数、日期、错别字检查、格式等，这些规则都是固定的。如果没有 Skill，每次都要写大致相同的 Prompt 提示词。有了 Skill 之后，我可以先让 AI 工具生成这些规则的 Skill，以后每次只调用这个 Skill 执行，简化每次编写相同 Prompt 提示词的工作。 二、Skill 与 Prompt 的区别Prompt：临时指令，每次对话都要重写，易遗忘、占上下文。 Skill：长久指令包，可复用，不占对话空间。 三、Skill 目录文件夹...</div></div></div></a><a class="pagination-related" href="/2025/09/05/dotnet-agent-framework/" title="dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-05</div><div class="info-item-2">dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🔍 带有 Azure AI Foundry (.NET) 的企业 RAG📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 Azure AI Foundry 构建企业级检索增强生成 (RAG) 系统。您将学习创建可用于搜索文档并提供准确的上下文感知响应以及企业安全性和可扩展性的生产就绪代理。 您将构建的企业 RAG 功能：  📚 文档智能：使用 Azure AI 服务进行高级文档处理 🔍 语义搜索：具有企业功能的高性能矢量搜索 🛡️ 安全集成：基于角色的访问和数据保护模式 🏢 可扩展架构：具有监控功能的生产就绪 RAG 系统  🎯 企业 RAG 架构核心企业组件 Azure AI Foundry：具有安全性和合规性的托管企业 AI 平台 持久代理：具有对话历史记录和上下文管理的状态代理 矢量存储管理：企业级文档索引和检索 身份集成：Azure AD 身份验证和基于角色的访问控制  .NET 企业优势 类型安全：RAG 操作和数据结构的编译时验证 异步性能：非阻塞文档处理和搜索操作 内存管理：大型文档集合的高效资...</div></div></div></a><a class="pagination-related" href="/2025/09/13/multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-13</div><div class="info-item-2">multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition</div></div><div class="info-2"><div class="info-item-1">🔀 使用 Azure AI Foundry (.NET) 的条件代理工作流程📋 基于智能决策的工作流程教程本笔记本演示了使用 Azure AI Foundry 和 Microsoft Agent Framework for .NET 的条件工作流模式。您将学习如何构建复杂的、决策驱动的工作流程，根据人工智能分析、业务规则和企业级自动化的动态条件智能地路由处理。 🎯 学习目标🧠 智能决策架构 条件逻辑实现：构建具有多个分支点的复杂决策树 AI 支持的路由：使用 Azure AI Foundry 模型做出智能路由决策 动态工作流程适应：根据运行时分析和条件修改工作流程行为 企业规则集成：将业务逻辑和合规性要求纳入工作流程中  🔀 高级条件模式 多标准决策：评估路由决策的多个因素 上下文感知处理：根据累积的工作流上下文和历史记录做出决策 自适应工作流程修改：根据实时情况动态调整处理路径 规则引擎集成：在工作流程中实施复杂的业务规则引擎  🏢 企业有条件申请 文档分类和路由：自动分类文档并将其路由到适当的工作流程 客户服务分类：将客户询问智能路由至专业处理团队 合规与风险处理...</div></div></div></a><a class="pagination-related" href="/2025/09/03/agentic-protocols__code_samples__github-mcp__event-descriptions/" title="agentic-protocols__code_samples__github-mcp__event-descriptions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-03</div><div class="info-item-2">agentic-protocols__code_samples__github-mcp__event-descriptions</div></div><div class="info-2"><div class="info-item-1">活动名称：使用 Azure AI 代理服务构建代码优先应用程序（欧洲、中东和非洲&#x2F;美国产品）描述Azure AI 代理服务是服务和 SDK 的无缝结合，可简化强大的 AI 驱动解决方案的开发。在本次会议中，你将了解如何使用 Azure 构建自己的代码优先 AI 代理，该代理可以回答问题、执行数据分析以及集成外部数据源。您还将探索更复杂的架构，包括多个代理一起工作。 网址https://developer.microsoft.com/en-us/reactor/events/25325/  活动名称：使用语义内核通过多代理 AI 转变业务流程描述通过现场演示和实践学习，了解多智能体人工智能系统的强大功能，包括群聊、反射、选择器和群体模式。利用语义内核流程框架来自动化和扩展关键业务流程，从客户支持到使用 Python 的项目管理 网址https://developer.microsoft.com/en-us/reactor/events/25313/  活动名称：使用 AutoGen v0.4 构建代理应用程序描述开始使用 AutoGen v0.4 构建代理和多代理团队。我...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-RAG%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">什么是 RAG？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%B5%81-RAG-%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">主流 RAG 方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E5%87%86-RAG-%E5%8F%8A%E5%8F%98%E4%BD%93"><span class="toc-number">2.1.</span> <span class="toc-text">标准 RAG 及变体</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Naive-RAG"><span class="toc-number">2.1.1.</span> <span class="toc-text">Naive RAG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Multi-Query-RAG"><span class="toc-number">2.1.2.</span> <span class="toc-text">Multi-Query RAG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HyDE"><span class="toc-number">2.1.3.</span> <span class="toc-text">HyDE</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E6%A3%80%E7%B4%A2%E8%B4%A8%E9%87%8F"><span class="toc-number">2.2.</span> <span class="toc-text">提升检索质量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AD%E4%B9%89%E5%88%86%E5%9D%97%EF%BC%88Semantic-Chunking%EF%BC%89"><span class="toc-number">2.2.1.</span> <span class="toc-text">语义分块（Semantic Chunking）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%82%E7%BA%A7%E7%B4%A2%E5%BC%95%EF%BC%88Parent-Child-Retrieval%EF%BC%89"><span class="toc-number">2.2.2.</span> <span class="toc-text">层级索引（Parent-Child Retrieval）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hybrid-Search-%E6%B7%B7%E5%90%88%E6%A3%80%E7%B4%A2"><span class="toc-number">2.2.3.</span> <span class="toc-text">Hybrid Search 混合检索</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reranking-%E7%B2%BE%E6%8E%92"><span class="toc-number">2.2.4.</span> <span class="toc-text">Reranking 精排</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAG-%E5%8F%8D%E6%80%9D%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">RAG 反思机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Corrective-RAG%EF%BC%88CRAG%EF%BC%89"><span class="toc-number">2.3.1.</span> <span class="toc-text">Corrective RAG（CRAG）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Self-RAG"><span class="toc-number">2.3.2.</span> <span class="toc-text">Self-RAG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Adaptive-RAG"><span class="toc-number">2.3.3.</span> <span class="toc-text">Adaptive RAG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E7%9F%A5%E8%AF%86%E5%A2%9E%E5%BC%BA"><span class="toc-number">2.4.</span> <span class="toc-text">结构化知识增强</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GraphRAG"><span class="toc-number">2.4.1.</span> <span class="toc-text">GraphRAG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Text-to-SQL-RAG"><span class="toc-number">2.4.2.</span> <span class="toc-text">Text-to-SQL RAG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%99%BA%E8%83%BD%E4%BD%93%E9%A9%B1%E5%8A%A8-RAG"><span class="toc-number">2.5.</span> <span class="toc-text">智能体驱动 RAG</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Agentic-RAG"><span class="toc-number">2.5.1.</span> <span class="toc-text">Agentic RAG</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Multi-Agent-RAG"><span class="toc-number">2.5.2.</span> <span class="toc-text">Multi-Agent RAG</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAG-%E8%83%BD%E5%8A%9B%E6%89%A9%E5%B1%95"><span class="toc-number">2.6.</span> <span class="toc-text">RAG 能力扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81-RAG%EF%BC%88Multimodal-RAG%EF%BC%89"><span class="toc-number">2.6.1.</span> <span class="toc-text">多模态 RAG（Multimodal RAG）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Speculative-RAG"><span class="toc-number">2.6.2.</span> <span class="toc-text">Speculative RAG</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E9%80%89%E6%8B%A9"><span class="toc-number">3.</span> <span class="toc-text">方法选择</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

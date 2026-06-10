@@ -1,0 +1,545 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>setup | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="高级设置 Claude Code 的系统要求、特定平台安装、版本管理和卸载。  本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅快速入门。如果您从未使用过终端，请参阅终端指南。 系统要求Claude Code 在以下平台和配置上运行：  操作系统： macOS 13.0+ Windows 10 1809+ 或 Windows Server 2019+ Ubuntu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="setup">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/03/15/setup/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="高级设置 Claude Code 的系统要求、特定平台安装、版本管理和卸载。  本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅快速入门。如果您从未使用过终端，请参阅终端指南。 系统要求Claude Code 在以下平台和配置上运行：  操作系统： macOS 13.0+ Windows 10 1809+ 或 Windows Server 2019+ Ubuntu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-03-15T13:23:57.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.579Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "setup",
+  "url": "https://hzhzxfs.github.io/2026/03/15/setup/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-03-15T13:23:57.000Z",
+  "dateModified": "2026-06-10T02:14:46.579Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/03/15/setup/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'setup',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">setup</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">setup</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T13:23:57.000Z" title="发表于 2026-03-15 21:23:57">2026-03-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.579Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="高级设置"><a href="#高级设置" class="headerlink" title="高级设置"></a>高级设置</h1><blockquote>
+<p>Claude Code 的系统要求、特定平台安装、版本管理和卸载。</p>
+</blockquote>
+<p>本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅<a href="/zh-CN/quickstart">快速入门</a>。如果您从未使用过终端，请参阅<a href="/zh-CN/terminal-guide">终端指南</a>。</p>
+<h2 id="系统要求"><a href="#系统要求" class="headerlink" title="系统要求"></a>系统要求</h2><p>Claude Code 在以下平台和配置上运行：</p>
+<ul>
+<li><strong>操作系统</strong>：<ul>
+<li>macOS 13.0+</li>
+<li>Windows 10 1809+ 或 Windows Server 2019+</li>
+<li>Ubuntu 20.04+</li>
+<li>Debian 10+</li>
+<li>Alpine Linux 3.19+</li>
+</ul>
+</li>
+<li><strong>硬件</strong>：4 GB+ RAM、x64 或 ARM64 处理器</li>
+<li><strong>网络</strong>：需要互联网连接。请参阅<a href="/zh-CN/network-config#network-access-requirements">网络配置</a>。</li>
+<li><strong>Shell</strong>：Bash、Zsh、PowerShell 或 CMD。</li>
+<li><strong>位置</strong>：<a target="_blank" rel="noopener" href="https://www.anthropic.com/supported-countries">Anthropic 支持的国家&#x2F;地区</a></li>
+</ul>
+<h3 id="其他依赖项"><a href="#其他依赖项" class="headerlink" title="其他依赖项"></a>其他依赖项</h3><ul>
+<li><strong>ripgrep</strong>：通常包含在 Claude Code 中。如果搜索失败，请参阅<a href="/zh-CN/troubleshooting#search-and-discovery-issues">搜索故障排除</a>。</li>
+</ul>
+<h2 id="安装-Claude-Code"><a href="#安装-Claude-Code" class="headerlink" title="安装 Claude Code"></a>安装 Claude Code</h2><Tip>
+  更喜欢图形界面？[桌面应用](/zh-CN/desktop-quickstart)让您无需使用终端即可使用 Claude Code。下载适用于 [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) 或 [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) 的版本。
+
+<p>  初次使用终端？请参阅<a href="/zh-CN/terminal-guide">终端指南</a>获取分步说明。<br></Tip></p>
+<p>To install Claude Code, use one of the following methods:</p>
+<Tabs>
+  <Tab title="Native Install (Recommended)">
+    **macOS, Linux, WSL:**
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.sh | bash</span><br></pre></td></tr></table></figure>
+
+**Windows PowerShell:**
+
+<figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">irm</span> https://claude.ai/install.ps1 | <span class="built_in">iex</span></span><br></pre></td></tr></table></figure>
+
+**Windows CMD:**
+
+<figure class="highlight plaintext"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</span><br></pre></td></tr></table></figure>
+
+If you see `The token &#39;&amp;&amp;&#39; is not a valid statement separator`, you&#39;re in PowerShell, not CMD. If you see `&#39;irm&#39; is not recognized as an internal or external command`, you&#39;re in CMD, not PowerShell. Your prompt shows `PS C:\` when you&#39;re in PowerShell and `C:\` without the `PS` when you&#39;re in CMD.
+
+[Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
+
+&lt;Info&gt;
+  Native installations automatically update in the background to keep you on the latest version.
+&lt;/Info&gt;
+</code></pre>
+  </Tab>
+
+  <Tab title="Homebrew">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask claude-code</span><br></pre></td></tr></table></figure>
+
+<pre><code>Homebrew offers two casks. `claude-code` tracks the stable release channel, which is typically about a week behind and skips releases with major regressions. `claude-code@latest` tracks the latest channel and receives new versions as soon as they ship.
+
+&lt;Info&gt;
+  Homebrew installations do not auto-update. Run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed, to get the latest features and security fixes.
+&lt;/Info&gt;
+</code></pre>
+  </Tab>
+
+  <Tab title="WinGet">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winget install Anthropic.ClaudeCode</span><br></pre></td></tr></table></figure>
+
+<pre><code>&lt;Info&gt;
+  WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
+&lt;/Info&gt;
+</code></pre>
+  </Tab>
+</Tabs>
+
+<p>You can also install with <a href="/en/setup#install-with-linux-package-managers">apt, dnf, or apk</a> on Debian, Fedora, RHEL, and Alpine.</p>
+<p>安装完成后，在您要使用的项目中打开终端并启动 Claude Code：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<p>如果在安装过程中遇到任何问题，请参阅<a href="/zh-CN/troubleshoot-install">故障排除安装和登录</a>。</p>
+<h3 id="在-Windows-上设置"><a href="#在-Windows-上设置" class="headerlink" title="在 Windows 上设置"></a>在 Windows 上设置</h3><p>您可以在 Windows 上原生运行 Claude Code，也可以在 WSL 中运行。根据您的项目位置和所需的功能进行选择：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>需要</th>
+<th><a href="/zh-CN/sandboxing">沙箱</a></th>
+<th>何时使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原生 Windows</td>
+<td>无；<a target="_blank" rel="noopener" href="https://git-scm.com/downloads/win">Git for Windows</a> 是可选的</td>
+<td>不支持</td>
+<td>Windows 原生项目和工具</td>
+</tr>
+<tr>
+<td>WSL 2</td>
+<td>WSL 2 已启用</td>
+<td>支持</td>
+<td>Linux 工具链或沙箱命令执行</td>
+</tr>
+<tr>
+<td>WSL 1</td>
+<td>WSL 1 已启用</td>
+<td>不支持</td>
+<td>如果 WSL 2 不可用</td>
+</tr>
+</tbody></table>
+<p><strong>选项 1：原生 Windows</strong></p>
+<p>从 PowerShell 或 CMD 运行安装命令。您无需以管理员身份运行。安装 <a target="_blank" rel="noopener" href="https://git-scm.com/downloads/win">Git for Windows</a> 是可选的。它通过提供 Git Bash 来启用 <a href="/zh-CN/tools-reference#bash-tool-behavior">Bash 工具</a>。</p>
+<p>无论您从 PowerShell 还是 CMD 安装，只会影响您运行的安装命令。您的提示在 PowerShell 中显示为 <code>PS C:\Users\YourName&gt;</code>，在 CMD 中显示为 <code>C:\Users\YourName&gt;</code>（不带 <code>PS</code>）。如果您是终端新手，<a href="/zh-CN/terminal-guide#windows">终端指南</a>会逐步讲解每个步骤。</p>
+<p>安装后，从任何终端启动 <code>claude</code>。</p>
+<ul>
+<li><p><strong>不使用 Git for Windows</strong>，Claude Code 通过 <a href="/zh-CN/tools-reference#powershell-tool">PowerShell 工具</a>运行 shell 命令。</p>
+</li>
+<li><p><strong>使用 Git for Windows</strong>，Claude Code 为 <a href="/zh-CN/tools-reference#bash-tool-behavior">Bash 工具</a>使用 Git Bash。如果 Claude Code 找不到 Git Bash，请在您的 <a href="/zh-CN/settings">settings.json 文件</a>中设置路径：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;env&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CLAUDE_CODE_GIT_BASH_PATH&quot;</span><span class="punctuation">:</span> <span class="string">&quot;C:\\Program Files\\Git\\bin\\bash.exe&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>安装 Git for Windows 后，PowerShell 工具正在逐步推出作为 Bash 的额外选项。设置 <code>CLAUDE_CODE_USE_POWERSHELL_TOOL=1</code> 以选择加入或 <code>0</code> 以选择退出。有关设置和限制，请参阅 <a href="/zh-CN/tools-reference#powershell-tool">PowerShell 工具</a>。</p>
+<p><strong>选项 2：WSL</strong></p>
+<p>打开您的 WSL 发行版并从上面的<a href="#install-claude-code">安装说明</a>中运行 Linux 安装程序。您在 WSL 终端内安装和启动 <code>claude</code>，而不是从 PowerShell 或 CMD。</p>
+<h3 id="Alpine-Linux-和基于-musl-的发行版"><a href="#Alpine-Linux-和基于-musl-的发行版" class="headerlink" title="Alpine Linux 和基于 musl 的发行版"></a>Alpine Linux 和基于 musl 的发行版</h3><p>Alpine 和其他基于 musl&#x2F;uClibc 的发行版上的原生安装程序需要 <code>libgcc</code>、<code>libstdc++</code> 和 <code>ripgrep</code>。使用您的发行版的包管理器安装这些，然后设置 <code>USE_BUILTIN_RIPGREP=0</code>。</p>
+<p>此示例在 Alpine 上安装所需的包：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apk add libgcc libstdc++ ripgrep</span><br></pre></td></tr></table></figure>
+
+<p>然后在您的 <a href="/zh-CN/settings#available-settings"><code>settings.json</code></a> 文件中将 <code>USE_BUILTIN_RIPGREP</code> 设置为 <code>0</code>：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;env&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;USE_BUILTIN_RIPGREP&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="验证您的安装"><a href="#验证您的安装" class="headerlink" title="验证您的安装"></a>验证您的安装</h2><p>安装后，确认 Claude Code 正常工作：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --version</span><br></pre></td></tr></table></figure>
+
+<p>如果此命令失败并显示 <code>command not found</code> 或其他错误，请参阅<a href="/zh-CN/troubleshoot-install">排查安装和登录问题</a>。</p>
+<p>要更详细地检查您的安装和配置，请运行 <a href="/zh-CN/troubleshooting#get-more-help"><code>claude doctor</code></a>：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude doctor</span><br></pre></td></tr></table></figure>
+
+<h2 id="身份验证"><a href="#身份验证" class="headerlink" title="身份验证"></a>身份验证</h2><p>Claude Code 需要 Pro、Max、Team、Enterprise 或 Console 账户。免费的 Claude.ai 计划不包括 Claude Code 访问权限。您也可以通过第三方 API 提供商（如 <a href="/zh-CN/amazon-bedrock">Amazon Bedrock</a>、<a href="/zh-CN/google-vertex-ai">Google Vertex AI</a> 或 <a href="/zh-CN/microsoft-foundry">Microsoft Foundry</a>）使用 Claude Code。</p>
+<p>安装后，通过运行 <code>claude</code> 并按照浏览器提示登录。有关所有账户类型和团队设置选项，请参阅<a href="/zh-CN/authentication">身份验证</a>。</p>
+<h2 id="更新-Claude-Code"><a href="#更新-Claude-Code" class="headerlink" title="更新 Claude Code"></a>更新 Claude Code</h2><p>原生安装会在后台自动更新。您可以<a href="#configure-release-channel">配置发布渠道</a>来控制您是立即接收更新还是按延迟的稳定计划接收更新，或者<a href="#disable-auto-updates">完全禁用自动更新</a>。Homebrew、WinGet 和<a href="#install-with-linux-package-managers">Linux 包管理器</a>安装默认需要手动更新。</p>
+<h3 id="自动更新"><a href="#自动更新" class="headerlink" title="自动更新"></a>自动更新</h3><p>Claude Code 在启动时和运行时定期检查更新。更新在后台下载和安装，然后在您下次启动 Claude Code 时生效。</p>
+<p>运行 <code>claude doctor</code> 以查看最近一次更新尝试的结果。</p>
+<p>如果 npm 全局安装因为 npm 全局目录不可写而无法自动更新，Claude Code 会在启动时显示一次性通知，<code>claude doctor</code> 会列出可用的修复。有关详细信息，请参阅<a href="/zh-CN/troubleshoot-install#permission-errors-during-installation">安装期间的权限错误</a>。</p>
+<Note>
+  Homebrew、WinGet、apt、dnf 和 apk 安装默认不会自动更新；请参阅下文以选择加入 Homebrew 和 WinGet。要手动升级 Homebrew，请运行 `brew upgrade claude-code` 或 `brew upgrade claude-code@latest`，具体取决于您安装的 cask。对于 WinGet，请运行 `winget upgrade Anthropic.ClaudeCode`。对于 Linux 包管理器，请参阅[使用 Linux 包管理器安装](#install-with-linux-package-managers)中的升级命令。
+
+<p>  要让 Claude Code 在 Homebrew 或 WinGet 上为您运行升级命令，请将 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE</code></a> 设置为 <code>1</code>。Claude Code 随后会在新版本可用时在后台运行升级，并在成功时显示重启提示。升级仅针对 Claude Code 包，不会影响您已安装的其他软件。</p>
+<p>  在 WinGet 上，当 Claude Code 运行时升级可能会失败，因为 Windows 会锁定可执行文件。在这种情况下，Claude Code 会改为显示手动命令。apt、dnf 和 apk 继续需要手动升级，因为这些命令需要提升的权限。</p>
+<p>  <strong>已知问题</strong>：Claude Code 可能会在新版本在这些包管理器中可用之前通知您有更新。如果升级失败，请稍候后重试。</p>
+<p>  Homebrew 在升级后会在磁盘上保留旧版本。定期运行 <code>brew cleanup</code> 以回收磁盘空间。<br></Note></p>
+<h3 id="配置发布渠道"><a href="#配置发布渠道" class="headerlink" title="配置发布渠道"></a>配置发布渠道</h3><p>使用 <code>autoUpdatesChannel</code> 设置控制 Claude Code 为自动更新和 <code>claude update</code> 遵循的发布渠道：</p>
+<ul>
+<li><code>&quot;latest&quot;</code>，默认值：在新功能发布后立即接收</li>
+<li><code>&quot;stable&quot;</code>：使用通常约一周前的版本，跳过有重大回归的发布</li>
+</ul>
+<p>通过 <code>/config</code> → <strong>自动更新渠道</strong>配置此项，或将其添加到您的 <a href="/zh-CN/settings">settings.json 文件</a>：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;autoUpdatesChannel&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stable&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于企业部署，您可以使用<a href="/zh-CN/permissions#managed-settings">托管设置</a>在整个组织中强制执行一致的发布渠道。</p>
+<p>Homebrew 安装通过 cask 名称而不是此设置来选择渠道：<code>claude-code</code> 跟踪稳定版，<code>claude-code@latest</code> 跟踪最新版。</p>
+<h3 id="固定最低版本"><a href="#固定最低版本" class="headerlink" title="固定最低版本"></a>固定最低版本</h3><p><code>minimumVersion</code> 设置建立了一个下限。后台自动更新和 <code>claude update</code> 拒绝安装低于此值的任何版本，因此如果您已经在较新的 <code>&quot;latest&quot;</code> 构建上，切换到 <code>&quot;stable&quot;</code> 渠道不会降级您。</p>
+<p>通过 <code>/config</code> 从 <code>&quot;latest&quot;</code> 切换到 <code>&quot;stable&quot;</code> 会提示您选择保留当前版本或允许降级。选择保留会将 <code>minimumVersion</code> 设置为该版本。切换回 <code>&quot;latest&quot;</code> 会清除它。</p>
+<p>将其添加到您的 <a href="/zh-CN/settings">settings.json 文件</a>以显式固定下限：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;autoUpdatesChannel&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stable&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minimumVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.1.100&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<a href="/zh-CN/permissions#managed-settings">托管设置</a>中，这会强制执行用户和项目设置无法覆盖的组织范围最低版本。</p>
+<h3 id="禁用自动更新"><a href="#禁用自动更新" class="headerlink" title="禁用自动更新"></a>禁用自动更新</h3><p>在您的 <a href="/zh-CN/settings#available-settings"><code>settings.json</code></a> 文件的 <code>env</code> 键中将 <code>DISABLE_AUTOUPDATER</code> 设置为 <code>&quot;1&quot;</code>：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;env&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;DISABLE_AUTOUPDATER&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>DISABLE_AUTOUPDATER</code> 仅停止后台检查；<code>claude update</code> 和 <code>claude install</code> 仍然有效。要阻止所有更新路径（包括手动更新），请改为设置 <a href="/zh-CN/env-vars"><code>DISABLE_UPDATES</code></a>。当您通过自己的渠道分发 Claude Code 并需要用户保持在您提供的版本上时，请使用此选项。</p>
+<h3 id="手动更新"><a href="#手动更新" class="headerlink" title="手动更新"></a>手动更新</h3><p>要立即应用更新而不等待下一次后台检查，请运行：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude update</span><br></pre></td></tr></table></figure>
+
+<h2 id="高级安装选项"><a href="#高级安装选项" class="headerlink" title="高级安装选项"></a>高级安装选项</h2><p>这些选项用于版本固定、Linux 包管理器、npm 和验证二进制完整性。</p>
+<h3 id="安装特定版本"><a href="#安装特定版本" class="headerlink" title="安装特定版本"></a>安装特定版本</h3><p>原生安装程序接受特定版本号或发布渠道（<code>latest</code> 或 <code>stable</code>）。您在安装时选择的渠道将成为自动更新的默认值。有关更多信息，请参阅<a href="#configure-release-channel">配置发布渠道</a>。</p>
+<p>要安装最新版本（默认）：</p>
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.sh | bash</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">irm</span> https://claude.ai/install.ps1 | <span class="built_in">iex</span></span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows CMD">
+    <figure class="highlight plaintext"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<p>要安装稳定版本：</p>
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.sh | bash -s stable</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; ([<span class="type">scriptblock</span>]::Create((<span class="built_in">irm</span> https://claude.ai/install.ps1))) stable</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows CMD">
+    <figure class="highlight plaintext"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd stable &amp;&amp; del install.cmd</span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<p>要安装特定版本号：</p>
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; ([<span class="type">scriptblock</span>]::Create((<span class="built_in">irm</span> https://claude.ai/install.ps1))) <span class="number">2.1</span>.<span class="number">89</span></span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows CMD">
+    <figure class="highlight plaintext"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd 2.1.89 &amp;&amp; del install.cmd</span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<h3 id="使用-Linux-包管理器安装"><a href="#使用-Linux-包管理器安装" class="headerlink" title="使用 Linux 包管理器安装"></a>使用 Linux 包管理器安装</h3><p>Claude Code 发布已签名的 apt、dnf 和 apk 存储库。将 <code>stable</code> 替换为 <code>latest</code> 以使用滚动渠道。包管理器安装不会通过 Claude Code 自动更新；更新通过您的正常系统升级工作流程进行。</p>
+<p>所有存储库都使用 <a href="#binary-integrity-and-code-signing">Claude Code 发布签名密钥</a>进行签名。在信任密钥之前，请按照每个选项卡中的说明验证它。</p>
+<Tabs>
+  <Tab title="apt">
+    适用于 Debian 和 Ubuntu。要使用滚动渠道，请更改 `deb` 行中的两个 `stable` 出现：URL 路径和套件名称。
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> install -d -m 0755 /etc/apt/keyrings</span><br><span class="line"><span class="built_in">sudo</span> curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \</span><br><span class="line">  -o /etc/apt/keyrings/claude-code.asc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main&quot;</span> \</span><br><span class="line">  | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/apt/sources.list.d/claude-code.list</span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install claude-code</span><br></pre></td></tr></table></figure>
+
+在信任之前验证 GPG 密钥指纹：`gpg --show-keys /etc/apt/keyrings/claude-code.asc` 应该报告 `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE`。
+
+要稍后升级，请运行 `sudo apt update &amp;&amp; sudo apt upgrade claude-code`。
+</code></pre>
+  </Tab>
+
+  <Tab title="dnf">
+    适用于 Fedora 和 RHEL：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/yum.repos.d/claude-code.repo &lt;&lt;<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[claude-code]</span><br><span class="line">name=Claude Code</span><br><span class="line">baseurl=https://downloads.claude.ai/claude-code/rpm/stable</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://downloads.claude.ai/keys/claude-code.asc</span><br><span class="line">EOF</span><br><span class="line"><span class="built_in">sudo</span> dnf install claude-code</span><br></pre></td></tr></table></figure>
+
+dnf 在首次安装时下载密钥并提示您确认指纹。在接受之前验证它与 `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` 匹配。
+
+要稍后升级，请运行 `sudo dnf upgrade claude-code`。
+</code></pre>
+  </Tab>
+
+  <Tab title="apk">
+    适用于 Alpine Linux：
+
+<pre><code><figure class="highlight sh"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget -O /etc/apk/keys/claude-code.rsa.pub \</span><br><span class="line">  https://downloads.claude.ai/keys/claude-code.rsa.pub</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;https://downloads.claude.ai/claude-code/apk/stable&quot;</span> &gt;&gt; /etc/apk/repositories</span><br><span class="line">apk add claude-code</span><br></pre></td></tr></table></figure>
+
+使用 `sha256sum /etc/apk/keys/claude-code.rsa.pub` 验证下载的密钥，应该报告 `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`。
+
+要稍后升级，请运行 `apk update &amp;&amp; apk upgrade claude-code`。
+</code></pre>
+  </Tab>
+</Tabs>
+
+<h3 id="使用-npm-安装"><a href="#使用-npm-安装" class="headerlink" title="使用 npm 安装"></a>使用 npm 安装</h3><p>您也可以将 Claude Code 安装为全局 npm 包。该包需要 <a target="_blank" rel="noopener" href="https://nodejs.org/en/download">Node.js 18 或更高版本</a>。</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g @anthropic-ai/claude-code</span><br></pre></td></tr></table></figure>
+
+<p>npm 包安装与独立安装程序相同的原生二进制文件。npm 通过每个平台的可选依赖项（如 <code>@anthropic-ai/claude-code-darwin-arm64</code>）拉取二进制文件，并通过 postinstall 步骤将其链接到位。已安装的 <code>claude</code> 二进制文件本身不调用 Node。</p>
+<p>支持的 npm 安装平台是 <code>darwin-arm64</code>、<code>darwin-x64</code>、<code>linux-x64</code>、<code>linux-arm64</code>、<code>linux-x64-musl</code>、<code>linux-arm64-musl</code>、<code>win32-x64</code> 和 <code>win32-arm64</code>。您的包管理器必须允许可选依赖项。如果安装后二进制文件丢失，请参阅<a href="/zh-CN/troubleshoot-install#native-binary-not-found-after-npm-install">故障排除</a>。</p>
+<p>要升级 npm 安装，请运行 <code>npm install -g @anthropic-ai/claude-code@latest</code>。避免使用 <code>npm update -g</code>，因为它遵循原始安装的 semver 范围，可能不会将您移动到最新版本。</p>
+<Warning>
+  不要使用 `sudo npm install -g`，因为这可能导致权限问题和安全风险。如果遇到权限错误，请参阅[故障排除权限错误](/zh-CN/troubleshoot-install#permission-errors-during-installation)。
+</Warning>
+
+<h3 id="二进制完整性和代码签名"><a href="#二进制完整性和代码签名" class="headerlink" title="二进制完整性和代码签名"></a>二进制完整性和代码签名</h3><p>每个发布都发布一个 <code>manifest.json</code>，其中包含每个平台二进制文件的 SHA256 校验和。清单使用 Anthropic GPG 密钥签名，因此验证清单上的签名可以传递地验证它列出的每个二进制文件。</p>
+<h4 id="验证清单签名"><a href="#验证清单签名" class="headerlink" title="验证清单签名"></a>验证清单签名</h4><p>步骤 1-3 需要带有 <code>gpg</code> 和 <code>curl</code> 的 POSIX shell。在 Windows 上，在 Git Bash 或 WSL 中运行它们。步骤 4 包括 PowerShell 选项。</p>
+<Steps>
+  <Step title="下载并导入公钥">
+    发布签名密钥发布在固定 URL。
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://downloads.claude.ai/keys/claude-code.asc | gpg --import</span><br></pre></td></tr></table></figure>
+
+显示导入的密钥的指纹。
+
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --fingerprint security@anthropic.com</span><br></pre></td></tr></table></figure>
+
+确认输出包含此指纹：
+
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">31DD DE24 DDFA B679 F42D  7BD2 BAA9 29FF 1A7E CACE</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Step>
+
+  <Step title="下载清单和签名">
+    将 `VERSION` 设置为您要验证的发布。
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">REPO=https://downloads.claude.ai/claude-code-releases</span><br><span class="line">VERSION=2.1.89</span><br><span class="line">curl -fsSLO <span class="string">&quot;<span class="variable">$REPO</span>/<span class="variable">$VERSION</span>/manifest.json&quot;</span></span><br><span class="line">curl -fsSLO <span class="string">&quot;<span class="variable">$REPO</span>/<span class="variable">$VERSION</span>/manifest.json.sig&quot;</span></span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Step>
+
+  <Step title="验证签名">
+    针对清单验证分离的签名。
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpg --verify manifest.json.sig manifest.json</span><br></pre></td></tr></table></figure>
+
+有效的结果报告 `Good signature from &quot;Anthropic Claude Code Release Signing &lt;security@anthropic.com&gt;&quot;`。
+
+`gpg` 也会为任何新导入的密钥打印 `WARNING: This key is not certified with a trusted signature!`。这是预期的。`Good signature` 行确认密码学检查通过。第 1 步中的指纹比较确认密钥本身是真实的。
+</code></pre>
+  </Step>
+
+  <Step title="根据清单检查二进制文件">
+    将您下载的二进制文件的 SHA256 校验和与 `manifest.json` 中 `platforms.<platform>.checksum` 下列出的值进行比较。
+
+<pre><code>&lt;Tabs&gt;
+  &lt;Tab title=&quot;Linux&quot;&gt;
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sha256sum</span> claude</span><br></pre></td></tr></table></figure>
+  &lt;/Tab&gt;
+
+  &lt;Tab title=&quot;macOS&quot;&gt;
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shasum -a 256 claude</span><br></pre></td></tr></table></figure>
+  &lt;/Tab&gt;
+
+  &lt;Tab title=&quot;Windows PowerShell&quot;&gt;
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="built_in">Get-FileHash</span> claude.exe <span class="literal">-Algorithm</span> SHA256).Hash.ToLower()</span><br></pre></td></tr></table></figure>
+  &lt;/Tab&gt;
+&lt;/Tabs&gt;
+</code></pre>
+  </Step>
+</Steps>
+
+<Note>
+  清单签名可用于 `2.1.89` 及以后的发布。较早的发布在 `manifest.json` 中发布校验和，但没有分离的签名。
+</Note>
+
+<h4 id="平台代码签名"><a href="#平台代码签名" class="headerlink" title="平台代码签名"></a>平台代码签名</h4><p>除了签名的清单外，各个二进制文件在支持的地方还带有平台原生代码签名。</p>
+<ul>
+<li><strong>macOS</strong>：由”Anthropic PBC”签名并由 Apple 公证。使用 <code>codesign --verify --verbose ./claude</code> 验证。</li>
+<li><strong>Windows</strong>：由”Anthropic, PBC”签名。使用 <code>Get-AuthenticodeSignature .\claude.exe</code> 验证。</li>
+<li><strong>Linux</strong>：二进制文件不单独进行代码签名。如果您直接从 <code>claude-code-releases</code> 存储桶下载或使用原生安装程序，请使用上面的清单签名验证完整性。如果您使用 <a href="#install-with-linux-package-managers">apt、dnf 或 apk</a> 安装，您的包管理器会使用存储库签名密钥自动验证签名。</li>
+</ul>
+<h2 id="卸载-Claude-Code"><a href="#卸载-Claude-Code" class="headerlink" title="卸载 Claude Code"></a>卸载 Claude Code</h2><p>要删除 Claude Code，请按照您的安装方法的说明进行操作。如果之后 <code>claude</code> 仍然运行，您可能有第二个安装或来自较旧安装程序的遗留 shell 别名。请参阅<a href="/zh-CN/troubleshoot-install#check-for-conflicting-installations">检查冲突的安装</a>以查找并删除它。</p>
+<h3 id="原生安装"><a href="#原生安装" class="headerlink" title="原生安装"></a>原生安装</h3><p>删除 Claude Code 二进制文件和版本文件：</p>
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -f ~/.local/bin/claude</span><br><span class="line"><span class="built_in">rm</span> -rf ~/.local/share/claude</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;<span class="variable">$env:USERPROFILE</span>\.local\bin\claude.exe&quot;</span> <span class="literal">-Force</span></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;<span class="variable">$env:USERPROFILE</span>\.local\share\claude&quot;</span> <span class="literal">-Recurse</span> <span class="literal">-Force</span></span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<h3 id="Homebrew-安装"><a href="#Homebrew-安装" class="headerlink" title="Homebrew 安装"></a>Homebrew 安装</h3><p>删除您安装的 Homebrew cask。如果您安装了稳定版 cask：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew uninstall --cask claude-code</span><br></pre></td></tr></table></figure>
+
+<p>如果您安装了最新版 cask：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew uninstall --cask claude-code@latest</span><br></pre></td></tr></table></figure>
+
+<h3 id="WinGet-安装"><a href="#WinGet-安装" class="headerlink" title="WinGet 安装"></a>WinGet 安装</h3><p>删除 WinGet 包：</p>
+<figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winget uninstall Anthropic.ClaudeCode</span><br></pre></td></tr></table></figure>
+
+<h3 id="apt-dnf-apk"><a href="#apt-dnf-apk" class="headerlink" title="apt &#x2F; dnf &#x2F; apk"></a>apt &#x2F; dnf &#x2F; apk</h3><p>删除包和存储库配置：</p>
+<Tabs>
+  <Tab title="apt">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt remove claude-code</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="dnf">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> dnf remove claude-code</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> /etc/yum.repos.d/claude-code.repo</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="apk">
+    <figure class="highlight sh"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apk del claude-code</span><br><span class="line">sed -i <span class="string">&#x27;\|downloads.claude.ai/claude-code/apk|d&#x27;</span> /etc/apk/repositories</span><br><span class="line"><span class="built_in">rm</span> /etc/apk/keys/claude-code.rsa.pub</span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<h3 id="npm"><a href="#npm" class="headerlink" title="npm"></a>npm</h3><p>删除全局 npm 包：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall -g @anthropic-ai/claude-code</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除配置文件"><a href="#删除配置文件" class="headerlink" title="删除配置文件"></a>删除配置文件</h3><Warning>
+  删除配置文件将删除您的所有设置、允许的工具、MCP 服务器配置和会话历史记录。
+</Warning>
+
+<p>VS Code 扩展、JetBrains 插件和桌面应用也会写入 <code>~/.claude/</code>。如果其中任何一个仍然安装，下次运行时目录会被重新创建。要完全删除 Claude Code，请在删除这些文件之前卸载 <a href="/zh-CN/vs-code#uninstall-the-extension">VS Code 扩展</a>、JetBrains 插件和桌面应用。</p>
+<p>要删除 Claude Code 设置和缓存数据：</p>
+<Tabs>
+  <Tab title="macOS、Linux、WSL">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除用户设置和状态</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.claude</span><br><span class="line"><span class="built_in">rm</span> ~/.claude.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除特定于项目的设置（从您的项目目录运行）</span></span><br><span class="line"><span class="built_in">rm</span> -rf .claude</span><br><span class="line"><span class="built_in">rm</span> -f .mcp.json</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除用户设置和状态</span></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;<span class="variable">$env:USERPROFILE</span>\.claude&quot;</span> <span class="literal">-Recurse</span> <span class="literal">-Force</span></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;<span class="variable">$env:USERPROFILE</span>\.claude.json&quot;</span> <span class="literal">-Force</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除特定于项目的设置（从您的项目目录运行）</span></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;.claude&quot;</span> <span class="literal">-Recurse</span> <span class="literal">-Force</span></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="literal">-Path</span> <span class="string">&quot;.mcp.json&quot;</span> <span class="literal">-Force</span></span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/03/15/setup/">https://hzhzxfs.github.io/2026/03/15/setup/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/16/skills/" title="skills"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">skills</div></div><div class="info-2"><div class="info-item-1">使用 skills 扩展 Claude 创建、管理和共享 skills 以在 Claude Code 中扩展 Claude 的功能。包括自定义命令和捆绑 skills。  Skills 扩展了 Claude 能做的事情。创建一个 SKILL.md 文件，其中包含说明，Claude 会将其添加到其工具包中。Claude 在相关时使用 skills，或者你可以使用 /skill-name 直接调用一个。 当你不断将相同的说明、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。    对于内置命令（如 `/help` 和 `/compact`）以及捆绑 skills（如 `/debug` 和 `/code-review`），请参阅[命令参考](/zh-CN/commands)。    自定义命令已合并到 skills 中。 .claude/commands/deploy.md 中的文件和 .claud...</div></div></div></a><a class="pagination-related" href="/2026/03/14/settings/" title="settings"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">settings</div></div><div class="info-2"><div class="info-item-1">Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 /config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共享。了解作用域可以帮助您决定如何为个人使用、团队协作或企业部署配置 Claude Code。 可用作用域   作用域 位置 影响范围 与团队共享？    Managed 服务器管理的设置、plist &#x2F; 注册表或系统级 managed-settings.json 机器上的所有用户 是（由 IT 部署）   User ~/.claude/ 目录 您，跨所有项目 否   Project 存储库中的 .claude/ 此存储库上的所有协作者 是（提交到 git）   Local .claude/settings.local.json 您，仅在此存储库中 否（gitignored）  ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/01/01-%E9%A1%B9%E7%9B%AE%E5%85%A8%E6%99%AF/" title="01-项目全景"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-01</div><div class="info-item-2">01-项目全景</div></div><div class="info-2"><div class="info-item-1">第 1 篇：项目全景 — 一个 AI CLI 产品的技术蓝图 本篇是《深入 Claude Code 源码》系列的开篇。我们将从技术栈选型、启动链路、模块依赖三个维度，建立对整个项目的全局认知。  为什么要从全景开始？当你面对一个约 1900 个源码文件（其中 TypeScript 文件约 1884 个）、核心文件超过 4000 行的大型项目时，最大的挑战不是读懂某个函数，而是不知道从哪里开始读。 Claude Code 是 Anthropic 公司开发的 AI 驱动命令行编程助手。它不是一个简单的 API wrapper —— 它是一个完整的 AI Agent 运行时，包含了从终端 UI 渲染、多 Agent 编排、工具系统、权限安全到 Prompt 工程的全技术栈。理解它的全貌，等于理解了一个生产级 AI 产品的完整架构。 本篇将回答三个核心问题：  为什么选择这些技术？ — Bun + TypeScript + Ink + Commander.js 的技术栈选型逻辑 程序是怎么启动的？ — 从 cli.tsx 到 REPL 的启动链路 代码是怎么组织的？ — 约 1900 个...</div></div></div></a><a class="pagination-related" href="/2026/03/11/routines/" title="routines"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-11</div><div class="info-item-2">routines</div></div><div class="info-2"><div class="info-item-1">使用例程自动化工作 让 Claude Code 自动运行。定义在计划上运行、通过 API 调用触发或对来自 Anthropic 管理的云基础设施的 GitHub 事件做出反应的例程。     Routines 处于研究预览阶段。行为、限制和 API 表面可能会改变。   例程是一个保存的 Claude Code 配置：一个提示、一个或多个存储库和一组 connectors，打包一次并自动运行。例程在 Anthropic 管理的云基础设施上执行，因此当您的笔记本电脑关闭时它们仍然可以工作。 每个例程可以附加一个或多个触发器：  Scheduled：按照每小时、每晚或每周等定期节奏运行，或在特定的未来时间运行一次 API：通过向每个例程端点发送带有持有者令牌的 HTTP POST 来按需触发 GitHub：自动响应存储库事件（如拉取请求或发布）运行  单个例程可以组合触发器。例如，PR 审查例程可以每晚运行、从部署脚本触发，也可以对每个新 PR 做出反应。 Routines 在启用了 Claude Code on the web 的 Pro、Max、Team 和 Enterprise...</div></div></div></a><a class="pagination-related" href="/2026/03/05/permission-modes/" title="permission-modes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-05</div><div class="info-item-2">permission-modes</div></div><div class="info-2"><div class="info-item-1">选择权限模式 控制 Claude 在编辑文件或运行命令前是否询问。在 CLI 中使用 Shift+Tab 循环切换模式，或在 VS Code、Desktop 和 claude.ai 中使用模式选择器。  当 Claude 想要编辑文件、运行 shell 命令或发出网络请求时，它会暂停并要求您批准该操作。权限模式控制暂停发生的频率。您选择的模式塑造了会话的流程：默认模式让您在操作进行时审查每个操作，而更宽松的模式让 Claude 在更长的不间断时间内工作，然后报告完成情况。为敏感工作选择更多监督，或在您信任方向时选择更少中断。 可用模式每种模式在便利性和监督之间做出不同的权衡。下表显示了在每种模式中 Claude 无需权限提示即可执行的操作。    模式 无需询问即可运行的操作 最适合    default 仅读取 入门、敏感工作   acceptEdits 读取、文件编辑和常见文件系统命令（mkdir、touch、mv、cp 等） 迭代您正在审查的代码   plan 仅读取 在更改代码库前进行探索   auto 所有操作，带后台安全检查 长时间任务、减少提示疲劳   dontAs...</div></div></div></a><a class="pagination-related" href="/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="8.Skill with Claude Code（在Claude Code使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-09</div><div class="info-item-2">8.Skill with Claude Code（在Claude Code使用skills）</div></div><div class="info-2"><div class="info-item-1">Skill with Claude Code(熟练运用 Claude Code)引言Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。 Claude Code 工作原理当您给 Claude Code 一个任务时，它会经历三个阶段：收集上下文、采取行动和验证结果。这些阶段相互融合，Claude 在整个过程中使用工具，无论是搜索文件以理解您的代码，编辑文件以进行更改，还是运行测试以检查其工作。这个循环会根据您的需求进行调整。对代码库的提问可能只需要收集上下文。修复错误则会反复经历所有三个阶段。重构可能涉及广泛的验证。Claude 根据从上一步中学到的内容决定每一步需要什么，将数十个操作串联起来并在过程中进行纠正。您也是这个循环的一部分。您可以随时中断以引导 Claude 走向不同的方向，提供额外的上下文，或要求它尝试不同的方法。Claude 自主工作，但对您的输入保持...</div></div></div></a><a class="pagination-related" href="/2026/04/11/common-workflows/" title="common-workflows"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-11</div><div class="info-item-2">common-workflows</div></div><div class="info-2"><div class="info-item-1">常见工作流程 使用 Claude Code 探索代码库、修复错误、重构、测试和其他日常任务的分步指南。  本页收集了日常开发的简短工作流程。有关提示和上下文管理的更高级指导，请参阅最佳实践。 本页涵盖：  提示工作流程，用于探索代码、修复错误、重构、测试、PR 和文档 恢复以前的对话，以便任务可以跨越多个会话 使用 worktrees 运行并行会话，以便并发编辑不会冲突 编辑前规划，以在更改接触磁盘前审查更改 将研究委派给 subagents，以保持主上下文清洁 将 Claude 管道输入脚本，用于 CI 和批处理  提示工作流程这些是日常任务的提示模式，如探索陌生代码、调试、重构、编写测试和创建 PR。每个都可以在任何 Claude Code 界面中工作；根据您的项目调整措辞。 理解新的代码库有关在 monorepo 或大型代码库中配置 Claude Code 的信息，请参阅 Monorepos 和大型存储库。 快速获取代码库概览假设您刚加入一个新项目，需要快速了解其结构。         theme1cd /path/to/project             theme1...</div></div></div></a><a class="pagination-related" href="/2026/05/22/22-%E8%AE%BE%E8%AE%A1%E7%B3%BB%E7%BB%9F/" title="22-设计系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-22</div><div class="info-item-2">22-设计系统</div></div><div class="info-2"><div class="info-item-1">第 22 篇：设计系统 — 终端 UI 的组件化实践为什么终端应用需要设计系统？当你用 console.log 输出几行文字时，不需要设计系统。但当你的终端应用有流式输出、多工具并行进度条、权限确认对话框、Tab 切换面板、模糊搜索选择器、dark&#x2F;light 主题切换时，情况就完全不同了。 Claude Code 面对的正是这样的复杂度。它的 UI 不是静态的信息打印，而是一个高度动态的交互界面。在第 21 篇中我们看到了 forked Ink 框架如何在终端中运行 React；本篇则关注在这个框架之上，团队如何构建了一套可复用的组件化设计系统。 这套设计系统回答三个核心问题：  颜色从哪来？ — 6 套主题 × 80+ 语义化颜色 token 的主题系统 组件怎么组合？ — 15 个设计系统组件 + 1 个颜色工具函数的职责划分 工具 UI 怎么统一？ — Tool 接口中 10 个 render&#x2F;查询方法构成的 UI 协议   一、主题系统：80+ 语义化颜色 token1.1 Theme 类型：颜色的语义化契约终端应用的颜色管理比 Web 更复杂。We...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">高级设置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-number">1.1.</span> <span class="toc-text">系统要求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E4%BE%9D%E8%B5%96%E9%A1%B9"><span class="toc-number">1.1.1.</span> <span class="toc-text">其他依赖项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Claude-Code"><span class="toc-number">1.2.</span> <span class="toc-text">安装 Claude Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-Windows-%E4%B8%8A%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.1.</span> <span class="toc-text">在 Windows 上设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Alpine-Linux-%E5%92%8C%E5%9F%BA%E4%BA%8E-musl-%E7%9A%84%E5%8F%91%E8%A1%8C%E7%89%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">Alpine Linux 和基于 musl 的发行版</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%82%A8%E7%9A%84%E5%AE%89%E8%A3%85"><span class="toc-number">1.3.</span> <span class="toc-text">验证您的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text">身份验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0-Claude-Code"><span class="toc-number">1.5.</span> <span class="toc-text">更新 Claude Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text">自动更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%91%E5%B8%83%E6%B8%A0%E9%81%93"><span class="toc-number">1.5.2.</span> <span class="toc-text">配置发布渠道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E6%9C%80%E4%BD%8E%E7%89%88%E6%9C%AC"><span class="toc-number">1.5.3.</span> <span class="toc-text">固定最低版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%81%E7%94%A8%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0"><span class="toc-number">1.5.4.</span> <span class="toc-text">禁用自动更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E6%9B%B4%E6%96%B0"><span class="toc-number">1.5.5.</span> <span class="toc-text">手动更新</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E5%AE%89%E8%A3%85%E9%80%89%E9%A1%B9"><span class="toc-number">1.6.</span> <span class="toc-text">高级安装选项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC"><span class="toc-number">1.6.1.</span> <span class="toc-text">安装特定版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Linux-%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E5%AE%89%E8%A3%85"><span class="toc-number">1.6.2.</span> <span class="toc-text">使用 Linux 包管理器安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-npm-%E5%AE%89%E8%A3%85"><span class="toc-number">1.6.3.</span> <span class="toc-text">使用 npm 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E5%92%8C%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D"><span class="toc-number">1.6.4.</span> <span class="toc-text">二进制完整性和代码签名</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%B8%85%E5%8D%95%E7%AD%BE%E5%90%8D"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">验证清单签名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E5%8F%B0%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D"><span class="toc-number">1.6.4.2.</span> <span class="toc-text">平台代码签名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD-Claude-Code"><span class="toc-number">1.7.</span> <span class="toc-text">卸载 Claude Code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E5%AE%89%E8%A3%85"><span class="toc-number">1.7.1.</span> <span class="toc-text">原生安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Homebrew-%E5%AE%89%E8%A3%85"><span class="toc-number">1.7.2.</span> <span class="toc-text">Homebrew 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WinGet-%E5%AE%89%E8%A3%85"><span class="toc-number">1.7.3.</span> <span class="toc-text">WinGet 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#apt-dnf-apk"><span class="toc-number">1.7.4.</span> <span class="toc-text">apt &#x2F; dnf &#x2F; apk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#npm"><span class="toc-number">1.7.5.</span> <span class="toc-text">npm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.7.6.</span> <span class="toc-text">删除配置文件</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

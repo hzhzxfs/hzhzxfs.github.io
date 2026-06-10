@@ -1,0 +1,465 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>mcp-quickstart | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="连接到 MCP 服务器 将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。  Model Context Protocol (MCP) 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。 本指南将引导您通过 Claude Code CL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mcp-quickstart">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/03/01/mcp-quickstart/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="连接到 MCP 服务器 将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。  Model Context Protocol (MCP) 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。 本指南将引导您通过 Claude Code CL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-03-01T02:56:39.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.570Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "mcp-quickstart",
+  "url": "https://hzhzxfs.github.io/2026/03/01/mcp-quickstart/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-03-01T02:56:39.000Z",
+  "dateModified": "2026-06-10T02:14:46.570Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/03/01/mcp-quickstart/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'mcp-quickstart',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">mcp-quickstart</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">mcp-quickstart</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-01T02:56:39.000Z" title="发表于 2026-03-01 10:56:39">2026-03-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.570Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="连接到-MCP-服务器"><a href="#连接到-MCP-服务器" class="headerlink" title="连接到 MCP 服务器"></a>连接到 MCP 服务器</h1><blockquote>
+<p>将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/introduction">Model Context Protocol (MCP)</a> 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。</p>
+<p>本指南将引导您通过 Claude Code CLI 端到端地连接一个 MCP 服务器。完成后，您将拥有一个已连接且响应的服务器，了解其配置在磁盘上的位置，并知道如何修复最常见的连接错误。</p>
+<Note>
+  您也可以从其他界面添加 MCP 服务器，包括桌面应用、VS Code 和网络版。请参阅[从其他界面连接](#connect-from-other-surfaces)。
+</Note>
+
+<p>有关在 Claude Code 中连接和配置 MCP 服务器的所有方式，请参阅 <a href="/zh-CN/mcp">MCP 参考</a>。</p>
+<h2 id="开始之前"><a href="#开始之前" class="headerlink" title="开始之前"></a>开始之前</h2><p>确保您拥有：</p>
+<ul>
+<li><a href="/zh-CN/quickstart">已安装</a>并验证了 Claude Code</li>
+<li>在项目目录中打开的终端。任何目录都可以，包括空目录。</li>
+</ul>
+<h2 id="添加并验证服务器"><a href="#添加并验证服务器" class="headerlink" title="添加并验证服务器"></a>添加并验证服务器</h2><p>下面的示例连接到 <a target="_blank" rel="noopener" href="https://code.claude.com/docs/mcp">Claude Code 文档 MCP 服务器</a>，这是一个托管服务器，具有对 Claude Code 文档的全文搜索功能。它不需要身份验证或任何特殊配置，因此它很适合作为第一个服务器来测试设置流程。</p>
+<p>所有服务器的步骤都相同：添加它、检查连接状态，然后在会话中使用它，最后可选择清理步骤。某些服务器会添加一个步骤，例如浏览器登录，如 <a href="#additional-mcp-server-examples">其他 MCP 服务器示例</a> 中所示。有关更多要连接的服务器，请浏览 <a href="/zh-CN/mcp#find-and-build-mcp-servers">Anthropic 目录</a>。</p>
+<Steps>
+  <Step title="添加 MCP 服务器">
+    向 Claude Code 注册服务器。在您的终端中运行此命令，而不是在 `claude` 会话内：您在启动对话之前配置服务器。
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add --transport http claude-code-docs https://code.claude.com/docs/mcp</span><br></pre></td></tr></table></figure>
+
+命令的各部分：
+
+* `claude mcp add`：向 Claude Code 注册服务器。
+* `--transport http`：服务器托管在 URL 上，而不是作为本地进程运行。
+* `claude-code-docs`：您创建的名称。将同一服务器称为 `docs` 会完全相同。Claude Code 使用您选择的任何名称来标记 Claude 输出中的服务器工具，并在 `claude mcp remove` 等命令中引用服务器。
+* `https://code.claude.com/docs/mcp`：服务器托管的 URL。
+
+该命令打印一个确认信息，如 `Added HTTP MCP server claude-code-docs with URL: https://code.claude.com/docs/mcp to local config`。`local config` 部分意味着服务器已注册给您，在此项目中：如果您在不同的项目中启动 Claude Code，此服务器在那里不活跃。要为所有项目注册一次服务器，请在用户范围内添加它，详见 [更改服务器范围](#change-server-scope)。
+</code></pre>
+  </Step>
+
+  <Step title="检查连接状态">
+    确认服务器出现在您的服务器列表中并检查其状态：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp list</span><br></pre></td></tr></table></figure>
+
+服务器显示状态指示器：
+
+| 状态                       | 含义                                                                                            |
+| :----------------------- | :-------------------------------------------------------------------------------------------- |
+| `✓ Connected`            | 准备就绪。这是您应该为 `claude-code-docs` 看到的                                                            |
+| `! Needs authentication` | 服务器可以访问但需要浏览器登录，或使用 `--header` 传递的令牌。请参阅[连接需要登录的服务器](#connect-a-server-that-requires-sign-in) |
+| `✗ Failed to connect`    | 服务器没有响应。请参阅[故障排除](#troubleshooting)                                                           |
+| `✗ Connection error`     | 连接尝试抛出错误。请参阅[故障排除](#troubleshooting)                                                          |
+| `⏸ Pending approval`     | 您尚未批准的项目范围服务器。请参阅[直接编辑 .mcp.json](#edit-mcp-json-directly)                                    |
+</code></pre>
+  </Step>
+
+  <Step title="使用服务器">
+    启动会话并要求 Claude 按名称使用新服务器：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Use the claude-code-docs server to look up what MCP_TIMEOUT does</span><br></pre></td></tr></table></figure>
+
+&lt;Info&gt;
+  您通常不需要在提示中命名服务器，因为 Claude 会自动选择相关工具。在这里命名它可以保证演示通过新服务器而不是另一个工具（如网络获取）进行，该工具可以回答相同的问题。
+&lt;/Info&gt;
+
+Claude 第一次调用服务器时，它会要求使用新工具的权限。批准它以继续。Claude 输出中的工具调用标有服务器名称，这是您确认答案来自 MCP 服务器而不是 Claude 内置知识的方式。
+</code></pre>
+  </Step>
+
+  <Step title="删除服务器">
+    此步骤是可选的。完成实验后，您可以删除服务器：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp remove claude-code-docs</span><br></pre></td></tr></table></figure>
+
+&lt;Note&gt;
+  每个已连接的服务器在 [Claude 的上下文窗口](/zh-CN/how-claude-code-works#the-context-window) 中占用一些空间，因为其工具名称和服务器说明加载到每个会话中。删除您不再使用的服务器可以保持该空间空闲。
+&lt;/Note&gt;
+</code></pre>
+  </Step>
+</Steps>
+
+<h2 id="服务器保存位置"><a href="#服务器保存位置" class="headerlink" title="服务器保存位置"></a>服务器保存位置</h2><p><code>claude mcp add</code> 命令将服务器的详细信息写入配置文件。默认情况下，它在 <code>local</code> 范围内注册服务器：仅限您私有，仅在当前项目中活跃。传递 <code>--scope user</code> 以为所有项目注册一次，或 <code>--scope project</code> 以与队友共享。<a href="#change-server-scope">更改服务器范围</a> 介绍了两者。</p>
+<Note>
+  `claude mcp add` 在每个 shell 中的工作方式相同，包括 PowerShell 和命令提示符。在 `claude` 会话内，使用 `/mcp` 命令检查和管理您已添加的服务器。
+</Note>
+
+<p>还有其他方式添加服务器，每种都在本页后面介绍：</p>
+<ul>
+<li><a href="#add-a-local-server">添加本地服务器</a>：在您的机器上运行程序而不是连接到 URL。</li>
+<li><a href="#edit-mcp-json-directly">直接编辑 <code>.mcp.json</code></a>：自己编写 JSON 条目而不是使用命令。</li>
+<li><a href="#connect-a-server-that-requires-sign-in">连接需要登录的服务器</a>：添加需要浏览器登录才能使其工具工作的托管服务器。</li>
+</ul>
+<h3 id="在磁盘上找到您的配置"><a href="#在磁盘上找到您的配置" class="headerlink" title="在磁盘上找到您的配置"></a>在磁盘上找到您的配置</h3><p><code>claude mcp add</code> 命令将服务器写入三个范围之一，根据 <code>--scope</code> 标志存储在两个文件中。您不需要直接编辑这些文件，但知道它们的位置有助于调试和版本控制。</p>
+<table>
+<thead>
+<tr>
+<th align="left">范围</th>
+<th align="left">文件</th>
+<th align="left">可用于</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>local</code></td>
+<td align="left"><code>~/.claude.json</code>，在此项目的条目下</td>
+<td align="left">仅您，仅此项目。默认值</td>
+</tr>
+<tr>
+<td align="left"><code>project</code></td>
+<td align="left">项目根目录中的 <code>.mcp.json</code></td>
+<td align="left">克隆项目的所有人</td>
+</tr>
+<tr>
+<td align="left"><code>user</code></td>
+<td align="left"><code>~/.claude.json</code>，在顶级 <code>mcpServers</code> 键下</td>
+<td align="left">仅您，所有项目</td>
+</tr>
+</tbody></table>
+<p>在 Windows 上，<code>~/.claude.json</code> 解析为 <code>%USERPROFILE%\.claude.json</code>，通常为 <code>C:\Users\YourName\.claude.json</code>。如果您设置了 <a href="/zh-CN/env-vars"><code>CLAUDE_CONFIG_DIR</code></a>，Claude Code 会从该目录内读取 <code>.claude.json</code>。</p>
+<p>运行 <code>claude mcp get claude-code-docs</code> 以查看哪个范围保存服务器的定义。有关当同一服务器在多个范围中定义时范围如何交互，请参阅 <a href="/zh-CN/mcp#mcp-installation-scopes">MCP 安装范围</a>。</p>
+<h2 id="更改服务器范围"><a href="#更改服务器范围" class="headerlink" title="更改服务器范围"></a>更改服务器范围</h2><p>服务器的范围在添加时是固定的，因此更改范围意味着删除条目并在新范围内重新添加它。下面两种情况都从删除第一个演练中的本地条目开始，因此服务器只有一个定义。如果您已在该演练结束时删除了它，请跳过此命令：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp remove claude-code-docs --scope <span class="built_in">local</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="在所有项目中使用服务器"><a href="#在所有项目中使用服务器" class="headerlink" title="在所有项目中使用服务器"></a>在所有项目中使用服务器</h3><p>在 <code>user</code> 范围内重新添加服务器，使其在您打开的每个项目中活跃，仍然仅限您私有：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add --scope user --transport http claude-code-docs https://code.claude.com/docs/mcp</span><br></pre></td></tr></table></figure>
+
+<h3 id="与您的团队共享服务器"><a href="#与您的团队共享服务器" class="headerlink" title="与您的团队共享服务器"></a>与您的团队共享服务器</h3><p>在 <code>project</code> 范围内重新添加服务器，该范围写入项目根目录中的 <code>.mcp.json</code>：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add --scope project --transport http claude-code-docs https://code.claude.com/docs/mcp</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>.mcp.json</code> 提交到版本控制。克隆存储库并启动 Claude Code 的队友会看到批准服务器的提示，然后它也会为他们连接。</p>
+<h2 id="其他-MCP-服务器示例"><a href="#其他-MCP-服务器示例" class="headerlink" title="其他 MCP 服务器示例"></a>其他 MCP 服务器示例</h2><p>第一个演练使用了无需任何登录即可连接的托管服务器。下面的示例涵盖了其他两种常见形式，具有相同的添加、检查、使用流程。</p>
+<h3 id="添加本地服务器"><a href="#添加本地服务器" class="headerlink" title="添加本地服务器"></a>添加本地服务器</h3><p>本地 stdio 服务器是 Claude Code 在您的机器上作为子进程启动的程序，而不是它通过 URL 访问的服务。对于需要访问本地资源（如浏览器、您的文件系统或数据库套接字）的工具，请使用一个。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/microsoft/playwright-mcp">Playwright MCP 服务器</a> 是一个很好的尝试：它为 Claude 提供了一个可以导航、点击和读取的浏览器，并且不需要帐户。它通过 <code>npx</code> 运行，因此需要 <a target="_blank" rel="noopener" href="https://nodejs.org/en/download">Node.js</a> 18 或更高版本。</p>
+<Steps>
+  <Step title="添加 Playwright 服务器">
+    使用 Claude Code 应该运行以启动它的命令注册服务器：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add playwright -- npx -y @playwright/mcp@latest</span><br></pre></td></tr></table></figure>
+
+此命令与托管示例的不同之处有三个：
+
+* 没有 `--transport` 标志，因为本地服务器使用默认的 `stdio` 传输。
+* `--` 分隔符之后的所有内容都是 Claude Code 运行以启动服务器的命令。
+* `-y` 告诉 `npx` 安装包而不提示。
+
+Playwright 驱动您机器上已安装的任何 Chrome。要使用不同的浏览器，请在 `@playwright/mcp@latest` 之后附加 `--browser` 和浏览器名称，例如 `--browser firefox`。
+</code></pre>
+  </Step>
+
+  <Step title="检查连接">
+    `Added` 确认意味着条目已保存，而不是命令运行。检查连接：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp list</span><br></pre></td></tr></table></figure>
+
+第一次检查可能会在 `npx` 下载包时显示 `✗ Failed to connect`，因此请稍等片刻并再次运行。
+</code></pre>
+  </Step>
+
+  <Step title="使用浏览器">
+    给 Claude 一个需要浏览器的任务：
+
+<pre><code><figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Use playwright to open https://example.com and tell me the page title</span><br></pre></td></tr></table></figure>
+
+浏览器窗口打开，以便您可以观看它工作，Claude 输出中的工具调用标有 `playwright` 服务器名称和操作，如 `browser_navigate`。
+
+尝试将其指向您的本地开发服务器以检查页面在更改后是否仍然呈现，或让它逐步完成错误报告。
+</code></pre>
+  </Step>
+</Steps>
+
+<h3 id="连接需要登录的服务器"><a href="#连接需要登录的服务器" class="headerlink" title="连接需要登录的服务器"></a>连接需要登录的服务器</h3><p>Sentry、Linear 和 Notion 等托管服务在 OAuth 后面运行其 MCP 服务器：您添加服务器的 URL，然后通过浏览器登录。</p>
+<p>下面的步骤以 Sentry 为例。要连接不同的服务，请替换其 URL，您可以在 <a href="/zh-CN/mcp#find-and-build-mcp-servers">Anthropic 目录</a> 或服务的文档中找到。</p>
+<Steps>
+  <Step title="添加服务器">
+    `add` 命令与文档服务器相同，使用 Sentry 的 URL：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add --transport http sentry https://mcp.sentry.dev/mcp</span><br></pre></td></tr></table></figure>
+
+添加后，`claude mcp list` 显示服务器为 `! Needs authentication`。这是预期的：下一步完成登录。
+</code></pre>
+  </Step>
+
+  <Step title="在浏览器中进行身份验证">
+    启动 Claude Code 会话并打开 MCP 面板：
+
+<pre><code><figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/mcp</span><br></pre></td></tr></table></figure>
+
+从列表中选择 `sentry`，按 Enter，然后选择 `Authenticate`。您的浏览器打开到 Sentry 的登录页面。在那里批准连接。
+
+回到 Claude Code，服务器的状态更改为已连接。如果登录失败或浏览器没有打开，请参阅[故障排除](#troubleshooting)。
+</code></pre>
+  </Step>
+
+  <Step title="使用服务器">
+    询问 Claude 需要该服务的内容，例如 `What Sentry projects do I have access to?`，并查找在其输出中标有 `sentry` 服务器名称的工具调用。
+  </Step>
+</Steps>
+
+<p>使用静态令牌而不是 OAuth 进行身份验证的服务器在添加时使用 <code>--header &quot;Authorization: Bearer &lt;token&gt;&quot;</code> 获取令牌。有关已完成的版本，请参阅 <a href="/zh-CN/mcp#example-connect-to-github-for-code-reviews">GitHub 示例</a>。</p>
+<h2 id="直接编辑-mcp-json"><a href="#直接编辑-mcp-json" class="headerlink" title="直接编辑 .mcp.json"></a>直接编辑 .mcp.json</h2><p><a href="#find-your-configuration-on-disk">范围表</a> 中的每个文件都对服务器条目使用相同的 JSON 格式。本部分编辑 <code>.mcp.json</code>，即项目范围文件。它最值得手工编写，因为它被检入存储库，在那里它充当团队的配置即代码。</p>
+<p>在项目根目录中创建 <code>.mcp.json</code>。下面的示例定义了本指南中的两个服务器，通过 HTTP 访问的托管文档服务器和作为本地 <code>stdio</code> 进程的 Playwright 服务器：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;claude-code-docs&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://code.claude.com/docs/mcp&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;playwright&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stdio&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npx&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;-y&quot;</span><span class="punctuation">,</span> <span class="string">&quot;@playwright/mcp@latest&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段因服务器类型而异：</p>
+<ul>
+<li>对于 HTTP 服务器，<code>url</code> 是 Claude Code 连接到的端点。</li>
+<li>对于 stdio 服务器，<code>command</code> 和 <code>args</code> 是它运行的程序。</li>
+</ul>
+<p>保存文件后，在项目中启动新的 Claude Code 会话。Claude Code 在启动时读取 <code>.mcp.json</code>。</p>
+<p>Claude Code 第一次看到项目范围的服务器时，它会要求您批准它。提示存在是为了防止您克隆的存储库在未经您同意的情况下在您的机器上启动进程。批准提示，或如果您错过了，运行 <code>/mcp</code> 以稍后批准。</p>
+<p>批准后，运行 <code>/mcp</code> 并检查服务器是否显示为已连接。如果其中一个显示错误，请参阅<a href="#troubleshooting">故障排除</a>。</p>
+<h2 id="从其他界面连接"><a href="#从其他界面连接" class="headerlink" title="从其他界面连接"></a>从其他界面连接</h2><p>本指南使用 <code>claude mcp</code> CLI 命令，但每个 Claude Code 界面都可以连接到 MCP 服务器：</p>
+<ul>
+<li><strong>Claude Code 桌面应用</strong>：通过 <a href="/zh-CN/desktop#connect-external-tools">连接器 UI</a> 添加服务器。</li>
+<li><strong>Claude 桌面聊天应用</strong>：与 Claude Code 不同的应用。要将其 <code>claude_desktop_config.json</code> 中的服务器复制到 CLI，请在 macOS 或 WSL 上运行 <code>claude mcp add-from-claude-desktop</code>。</li>
+<li><strong>VS Code</strong>：请参阅<a href="/zh-CN/vs-code#connect-to-external-tools-with-mcp">使用 MCP 连接到外部工具</a>。</li>
+<li><strong>网络上的 Claude Code</strong>：从您的存储库读取 <code>.mcp.json</code>。请参阅<a href="#edit-mcp-json-directly">直接编辑 .mcp.json</a>。</li>
+<li><strong>Claude.ai</strong>：您在 <a target="_blank" rel="noopener" href="https://claude.ai/customize/connectors">claude.ai&#x2F;customize&#x2F;connectors</a> 添加的连接器在您使用该帐户登录 CLI 时自动加载。请参阅<a href="/zh-CN/mcp#use-mcp-servers-from-claude-ai">从 Claude.ai 使用 MCP 服务器</a>。</li>
+</ul>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><p>如果服务器不连接，请在会话内使用 <code>/mcp</code> 或从 shell 使用 <code>claude mcp list</code> 检查其状态，然后匹配下面的症状。<code>/mcp</code> 面板还允许您重新连接或进行身份验证而无需离开会话。</p>
+<AccordionGroup>
+  <Accordion title="/mcp 显示未配置 MCP 服务器">
+    Claude Code 没有为当前目录找到任何服务器。最常见的原因：
+
+<pre><code>* 您从不同的项目运行了 `claude mcp add`。本地范围的服务器与您添加它们的项目相关联：存储库根目录，或如果您不在 git 存储库中，则为确切目录。从您现在所在的项目重新添加服务器，或使用 `--scope user` 添加它，以便它不与项目相关联。
+* 您在错误的路径编辑了配置文件。正确的文件是 `~/.claude.json` 和 `&lt;project&gt;/.mcp.json`。Claude Code 不读取 `~/.claude/config/mcp.json`、`~/.claude/mcp.json` 或 `%APPDATA%\Claude\mcp.json` 等路径。
+</code></pre>
+  </Accordion>
+
+  <Accordion title="状态显示连接失败或连接错误">
+    两种状态都意味着服务器没有启动或 URL 没有响应。对于期望令牌而不是 [连接需要登录的服务器](#connect-a-server-that-requires-sign-in) 中涵盖的浏览器登录的 HTTP 服务器，它们也可能出现。
+
+<pre><code>对于 HTTP 服务器，确认 URL 可从您的机器访问：
+
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -I https://mcp.sentry.dev/mcp</span><br></pre></td></tr></table></figure>
+
+在 PowerShell 中，使用 `curl.exe` 而不是 `curl`，以便请求转到真实的 curl 二进制文件而不是 `Invoke-WebRequest` 别名。
+
+响应告诉您您有什么样的问题：
+
+* `404` 或 `405`：服务器已启动。许多 MCP 端点仅回答 POST 请求，因此这仍然确认 URL 可从您的机器访问。
+* `401` 或 `403`：服务器已启动，您需要进行身份验证。使用 [连接需要登录的服务器](#connect-a-server-that-requires-sign-in) 中的浏览器登录，或对于接受令牌的服务器（如 GitHub 的），在 `claude mcp add` 命令上使用 `--header &quot;Authorization: Bearer &lt;token&gt;&quot;` 传递它。
+* 完全没有响应：检查 URL 和您的网络。
+
+对于 stdio 服务器，直接在终端中运行配置的命令以查看基础错误。对于本指南中的 Playwright 服务器，运行：
+
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx -y @playwright/mcp@latest</span><br></pre></td></tr></table></figure>
+
+接下来发生的事情告诉您问题在哪里：
+
+* 命令启动并等待输入：服务器本身工作。运行 `claude mcp get &lt;name&gt;` 并确认那里显示的命令与您刚刚运行的命令匹配。如果显示的命令与您键入的不同，您可能在服务器命令之前省略了 `--` 分隔符。删除服务器并使用 `--` 重新添加它。如果您手工编写了 `.mcp.json`，请检查其语法和位置。
+* 命令出错：消息命名缺少的内容，例如 Node.js 或浏览器。
+</code></pre>
+  </Accordion>
+
+  <Accordion title="连接在启动时超时">
+    服务器花费的时间超过了默认的 30 秒启动超时。stdio 服务器的第一次运行在 `npx` 下载包时可能很慢。使用 [`MCP_TIMEOUT`](/zh-CN/env-vars) 环境变量（以毫秒为单位）增加限制：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MCP_TIMEOUT=60000 claude</span><br></pre></td></tr></table></figure>
+
+在 PowerShell 中，在同一行上的命令之前设置变量：
+
+<figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env:MCP_TIMEOUT</span> = <span class="string">&quot;60000&quot;</span>; claude</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Accordion>
+
+  <Accordion title="服务器已存在">
+    您已在同一范围内添加了具有该名称的服务器。要么先删除现有条目，要么选择不同的名称：
+
+<pre><code><figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp remove claude-code-docs</span><br></pre></td></tr></table></figure>
+
+如果名称存在于多个范围内，`remove` 报告 `exists in multiple scopes`。传递 `--scope` 以选择要删除的副本，例如 `claude mcp remove claude-code-docs --scope local`。
+</code></pre>
+  </Accordion>
+
+  <Accordion title="服务器连接但没有工具出现">
+    在会话内运行 `/mcp` 并选择服务器以查看其工具列表。如果列表为空，服务器启动但没有注册任何工具，这通常意味着它缺少必需的环境变量，例如 API 密钥。
+
+<pre><code>在 `claude mcp add` 上使用 `--env KEY=value` 传递变量，或在服务器的 `.mcp.json` 条目的 `env` 字段中传递。服务器的文档列出了它需要的变量。
+</code></pre>
+  </Accordion>
+
+  <Accordion title=".mcp.json 的更改不生效">
+    Claude Code 在会话启动时读取 `.mcp.json`。编辑文件后退出并重新启动会话。
+
+<pre><code>如果您的服务器仍然没有出现，运行 `/mcp` 并查找解析警告。Claude Code 跳过格式错误的条目并在那里显示有问题的字段。
+
+如果您之前在提示时拒绝了服务器，请重置项目批准：
+
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp reset-project-choices</span><br></pre></td></tr></table></figure>
+</code></pre>
+  </Accordion>
+
+  <Accordion title="OAuth 登录失败或浏览器不打开">
+    运行 `/mcp`，选择服务器，然后再次选择 `Authenticate`。如果浏览器没有自动打开，复制终端中显示的 URL 并手动打开它。有关固定回调端口和预配置凭据，请参阅[使用远程 MCP 服务器进行身份验证](/zh-CN/mcp#authenticate-with-remote-mcp-servers)。
+  </Accordion>
+</AccordionGroup>
+
+<h2 id="后续步骤"><a href="#后续步骤" class="headerlink" title="后续步骤"></a>后续步骤</h2><p>连接一个服务器后，探索 MCP 启用的其余功能：</p>
+<ul>
+<li><a href="/zh-CN/mcp#find-and-build-mcp-servers">查找更多 MCP 服务器</a> 在 Anthropic 目录中</li>
+<li><a href="/zh-CN/mcp#mcp-installation-scopes">与您的团队共享服务器</a> 使用安装范围</li>
+<li><a href="/zh-CN/managed-mcp">为组织管理 MCP 访问</a> 使用托管设置和策略控制</li>
+<li><a href="/zh-CN/mcp#use-mcp-resources">在提示中引用 MCP 资源</a> 使用 @ 提及</li>
+<li><a href="/zh-CN/mcp#use-mcp-prompts-as-commands">将 MCP 提示作为命令运行</a> 从 <code>/</code> 菜单</li>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/quickstart/server">构建您自己的服务器</a> 使用 MCP SDK</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/03/01/mcp-quickstart/">https://hzhzxfs.github.io/2026/03/01/mcp-quickstart/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/02/mcp/" title="mcp"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">mcp</div></div><div class="info-2"><div class="info-item-1">通过 MCP 将 Claude Code 连接到工具 了解如何使用 Model Context Protocol 将 Claude Code 连接到您的工具。  Claude Code 可以通过 Model Context Protocol (MCP)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。 当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。 如果您是第一次连接服务器，请从 MCP 快速入门 开始，获取分步演练。本页面是完整参考。 使用 MCP 可以做什么连接 MCP 服务器后，您可以要求 Claude Code：  从问题跟踪器实现功能：”添加 JIRA 问题 ENG-4521 中描述的功能，并在 GitHub 上创建 PR。” 分析监控数据：”检查 Sentry 和 Statsig 以检查 ENG-4521 中描述的功能的使用情况。” 查询数据库：...</div></div></div></a><a class="pagination-related" href="/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/" title="9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</div></div><div class="info-2"><div class="info-item-1">第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专家” (Sub-agents) 进行分工协作，最终通过 MCP 将成果交付到外部系统 (Notion)。  1. 核心架构：指挥官与专家团队 (The Architecture)我们使用 SDK 构建的系统架构可以映射为传统的企业组织结构：    架构层级 概念隐喻 (Metaphor) 代码组件 (SDK Component) 本案具体实现 (Implementation)    The Brain 指挥官 &#x2F; 编排者 Main Agent + TaskTool 负责理解需求，加载技能制定计划，分派任务，最后合成报告。   The Arms 专家 &#x2F; 执行者 Age...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/17/slack/" title="slack"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">slack</div></div><div class="info-2"><div class="info-item-1">Slack 中的 Claude Code 直接从 Slack 工作区委派编码任务  Slack 中的 Claude Code 将 Claude Code 的强大功能直接引入您的 Slack 工作区。当您使用编码任务提及 @Claude 时，Claude 会自动检测意图并在网络上创建 Claude Code 会话，允许您在不离开团队对话的情况下委派开发工作。 此集成基于现有的 Claude for Slack 应用程序构建，但为与编码相关的请求添加了到网络上 Claude Code 的智能路由。 用例 Bug 调查和修复：要求 Claude 在 Slack 频道中报告 Bug 时立即调查和修复。 快速代码审查和修改：让 Claude 根据团队反馈实现小功能或重构代码。 协作调试：当团队讨论提供关键背景信息（例如错误重现或用户报告）时，Claude 可以使用该信息来指导其调试方法。 并行任务执行：在 Slack 中启动编码任务，同时继续其他工作，完成时收到通知。  前置条件在使用 Slack 中的 Claude Code 之前，请确保您具有以下条件：    要求 详情    Clau...</div></div></div></a><a class="pagination-related" href="/2026/03/21/troubleshooting/" title="troubleshooting"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-21</div><div class="info-item-2">troubleshooting</div></div><div class="info-2"><div class="info-item-1">故障排除 修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。  本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：    症状 转到    command not found、安装失败、PATH 问题、EACCES、TLS 错误 故障排除安装和登录   登录循环、OAuth 错误、403 Forbidden、”organization disabled”、Bedrock&#x2F;Vertex&#x2F;Foundry 凭据 故障排除安装和登录   设置未应用、hooks 未触发、MCP 服务器未加载 调试您的配置   API Error: 5xx、529 Overloaded、429、请求验证错误 错误参考   model not found 或 you may not have access to it 错误参考   VS Code 扩展未连接或未检测到 Claude VS Code 集成   JetBrains 插件或 IDE 未检测到 JetB...</div></div></div></a><a class="pagination-related" href="/2026/03/09/quickstart/" title="quickstart"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-09</div><div class="info-item-2">quickstart</div></div><div class="info-2"><div class="info-item-1">快速开始 欢迎使用 Claude Code！  本快速开始指南将在几分钟内让您使用 AI 驱动的编码辅助。完成本指南后，您将了解如何使用 Claude Code 完成常见的开发任务。 开始前确保您拥有：  打开的终端或命令提示符 如果您之前从未使用过终端，请查看终端指南   一个可以使用的代码项目 一个 Claude 订阅（Pro、Max、Team 或 Enterprise）、Claude Console 账户，或通过支持的云提供商的访问权限     本指南涵盖终端 CLI。Claude Code 也可在[网页](https://claude.ai/code)、[桌面应用](/zh-CN/desktop)、[VS Code](/zh-CN/vs-code) 和 [JetBrains IDE](/zh-CN/jetbrains)、[Slack](/zh-CN/slack) 中使用，以及通过 [GitHub Actions](/zh-CN/github-actions) 和 [GitLab](/zh-CN/gitlab-ci-cd) 进行 CI/CD。查看[所有界面](/zh-CN/...</div></div></div></a><a class="pagination-related" href="/2026/05/06/06-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/" title="06-上下文管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-06</div><div class="info-item-2">06-上下文管理</div></div><div class="info-2"><div class="info-item-1">第 6 篇：上下文管理 — 无限对话的秘密 本篇是《深入 Claude Code 源码》系列的第 6 篇。我们将深入分析 Claude Code 如何在有限的 context window 内支撑无限长度的对话——从 token 预算管理、多级压缩策略，到文件状态缓存与 compact 后恢复的设计。 范围说明：上下文的”构建”（System Prompt 组装、CLAUDE.md 注入、git status 获取）已在第 4 篇中覆盖，缓存策略的横切视角将在第 7 篇中展开。本篇聚焦于上下文构建完成后的压缩、清理与恢复——即当 context window 不够用时，Claude Code 如何在不中断对话的情况下释放空间并重建必要的工作上下文。  为什么上下文管理如此重要？LLM 的 context window 是有限的。Claude 的模型通常有 200K token 的窗口（部分模型支持 1M），看起来很大，但在实际使用中消耗极快：  一次 System Prompt 可能占 5K-15K token 用户附带的 CLAUDE.md 文件可能占 3K-10K token...</div></div></div></a><a class="pagination-related" href="/2026/03/02/mcp/" title="mcp"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-02</div><div class="info-item-2">mcp</div></div><div class="info-2"><div class="info-item-1">通过 MCP 将 Claude Code 连接到工具 了解如何使用 Model Context Protocol 将 Claude Code 连接到您的工具。  Claude Code 可以通过 Model Context Protocol (MCP)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。 当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。 如果您是第一次连接服务器，请从 MCP 快速入门 开始，获取分步演练。本页面是完整参考。 使用 MCP 可以做什么连接 MCP 服务器后，您可以要求 Claude Code：  从问题跟踪器实现功能：”添加 JIRA 问题 ENG-4521 中描述的功能，并在 GitHub 上创建 PR。” 分析监控数据：”检查 Sentry 和 Statsig 以检查 ENG-4521 中描述的功能的使用情况。” 查询数据库：...</div></div></div></a><a class="pagination-related" href="/2026/04/18/jetbrains/" title="jetbrains"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">jetbrains</div></div><div class="info-2"><div class="info-item-1">JetBrains IDEs 在 JetBrains IDE（包括 IntelliJ、PyCharm、WebStorm 等）中使用 Claude Code  Claude Code 通过专用插件与 JetBrains IDE 集成，提供交互式差异查看、选择上下文共享等功能。 支持的 IDEClaude Code 插件适用于大多数 JetBrains IDE，包括：  IntelliJ IDEA PyCharm Android Studio WebStorm PhpStorm GoLand  功能 快速启动：使用 Cmd+Esc（Mac）或 Ctrl+Esc（Windows&#x2F;Linux）直接从编辑器打开 Claude Code，或点击 UI 中的 Claude Code 按钮 差异查看：代码更改可以直接在 IDE 差异查看器中显示，而不是在终端中显示 选择上下文：IDE 中的当前选择或标签页会自动与 Claude Code 共享。Read 拒绝规则会阻止对匹配文件的此共享 文件引用快捷方式：使用 Cmd+Option+K（Mac）或 Alt+Ctrl+K（Linux&#x...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0-MCP-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">连接到 MCP 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E4%B9%8B%E5%89%8D"><span class="toc-number">1.1.</span> <span class="toc-text">开始之前</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%B9%B6%E9%AA%8C%E8%AF%81%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">添加并验证服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.3.</span> <span class="toc-text">服务器保存位置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%A3%81%E7%9B%98%E4%B8%8A%E6%89%BE%E5%88%B0%E6%82%A8%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">在磁盘上找到您的配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8C%83%E5%9B%B4"><span class="toc-number">1.4.</span> <span class="toc-text">更改服务器范围</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E6%89%80%E6%9C%89%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">在所有项目中使用服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E6%82%A8%E7%9A%84%E5%9B%A2%E9%98%9F%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">与您的团队共享服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96-MCP-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.5.</span> <span class="toc-text">其他 MCP 服务器示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%9C%AC%E5%9C%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.5.1.</span> <span class="toc-text">添加本地服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%9C%80%E8%A6%81%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.5.2.</span> <span class="toc-text">连接需要登录的服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E7%BC%96%E8%BE%91-mcp-json"><span class="toc-number">1.6.</span> <span class="toc-text">直接编辑 .mcp.json</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%85%B6%E4%BB%96%E7%95%8C%E9%9D%A2%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.7.</span> <span class="toc-text">从其他界面连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">1.8.</span> <span class="toc-text">故障排除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.9.</span> <span class="toc-text">后续步骤</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

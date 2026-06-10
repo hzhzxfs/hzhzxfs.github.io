@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>推理加速 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="推理加速模型量化数值类型LLM 的训练和推理要尽量使用 BF16，而不是 FP16&#x2F;HF16&#x2F;FP32。  FP32：单精度浮点数，用 8 bit 表示指数，23 bit 表示小数； FP16：半精度浮点数，用 5 bit 表示指数，10 bit 表示小数； BF16：对 FP32 单精度浮点数截断数据（小数部分），即用 8 bit 表示指数，7 bit 表示小数。    这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推理加速">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="推理加速模型量化数值类型LLM 的训练和推理要尽量使用 BF16，而不是 FP16&#x2F;HF16&#x2F;FP32。  FP32：单精度浮点数，用 8 bit 表示指数，23 bit 表示小数； FP16：半精度浮点数，用 5 bit 表示指数，10 bit 表示小数； BF16：对 FP32 单精度浮点数截断数据（小数部分），即用 8 bit 表示指数，7 bit 表示小数。    这里">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-12-10T09:51:30.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.543Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "推理加速",
+  "url": "https://hzhzxfs.github.io/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-12-10T09:51:30.000Z",
+  "dateModified": "2026-06-10T02:14:46.543Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '推理加速',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">推理加速</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">推理加速</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-10T09:51:30.000Z" title="发表于 2025-12-10 17:51:30">2025-12-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.543Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="推理加速"><a href="#推理加速" class="headerlink" title="推理加速"></a>推理加速</h1><h2 id="模型量化"><a href="#模型量化" class="headerlink" title="模型量化"></a>模型量化</h2><h3 id="数值类型"><a href="#数值类型" class="headerlink" title="数值类型"></a>数值类型</h3><p>LLM 的训练和推理要尽量使用 BF16，而不是 FP16&#x2F;HF16&#x2F;FP32。</p>
+<ul>
+<li><strong>FP32</strong>：单精度浮点数，用 8 bit 表示指数，23 bit 表示小数；</li>
+<li><strong>FP16</strong>：半精度浮点数，用 5 bit 表示指数，10 bit 表示小数；</li>
+<li><strong>BF16</strong>：对 FP32 单精度浮点数截断数据（小数部分），即用 8 bit 表示指数，7 bit 表示小数。</li>
+</ul>
+<p><img src="/./images/iShot_2024-10-30_10.30.17.png" alt="量化"></p>
+<blockquote>
+<p>这里的计算方式不太懂？</p>
+</blockquote>
+<p><strong>BF16 vs HF16</strong>：</p>
+<p>BF16 拥有 7 位精度，而 HF16 拥有 10 位精度。这表明在表示接近于 1 的小数值时，HF16 比 BF16 能提供更高的精度。然而，BF16 拥有与 FP32 相同的 8 位指数部分，因而能够表示与 FP32 几乎一样广泛的数值范围，这对于避免上溢和下溢非常重要。尽管 BF16 在尾数精度上不如 HF16，但在深度学习应用中，这种较宽的数值范围通常比尾数的额外几位精度更为重要。这是因为深度学习模型通常对权重的尾数精度不是非常敏感，而更依赖于能够处理范围广泛的梯度和权重值。</p>
+<p><strong>总结</strong>：</p>
+<p>量化后速度并不能明显提高，但占用的显存显著减少。</p>
+<p>在训练时，为保证精度，主权重始终为 FP32。而在推理时，FP16 权重通常能提供与 FP32 相似的精度，这意味着在推理时使用 FP16 权重，仅需一半 GPU 显存就能获得相同的结果。</p>
+<h3 id="常用量化方法"><a href="#常用量化方法" class="headerlink" title="常用量化方法"></a>常用量化方法</h3><p><strong>INT8 量化</strong>：</p>
+<p><img src="/./images/iShot_2024-10-30_15.43.58.png" alt="quan"></p>
+<p><img src="/./images/iShot_2024-10-30_15.47.41.png" alt="quan2"></p>
+<p>可以通过组合各种技巧，例如逐行或逐向量量化，来获取更精确的结果。</p>
+<p><strong>混合精度分解</strong>：</p>
+<ul>
+<li>蓝色块：正常范围内的值做 INT8 量化，左边矩阵按行量化，右边矩阵按列量化，做完 INT8 的矩阵乘后，再反量化回 FP16；</li>
+<li>黄色块：离群值不做量化，单独拿出来做 FP16 的矩阵乘。</li>
+</ul>
+<p>最后，将蓝色块和黄色块拼接回一个矩阵。</p>
+<h3 id="其它量化方法"><a href="#其它量化方法" class="headerlink" title="其它量化方法"></a>其它量化方法</h3><ul>
+<li>AWQ；</li>
+<li>GGUF；</li>
+<li>GPTQ；</li>
+<li>SmoothQuant。</li>
+</ul>
+<h2 id="模型结构改进"><a href="#模型结构改进" class="headerlink" title="模型结构改进"></a>模型结构改进</h2><h3 id="FlashAttention"><a href="#FlashAttention" class="headerlink" title="FlashAttention"></a>FlashAttention</h3><p><a target="_blank" rel="noopener" href="https://github.com/Dao-AILab/flash-attention"><u>FlashAttention Github</u></a>。</p>
+<h3 id="PagedAttention"><a href="#PagedAttention" class="headerlink" title="PagedAttention"></a>PagedAttention</h3><p>vLLM。</p>
+<h2 id="Dynamic-Batch"><a href="#Dynamic-Batch" class="headerlink" title="Dynamic Batch"></a>Dynamic Batch</h2><p><strong>Static Batching</strong>：</p>
+<p><img src="/./images/iShot_2024-10-30_16.20.24.png" alt="batch"></p>
+<p><strong>Dynamic Batching</strong>：</p>
+<p>一旦生成序列结束标记，我们就在其位置插入一个新序列。这样可以实现更高的 GPU 利用率，因为 GPU 不会等待所有序列完成才开始新的序列。</p>
+<p><img src="/./images/iShot_2024-10-30_14.52.44.png" alt="batch2"></p>
+<p><strong>LLM 推理是 memory-IO bound（约束）的, 不是 compute bound 的</strong>。</p>
+<p>换句话说，目前将 1MB 数据加载到 GPU 计算核心所需的时间比这些计算核心对 1 MB 数据执行 LLM 计算所需的时间要长。这意味着 LLM 推理的吞吐量，很大程度上被一个 batch 中可以匹配多大高带宽的 GPU 内存所决定。</p>
+<h2 id="Speculative-Inference"><a href="#Speculative-Inference" class="headerlink" title="Speculative Inference"></a>Speculative Inference</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/688736901"><u>LLM 推理加速方式汇总</u></a>；</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/699776257"><u>LLM 推理加速调研</u></a>；</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/627436535"><u>大语言模型的模型量化（INT8&#x2F;INT4）技术</u></a>；</li>
+<li><a target="_blank" rel="noopener" href="https://www.anyscale.com/blog/continuous-batching-llm-inference"><u>Continuous Batching</u></a>；</li>
+<li><a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html#understand-perf"><u>Understanding GPU Performance</u></a>。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/">https://hzhzxfs.github.io/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/12/11/%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E/" title="推理引擎"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">推理引擎</div></div><div class="info-2"><div class="info-item-1">推理引擎推理系统与推理引擎训练和推理服务推理和训练的区别：  模型部署后，长期运行； 不需要反向传播； 部署设备更加多样。  推理服务系统的功能（与 AI 算法关系不大，更多地是平台性的工作）：  模型加载； 版本管理； 数据管理； 服务接口。  优化目标 低延迟； 高吞吐：高负载； 高效率：低功耗使用 CPU&#x2F;GPU； 灵活性：支持多框架； 扩展性。  部署态场景：数据中心的服务端、边缘侧的移动端。  云端； 边侧：严格约束功耗、算力不足、数据分散、平台多样化。  推理系统架构推理服务化、推理服务框架。 基本概念：  推理：前向计算； 部署：将模型部署到硬件上，包括：移植、压缩、加速等； 服务化：将模型封装为 sdk 或 web 服务。  Triton 服务化框架：  接入层：HTTP、gRPC、CAPI； 模型仓库； 模型预编排：解析 URL 请求； 框架后端：指推理引擎（如 TensorRT、ONNX Runtime、MindSpore Lite 等）； 监控功能：健康管理。  模型版本管理模型生命周期管理：  金丝雀策略（Canary）； 回滚策略（Rollba...</div></div></div></a><a class="pagination-related" href="/2025/12/09/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" title="性能测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">性能测试</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VL 性能测试环境设置1234567# vllmcd /workspace/vllmgit reset --hard 2918c1b49c88c29783c86f78d2c4221cb9622379# vllm-ascend: maincd /workspace/vllm-ascendpip install -r benchmarks/requirements-bench.txt  Run: 1bash benchmarks/scripts/run-performance-benchmarks.sh  Benchmark 结果Before (未移除任何 layer 之前): 12345678910111213141516171819202122232425============ Serving Benchmark Result ============Successful requests:                     200       Failed requests:                         0         Reque...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8%E5%8D%95%E5%BC%A0%E9%AB%98%E5%88%86%E8%BE%A8%E7%8E%87%E5%9B%BE%EF%BC%9F/" title="为什么不用单张高分辨率图？"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-15</div><div class="info-item-2">为什么不用单张高分辨率图？</div></div><div class="info-2"><div class="info-item-1">一、为什么不用单张高分辨率图？传统 VLM 如果直接输入： 比如：  1024×1024 1536×1536  ViT patch 数会急剧上升。 假设 patch size &#x3D; 14（ViT 常见） 那么 token 数近似： 728×728[(728&#x2F;14)^2 &#x3D; 52^2 &#x3D; 2704] 1024×1024[(1024&#x2F;14)^2 \approx 73^2 &#x3D; 5329] 几乎翻倍。 而 ViT self-attention复杂度是： O(N^2) token翻倍，attention计算可能接近 4倍。 所以 Step3-VL 的策略是：  不要让一张图特别大，而是拆成： 一个全局图 + 多个局部图  这样可以：  保持 global understanding 获得 local detail batch 并行计算更友好  论文里明确提到：  exploits batch-dimension parallelism, avoiding variable-length packing complexity. (Hy...</div></div></div></a><a class="pagination-related" href="/2025/08/11/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADPlacement%20Group%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8/" title="Ray框架中Placement Group概念及作用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="info-item-2">Ray框架中Placement Group概念及作用</div></div><div class="info-2"><div class="info-item-1">好的，我们来详细解释一下 Ray 框架中的 Placement Group 概念及其作用。 核心概念：什么是 Placement Group？Placement Group 是 Ray 中用于精细化控制任务或角色资源布局的抽象概念。它允许你提前声明一“组”资源，并指定这组资源在集群中的“摆放策略”，然后你可以将任务或演员调度到这组资源的“插槽”中。 你可以把它想象成：  传统调度：就像你去餐厅，告诉服务员“我需要两个座位”，服务员会随机找两个空位给你。 使用 Placement Group：就像你提前预定了一个包含特定座位（比如一个沙发座和两个普通座）的卡座，并指定这个卡座要靠窗。之后你的朋友们会直接到这个预定好的卡座就坐。   为什么需要 Placement Group？它的作用是什么？在没有 Placement Group 的情况下，Ray 的默认调度器虽然能高效地分配资源，但它主要关注的是“资源量”（例如，需要 2 个 CPU），而不太关心“资源的位置”。这在很多高级场景下会成为一个瓶颈。 Placement Group 的主要作用体现在以下几个方面： 1. 实现任务间的紧...</div></div></div></a><a class="pagination-related" href="/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/" title="Qwen3-Omni没有vllm_config属性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-07</div><div class="info-item-2">Qwen3-Omni没有vllm_config属性</div></div><div class="info-2"><div class="info-item-1">1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config = vllm_config </div></div></div></a><a class="pagination-related" href="/2025/08/12/qwen3_vl_image_vs_video_inference/" title="qwen3_vl_image_vs_video_inference"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-12</div><div class="info-item-2">qwen3_vl_image_vs_video_inference</div></div><div class="info-2"><div class="info-item-1">Qwen3-VL：图像推理与视频推理的区别1. 输入预处理图像 输入为静态图片，经过 image_processor 处理 使用 Conv3dLayer（temporal_patch_size&#x3D;2）对图片做 patch 嵌入，但 t&#x3D;1（单帧） 输出 pixel_values（shape: [num_patches, flattened_patch_size]） grid 信息保存在 image_grid_thw，每条记录为 [1, H, W]  视频 输入为视频帧序列，经过 video_processor 处理 先均匀采样若干帧（如 16 帧），再按 temporal_patch_size=2 分组打包成时序 patch 输出 pixel_values_videos（shape: [num_patches, flattened_patch_size]） grid 信息保存在 video_grid_thw，每条记录为 [T, H, W]，T≥1 表示时序维度   2. 输入格式差异   维度 图像 视频    pixel values key pixel_va...</div></div></div></a><a class="pagination-related" href="/2025/12/01/TorchAir%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="TorchAir学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-01</div><div class="info-item-2">TorchAir学习笔记</div></div><div class="info-2"><div class="info-item-1">TorchAir 学习笔记Eager Mode（单算子模式）：  优点：立即执行并返回结果；易用、可调试；动态构建计算图（图的形状和大小可以在运行时改变）； 缺点：可能存在性能问题（host bound），每一次 OP 调用触发一次 python&#x2F;C++ 相关处理（torch&#x2F;torch-npu&#x2F;CANN）。  PyTorch 图模式演进： torch.jit -&gt; lazy tensor -&gt; TorchDynamo（PyTorch 2.0 正式集成，对外提供 torch.compile API，不光提供了成图能力，也同时发布了 Inductor 代码生成后端） torch.compile 底层原理：  前端：  图定义：torch fx 定义了一种图结构表达，并且能够进行 python 代码生成； 图生成：TorchDynamo 解析 python 编译后的 PyCodeObject 字节码，并生成一张 fx 图（传给用户定义的 Compiler）；   后端：  图编译、图执行：TorchAir 是 torch.compile 里的...</div></div></div></a><a class="pagination-related" href="/2025/12/15/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="线性代数基本概念"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-15</div><div class="info-item-2">线性代数基本概念</div></div><div class="info-2"><div class="info-item-1">线性代数基本概念 特征值和特征向量 值域空间 零空间 行空间与列空间 正交补 基 标准正交基 奇异值分解 Matrix Norm (矩阵范数) Frobenius Norm (弗罗贝尼乌斯范数)   奇异值分解在统计中的主要应用为主成分分析（PCA）。数据集的特征值（在 SVD 中用奇异值表征）按照重要性排列，降维的过程就是舍弃不重要的特征向量的过程，而剩下的特征向量张成空间为降维后的空间。 </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F"><span class="toc-number">1.</span> <span class="toc-text">推理加速</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text">模型量化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">数值类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E9%87%8F%E5%8C%96%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">常用量化方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E9%87%8F%E5%8C%96%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.3.</span> <span class="toc-text">其它量化方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84%E6%94%B9%E8%BF%9B"><span class="toc-number">1.2.</span> <span class="toc-text">模型结构改进</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FlashAttention"><span class="toc-number">1.2.1.</span> <span class="toc-text">FlashAttention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PagedAttention"><span class="toc-number">1.2.2.</span> <span class="toc-text">PagedAttention</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dynamic-Batch"><span class="toc-number">1.3.</span> <span class="toc-text">Dynamic Batch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Speculative-Inference"><span class="toc-number">1.4.</span> <span class="toc-text">Speculative Inference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.5.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

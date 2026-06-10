@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>大模型基础知识 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="大模型基础知识Tokenizertoken：最小语义单元。多模态模型：图像等 -&gt; token，再与文本的 token 进行拼接。 tokenizer：分词器。输入文本 -&gt; token_id（input_id）。 input ids：token 的索引，是整数向量。 tokenizer.decode()：将 input_ids 转化为对应的 embedding 向量。  模型文件解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型基础知识">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/11/17/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="大模型基础知识Tokenizertoken：最小语义单元。多模态模型：图像等 -&gt; token，再与文本的 token 进行拼接。 tokenizer：分词器。输入文本 -&gt; token_id（input_id）。 input ids：token 的索引，是整数向量。 tokenizer.decode()：将 input_ids 转化为对应的 embedding 向量。  模型文件解析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-11-17T09:54:04.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.532Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "大模型基础知识",
+  "url": "https://hzhzxfs.github.io/2025/11/17/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-11-17T09:54:04.000Z",
+  "dateModified": "2026-06-10T02:14:46.532Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/11/17/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '大模型基础知识',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">大模型基础知识</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">大模型基础知识</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-17T09:54:04.000Z" title="发表于 2025-11-17 17:54:04">2025-11-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.532Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="大模型基础知识"><a href="#大模型基础知识" class="headerlink" title="大模型基础知识"></a>大模型基础知识</h1><h2 id="Tokenizer"><a href="#Tokenizer" class="headerlink" title="Tokenizer"></a>Tokenizer</h2><p>token：最小语义单元。多模态模型：图像等 -&gt; token，再与文本的 token 进行拼接。</p>
+<p>tokenizer：分词器。输入文本 -&gt; token_id（input_id）。</p>
+<p>input ids：token 的索引，是整数向量。</p>
+<p>tokenizer.decode()：将 input_ids 转化为对应的 embedding 向量。</p>
+<p><img src="/./images/2.png"></p>
+<p>模型文件解析：</p>
+<p><img src="/./images/1.png"></p>
+<h2 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h2><p>Transformer &#x3D; Encoder + Decoder</p>
+<ul>
+<li>Encoder：适合理解型任务；</li>
+<li>Decoder：适合生成型任务。</li>
+</ul>
+<p>Self-Attention：</p>
+<p><img src="/./images/3.png"></p>
+<p>Mask-Attention：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> torch</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>seq_len = <span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>qkt = torch.randn([seq_len, seq_len])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>qkt</span><br><span class="line">tensor([[ <span class="number">0.0697</span>,  <span class="number">0.7932</span>, -<span class="number">0.1177</span>,  <span class="number">0.0812</span>],</span><br><span class="line">        [ <span class="number">0.3271</span>, -<span class="number">1.1111</span>, -<span class="number">0.8723</span>,  <span class="number">1.2537</span>],</span><br><span class="line">        [ <span class="number">1.7847</span>, -<span class="number">0.2803</span>,  <span class="number">1.3621</span>, -<span class="number">1.1000</span>],</span><br><span class="line">        [ <span class="number">0.5083</span>,  <span class="number">0.5289</span>,  <span class="number">1.9308</span>, -<span class="number">0.0894</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>masked = torch.tril(torch.ones([seq_len, seq_len])) <span class="comment"># 返回矩阵的下三角部分</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>masked</span><br><span class="line">tensor([[<span class="number">1.</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">0.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">0.</span>],</span><br><span class="line">        [<span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>, <span class="number">1.</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>qkt1 = qkt.masked_fill(masked == <span class="number">0</span>, <span class="built_in">float</span>(<span class="string">&#x27;-inf&#x27;</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>qkt1</span><br><span class="line">tensor([[ <span class="number">0.0697</span>,    -inf,    -inf,    -inf],</span><br><span class="line">        [ <span class="number">0.3271</span>, -<span class="number">1.1111</span>,    -inf,    -inf],</span><br><span class="line">        [ <span class="number">1.7847</span>, -<span class="number">0.2803</span>,  <span class="number">1.3621</span>,    -inf],</span><br><span class="line">        [ <span class="number">0.5083</span>,  <span class="number">0.5289</span>,  <span class="number">1.9308</span>, -<span class="number">0.0894</span>]])</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.armcvai.cn/2024-11-10/masked-attention.html">masked-attention 算法详解</a></p>
+<p>MHA（Multi-Head Attention，多头注意力）</p>
+<p>MLP（又叫 FFN）：升维 -&gt; 激活 -&gt; 降维。MLP 占了 Transformer 中最多的参数量和计算量。</p>
+<ul>
+<li>激活：增强模型的非线性表达能力；</li>
+<li>升维：更宽的线性层可以增强模型的表达能力。</li>
+</ul>
+<p>Embedding：单词 embedding（不包含时序信息）+ 位置 embedding（逐点相加）。</p>
+<h2 id="Llama-模型结构"><a href="#Llama-模型结构" class="headerlink" title="Llama 模型结构"></a>Llama 模型结构</h2><p><img src="/./images/4.png"></p>
+<p>FFN_SiLU：</p>
+<p><img src="/./images/5.png"></p>
+<p>RoPE 位置编码：</p>
+<p><img src="/./images/6.png"></p>
+<h2 id="大模型推理技术综述"><a href="#大模型推理技术综述" class="headerlink" title="大模型推理技术综述"></a>大模型推理技术综述</h2><p><img src="/./images/7.png"></p>
+<h2 id="张量并行"><a href="#张量并行" class="headerlink" title="张量并行"></a>张量并行</h2><h3 id="集合通信"><a href="#集合通信" class="headerlink" title="集合通信"></a>集合通信</h3><p><img src="/./images/8.png"></p>
+<p><img src="/./images/9.png"></p>
+<h3 id="并行技术"><a href="#并行技术" class="headerlink" title="并行技术"></a>并行技术</h3><p><img src="/./images/10.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/11/17/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">https://hzhzxfs.github.io/2025/11/17/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/19/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%AD%E7%9A%84%E5%8A%A8%E6%80%81%E5%9B%BE%E4%B8%8E%E9%9D%99%E6%80%81%E5%9B%BE%E8%A7%A3%E6%9E%90/" title="大模型推理中的动态图与静态图解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">大模型推理中的动态图与静态图解析</div></div><div class="info-2"><div class="info-item-1">在大模型推理领域中，图模式（graph mode）中的动态图和静态图是什么意思？ 好的，这是一个在大模型推理和深度学习框架中非常核心的概念。我会用尽可能清晰的方式解释动态图和静态图的区别、原理以及它们在大模型推理中的权衡。 核心思想：何时构建计算图？想象一下，你的模型（比如一个Transformer）是由许多层（如线性层、注意力机制、激活函数等）组成的。这些层之间的数据流动和计算关系可以表示为一个计算图。 动态图 和 静态图 最根本的区别就在于这个计算图的构建时机和执行方式。  1. 动态图定义：边定义，边执行。 在动态图模式下，计算图是在代码运行时动态生成的。你每执行一行定义操作的代码（例如 z = x + y），这个操作就立即被执行，并且计算图也会实时地扩展一个节点。 类比：这就像Python的交互式解释器。你输入一行命令，它立刻给你返回结果。 技术特点  直观易懂：代码的执行流程和标准的Python程序完全一致，便于调试。你可以使用 print 语句、断点等所有熟悉的调试工具来检查任何一个中间变量的值。 灵活性高：因为图是动态的，所以你可以轻松使用Python的控制流，如 ...</div></div></div></a><a class="pagination-related" href="/2025/11/16/%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91/" title="代码编译"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">代码编译</div></div><div class="info-2"><div class="info-item-1">CUDA 编程练习编译程序跳过 .o 文件，直接编译链接成可执行文件。 12345678910nvcc xxx.cu -o xxx# or:nvcc xxx.cu --gpu-architecture=compute_yy -o xxx# GeForce RTX 2060 (Compute Capability: 7.5)nvcc xxx.cu --gpu-architecture=compute_75 -o xxx# nvcc xxx.cu -arch=sm_75 -o xxx (?)# 执行程序./xxx </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/" title="Qwen2.5-VL_RoPE计算流程详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-06</div><div class="info-item-2">Qwen2.5-VL_RoPE计算流程详解</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程整个流程从 forward(x, grid_thw) 开始，分为以下几个阶段：  第一步：初始化时预计算 cos&#x2F;sin 缓存qwen2_5_vl.py:608-612 123456self.rotary_pos_emb = get_rope(    head_size=head_dim,    max_position=8192,    is_neox_style=True,    rope_parameters=&#123;&quot;partial_rotary_factor&quot;: 0.5&#125;,)  get_rope 最终创建一个 RotaryEmbedding 对象，关键参数：  rotary_dim = head_dim * 0.5 → 只使用一半的 head 维度做旋转 在 _compute_cos_sin_cache 中(base.py:83-92)：  12345# inv_freq 形状: [rotary_dim // 2]inv_fr...</div></div></div></a><a class="pagination-related" href="/2025/12/09/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" title="性能测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-09</div><div class="info-item-2">性能测试</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VL 性能测试环境设置1234567# vllmcd /workspace/vllmgit reset --hard 2918c1b49c88c29783c86f78d2c4221cb9622379# vllm-ascend: maincd /workspace/vllm-ascendpip install -r benchmarks/requirements-bench.txt  Run: 1bash benchmarks/scripts/run-performance-benchmarks.sh  Benchmark 结果Before (未移除任何 layer 之前): 12345678910111213141516171819202122232425============ Serving Benchmark Result ============Successful requests:                     200       Failed requests:                         0         Reque...</div></div></div></a><a class="pagination-related" href="/2025/08/09/Qwen3-VL-8B%E6%8E%A8%E7%90%86%E7%BB%93%E6%9E%9C%E4%B8%BA%E7%A9%BA/" title="Qwen3-VL-8B推理结果为空"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-09</div><div class="info-item-2">Qwen3-VL-8B推理结果为空</div></div><div class="info-2"><div class="info-item-1">123456789101112131415161718192021222324252627python -m vllm.entrypoints.openai.api_server \--model /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct \--dtype bfloat16 \--gpu-memory-utilization 0.9 \--max-model-len 8192  \--max_num_batched_tokens 8192--host 0.0.0.0 \--port 8000 \--compilation-config &#x27;&#123;&quot;cudagraph_capture_sizes&quot;: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]&#125;&#x27;curl -X POST http://localhost:8000/v1/chat/completions \    -H &quot;Content-Type: app...</div></div></div></a><a class="pagination-related" href="/2025/11/12/vLLM4.md/" title="vLLM4.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-12</div><div class="info-item-2">vLLM4.md</div></div><div class="info-2"><div class="info-item-1">一、引言随着 vLLM 逐渐成为生产级场景下大模型推理的通用解决方案之一，期望 vLLM 支持各式各样算力底座的需求日趋强烈。目前，在 vLLM 的官方仓库中维护着 NVIDIA GPU、AMD GPU 以及 Google TPU 等多家芯片厂商的代码，但除此之外，还有更多的 AI 芯片是通过“硬件插件化机制”来支持自家算力的。 所有不在 vLLM 官方仓库中支持的硬件，都被统称为 OOT（Out Of Tree）Device，包括：  官方插件（指存在于 vllm-project 官方项目下的插件）：vllm-ascend（华为昇腾 NPU）、vllm-spyre、vllm-gaudi（Intel Gaudi）、vllm-neuron（AWS Neuron）、vllm-metal（Apple Silicon）等； 非官方插件：vLLM-metax（沐曦 GPU）、vLLM-Kunlun（百度昆仑芯 XPU）等。  本文将深入介绍 vLLM 硬件插件化系统的原理，以及如何通过 CustomOp 完成自定义算子的注册与替换，从而使 vLLM 能够灵活地、高效地支持多样性算力。 二、...</div></div></div></a><a class="pagination-related" href="/2025/11/06/SHM/" title="SHM"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-06</div><div class="info-item-2">SHM</div></div><div class="info-2"><div class="info-item-1">SHMShared Memory &#x3D; 多个进程&#x2F;设备可以“直接访问同一块内存”的机制。  普通进程通信（非 SHM）：进程 A → 拷贝 → 内核 → 拷贝 → 进程 B（数据被复制多次）； Shared Memory：进程 A ↔ 同一块内存 ↔ 进程 B（没有中间 copy）。  SHM 在不同层的含义：  操作系统：POSIX &#x2F; System V SHM。OS 分配一块内存，映射到多个进程的虚拟地址空间。特点：零拷贝（进程间）、需要同步机制（锁、信号量）。比如：from multiprocessing import shared_memory； GPU &#x2F; CUDA：GPU SM 内部的片上共享内存，给 thread block 用。特点：超快（比 global memory 快很多）。比如：__shared__ float buf[256]； 容器 &#x2F; Docker：是一个 tmpfs（内存文件系统），用来做进程间共享内存。比如 docker run --shm-size=8g，对应 /dev/shm。  在 vLLM ...</div></div></div></a><a class="pagination-related" href="/2025/12/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%BC%B8%E7%BC%A9%E7%AD%96%E7%95%A5%E8%A7%A3%E6%9E%90/" title="分布式系统伸缩策略解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-03</div><div class="info-item-2">分布式系统伸缩策略解析</div></div><div class="info-2"><div class="info-item-1">好的，这是一个非常核心的分布式系统与云计算概念。我们来详细解析“水平伸缩”和“垂直伸缩”的含义、区别以及各自的应用场景。  1. 核心含义水平伸缩 含义：通过增加或减少实例的数量来应对负载变化。这通常意味着在负载高时，向资源池中添加更多的服务器&#x2F;节点；在负载低时，移除多余的服务器&#x2F;节点。 形象比喻：一个餐厅客人变多，老板不是让同一个服务员干得更快（垂直伸缩），而是雇佣更多的服务员来分担工作。 技术实现：通常依赖于负载均衡器，将进入的请求流量分发到后端多个无状态的服务实例上。在云环境中，这通常通过自动伸缩组来实现。  垂直伸缩 含义：通过升级或降级单个实例的资源配置（如CPU、内存、磁盘I&#x2F;O）来应对负载变化。这通常意味着在负载高时，为服务器更换更强大的CPU或增加更多内存；在负载低时，降低配置以节省成本。 形象比喻：同一个服务员，通过让他参加培训、喝咖啡、使用更先进的工具，从而提升他个人的服务速度和能力。 技术实现：在物理机时代，这需要手动更换硬件。在云时代和虚拟化环境中，这通常可以通过改变虚拟机实例的规格（例如，AWS 从 t3.small 升级到...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">大模型基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Tokenizer"><span class="toc-number">1.1.</span> <span class="toc-text">Tokenizer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transformer"><span class="toc-number">1.2.</span> <span class="toc-text">Transformer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Llama-%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">Llama 模型结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E6%8A%80%E6%9C%AF%E7%BB%BC%E8%BF%B0"><span class="toc-number">1.4.</span> <span class="toc-text">大模型推理技术综述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C"><span class="toc-number">1.5.</span> <span class="toc-text">张量并行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E9%80%9A%E4%BF%A1"><span class="toc-number">1.5.1.</span> <span class="toc-text">集合通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E6%8A%80%E6%9C%AF"><span class="toc-number">1.5.2.</span> <span class="toc-text">并行技术</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

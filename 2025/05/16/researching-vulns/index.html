@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>researching-vulns | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="研究潜在的漏洞根据我们在 Kioptrix 的扫描和枚举中发现的内容，我们需要研究我们可能已识别的漏洞。 研究结果按我们认为最容易被利用和&#x2F;或最容易受到攻击的顺序排列： 123456789101112131415161718192021222324252627Target: 10.0.3.5Ports w&#x2F; findings:	80: HTTP		:80&#x2F;			Default page">
+<meta property="og:type" content="article">
+<meta property="og:title" content="researching-vulns">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/05/16/researching-vulns/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="研究潜在的漏洞根据我们在 Kioptrix 的扫描和枚举中发现的内容，我们需要研究我们可能已识别的漏洞。 研究结果按我们认为最容易被利用和&#x2F;或最容易受到攻击的顺序排列： 123456789101112131415161718192021222324252627Target: 10.0.3.5Ports w&#x2F; findings:	80: HTTP		:80&#x2F;			Default page">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-05-16T13:03:01.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.462Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Network Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "researching-vulns",
+  "url": "https://hzhzxfs.github.io/2025/05/16/researching-vulns/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-05-16T13:03:01.000Z",
+  "dateModified": "2026-06-10T02:14:46.462Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/05/16/researching-vulns/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'researching-vulns',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">researching-vulns</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">researching-vulns</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-16T13:03:01.000Z" title="发表于 2025-05-16 21:03:01">2025-05-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.462Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network-Security/">Network Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="研究潜在的漏洞"><a href="#研究潜在的漏洞" class="headerlink" title="研究潜在的漏洞"></a>研究潜在的漏洞</h1><p>根据我们在 Kioptrix 的扫描和枚举中发现的内容，我们需要研究我们可能已识别的漏洞。</p>
+<h2 id="研究结果"><a href="#研究结果" class="headerlink" title="研究结果"></a>研究结果</h2><p>按我们认为最容易被利用和&#x2F;或最容易受到攻击的顺序排列：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Target: 10.0.3.5</span><br><span class="line">Ports w/ findings:</span><br><span class="line">	80: HTTP</span><br><span class="line">		:80/</span><br><span class="line">			Default page <span class="keyword">for</span> Apache Web Server:</span><br><span class="line">				Apache v1.3.20 (Unix) (Red-Hat/Linux)</span><br><span class="line">				mod_ssl v2.8.4</span><br><span class="line">		:80/manual/*</span><br><span class="line">			manual pages <span class="keyword">for</span> Apache HTTP Server Version 1.3b5</span><br><span class="line">		:80/manual/mod/mod_ssl/*</span><br><span class="line">			manual pages <span class="keyword">for</span> mod_ssl v2.8.31</span><br><span class="line">	443: HTTPS</span><br><span class="line">			Apache/1.3.20 (Unix)  (Red-Hat/Linux) </span><br><span class="line">				mod_ssl v2.8.4 </span><br><span class="line">				OpenSSL v0.9.6b</span><br><span class="line">				SSLv2 supported</span><br><span class="line">	139: Samba/ NetBIOS</span><br><span class="line">		workgroup: MYGROUP</span><br><span class="line">		Anonymous login allowed (no password)</span><br><span class="line">		Shares:</span><br><span class="line">			IPC$</span><br><span class="line">			ADMIN$</span><br><span class="line">		SMB version 2.2.1a</span><br><span class="line">		ntlmv2</span><br><span class="line">	445: </span><br><span class="line">	22: SSH</span><br><span class="line">		OpenSSH 2.9p2 </span><br></pre></td></tr></table></figure>
+<h2 id="查找预先存在的漏洞和-CVE"><a href="#查找预先存在的漏洞和-CVE" class="headerlink" title="查找预先存在的漏洞和 CVE"></a>查找预先存在的漏洞和 CVE</h2><p>从 <code>mod_ssl</code> 开始，我们使用 nmap 找到的版本是 <code>2.8.4</code>。使用它，我们可以搜索这个确切版本的漏洞&#x2F;漏洞。我们可以使用一些资源来做到这一点。</p>
+<h3 id="利用数据库"><a href="#利用数据库" class="headerlink" title="利用数据库:"></a><a href="/cybersecurity/tools/exploitation/exploit-db.md">利用数据库</a>:</h3><p>Exploit DB 是恶意软件的数据库。该恶意软件可以在线阅读（<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/764%EF%BC%89%E6%88%96%E4%B8%8B%E8%BD%BD%E5%88%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E5%B9%B6%E4%BB%A5%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%E6%9F%A5%E7%9C%8B/%E4%BD%BF%E7%94%A8%E3%80%82">https://www.exploit-db.com/exploits/764）或下载到虚拟机中并以这种方式查看/使用。</a> <em>下载时，恶意软件应下载到隔离环境中</em> b&#x2F;c 执行时它将执行其设计的操作。</p>
+<p>还可以使用 <a href="/cybersecurity/tools/exploitation/searchsploit.md">searchsploit</a> 命令通过命令行搜索漏洞利用数据库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">searchsploit mod_ssl 2.8.4</span><br><span class="line">Exploit Title                                               |  Path</span><br><span class="line">--------------------------------------------------------------------------------------</span><br><span class="line">Apache mod_ssl &lt; 2.8.7 OpenSSL - <span class="string">&#x27;OpenFuck.c&#x27;</span> Remote Buffer Overflow                                                                              | unix/remote/21671.c</span><br><span class="line">Apache mod_ssl &lt; 2.8.7 OpenSSL - <span class="string">&#x27;OpenFuckV2.c&#x27;</span> Remote Buffer Overflow (1)                                                                        | unix/remote/764.c</span><br><span class="line">Apache mod_ssl &lt; 2.8.7 OpenSSL - <span class="string">&#x27;OpenFuckV2.c&#x27;</span> Remote Buffer Overflow (2)                                                                        | unix/remote/47080.c</span><br><span class="line">--------------------------------------------------------------------------------------</span><br><span class="line">Shellcodes: No Results</span><br></pre></td></tr></table></figure>
+<p>使用在线数据库或<code>searchsploit</code>，我们发现<a href="/cybersecurity/vulnerability/openfuck.md"><code>OpenFuck</code></a>，这是一个远程<a href="/cybersecurity/TTPs/exploitation/binary-exploitation/buffer-overflow.md">缓冲区溢出</a>。从在线数据库中，您可以查看漏洞本身的代码：<br><img src="/PNPT/PNPT-pics/researching-vulns-1.png"><br><img src="/PNPT-study-guide/PNPT-pics/researching-vulns-1.png"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/764">利用数据库：OpenFuckV2.c</a></p>
+</blockquote>
+<p><strong>您也可以通过 Google 搜索 <code>mod_ssl 2.8.4 exploit</code> &#x2F; <code>vulnerability</code> 并找到类似的结果</strong></p>
+<h3 id="记笔记"><a href="#记笔记" class="headerlink" title="记笔记"></a>记笔记</h3><p>记录您发现的漏洞，以便您在编写<a href="/cybersecurity/pen-testing/report-writing.md">报告</a> 时更容易参考。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p><code>vulnerabilities.txt</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80/443: Potentially vulnerable to OpenFuck (https://www.exploit-db.com/exploits/764)</span><br></pre></td></tr></table></figure>
+<h2 id="确定严重性"><a href="#确定严重性" class="headerlink" title="确定严重性"></a>确定严重性</h2><p>现在让我们搜索漏洞并利用 r&#x2F;t <code>Apache v1.3.20</code> （在 <code>port 80</code> 上运行的 <a href="/www/HTTP.md">HTTP</a> 服务器）。</p>
+<h3 id="CVE-详细信息"><a href="#CVE-详细信息" class="headerlink" title="CVE 详细信息"></a><a target="_blank" rel="noopener" href="https://cvedetails.com/">CVE 详细信息</a></h3><p>CVE 详细信息是我们可以用来研究漏洞的另一个来源。如果我们搜索 <code>apache 1.3.20</code> 我们可以找到多个 <a href="/cybersecurity/resources/CVEs.md">CVE</a> r&#x2F;t 我们找到的服务器。</p>
+<p>每个 CVE 使用 <a href="/cybersecurity/resources/CVSS.md">CVSS</a>（通用漏洞评分系统）<em>根据严重性</em> (1-10) 进行评级。我们希望为我们的服务器版本找到一个具有高严重性的版本。</p>
+<h3 id="漏洞评分-CVSS-："><a href="#漏洞评分-CVSS-：" class="headerlink" title="漏洞评分 (CVSS)："></a>漏洞评分 (CVSS)：</h3><p>CVE 的 CVSS 使用三个指标确定：</p>
+<h4 id="1-基础"><a href="#1-基础" class="headerlink" title="1. 基础"></a>1. 基础</h4><p>根据一些子指标给出的基本分数。这些子指标决定了漏洞的“可利用性或影响”。基本分数将根据时间和环境指标而变化。</p>
+<h4 id="2-颞叶"><a href="#2-颞叶" class="headerlink" title="2. 颞叶"></a>2. 颞叶</h4><p>根据 CVE 的漏洞代码的存在性、可用性和准确性对基本分数进行更改。</p>
+<h4 id="3-环境"><a href="#3-环境" class="headerlink" title="3.环境"></a>3.环境</h4><p>通过考虑各个企业采取或实施的缓解措施来更改基本分数。该指标允许组织根据其针对 CVE 的保护来更改 CVE 的总体 CVSS 分数。</p>
+<p>对于我们在 <code>mod_ssl 2.8.4</code> 中发现的 <code>OpenFuck</code> 漏洞，<a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2002-0082">NIST 已给出</a> 的基本分数为 <em>7.5（高）</em>（使用 CVSS 版本 2）。因此我们可以推断该漏洞的严重程度较高。漏洞利用代码很可能很容易获得、广泛传播并且易于执行。</p>
+<p>CVSS 也可能因其他原因而很高，但是，鉴于此分数只是没有时间或环境修饰符的基本分数，我们应该记住，该分数可能与我们的目标不同。</p>
+<h2 id="解决其他漏洞"><a href="#解决其他漏洞" class="headerlink" title="解决其他漏洞"></a>解决其他漏洞</h2><p>鉴于我们的潜在漏洞列表，以下是我们使用上述工作流程可以在其中找到的内容的摘要：<br><code>vulnerabilities.txt</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">80/443: mod_ssl v2.8.4</span><br><span class="line">	Potentially vulnerable to OpenFuck (https://www.exploit-db.com/exploits/764)</span><br><span class="line">	- OpenFuck/ CVE-2002-0082: CVSS 7.5 (NIST)</span><br><span class="line"></span><br><span class="line">139: Samba v2.2.1a</span><br><span class="line">	Potentially vulnerable to trans2open </span><br><span class="line">	(https://www.rapid7.com/db/modules/exploit/linux/samba/trans2open/)</span><br><span class="line">	- trans2open/ CVE-2003-0201: CVSS 10.0 (NIST)</span><br><span class="line"></span><br><span class="line">22: OpenSSH v2.9p2 </span><br><span class="line">	Potentially vulnerable to memory corruption via CVE-2021-28041</span><br><span class="line">	(https://www.cvedetails.com/cve/CVE-2021-28041)</span><br><span class="line">	- CVE-2021-28041: CVSS 4.6 - 7.1 (NIST)</span><br></pre></td></tr></table></figure>
+<p>根据列出的这些指标，<code>trans2open</code> 漏洞利用看起来可能是我们努力中最成功的。</p>
+<h3 id="trans2open-CVE-2003-0201"><a href="#trans2open-CVE-2003-0201" class="headerlink" title="trans2open&#x2F; CVE-2003-0201"></a><a href="/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/%E6%BC%8F%E6%B4%9E/trans2.md">trans2open</a>&#x2F; CVE-2003-0201</h3><p>对这个特定漏洞进行更多研究可以让我们更多地了解它的成功程度。根据 NIST 的说法，该 CVE 最后一次修改是在 2018 年，使用的是 CVSS v2，评分为 10.0。基本分数细分为：<br><img src="/PNPT/PNPT-pics/researching-vulns-3.png"><br><img src="/PNPT-study-guide/PNPT-pics/researching-vulns-3.png"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln-metrics/cvss/v2-calculator?name=CVE-2003-0201&vector=(AV:N/AC:L/Au:N/C:C/I:C/A:C)&version=2.0&source=NIST">NVD</a></p>
+</blockquote>
+<p>查看 <a target="_blank" rel="noopener" href="https://www.cvedetails.com/epss/CVE-2003-0201/epss-score-history.html">CVE 详细信息</a>，我们可以看到此 CVE 的 <a href="/cybersecurity/resources/EPSS.md">EPSS</a>（利用预测评分系统）为<em>96.89%</em>，这反映了在未来 30 天内使用 trans2open 的可能性。该分数<em>于 2023 年 3 月</em>重新计算，以反映时间严重性。<br><img src="/PNPT/PNPT-pics/researching-vulns-2.png"><br><img src="/PNPT-study-guide/PNPT-pics/researching-vulns-3.png"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cvedetails.com/epss/CVE-2003-0201/epss-score-history.html">CVE 详细信息</a></p>
+</blockquote>
+<p>回想一下 CVSS 的计算方式，我们知道漏洞利用代码的活动和可用性的增加<em>会增加 CVE 的整体严重性</em>。 CVE 详细信息还告诉我们，有一些 <a href="/cybersecurity/tools/exploitation/metasploit.md">Metasploit</a> 模块使此漏洞更容易被利用。</p>
+<blockquote>
+<p>[!资源]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/764">利用数据库：OpenFuckV2.c</a></li>
+<li><a target="_blank" rel="noopener" href="https://cvedetails.com/">CVE 详细信息</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2002-0082">NIST：CVE-2002-0082</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2003-0201">NIST：CVE-2003-0201</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cvedetails.com/cve/CVE-2021-28041">CVE 详细信息：CVE-2021-28041</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cvedetails.com/cve/CVE-2003-0201/">CVE 详细信息：CVE-2003-0201</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln-metrics/cvss/v2-calculator?name=CVE-2003-0201&vector=(AV:N/AC:L/Au:N/C:C/I:C/A:C)&version=2.0&source=NIST">NVD：CVE-2003-0201 的 CVSS 计算器</a></li>
+</ul>
+</blockquote>
+<blockquote>
+<p>[！我以前的笔记（在文本中链接）]</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/tools/reverse-engineering/searchsploit.md">searchsploit</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/TTPs/exploitation/buffer-overflow.md">缓冲区溢出</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/pen-testing/report-writing.md">报告撰写</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/networking/protocols/HTTP.md">HTTP</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/literature/CVEs.md">CVE</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/literature/CVSS.md">CVSS</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/vulnerability/trans2.md">trans2open</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/tools/metasploit.md">Metasploit</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TrshPuppy/obsidian-notes/tree/main/cybersecurity/literature/EPSS.md">EPSS</a></li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/05/16/researching-vulns/">https://hzhzxfs.github.io/2025/05/16/researching-vulns/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Network-Security/">Network Security</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/17/responder/" title="responder"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">responder</div></div><div class="info-2"><div class="info-item-1">使用 Responder 捕获哈希值Responder 是一个可用于对 活动目录 域执行 LLMNR 中毒 攻击的工具。 LLMNR 并不是响应者可以对其进行中毒攻击的唯一协议。它还可以用于 NBT-NS 和 MDNS。 用法示例针对我们的 AD 实验室，我们将使用 Responder 来执行 LLMNR 中毒。这将使我们能够捕获从受害计算机发送的用于身份验证的哈希值。一旦我们有了哈希值，我们就可以破解它以获取该机器的密码。 随着我们的 AD 实验室启动并处于活动状态，我们将使用以下命令与响应者来攻击 域控制器 1responder -I eth0 -dwP 使用的标志： -I/ --interface：告诉响应者我们要使用哪个网络接口。 -d/ --DHCP：告诉响应者“也响应”DHCP 广播请求。 -w/ --wpad：启动恶意 WPAD 服务器（它将响应主机名解析请求） -P/ --ProxyAuth：告诉响应程序强制 NTLM 身份验证（即使目标网络没有打开 WPAD） 其他：-v/ --verbose：将您已经捕获的哈希添加到输出中。打开这些标志，并且您的攻击框与域和域...</div></div></div></a><a class="pagination-related" href="/2025/05/15/post-exploitation/" title="post-exploitation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">post-exploitation</div></div><div class="info-2"><div class="info-item-1">后利用一旦我们利用了一个目标，我们就想知道我们可以访问哪些信息，因为这些“是发现”，客户会想知道他们的资产有多脆弱。因此，后期利用包括对目标的大量侦察。 枚举目标网络拓扑我们想使用常用命令查看一些网络拓扑：  ifconfig - IP 地址 ip a - IP 地址 arp - MAC 地址 route - 路由表  ###须藤作为当前用户，我们可以使用 sudo -l 来查看我们的 sudo 权限是什么。这将向我们展示允许用户以 root 身份运行哪些命令。 /etc/passwd用于列出用户的密码，但现在仅列出带有 x 占位符的用户。 /etc/shadow密码哈希现在保存在 /etc/shadow 中，因此我们可以找到系统上用户密码的哈希值，然后使用 john 等工具破解这些哈希值以获取明文密码。 其他（稍后再说） 文件系统中的文件 连接到计算机的设备 网络上的其他设备 服务运行 开放端口 等   [！我以前的笔记（在文本中链接）]  IP 地址 MAC 地址 路由表 约翰   </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/04/07/checklists/" title="checklists"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-07</div><div class="info-item-2">checklists</div></div><div class="info-2"><div class="info-item-1">外部参与清单检查表对于任何类型的参与都很有用。 外部渗透测试清单基本外部渗透测试清单的示例可能包括：   确保 ROE 已由客户签署  将范围内的 IP 添加到范围选项卡  验证客户范围  发送“启动”电子邮件  进行漏洞扫描  在违规数据库中识别员工的电子邮件&#x2F;凭证  ID员工电子邮件格式  ID 客户的网站  枚举门户上的所有帐户、密码重置功能等。  扫描网络应用程序（如果存在）  进行手动测试和利用  验证扫描时发现的漏洞  在登录端点&#x2F;门户上进行密码喷射等  将访问从外部升级到内部  验证之前的发现已得到解决（如果适用）  清理  每个项目都应该有一个地方可以添加注释和状态（即待处理、已完成等）。 您还可以检查范围内的交战规则&#x2F;资产部分。例如，如果范围内有 10 个 IP 地址，请为每个地址制作一个清单，您可以在其中添加注释并在调查它们时进行标记。 将所有这些内容分组到具有多个选项卡的电子表格中会有所帮助。  [!资源]  TCM安全    [！我以前的笔记（在文本中链接）]  你可以在这里找到它们   </div></div></div></a><a class="pagination-related" href="/2025/05/10/nessus-vuln-scanning/" title="nessus-vuln-scanning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">nessus-vuln-scanning</div></div><div class="info-2"><div class="info-item-1">使用 Nessus 进行漏洞扫描Nessus 是渗透测试中常用的漏洞扫描器。  安装从 https://www.tenable.com/downloads/nessus?loginAttempted=true 下载该工具。使用 /Downloads 文件夹中的 dpkg -i Nessus... 进行安装。安装该工具时，按照终端中的提示操作，您将需要 Nessus Essentials 的激活码： 1234567Unpacking Nessus Scanner Core Components... - You can start Nessus Scanner by typing /bin/systemctl start nessusd.service - Then go to https://kali:8834/ to configure your scanner┌──(hakcypuppy㉿kali)-[~/Downloads]└─$ /bin/systemctl start nessusd.service    点击链接至 https://kali:8834/: 基本网络扫描...</div></div></div></a><a class="pagination-related" href="/2025/05/12/pattern-create/" title="pattern-create"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-12</div><div class="info-item-2">pattern-create</div></div><div class="info-2"><div class="info-item-1">通过创建图案查找偏移量现在我们知道了与 fuzzing 程序的偏移量，我们可以使用 pattern create 来帮助微调我们的漏洞利用脚本和有效负载。 **！参见模式创建（相对）模式创建 (GitHub 存储库) 查找 确切 地址现在我们已经使用 pattern_create 创建了一个缓冲区字符串，我们可以将模糊测试脚本复制粘贴到新脚本中（当我们对其进行微调时，它将成为我们的漏洞利用程序）。 123456789101112131415161718192021222324252627import sys, socket# Create the buffer of &#x27;A&#x27; charactersbuffer = &quot;A&quot; * 100try:	# Build the payload by appending the TRUN command to the buffer	payload = &quot;TRUN /.:/&quot; + buffer	# Create, open, and connect to the socket (conne...</div></div></div></a><a class="pagination-related" href="/2025/05/18/rules-of-engagement/" title="rules-of-engagement"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-18</div><div class="info-item-2">rules-of-engagement</div></div><div class="info-2"><div class="info-item-1">渗透测试参与规则ROE 是一份文件，概述了您在整个合作过程中可以做什么和不能做什么，并由您和客户签署并同意。它还定义了双方成员的“角色和责任”。 部分：以下部分列表可能出现在交战规则文件中，也可能不出现。每家公司都有不同的股本回报率计算方式，尽管有些部分绝对应该包括在内，例如范围、披露和接受。 根据客户的评估要求，每次参与的 ROE 也会有所不同。 目标概述交战规则文件意图的一般简介。这里可能出现的一句话可能是：  本文件的目的是概述和明确定义各方的角色和责任，以及商定的评估细节。  适用性描述该文档具体适用的内容，即该文档可能适用于渗透测试方向客户提供的“评估中涉及的所有要素”。这还包括客户组织的相关联系人 角色和职责本节概述了参与评估的所有各方的角色和责任。这里概述的一些常见角色示例如下： 渗透测试团队本节应包括参与渗透测试团队的所有成员包括来自客户的将参与的团队成员。 客户本节将概述客户的责任。责任的一些例子可能包括：  观察并记录进攻团队成员（您）的入侵尝试 防止执法部门介入 确保参与保密&#x2F;不向员工宣布  本节还可以为客户团队成员定义特定角色，例如： 客户联络点...</div></div></div></a><a class="pagination-related" href="/2025/04/15/ethical-hacking-methodology/" title="ethical-hacking-methodology"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-15</div><div class="info-item-2">ethical-hacking-methodology</div></div><div class="info-2"><div class="info-item-1">道德黑客方法论进行渗透测试&#x2F;道德黑客攻击有 5 个阶段： 1. 侦察通过 OSINT、DNS 记录、浏览网站等被动方式收集有关目标的信息。目标是“收集尽可能多的目标信息”，以便您可以计划和有效的测试。 2. 扫描扫描就像侦察，但更主动，因为您*可能会留下您存在的痕迹。*此阶段包括探测系统&#x2F;网络以发现可用于获取访问权限的功能。 有效的扫描将告诉您：  开放端口 系统&#x2F;网络上运行的服务 这些服务中的漏洞  扫描包括端口扫描、漏洞扫描、网络映射等技术。 3. 获取访问权限利用侦察和扫描期间收集的信息，利用目标系统中的漏洞来获取访问权限。此阶段使用的一些技术包括密码暴力破解、社会工程、利用软件漏洞等。 4. 维护访问权限一旦目标被渗透，你必须通过隐藏你的踪迹、建立“后门”以便在必要时重新进入并获得持久性来保持访问。 在道德黑客攻击中，这一阶段的重点是模仿真正的黑客会做什么，以找出可能造成多少损害以及目标面临的风险。 5. 覆盖轨迹一旦系统的利用和渗透完成，您需要掩盖您的踪迹并删除您存在的证据。一些掩盖您踪迹的技术包括删除日志、删除或更改文件以及尝试将系统恢复...</div></div></div></a><a class="pagination-related" href="/2025/04/23/intro/" title="intro"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-23</div><div class="info-item-2">intro</div></div><div class="info-2"><div class="info-item-1">实用道德黑客简介：渗透测试的类型：外网渗透测试最常见的类型是从外部（通常是远程位置）评估和测试组织的安全性。这种类型的渗透测试是“最常见的”，因为合规组织每年都需要进行外部网络渗透测试。 它们也往往比其他类型的渗透测试便宜。这使得公司更容易开始采用渗透测试作为其安全实践。 方法论重点关注 OSINT，收集有关公司及其员工的开源信息。通常需要约 32-40 小时 + 8-16 小时来撰写报告。 开源情报可以收集哪些数据（公开的）来帮助闯入&#x2F;利用组织的网络并访问受限空间&#x2F;信息？ *漏洞扫描：*外部网络端点始终被机器人扫描。通过被动扫描发现漏洞的可能性相对较低。大多数公司都有足够的保护措施来通过修补等方式来覆盖这方面的安全性。 相反，OSINT 专注于“收集情报”，例如网络的拓扑结构是什么？登录面板在哪里？用户是谁？ 内网渗透测试从网络内部评估组织的安全性。网络已经被破坏，并且&#x2F;或与客户达成的协议的一部分是允许将笔记本电脑&#x2F;设备带入内部并连接到网络（然后渗透测试人员可以远程进入以执行评估）。 方法论重点关注 Active Directory 攻击...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E6%BD%9C%E5%9C%A8%E7%9A%84%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">研究潜在的漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E7%BB%93%E6%9E%9C"><span class="toc-number">1.1.</span> <span class="toc-text">研究结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E9%A2%84%E5%85%88%E5%AD%98%E5%9C%A8%E7%9A%84%E6%BC%8F%E6%B4%9E%E5%92%8C-CVE"><span class="toc-number">1.2.</span> <span class="toc-text">查找预先存在的漏洞和 CVE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.2.1.</span> <span class="toc-text">利用数据库:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E7%AC%94%E8%AE%B0"><span class="toc-number">1.2.2.</span> <span class="toc-text">记笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E4%B8%A5%E9%87%8D%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">确定严重性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="toc-number">1.3.1.</span> <span class="toc-text">CVE 详细信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%84%E5%88%86-CVSS-%EF%BC%9A"><span class="toc-number">1.3.2.</span> <span class="toc-text">漏洞评分 (CVSS)：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">1. 基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%A2%9E%E5%8F%B6"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">2. 颞叶</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">3.环境</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%85%B6%E4%BB%96%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.4.</span> <span class="toc-text">解决其他漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#trans2open-CVE-2003-0201"><span class="toc-number">1.4.1.</span> <span class="toc-text">trans2open&#x2F; CVE-2003-0201</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>工具、权限与执行链需求文档 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="02. 工具、权限与执行链需求文档1. 为什么工具系统是产品核心如果模型不能操作环境，它只是建议生成器。这个产品的目标是帮助用户推进真实工程任务，因此必须具备正式的工具系统。 2. 工具系统需求2.1 基础工具能力产品至少需要以下工具类别：  读文件 改文件 写文件 搜索文件 搜索内容 shell &#x2F; 命令执行 todo &#x2F; 任务管理 用户追问 启动子 agent 调用外部 M">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具、权限与执行链需求文档">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="02. 工具、权限与执行链需求文档1. 为什么工具系统是产品核心如果模型不能操作环境，它只是建议生成器。这个产品的目标是帮助用户推进真实工程任务，因此必须具备正式的工具系统。 2. 工具系统需求2.1 基础工具能力产品至少需要以下工具类别：  读文件 改文件 写文件 搜索文件 搜索内容 shell &#x2F; 命令执行 todo &#x2F; 任务管理 用户追问 启动子 agent 调用外部 M">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-16T02:25:07.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.560Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "工具、权限与执行链需求文档",
+  "url": "https://hzhzxfs.github.io/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-16T02:25:07.000Z",
+  "dateModified": "2026-06-10T02:14:46.560Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '工具、权限与执行链需求文档',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">工具、权限与执行链需求文档</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">工具、权限与执行链需求文档</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-16T02:25:07.000Z" title="发表于 2026-01-16 10:25:07">2026-01-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.560Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="02-工具、权限与执行链需求文档"><a href="#02-工具、权限与执行链需求文档" class="headerlink" title="02. 工具、权限与执行链需求文档"></a>02. 工具、权限与执行链需求文档</h1><h2 id="1-为什么工具系统是产品核心"><a href="#1-为什么工具系统是产品核心" class="headerlink" title="1. 为什么工具系统是产品核心"></a>1. 为什么工具系统是产品核心</h2><p>如果模型不能操作环境，它只是建议生成器。这个产品的目标是帮助用户推进真实工程任务，因此必须具备正式的工具系统。</p>
+<h2 id="2-工具系统需求"><a href="#2-工具系统需求" class="headerlink" title="2. 工具系统需求"></a>2. 工具系统需求</h2><h3 id="2-1-基础工具能力"><a href="#2-1-基础工具能力" class="headerlink" title="2.1 基础工具能力"></a>2.1 基础工具能力</h3><p>产品至少需要以下工具类别：</p>
+<ul>
+<li>读文件</li>
+<li>改文件</li>
+<li>写文件</li>
+<li>搜索文件</li>
+<li>搜索内容</li>
+<li>shell &#x2F; 命令执行</li>
+<li>todo &#x2F; 任务管理</li>
+<li>用户追问</li>
+<li>启动子 agent</li>
+<li>调用外部 MCP 工具</li>
+</ul>
+<h3 id="2-2-工具使用规范"><a href="#2-2-工具使用规范" class="headerlink" title="2.2 工具使用规范"></a>2.2 工具使用规范</h3><p>系统必须对模型明确规定工具使用优先级，避免：</p>
+<ul>
+<li>用 shell 替代专用文件工具</li>
+<li>误删或误改文件</li>
+<li>低效重复操作</li>
+</ul>
+<h2 id="3-权限系统需求"><a href="#3-权限系统需求" class="headerlink" title="3. 权限系统需求"></a>3. 权限系统需求</h2><h3 id="3-1-用户控制边界"><a href="#3-1-用户控制边界" class="headerlink" title="3.1 用户控制边界"></a>3.1 用户控制边界</h3><p>用户必须能控制哪些工具自动允许，哪些要询问，哪些禁止。</p>
+<h3 id="3-2-权限决策来源"><a href="#3-2-权限决策来源" class="headerlink" title="3.2 权限决策来源"></a>3.2 权限决策来源</h3><p>权限决策至少可能来自：</p>
+<ul>
+<li>当前模式</li>
+<li>用户规则</li>
+<li>项目规则</li>
+<li>Hook 决策</li>
+<li>特殊工具安全策略</li>
+</ul>
+<h3 id="3-3-被拒后的行为要求"><a href="#3-3-被拒后的行为要求" class="headerlink" title="3.3 被拒后的行为要求"></a>3.3 被拒后的行为要求</h3><p>如果某次工具调用被拒绝，系统不能机械重试，而应：</p>
+<ul>
+<li>理解拒绝信号</li>
+<li>调整方案</li>
+<li>必要时向用户澄清</li>
+</ul>
+<h2 id="4-执行链路需求"><a href="#4-执行链路需求" class="headerlink" title="4. 执行链路需求"></a>4. 执行链路需求</h2><p>工具执行不能是“模型决定 -&gt; 直接运行”。产品需要一条正式执行链：</p>
+<ol>
+<li>找到工具</li>
+<li>校验输入结构</li>
+<li>做额外 validateInput</li>
+<li>执行 PreToolUse hooks</li>
+<li>做权限决策</li>
+<li>真正执行工具</li>
+<li>记录 telemetry</li>
+<li>执行 PostToolUse hooks</li>
+<li>格式化结果回流给模型</li>
+</ol>
+<h2 id="5-为什么需要-Hook"><a href="#5-为什么需要-Hook" class="headerlink" title="5. 为什么需要 Hook"></a>5. 为什么需要 Hook</h2><p>Hook 的需求本质是：</p>
+<ul>
+<li>让组织规则进入运行时</li>
+<li>让系统可以插入额外检查</li>
+<li>让工具调用具备动态治理能力</li>
+</ul>
+<h3 id="Hook-至少要支持的行为"><a href="#Hook-至少要支持的行为" class="headerlink" title="Hook 至少要支持的行为"></a>Hook 至少要支持的行为</h3><ul>
+<li>返回消息</li>
+<li>阻断执行</li>
+<li>修改输入</li>
+<li>提供 allow &#x2F; ask &#x2F; deny 建议</li>
+<li>注入额外上下文</li>
+</ul>
+<h2 id="6-为什么输入校验是必需的"><a href="#6-为什么输入校验是必需的" class="headerlink" title="6. 为什么输入校验是必需的"></a>6. 为什么输入校验是必需的</h2><p>模型本身会生成错误参数，因此产品必须在执行层拦住：</p>
+<ul>
+<li>schema 不合法</li>
+<li>参数越界</li>
+<li>缺字段</li>
+<li>类型错误</li>
+</ul>
+<h2 id="7-shell-类工具的特殊需求"><a href="#7-shell-类工具的特殊需求" class="headerlink" title="7. shell 类工具的特殊需求"></a>7. shell 类工具的特殊需求</h2><p>shell 工具的风险高于读写文件类工具，因此需要：</p>
+<ul>
+<li>更严格的权限策略</li>
+<li>可能的前置分类器检查</li>
+<li>更强的审计能力</li>
+</ul>
+<h2 id="8-工具执行结果的产品要求"><a href="#8-工具执行结果的产品要求" class="headerlink" title="8. 工具执行结果的产品要求"></a>8. 工具执行结果的产品要求</h2><p>工具执行结果不仅要“返回成功&#x2F;失败”，还要满足：</p>
+<ul>
+<li>可读</li>
+<li>可追踪</li>
+<li>能被后续 Hook 处理</li>
+<li>能成为 transcript 的一部分</li>
+</ul>
+<h2 id="9-伪代码表达"><a href="#9-伪代码表达" class="headerlink" title="9. 伪代码表达"></a>9. 伪代码表达</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">execute_tool</span>(<span class="params">tool_name, raw_input, context</span>):</span><br><span class="line">    tool = find_tool(tool_name)</span><br><span class="line">    validated = schema_validate(tool, raw_input)</span><br><span class="line">    validated = run_custom_validation(tool, validated)</span><br><span class="line"></span><br><span class="line">    hook_result = run_pre_hooks(tool, validated, context)</span><br><span class="line">    decision = resolve_permission(hook_result, context)</span><br><span class="line">    <span class="keyword">if</span> decision == <span class="string">&#x27;deny&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> denied_result()</span><br><span class="line"></span><br><span class="line">    final_input = maybe_update_input(validated, hook_result)</span><br><span class="line">    output = tool.call(final_input)</span><br><span class="line">    run_post_hooks(tool, final_input, output, context)</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-产品经理视角下的总需求句"><a href="#10-产品经理视角下的总需求句" class="headerlink" title="10. 产品经理视角下的总需求句"></a>10. 产品经理视角下的总需求句</h2><blockquote>
+<p>工具系统必须从“可调用”升级到“可治理”：既要让模型拥有执行能力，也要在执行前后经过校验、权限、Hook、审计与结果回流，确保整个过程安全、稳定、可追踪。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/">https://hzhzxfs.github.io/2026/01/16/%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/17/%E6%9E%B6%E6%9E%84%E8%83%BD%E5%8A%9B%E5%9C%B0%E5%9B%BE/" title="架构能力地图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">架构能力地图</div></div><div class="info-2"><div class="info-item-1">07. 架构能力地图1. 顶层能力区A. 入口层对应需求：  提供 CLI 入口 提供初始化流程 提供 SDK 接入方式 提供 MCP 入口  B. Prompt 编排层对应需求：  动态生成系统提示词 注入环境信息 注入语言与输出风格 注入记忆、MCP 说明、会话局部规则  C. 工具执行层对应需求：  工具发现 工具输入校验 权限判断 Hook 拦截 执行记录 输出回流  D. Agent 调度层对应需求：  启动子 agent 支持 fork &#x2F; background &#x2F; remote &#x2F; teammate 模式 管理 agent 生命周期 管理 agent 上下文边界  E. 扩展生态层对应需求：  Skills Plugins MCP 命令扩展 插件变量替换与配置注入  F. Memory &#x2F; Session 层对应需求：  项目记忆 用户记忆 会话摘要 transcript resume  G. 任务与后台层对应需求：  本地任务 后台 agent 任务 远程 agent 任务 shell 任务 进度追踪与通知  H. 质量保证...</div></div></div></a><a class="pagination-related" href="/2026/01/15/%E5%B7%A5%E4%BD%9C%E5%8C%BA%E4%B8%8E%E9%9A%94%E7%A6%BB%E7%AD%96%E7%95%A5%E8%A7%84%E6%A0%BC/" title="工作区与隔离策略规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">工作区与隔离策略规格</div></div><div class="info-2"><div class="info-item-1">12. 工作区与隔离策略规格1. 目标不同 agent 不能默认拥有相同的文件系统权限。产品必须允许根据角色与场景控制工作区隔离。 2. 隔离模式Python 版建议至少定义： 2.1 shared workspace主线程默认工作区，共享项目目录。 2.2 read-only workspace用于探索、规划、验证等只读角色。 2.3 temp workspace用于临时脚本、临时测试产物。 2.4 worktree workspace用于隔离修改型子任务，避免污染主分支。 2.5 remote workspace用于远程执行环境（第一版可不做）。 3. 为什么隔离必须存在没有隔离会导致：  子任务互相污染 验证角色破坏项目 fork 实验影响主线程 风险动作边界模糊  4. 角色与隔离建议 Explore Agent -&gt; read-only Plan Agent -&gt; read-only Verification Agent -&gt; read-only + temp writable General Agent -&gt; shared 或 worktree...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/11/multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-11</div><div class="info-item-2">multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential</div></div><div class="info-2"><div class="info-item-1">⏩ 使用 GitHub 模型 (.NET) 的顺序代理工作流程📋 高级顺序处理教程本笔记本演示了使用 Microsoft Agent Framework for .NET 和 GitHub 模型的顺序工作流模式。您将学习如何构建复杂的分步处理管道，其中代理按特定顺序执行，每个阶段都基于前一阶段的结果。 🎯 学习目标🔄 顺序处理架构 线性工作流程设计：创建具有明确依赖性的分步处理管道 状态管理：维护跨连续工作流程阶段的上下文和数据流 GitHub 模型集成：在多阶段 .NET 工作流程中利用 GitHub 的 AI 模型 企业管道模式：构建生产就绪的顺序处理系统  🏗️ 高级序列模式 阶段控制处理：在工作流程阶段之间实施验证检查点 上下文保存：在所有阶段维护状态和积累的知识 错误传播：在顺序处理链中优雅地处理故障 性能优化：以最小的开销实现高效的顺序执行  🏢 企业顺序应用程序 文档处理管道：多阶段文档分析、转换和验证 质量保证工作流程：顺序审查、验证和批准流程 内容制作流程：研究→写作→编辑→评论→出版 业务流程自动化：具有明确阶段依赖性的多步骤业务工作流程  ⚙️ 先...</div></div></div></a><a class="pagination-related" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-02</div><div class="info-item-2">Multi-Agent vs Single-Agent</div></div><div class="info-2"><div class="info-item-1">一、最新研究进展Google DeepMind 联合 MIT，做了一件业界期待已久的事：用 180 组控制实验，定量回答”多 Agent 到底比单 Agent 强多少”。 论文叫《Towards a Science of Scaling Agent Systems》（arXiv: 2512.08296），跨 3 个模型家族（OpenAI、Google、Anthropic）、5 种架构、4 个基准任务。不是理论推导，不是案例论证，这是真金白银烧 token 跑出来的实验数据。 结论一句话：  “More Agents Is NOT All You Need.”  更多的 Agent 不等于更好的结果。在大多数场景下，多 Agent 系统的表现不仅没有显著优于单 Agent，反而因为协调开销而更差。  二、论文里的六个关键数字这篇论文最大的价值不是观点，是数据。以下是六个关键定量发现，每一个都直接对应我们日常使用中的某种”体感”： 1：工具协调惩罚系数 &#x3D; -0.330在论文的 20 参数回归模型中，工具 - 协调交互项是最大的负因子。 翻译成人话：你给多 Agent 系统...</div></div></div></a><a class="pagination-related" href="/2026/01/12/%E4%BB%BB%E5%8A%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E8%A7%84%E6%A0%BC/" title="任务模型与后台执行规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-12</div><div class="info-item-2">任务模型与后台执行规格</div></div><div class="info-2"><div class="info-item-1">11. 任务模型与后台执行规格1. 目标任务系统负责把“一个 agent 在做什么”变成可追踪对象，而不是只存在于对话文本里。 2. 任务类型Python 版建议至少支持：  main_session_task local_agent_task background_agent_task shell_task verification_task remote_task（可后置）  3. 核心任务字段123456789101112131415class TaskRecord:    task_id: str    type: str    session_id: str    parent_task_id: str | None    agent_id: str | None    description: str    status: str    created_at: float    started_at: float | None    finished_at: float | None    output_path: str | None    error: str |...</div></div></div></a><a class="pagination-related" href="/2026/01/18/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%8A%B6%E6%80%81%E8%A7%84%E6%A0%BC/" title="消息模型与状态规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">消息模型与状态规格</div></div><div class="info-2"><div class="info-item-1">09. 消息模型与状态规格1. 为什么消息模型必须先定义这类 Agent 系统的核心不是“函数调用”，而是“结构化消息驱动状态变化”。如果消息模型不稳定，后面的 memory、resume、工具执行、agent 任务都会混乱。 2. 顶层消息类型Python 版本建议至少定义以下消息类型：  system user assistant tool_use tool_result progress attachment summary compact_boundary notification tombstone（可选，用于删除&#x2F;隐藏历史消息后的链修复）  3. 核心消息字段所有消息建议共享： 123456class BaseMessage:    id: str    type: str    created_at: float    parent_id: str | None    session_id: str  assistant 消息1234class AssistantMessage(BaseMessage):    content_blocks: list  ...</div></div></div></a><a class="pagination-related" href="/2025/09/03/agentic-protocols__code_samples__github-mcp__event-descriptions/" title="agentic-protocols__code_samples__github-mcp__event-descriptions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-03</div><div class="info-item-2">agentic-protocols__code_samples__github-mcp__event-descriptions</div></div><div class="info-2"><div class="info-item-1">活动名称：使用 Azure AI 代理服务构建代码优先应用程序（欧洲、中东和非洲&#x2F;美国产品）描述Azure AI 代理服务是服务和 SDK 的无缝结合，可简化强大的 AI 驱动解决方案的开发。在本次会议中，你将了解如何使用 Azure 构建自己的代码优先 AI 代理，该代理可以回答问题、执行数据分析以及集成外部数据源。您还将探索更复杂的架构，包括多个代理一起工作。 网址https://developer.microsoft.com/en-us/reactor/events/25325/  活动名称：使用语义内核通过多代理 AI 转变业务流程描述通过现场演示和实践学习，了解多智能体人工智能系统的强大功能，包括群聊、反射、选择器和群体模式。利用语义内核流程框架来自动化和扩展关键业务流程，从客户支持到使用 Python 的项目管理 网址https://developer.microsoft.com/en-us/reactor/events/25313/  活动名称：使用 AutoGen v0.4 构建代理应用程序描述开始使用 AutoGen v0.4 构建代理和多代理团队。我...</div></div></div></a><a class="pagination-related" href="/2025/09/09/multi-agent__code_samples__08-dotnet-agent-framework/" title="multi-agent__code_samples__08-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="info-item-2">multi-agent__code_samples__08-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🤝 企业多代理工作流系统 (.NET)📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 GitHub 模型构建复杂的企业级多代理系统。您将学习如何通过结构化工作流程协调多个专业代理一起工作，利用 .NET 的企业功能来实现生产就绪的解决方案。 您将构建的企业多代理功能：  👥 代理协作：具有编译时验证的类型安全代理协调 🔄 工作流编排：使用 .NET 异步模式的声明式工作流定义 🎭 角色专业化：强类型的座席个性和专业领域 🏢 企业集成：具有监控和错误处理功能的生产就绪模式  ⚙️ 先决条件和设置开发环境：  .NET 9.0 SDK 或更高版本 Visual Studio 2022 或带有 C# 扩展的 VS Code Azure 订阅（用于持久代理）  所需的 NuGet 包： 1234567&lt;PackageReference Include=&quot;Microsoft.Extensions.AI.Abstractions&quot; Version=&quot;9.9.0&quot; /&gt;&...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#02-%E5%B7%A5%E5%85%B7%E3%80%81%E6%9D%83%E9%99%90%E4%B8%8E%E6%89%A7%E8%A1%8C%E9%93%BE%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3"><span class="toc-number">1.</span> <span class="toc-text">02. 工具、权限与执行链需求文档</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E6%98%AF%E4%BA%A7%E5%93%81%E6%A0%B8%E5%BF%83"><span class="toc-number">1.1.</span> <span class="toc-text">1. 为什么工具系统是产品核心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E9%9C%80%E6%B1%82"><span class="toc-number">1.2.</span> <span class="toc-text">2. 工具系统需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E8%83%BD%E5%8A%9B"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 基础工具能力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E8%A7%84%E8%8C%83"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 工具使用规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F%E9%9C%80%E6%B1%82"><span class="toc-number">1.3.</span> <span class="toc-text">3. 权限系统需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%94%A8%E6%88%B7%E6%8E%A7%E5%88%B6%E8%BE%B9%E7%95%8C"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 用户控制边界</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%9D%83%E9%99%90%E5%86%B3%E7%AD%96%E6%9D%A5%E6%BA%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 权限决策来源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%A2%AB%E6%8B%92%E5%90%8E%E7%9A%84%E8%A1%8C%E4%B8%BA%E8%A6%81%E6%B1%82"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 被拒后的行为要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%89%A7%E8%A1%8C%E9%93%BE%E8%B7%AF%E9%9C%80%E6%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">4. 执行链路需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-Hook"><span class="toc-number">1.5.</span> <span class="toc-text">5. 为什么需要 Hook</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-%E8%87%B3%E5%B0%91%E8%A6%81%E6%94%AF%E6%8C%81%E7%9A%84%E8%A1%8C%E4%B8%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">Hook 至少要支持的行为</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BE%93%E5%85%A5%E6%A0%A1%E9%AA%8C%E6%98%AF%E5%BF%85%E9%9C%80%E7%9A%84"><span class="toc-number">1.6.</span> <span class="toc-text">6. 为什么输入校验是必需的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-shell-%E7%B1%BB%E5%B7%A5%E5%85%B7%E7%9A%84%E7%89%B9%E6%AE%8A%E9%9C%80%E6%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text">7. shell 类工具的特殊需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%B7%A5%E5%85%B7%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E7%9A%84%E4%BA%A7%E5%93%81%E8%A6%81%E6%B1%82"><span class="toc-number">1.8.</span> <span class="toc-text">8. 工具执行结果的产品要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%BC%AA%E4%BB%A3%E7%A0%81%E8%A1%A8%E8%BE%BE"><span class="toc-number">1.9.</span> <span class="toc-text">9. 伪代码表达</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%E8%A7%86%E8%A7%92%E4%B8%8B%E7%9A%84%E6%80%BB%E9%9C%80%E6%B1%82%E5%8F%A5"><span class="toc-number">1.10.</span> <span class="toc-text">10. 产品经理视角下的总需求句</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

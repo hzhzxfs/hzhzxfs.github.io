@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Python实现注意事项 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="16. Python 实现注意事项1. 实现原则目标不是逐字复刻原实现，而是用 Python 重建同样的产品能力结构。 2. 模块建议建议 Python 项目按以下模块拆：  runtime&#x2F;：query loop, orchestration messages&#x2F;：message schemas tools&#x2F;：tool registry and execution permissions&#x2F;：per">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python实现注意事项">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="16. Python 实现注意事项1. 实现原则目标不是逐字复刻原实现，而是用 Python 重建同样的产品能力结构。 2. 模块建议建议 Python 项目按以下模块拆：  runtime&#x2F;：query loop, orchestration messages&#x2F;：message schemas tools&#x2F;：tool registry and execution permissions&#x2F;：per">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-04T04:51:42.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.551Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Python实现注意事项",
+  "url": "https://hzhzxfs.github.io/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-04T04:51:42.000Z",
+  "dateModified": "2026-06-10T02:14:46.551Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Python实现注意事项',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Python实现注意事项</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Python实现注意事项</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-04T04:51:42.000Z" title="发表于 2026-01-04 12:51:42">2026-01-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.551Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="16-Python-实现注意事项"><a href="#16-Python-实现注意事项" class="headerlink" title="16. Python 实现注意事项"></a>16. Python 实现注意事项</h1><h2 id="1-实现原则"><a href="#1-实现原则" class="headerlink" title="1. 实现原则"></a>1. 实现原则</h2><p>目标不是逐字复刻原实现，而是用 Python 重建同样的产品能力结构。</p>
+<h2 id="2-模块建议"><a href="#2-模块建议" class="headerlink" title="2. 模块建议"></a>2. 模块建议</h2><p>建议 Python 项目按以下模块拆：</p>
+<ul>
+<li><code>runtime/</code>：query loop, orchestration</li>
+<li><code>messages/</code>：message schemas</li>
+<li><code>tools/</code>：tool registry and execution</li>
+<li><code>permissions/</code>：permission engine</li>
+<li><code>memory/</code>：memory loading and retrieval</li>
+<li><code>tasks/</code>：background task model</li>
+<li><code>storage/</code>：transcript and session persistence</li>
+<li><code>agents/</code>：agent definitions</li>
+<li><code>extensions/</code>：skills&#x2F;plugins&#x2F;mcp</li>
+<li><code>verification/</code>：verification runner</li>
+</ul>
+<h2 id="3-推荐先用的数据模型"><a href="#3-推荐先用的数据模型" class="headerlink" title="3. 推荐先用的数据模型"></a>3. 推荐先用的数据模型</h2><p>优先用：</p>
+<ul>
+<li><code>pydantic</code> &#x2F; <code>dataclasses</code> 定义消息与状态</li>
+<li><code>sqlite</code> 或 JSONL 先做 transcript</li>
+<li>明确的 service 层代替隐式全局状态</li>
+</ul>
+<h2 id="4-不要过早做的事"><a href="#4-不要过早做的事" class="headerlink" title="4. 不要过早做的事"></a>4. 不要过早做的事</h2><ul>
+<li>不要先优化 UI</li>
+<li>不要先做复杂并发</li>
+<li>不要先支持十几种 agent</li>
+<li>不要把 memory 做成向量库重系统</li>
+</ul>
+<h2 id="5-第一阶段的最佳目标"><a href="#5-第一阶段的最佳目标" class="headerlink" title="5. 第一阶段的最佳目标"></a>5. 第一阶段的最佳目标</h2><p>先做出一个：</p>
+<ul>
+<li>结构清晰</li>
+<li>transcript 可回放</li>
+<li>message 模型稳定</li>
+<li>verification 能跑</li>
+<li>compact 能工作</li>
+</ul>
+<p>的 Python core runtime。</p>
+<h2 id="6-推荐里程碑"><a href="#6-推荐里程碑" class="headerlink" title="6. 推荐里程碑"></a>6. 推荐里程碑</h2><h3 id="Milestone-1"><a href="#Milestone-1" class="headerlink" title="Milestone 1"></a>Milestone 1</h3><ul>
+<li>message model</li>
+<li>query loop</li>
+<li>basic tools</li>
+<li>transcript</li>
+</ul>
+<h3 id="Milestone-2"><a href="#Milestone-2" class="headerlink" title="Milestone 2"></a>Milestone 2</h3><ul>
+<li>permissions</li>
+<li>memory</li>
+<li>resume</li>
+<li>compact</li>
+</ul>
+<h3 id="Milestone-3"><a href="#Milestone-3" class="headerlink" title="Milestone 3"></a>Milestone 3</h3><ul>
+<li>verification agent</li>
+<li>simple skill loading</li>
+<li>background local agent tasks</li>
+</ul>
+<h3 id="Milestone-4"><a href="#Milestone-4" class="headerlink" title="Milestone 4"></a>Milestone 4</h3><ul>
+<li>MCP &#x2F; plugin minimal support</li>
+<li>worktree isolation</li>
+<li>richer UI</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/">https://hzhzxfs.github.io/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/" title="Python版本MVP范围"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Python版本MVP范围</div></div><div class="info-2"><div class="info-item-1">15. Python 版本 MVP 范围1. 目标避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。 2. MVP 必须包含2.1 主循环 多轮 query loop tool call -&gt; tool result -&gt; next turn  2.2 基础工具 read file write file edit file grep&#x2F;search bash  2.3 基础权限系统 allow &#x2F; ask &#x2F; deny 被拒后不原样重试  2.4 基础 transcript &#x2F; session 消息持久化 resume 会话  2.5 基础 memory 用户 &#x2F; 项目记忆注入 简单记忆文件结构  2.6 基础 agent orchestration main agent 至少一个 verification agent 可选一个 explore &#x2F; plan agent  2.7 基础 compact 超长消息时压缩历史 工具结果 budget 裁剪  3. MVP 可以后置的能力...</div></div></div></a><a class="pagination-related" href="/2026/01/03/MCP%20%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98/" title="MCP 解决什么问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MCP 解决什么问题</div></div><div class="info-2"><div class="info-item-1">MCP 解决什么问题在 Agent 系统中，让Agent做出重要的决定的一个关键点是构造好的 /chat/completions 请求参数，参数中：  messages 参数：给出对话历史，历史中包含的背景信息质量越高，给出的答案就会更准确； tools 参数：给出模型可用的工具，用于获取动态信息或执行某些动作。  这两个参数都可以认为是我们给模型的上下文信息。（context） message 的内容和问题messages 是一个数组，数组中的 content 的值是 user 给出的信息，或者其他角色的历史输出信息。如果是 user 给出的信息，则一般的做法是用一个 prompt template来组织基本的 prompt 结构，并将一些动态的信息通过其他方式检索到，补充道 prompt template中的占位符，从而形成最终输入模型的 prompt。 要得到最好的解，不同的问题需要不同的 prompt template。这是一个难点 tools 的内容和问题/chat/completions 接受的 tool 是有一定的 schema 规定，而一般的工具（如RESTful...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-02</div><div class="info-item-2">Multi-Agent vs Single-Agent</div></div><div class="info-2"><div class="info-item-1">一、最新研究进展Google DeepMind 联合 MIT，做了一件业界期待已久的事：用 180 组控制实验，定量回答”多 Agent 到底比单 Agent 强多少”。 论文叫《Towards a Science of Scaling Agent Systems》（arXiv: 2512.08296），跨 3 个模型家族（OpenAI、Google、Anthropic）、5 种架构、4 个基准任务。不是理论推导，不是案例论证，这是真金白银烧 token 跑出来的实验数据。 结论一句话：  “More Agents Is NOT All You Need.”  更多的 Agent 不等于更好的结果。在大多数场景下，多 Agent 系统的表现不仅没有显著优于单 Agent，反而因为协调开销而更差。  二、论文里的六个关键数字这篇论文最大的价值不是观点，是数据。以下是六个关键定量发现，每一个都直接对应我们日常使用中的某种”体感”： 1：工具协调惩罚系数 &#x3D; -0.330在论文的 20 参数回归模型中，工具 - 协调交互项是最大的负因子。 翻译成人话：你给多 Agent 系统...</div></div></div></a><a class="pagination-related" href="/2025/09/07/explore-agentic-frameworks__code_samples__02-dotnet-agent-framework/" title="explore-agentic-frameworks__code_samples__02-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-07</div><div class="info-item-2">explore-agentic-frameworks__code_samples__02-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🔍 探索 Microsoft Agent 框架 - 基本 Agent (.NET)📋 学习目标此示例通过 .NET 中的基本代理实现探索 Microsoft 代理框架的基本概念。您将学习核心代理模式，并了解智能代理如何使用 C# 和 .NET 生态系统在幕后工作。 你会发现什么 🏗️ 代理架构：了解 .NET 中 AI 代理的基本结构 🛠️ 工具集成：代理如何使用外部函数来扩展功能   💬 对话流：通过线程管理管理多轮对话和上下文 🔧 配置模式：.NET 中代理设置和管理的最佳实践  🎯 涵盖的关键概念代理框架原则 自治：代理如何使用 .NET AI 抽象做出独立决策 反应性：响应环境变化和用户输入 主动性：根据目标和背景采取主动 社交能力：通过自然语言与对话线程进行交互  技术组件 AIAgent：核心代理编排和对话管理 (.NET) 工具功能：使用 C# 方法和属性扩展代理功能 OpenAI 集成：通过标准化 .NET API 利用语言模型 安全配置：基于环境的API密钥管理  🔧 技术堆栈核心技术 微软代理框架（.NET） GitHub 模型 API 集成 ...</div></div></div></a><a class="pagination-related" href="/2026/01/17/%E6%9E%B6%E6%9E%84%E8%83%BD%E5%8A%9B%E5%9C%B0%E5%9B%BE/" title="架构能力地图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-17</div><div class="info-item-2">架构能力地图</div></div><div class="info-2"><div class="info-item-1">07. 架构能力地图1. 顶层能力区A. 入口层对应需求：  提供 CLI 入口 提供初始化流程 提供 SDK 接入方式 提供 MCP 入口  B. Prompt 编排层对应需求：  动态生成系统提示词 注入环境信息 注入语言与输出风格 注入记忆、MCP 说明、会话局部规则  C. 工具执行层对应需求：  工具发现 工具输入校验 权限判断 Hook 拦截 执行记录 输出回流  D. Agent 调度层对应需求：  启动子 agent 支持 fork &#x2F; background &#x2F; remote &#x2F; teammate 模式 管理 agent 生命周期 管理 agent 上下文边界  E. 扩展生态层对应需求：  Skills Plugins MCP 命令扩展 插件变量替换与配置注入  F. Memory &#x2F; Session 层对应需求：  项目记忆 用户记忆 会话摘要 transcript resume  G. 任务与后台层对应需求：  本地任务 后台 agent 任务 远程 agent 任务 shell 任务 进度追踪与通知  H. 质量保证...</div></div></div></a><a class="pagination-related" href="/2026/01/03/MCP%20%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98/" title="MCP 解决什么问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-03</div><div class="info-item-2">MCP 解决什么问题</div></div><div class="info-2"><div class="info-item-1">MCP 解决什么问题在 Agent 系统中，让Agent做出重要的决定的一个关键点是构造好的 /chat/completions 请求参数，参数中：  messages 参数：给出对话历史，历史中包含的背景信息质量越高，给出的答案就会更准确； tools 参数：给出模型可用的工具，用于获取动态信息或执行某些动作。  这两个参数都可以认为是我们给模型的上下文信息。（context） message 的内容和问题messages 是一个数组，数组中的 content 的值是 user 给出的信息，或者其他角色的历史输出信息。如果是 user 给出的信息，则一般的做法是用一个 prompt template来组织基本的 prompt 结构，并将一些动态的信息通过其他方式检索到，补充道 prompt template中的占位符，从而形成最终输入模型的 prompt。 要得到最好的解，不同的问题需要不同的 prompt template。这是一个难点 tools 的内容和问题/chat/completions 接受的 tool 是有一定的 schema 规定，而一般的工具（如RESTful...</div></div></div></a><a class="pagination-related" href="/2025/09/06/explore-agentic-frameworks__azure-ai-foundry-agent-creation/" title="explore-agentic-frameworks__azure-ai-foundry-agent-creation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-06</div><div class="info-item-2">explore-agentic-frameworks__azure-ai-foundry-agent-creation</div></div><div class="info-2"><div class="info-item-1">Azure AI代理服务开发在本练习中，您将使用 Microsoft Foundry 门户 中的 Azure AI 代理服务工具创建航班预订代理。该代理将能够与用户交互并提供有关航班的信息。 先决条件要完成此练习，您需要具备以下条件：  具有有效订阅的 Azure 帐户。 免费创建帐户。 您需要获得创建 Microsoft Foundry 中心的权限或有人为您创建一个中心。 如果您的角色是贡献者或所有者，您可以按照本教程中的步骤操作。    创建 Microsoft Foundry 中心 注： Microsoft Foundry 以前称为 Azure AI Studio。   请按照 Microsoft Foundry 博客文章中的指南创建 Microsoft Foundry 中心。  创建项目后，关闭显示的所有提示并查看 Microsoft Foundry 门户中的项目页面，该页面应类似于下图：     部署模型 在项目左侧窗格的 我的资产 部分中，选择 模型 + 端点 页面。  在 模型 + 端点 页面的 模型部署 选项卡中，在 + 部署模型 菜单中，选择 部署基础模型。  ...</div></div></div></a><a class="pagination-related" href="/2025/09/15/tool-use__code_samples__04-dotnet-agent-framework/" title="tool-use__code_samples__04-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-15</div><div class="info-item-2">tool-use__code_samples__04-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🛠️ GitHub 模型 (.NET) 的高级工具使用📋 学习目标本笔记本演示了使用 .NET 中的 Microsoft Agent Framework 与 GitHub 模型的企业级工具集成模式。您将学习利用 C# 的强类型和 .NET 的企业功能，使用多种专用工具构建复杂的代理。 您将掌握的高级工具功能 🔧 多工具架构：构建具有多种专业功能的代理 🎯 类型安全工具执行：利用 C# 的编译时验证 📊 企业工具模式：生产就绪的工具设计和错误处理 🔗 工具组合：组合复杂业务工作流程的工具  🎯 .NET 工具架构的优点企业工具功能 编译时验证：强类型确保工具参数的正确性 依赖注入：用于工具管理的 IoC 容器集成 异步&#x2F;等待模式：通过适当的资源管理实现非阻塞工具执行 结构化日志记录：用于工具执行监控的内置日志记录集成  生产就绪模式 异常处理：使用类型化异常进行全面的错误管理 资源管理：正确的处置模式和内存管理 性能监控：内置指标和性能计数器 配置管理：带有验证的类型安全配置  🔧 技术架构核心 .NET 工具组件 Microsoft.Extensions...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#16-Python-%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.</span> <span class="toc-text">16. Python 实现注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E5%88%99"><span class="toc-number">1.1.</span> <span class="toc-text">1. 实现原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.2.</span> <span class="toc-text">2. 模块建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8E%A8%E8%8D%90%E5%85%88%E7%94%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">3. 推荐先用的数据模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%8D%E8%A6%81%E8%BF%87%E6%97%A9%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-number">1.4.</span> <span class="toc-text">4. 不要过早做的事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E7%9A%84%E6%9C%80%E4%BD%B3%E7%9B%AE%E6%A0%87"><span class="toc-number">1.5.</span> <span class="toc-text">5. 第一阶段的最佳目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%8E%A8%E8%8D%90%E9%87%8C%E7%A8%8B%E7%A2%91"><span class="toc-number">1.6.</span> <span class="toc-text">6. 推荐里程碑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Milestone-1"><span class="toc-number">1.6.1.</span> <span class="toc-text">Milestone 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Milestone-2"><span class="toc-number">1.6.2.</span> <span class="toc-text">Milestone 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Milestone-3"><span class="toc-number">1.6.3.</span> <span class="toc-text">Milestone 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Milestone-4"><span class="toc-number">1.6.4.</span> <span class="toc-text">Milestone 4</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>14_race_conditions | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="竞争条件（详细概念）  竞赛条件 Kya Hoti Hai？  竞争条件选项卡 hoti hai jab do ya zyada 请求 ek hi 资源 ko 相同的 waqt 访问 kar rahi hoti hain aur 系统 ka 结果计时 pe 取决于 karta hai。   简单示例（注册案例）  场景：  请求A → 检查电子邮件是否存在？ → 没有  请求B → 检查电子邮件是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="14_race_conditions">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/03/05/14_race_conditions/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="竞争条件（详细概念）  竞赛条件 Kya Hoti Hai？  竞争条件选项卡 hoti hai jab do ya zyada 请求 ek hi 资源 ko 相同的 waqt 访问 kar rahi hoti hain aur 系统 ka 结果计时 pe 取决于 karta hai。   简单示例（注册案例）  场景：  请求A → 检查电子邮件是否存在？ → 没有  请求B → 检查电子邮件是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-03-05T08:28:09.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.429Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "14_race_conditions",
+  "url": "https://hzhzxfs.github.io/2025/03/05/14_race_conditions/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-03-05T08:28:09.000Z",
+  "dateModified": "2026-06-10T02:14:46.429Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/03/05/14_race_conditions/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '14_race_conditions',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">14_race_conditions</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">14_race_conditions</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-05T08:28:09.000Z" title="发表于 2025-03-05 16:28:09">2025-03-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.429Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>竞争条件（详细概念）</p>
+<ol>
+<li>竞赛条件 Kya Hoti Hai？</li>
+</ol>
+<p>竞争条件选项卡 hoti hai jab do ya zyada 请求 ek hi 资源 ko 相同的 waqt 访问 kar rahi hoti hain aur 系统 ka 结果计时 pe 取决于 karta hai。</p>
+<hr>
+<ol start="2">
+<li>简单示例（注册案例）</li>
+</ol>
+<p>场景：</p>
+<ol>
+<li><p>请求A → 检查电子邮件是否存在？ → 没有</p>
+</li>
+<li><p>请求B → 检查电子邮件是否存在？ → 没有</p>
+</li>
+</ol>
+<p>3.请求A→保存用户→成功</p>
+<p>4.请求B→保存用户→重复尝试</p>
+<p>Agar DB 唯一约束 na ho to dono save ho sakte hain。</p>
+<hr>
+<ol start="3">
+<li>竞态条件 Kyun 危险海？</li>
+</ol>
+<p>重复数据创建ho sakta hai</p>
+<p>金融交易双流程ho sakti hain</p>
+<p>库存负数ho sakta hai</p>
+<p>安全绕过ho sakta hai</p>
+<hr>
+<p>4.伊斯卡解决方案</p>
+<ol>
+<li><p>数据库唯一约束</p>
+</li>
+<li><p>原子操作</p>
+</li>
+<li><p>交易（主要是关键系统）</p>
+</li>
+<li><p>正确的错误处理</p>
+</li>
+</ol>
+<hr>
+<ol start="5">
+<li>真正的工程洞察力</li>
+</ol>
+<p>竞赛条件开发环境mein kam dikhti hai，lekin生产mein高流量ke时间频繁hoti hai。</p>
+<hr>
+<p>技术问题（附答案）</p>
+<p>Q1：竞态条件 zyada tar 生产 mein kyun 检测到 hoti hai？</p>
+<p>答：Kunki生产mein并发请求zyada hoti hain，jabke开发环境mein流量低hota hai。</p>
+<p>Q2：Kya应用程序级重复检查竞争条件可以完全防止kar sakta hai吗？</p>
+<p>答：纳希。 Sirf 数据库级唯一约束是事务的最终保护。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/03/05/14_race_conditions/">https://hzhzxfs.github.io/2025/03/05/14_race_conditions/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/06/15_verification_authZ_authN_basics/" title="15_verification_authZ_authN_basics"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">15_verification_authZ_authN_basics</div></div><div class="info-2"><div class="info-item-1">验证、身份验证、授权核心点 验证 联系所有权确认 karti hai（通过电子邮件 ya 电话 OTP se 证明 karna ke yeh waqai 用户 ka hai）。 身份验证 (AuthN) 身份证明 karta hai（电子邮件+密码匹配？JWT 有效吗？）。 **授权（AuthZ）**权限控制karta hai（用户kya kar sakta hai？admin ya普通用户？）。4.验证信任层hai、认证身份层hai、授权访问控制层hai。 安全系统我的青少年层 alag hoti hain lekin mil kar kaam karti hain。   简单流程示例注册→验证电子邮件→登录（身份验证）→访问控制（授权）  法伊达 清晰的架构设计 更好的安全模型 访问控制妥善管理和泰海 敏感系统存在误用风险 kam hota hai   技术问题（附答案）问题1： Kya验证ke bina验证允许karna安全吗？ 答案： 技术上可行，lekin 虚假电子邮件和垃圾邮件帐户存在风险 barh jata hai。 问题2： Agar 用户经过身份验证 hai l...</div></div></div></a><a class="pagination-related" href="/2025/03/04/13_authentication_basics/" title="13_authentication_basics"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">13_authentication_basics</div></div><div class="info-2"><div class="info-item-1">认证、授权、验证、验证（顺序注释）后端正确的执行顺序 验证 验证（如果需要） 认证4、授权   1. 验证验证检查传入数据的结构是否正确。 示例：  电子邮件的格式是否正确？ 密码是否至少8个字符？ 是否缺少必填字段？  验证发生在请求开始时。如果验证失败 → 请求将立即被拒绝。  2.验证验证确认身份的所有权。 示例：  电子邮件验证链接 一次性密码验证 电话号码确认  验证通常在注册后进行。它确保用户实际拥有电子邮件或电话。  3. 身份验证身份验证检查用户是谁。 示例：  使用电子邮件和密码登录 JWT令牌验证  如果凭据正确 → 用户已通过身份验证。如果不是 → 401 未经授权的响应。  4.授权授权检查允许经过身份验证的用户执行哪些操作。 示例：  只有管理员可以删除用户 用户只能编辑自己的帖子  如果缺少权限 → 403 禁止响应。  简单理解验证 → 数据正确吗？验证 → 身份是否得到确认？身份验证 → 你是谁？授权 → 你可以做什么？  完整的请求流程示例客户要求→ 验证中间件→ 认证中间件→ 授权检查→ 控制器逻辑→ 回应 这是标准的安全后端请求管道。 </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/01/09/HandlersServicesrepositorymodels/" title="HandlersServicesrepositorymodels"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-09</div><div class="info-item-2">HandlersServicesrepositorymodels</div></div><div class="info-2"><div class="info-item-1">三层模式（真实项目的干净架构）在构建可扩展的后端系统（API、机器人、Web 应用程序）时，我们将职责分层。 为什么？ 因为将所有内容混合在一个文件中会导致：  意大利面条代码  硬调试 硬测试 硬缩放 客户改变需求时的痛苦  所以我们使用：  什么是三层模式？它是一种代码组织结构，将应用程序分为三个逻辑层： 1.处理层（表示层）2.服务层（业务逻辑层）3. 存储库层（数据层） 每一层都只有一个职责。 简单的想法。强大的影响力。  为什么需要它？想象一下您的 OMR Streamlit 应用程序。 如果您：  检测图像 分析答案 转换为 JSON 存储在 MongoDB 中 返回响应  全部都在一个函数内…… 现在客户说：  “存储在 PostgreSQL 而不是 Mongo 中。”  现在你必须修改一切😵 但如果你使用图层：  仅存储库层发生变化。 应用程序的其余部分保持不变。  这就是清洁工程。  它解决了什么问题？   无层 分层    乱码 清洁分离   调试困难 轻松调试   难以测试 简单的单元测试   紧耦合 松耦合   改变打破一切 更改仅影响一层   该模式解...</div></div></div></a><a class="pagination-related" href="/2025/03/16/9_http_request_lifecycle/" title="9_http_request_lifecycle"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-16</div><div class="info-item-2">9_http_request_lifecycle</div></div><div class="info-2"><div class="info-item-1">HTTP 和请求生命周期（后端基础） 1.什么是HTTP？HTTP（超文本传输​​协议）是客户端和服务器之间使用的通信协议。 型号： 客户端→请求→服务器服务器→响应→客户端 HTTP 是无状态，这意味着每个请求都是独立的。  2. HTTP 请求的结构HTTP 请求包含： 1. 方法 GET（读取数据） POST（创建数据） PUT（替换数据） 补丁（部分更新） 删除（删除数据）  2.网址示例： 12/notes/notes/123 3. 标题额外的元数据，例如：  内容类型 授权 饼干  4. 正文（可选）主要用于 POST &#x2F; PUT &#x2F; PATCH 请求。  3. HTTP 响应的结构服务器响应包含：  状态代码（200、201、400、404、500） 标题 正文（JSON、文本等）  JSON 响应示例： 123&#123;  &quot;message&quot;: &quot;success&quot;&#125;  4. Node.js 请求生命周期（深入理解）第 1 步：服务器启动1app.listen(3000) 内部： 1http.c...</div></div></div></a><a class="pagination-related" href="/2025/06/08/PyTorch%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/" title="PyTorch深度学习实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-08</div><div class="info-item-2">PyTorch深度学习实践</div></div><div class="info-2"><div class="info-item-1">PyTorch 深度学习实践概述 课程链接：  《PyTorch深度学习实践》完结合集。   环境配置 安装教程：  最详细的 Windows 下 PyTorch 入门深度学习环境安装与配置 CPU GPU 版 | 土堆教程_哔哩哔哩_bilibili。   确认 GPUGPU（Graphics Processing Unit），显卡，用于在屏幕上显示图像、视频。 驱动：让计算机识别特定的硬件。 深度学习显卡，一般是用 NVIDIA（英伟达），AMD 的显卡不能用于深度学习。因为英伟达有 CUDA 平台，让用户可以通过 CUDA 操纵显卡，从而加速深度学习的训练。 CUDA 软件的版本（Cuda runtime version）要 &lt;&#x3D; CUDA 硬件驱动的版本（Cuda driver version）。 GPU 为什么可以加速训练？因为相比于 CPU，GPU 具有大量的 ALU（逻辑处理单元）用于计算。 安装 Anaconda虚拟环境： 1234567891011121314151617181920创建虚拟环境：conda create -n [环境名称] py...</div></div></div></a><a class="pagination-related" href="/2025/01/13/Routes/" title="Routes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-13</div><div class="info-item-2">Routes</div></div><div class="info-2"><div class="info-item-1">后端路由基础知识基于 Srinously 的教程，关于后端系统如何将传入的 HTTP 请求映射到特定业务逻辑的综合指南。 🚀 概述路由是请求的“何处”。它结合了 HTTP 方法（意图）和 URL 路径（位置）来查找服务器上正确的处理程序。 🛠 核心概念1. 静态与动态路由 静态路由： 常量路径，如 /api/books。它们总是指向相同的资源。 动态路由： 包含变量的路径，称为 路径参数。 示例： /api/users/:id 其中 :id 可以是 123。 用法： 从语义上识别特定资源。    2. 查询参数主要用于 GET 请求来发送没有请求正文的元数据。  语法： /api/books?page=2&amp;limit=20 常见用例： 分页（例如，page=2） 过滤（例如，category=tech） 排序（例如，sort=asc）    3.嵌套路由表达资源之间的关系。  示例： /api/users/:userId/posts/:postId 含义：“获取属于特定用户的特定帖子。”  4. API 版本控制和弃用允许进行重大更改而不会使现有客户端应用程序崩溃。 ...</div></div></div></a><a class="pagination-related" href="/2025/06/05/C++%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="C++学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-05</div><div class="info-item-2">C++学习笔记</div></div><div class="info-2"><div class="info-item-1">C++基础入门1  C++初识1.1  第一个C++程序1234567891011#include&lt;iostream&gt;#include&lt;string&gt;using namespace std;int main()&#123;    // ...    system(&quot;pause&quot;);    return 0;&#125;  1.2  注释1.3  变量1.4  常量12#define 常量名 常量值const 数据类型 常量名 = 常量值  1.5  关键字1.6  标识符命名规则 不能是关键字； 只能由字母、数字、下划线组成； 第一个字符必须为字母或下划线； 区分大小写。  2  数据类型2.1  整型   数据类型 占用空间    short 2 字节   int 4 字节   long Win 4 字节，Linux 4 字节（32 位）或 8 字节（64 位）   long long 8 字节   2.2  sizeof()作用：返回当前数据的类型长度（字节）。 2.3  浮点型   数据类型 占用空间    float 4 字节 ...</div></div></div></a><a class="pagination-related" href="/2025/02/03/C++%E5%B8%B8%E7%94%A8%E4%B8%89%E6%96%B9%E5%BA%93/" title="C++常用三方库"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-03</div><div class="info-item-2">C++常用三方库</div></div><div class="info-2"><div class="info-item-1">C++ 常用三方库gtest参考资料：  GoogleTest + VScode 编译和编写简单测试用例 [C++] gtest 入门教程  glog头文件：#include &lt;glog/logging.h&gt;。 日志级别 INFO WARNING ERROR FATAL  打印 FATAL 消息会在打印完成后终止程序。 CHECK 宏glog 提供了 CHECK() 宏帮助我们检查程序的错误，当 CHECK() 的条件不满足时，它会记录 FATAL 日志并终止程序。 123456#define CHECK_EQ(x,y) CHECK_OP(x,y,EQ,==)#define CHECK_NE(x,y) CHECK_OP(x,y,NE,!=)#define CHECK_LE(x,y) CHECK_OP(x,y,LE,&lt;=)#define CHECK_LT(x,y) CHECK_OP(x,y,LT,&lt;)#define CHECK_GE(x,y) CHECK_OP(x,y,GE,&gt;=)#define CHECK_GT(x,y) CHECK_OP(x,y,G...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

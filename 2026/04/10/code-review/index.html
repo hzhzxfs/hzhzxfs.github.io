@@ -1,0 +1,390 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>code-review | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Code Review 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题     Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https:&#x2F;&#x2F;claude.ai&#x2F;admin-settings&#x2F;claude-code) 订阅。对于启用了 [Zero Data Retention](&#x2F;zh-CN&#x2F;zero-data-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="code-review">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/04/10/code-review/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Code Review 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题     Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https:&#x2F;&#x2F;claude.ai&#x2F;admin-settings&#x2F;claude-code) 订阅。对于启用了 [Zero Data Retention](&#x2F;zh-CN&#x2F;zero-data-">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-04-10T04:07:25.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.592Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "code-review",
+  "url": "https://hzhzxfs.github.io/2026/04/10/code-review/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-04-10T04:07:25.000Z",
+  "dateModified": "2026-06-10T02:14:46.592Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/04/10/code-review/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'code-review',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">code-review</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">code-review</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-10T04:07:25.000Z" title="发表于 2026-04-10 12:07:25">2026-04-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.592Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Code-Review"><a href="#Code-Review" class="headerlink" title="Code Review"></a>Code Review</h1><blockquote>
+<p>设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题</p>
+</blockquote>
+<Note>
+  Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。
+</Note>
+
+<p>Code Review 分析您的 GitHub pull request，并在发现问题的代码行上发布内联评论。一支由专业代理组成的团队在完整代码库的上下文中检查代码更改，寻找逻辑错误、安全漏洞、破损的边界情况和微妙的回归问题。</p>
+<p>发现结果按严重程度标记，不会批准或阻止您的 PR，因此现有的审查工作流保持不变。您可以通过向存储库添加 <code>CLAUDE.md</code> 或 <code>REVIEW.md</code> 文件来调整 Claude 标记的内容。</p>
+<p>要在您自己的 CI 基础设施中运行 Claude 而不是使用此托管服务，请参阅 <a href="/zh-CN/github-actions">GitHub Actions</a> 或 <a href="/zh-CN/gitlab-ci-cd">GitLab CI&#x2F;CD</a>。对于自托管 GitHub 实例上的存储库，请参阅 <a href="/zh-CN/github-enterprise-server">GitHub Enterprise Server</a>。</p>
+<p>本页涵盖：</p>
+<ul>
+<li><a href="#how-reviews-work">审查工作原理</a></li>
+<li><a href="#set-up-code-review">设置</a></li>
+<li><a href="#manually-trigger-reviews">手动触发审查</a>，使用 <code>@claude review</code> 和 <code>@claude review once</code></li>
+<li><a href="#customize-reviews">自定义审查</a>，使用 <code>CLAUDE.md</code> 和 <code>REVIEW.md</code></li>
+<li><a href="#pricing">定价</a></li>
+<li><a href="#troubleshooting">故障排除</a>失败的运行和缺失的评论</li>
+<li><a href="#review-a-diff-locally">在本地审查差异</a>，使用 <code>/code-review</code> 命令</li>
+</ul>
+<Note>
+  要在本地终端中审查差异而无需安装 GitHub App，请在任何 Claude Code 会话中运行 `/code-review` 命令。请参阅[在本地审查差异](#review-a-diff-locally)。
+</Note>
+
+<h2 id="审查工作原理"><a href="#审查工作原理" class="headerlink" title="审查工作原理"></a>审查工作原理</h2><p>一旦管理员为您的组织<a href="#set-up-code-review">启用 Code Review</a>，审查将在 PR 打开时、每次推送时或手动请求时触发，具体取决于存储库的配置行为。在任何模式下，注释 <code>@claude review</code> 可以<a href="#manually-trigger-reviews">在 PR 上启动审查</a>。</p>
+<p>当审查运行时，多个代理在 Anthropic 基础设施上并行分析差异和周围代码。每个代理寻找不同类别的问题，然后验证步骤检查候选项是否与实际代码行为相符，以过滤掉误报。结果被去重、按严重程度排序，并作为内联评论发布在发现问题的特定行上，并在审查正文中包含摘要。如果未发现问题，Code Review 会更新 GitHub 检查运行以显示未检测到问题。Claude 也可能在 PR 上发布简短的确认评论。</p>
+<p>审查成本随 PR 大小和复杂性而扩展，平均在 20 分钟内完成。管理员可以通过<a href="#view-usage">分析仪表板</a>监控审查活动和支出。</p>
+<h3 id="严重程度级别"><a href="#严重程度级别" class="headerlink" title="严重程度级别"></a>严重程度级别</h3><p>每个发现都标有严重程度级别：</p>
+<table>
+<thead>
+<tr>
+<th align="left">标记</th>
+<th align="left">严重程度</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">🔴</td>
+<td align="left">重要</td>
+<td align="left">应在合并前修复的错误</td>
+</tr>
+<tr>
+<td align="left">🟡</td>
+<td align="left">小问题</td>
+<td align="left">轻微问题，值得修复但不阻止</td>
+</tr>
+<tr>
+<td align="left">🟣</td>
+<td align="left">预先存在</td>
+<td align="left">代码库中存在但不是由此 PR 引入的错误</td>
+</tr>
+</tbody></table>
+<p>发现包括可折叠的扩展推理部分，您可以展开以了解 Claude 为什么标记该问题以及它如何验证问题。</p>
+<h3 id="对发现进行评分和回复"><a href="#对发现进行评分和回复" class="headerlink" title="对发现进行评分和回复"></a>对发现进行评分和回复</h3><p>Claude 的每条审查评论都已附加 👍 和 👎，因此两个按钮都会在 GitHub UI 中出现，以便一键评分。如果发现有用，请点击 👍；如果发现错误或嘈杂，请点击 👎。Anthropic 在 PR 合并后收集反应计数，并使用它们来调整审查者。反应不会触发重新审查或更改 PR 上的任何内容。</p>
+<p>回复内联评论不会提示 Claude 响应或更新 PR。要对发现采取行动，请修复代码并推送。如果 PR 订阅了推送触发的审查，下一次运行将在问题修复时解决线程。要请求新审查而不推送，请作为<a href="#manually-trigger-reviews">顶级 PR 评论</a>注释 <code>@claude review once</code>。</p>
+<h3 id="检查运行输出"><a href="#检查运行输出" class="headerlink" title="检查运行输出"></a>检查运行输出</h3><p>除了内联审查评论外，每次审查都会填充 <strong>Claude Code Review</strong> 检查运行，该运行与您的 CI 检查一起出现。展开其 <strong>Details</strong> 链接以在一个地方查看每个发现的摘要，按严重程度排序：</p>
+<table>
+<thead>
+<tr>
+<th>严重程度</th>
+<th>文件:行</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>🔴 重要</td>
+<td><code>src/auth/session.ts:142</code></td>
+<td>令牌刷新与登出竞争，导致过期会话保持活跃</td>
+</tr>
+<tr>
+<td>🟡 小问题</td>
+<td><code>src/auth/session.ts:88</code></td>
+<td><code>parseExpiry</code> 在格式错误的输入上静默返回 0</td>
+</tr>
+</tbody></table>
+<p>每个发现也作为 <strong>Files changed</strong> 选项卡中的注释出现，直接标记在相关的差异行上。重要发现用红色标记呈现，小问题用黄色警告，预先存在的错误用灰色通知。注释和严重程度表独立于内联审查评论写入检查运行，因此即使 GitHub 拒绝在移动的行上的内联评论，它们仍然可用。</p>
+<p>检查运行始终以中立结论完成，因此它永远不会通过分支保护规则阻止合并。如果您想根据 Code Review 发现来限制合并，请在您自己的 CI 中读取检查运行输出中的严重程度分解。Details 文本的最后一行是一个机器可读的评论，您的工作流可以使用 <code>gh</code> 和 jq 解析：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \</span><br><span class="line">  --jq <span class="string">&#x27;.output.text | split(&quot;bughunter-severity: &quot;)[1] | split(&quot; --&gt;&quot;)[0] | fromjson&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这返回一个 JSON 对象，其中包含每个严重程度的计数，例如 <code>{&quot;normal&quot;: 2, &quot;nit&quot;: 1, &quot;pre_existing&quot;: 0}</code>。<code>normal</code> 键保存重要发现的计数；非零值意味着 Claude 发现了至少一个在合并前值得修复的错误。</p>
+<h3 id="Code-Review-检查的内容"><a href="#Code-Review-检查的内容" class="headerlink" title="Code Review 检查的内容"></a>Code Review 检查的内容</h3><p>默认情况下，Code Review 专注于正确性：会破坏生产的错误，而不是格式偏好或缺失的测试覆盖。您可以通过<a href="#customize-reviews">向存储库添加指导文件</a>来扩展其检查范围。</p>
+<h2 id="设置-Code-Review"><a href="#设置-Code-Review" class="headerlink" title="设置 Code Review"></a>设置 Code Review</h2><p>管理员为组织启用一次 Code Review，并选择要包含的存储库。</p>
+<Steps>
+  <Step title="打开 Claude Code 管理员设置">
+    转到 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) 并找到 Code Review 部分。您需要对 Claude 组织具有管理员访问权限，并有权在 GitHub 组织中安装 GitHub Apps。
+  </Step>
+
+  <Step title="开始设置">
+    点击**设置**。这将开始 GitHub App 安装流程。
+  </Step>
+
+  <Step title="安装 Claude GitHub App">
+    按照提示将 Claude GitHub App 安装到您的 GitHub 组织。该应用请求这些存储库权限：
+
+<pre><code>* **Contents**：读写
+* **Issues**：读写
+* **Pull requests**：读写
+
+Code Review 使用对内容的读取访问权限和对 pull request 的写入访问权限。更广泛的权限集也支持 [GitHub Actions](/zh-CN/github-actions)，如果您稍后启用的话。
+</code></pre>
+  </Step>
+
+  <Step title="选择存储库">
+    选择要为 Code Review 启用的存储库。如果您看不到存储库，请确保在安装期间为 Claude GitHub App 提供了对其的访问权限。您可以稍后添加更多存储库。
+  </Step>
+
+  <Step title="为每个存储库设置审查触发器">
+    设置完成后，Code Review 部分在表格中显示您的存储库。对于每个存储库，使用**审查行为**下拉菜单选择何时运行审查：
+
+<pre><code>* **PR 创建后一次**：当 PR 打开或标记为准备审查时运行一次审查
+* **每次推送后**：在每次推送到 PR 分支时运行审查，在 PR 演变时捕获新问题，并在您修复标记的问题时自动解决线程
+* **手动**：仅当有人[在 PR 上注释 `@claude review` 或 `@claude review once`](#manually-trigger-reviews) 时才启动审查；`@claude review` 也会将 PR 订阅到后续推送的审查
+
+每次推送时审查会运行最多审查并花费最多。手动模式对于高流量存储库很有用，您可以选择特定 PR 进行审查，或仅在 PR 准备好后才开始审查。
+</code></pre>
+  </Step>
+</Steps>
+
+<p>存储库表还显示每个存储库基于最近活动的平均审查成本。使用行操作菜单为每个存储库打开或关闭 Code Review，或完全删除存储库。</p>
+<p>要验证设置，请打开测试 PR。如果您选择了自动触发器，在几分钟内会出现名为 <strong>Claude Code Review</strong> 的检查运行。如果您选择了手动，在 PR 上注释 <code>@claude review</code> 以启动第一次审查。如果没有出现检查运行，请确认存储库在您的管理员设置中列出，并且 Claude GitHub App 有权访问它。</p>
+<h2 id="手动触发审查"><a href="#手动触发审查" class="headerlink" title="手动触发审查"></a>手动触发审查</h2><p>两个注释命令按需启动审查。无论存储库的配置触发器如何，两者都有效，因此您可以使用它们在手动模式下选择特定 PR 进行审查，或在其他模式下获得立即重新审查。</p>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>@claude review</code></td>
+<td align="left">启动审查并将 PR 订阅到今后的推送触发审查</td>
+</tr>
+<tr>
+<td align="left"><code>@claude review once</code></td>
+<td align="left">启动单次审查，不订阅未来推送</td>
+</tr>
+</tbody></table>
+<p>当您想要对 PR 的当前状态获得反馈但不希望每次后续推送都产生审查时，使用 <code>@claude review once</code>。这对于具有频繁推送的长期运行 PR 很有用，或者当您想要一次性第二意见而不改变 PR 的审查行为时。</p>
+<p>对于任一命令触发审查：</p>
+<ul>
+<li>将其作为顶级 PR 评论发布，而不是差异行上的内联评论</li>
+<li>在注释开头放置命令，如果您使用一次性形式，则在同一行上放置 <code>once</code></li>
+<li>您必须对存储库具有所有者、成员或协作者访问权限</li>
+<li>PR 必须打开</li>
+</ul>
+<p>与自动触发不同，手动触发在草稿 PR 上运行，因为显式请求表示您想要现在的审查，无论草稿状态如何。</p>
+<p>如果该 PR 上已有审查正在运行，请求将排队等待进行中的审查完成。您可以通过 PR 上的检查运行监控进度。</p>
+<h2 id="自定义审查"><a href="#自定义审查" class="headerlink" title="自定义审查"></a>自定义审查</h2><p>Code Review 从您的存储库读取两个文件来指导它标记的内容。它们在如何强烈影响审查方面有所不同：</p>
+<ul>
+<li><strong><code>CLAUDE.md</code></strong>：共享项目说明，Claude Code 用于所有任务，不仅仅是审查。Code Review 将其作为项目上下文读取，并将新引入的违规标记为小问题。</li>
+<li><strong><code>REVIEW.md</code></strong>：仅审查说明，直接注入到审查管道中的每个代理中作为最高优先级。使用它来改变标记的内容、严重程度以及如何报告发现。</li>
+</ul>
+<h3 id="CLAUDE-md"><a href="#CLAUDE-md" class="headerlink" title="CLAUDE.md"></a>CLAUDE.md</h3><p>Code Review 读取您的存储库的 <code>CLAUDE.md</code> 文件，并将新引入的违规视为<a href="#severity-levels">小问题级别</a>的发现。这是双向工作的：如果您的 PR 以使 <code>CLAUDE.md</code> 语句过时的方式更改代码，Claude 会标记文档需要更新。</p>
+<p>Claude 在目录层次结构的每个级别读取 <code>CLAUDE.md</code> 文件，因此子目录的 <code>CLAUDE.md</code> 中的规则仅适用于该路径下的文件。有关 <code>CLAUDE.md</code> 如何工作的更多信息，请参阅<a href="/zh-CN/memory">内存文档</a>。</p>
+<p>对于您不想应用于常规 Claude Code 会话的仅审查指导，请改用 <a href="#review-md"><code>REVIEW.md</code></a>。</p>
+<h3 id="REVIEW-md"><a href="#REVIEW-md" class="headerlink" title="REVIEW.md"></a>REVIEW.md</h3><p><code>REVIEW.md</code> 是位于您的存储库根目录的文件，它覆盖 Code Review 在您的存储库上的行为方式。其内容被注入到审查管道中每个代理的系统提示中，作为最高优先级指令块，优先于默认审查指导。</p>
+<p>因为它是逐字粘贴的，<code>REVIEW.md</code> 是纯说明：<a href="/zh-CN/memory#import-additional-files"><code>@</code> 导入语法</a>不会展开，引用的文件不会读入提示。将您想要强制执行的规则直接放在文件中。</p>
+<h4 id="您可以调整的内容"><a href="#您可以调整的内容" class="headerlink" title="您可以调整的内容"></a>您可以调整的内容</h4><p><code>REVIEW.md</code> 是自由格式的 markdown，因此任何您可以表达为审查说明的内容都在范围内。下面的模式在实践中影响最大。</p>
+<p><strong>严重程度</strong>：为您的存储库重新定义 🔴 重要的含义。默认校准针对生产代码；文档存储库、配置存储库或原型可能想要更窄的定义。明确说明哪些类别的发现是重要的，哪些最多是小问题。您也可以向另一个方向升级，例如将任何 <code>CLAUDE.md</code> 违规视为重要而不是默认小问题。</p>
+<p><strong>小问题数量</strong>：限制单次审查发布的 🟡 小问题评论数量。散文和配置文件可以永远被打磨。像”最多报告五个小问题，在摘要中提及其余的计数”这样的上限使审查可操作。</p>
+<p><strong>跳过规则</strong>：列出 Claude 应该不发布任何发现的路径、分支模式和发现类别。常见候选是生成的代码、lockfiles、供应商依赖和机器创作的分支，以及您的 CI 已经强制执行的任何内容，如 linting 或拼写检查。对于值得一些审查但不需要完全审查的路径，设置更高的标准而不是完全跳过：”在 <code>scripts/</code> 中，仅在接近确定且严重时报告。”</p>
+<p><strong>存储库特定检查</strong>：添加您想在每个 PR 上标记的规则，如”新 API 路由必须有集成测试。”因为 <code>REVIEW.md</code> 被注入为最高优先级，这些比长 <code>CLAUDE.md</code> 中的相同规则更可靠地着陆。</p>
+<p><strong>验证标准</strong>：在发布发现类别之前需要证据。例如，”行为声明需要源中的 <code>file:line</code> 引用，而不是从命名推断”会减少否则会花费作者往返的误报。</p>
+<p><strong>重新审查收敛</strong>：告诉 Claude 当 PR 已经被审查时如何表现。像”在第一次审查后，抑制新的小问题并仅发布重要发现”这样的规则会阻止单行修复仅因风格而达到第七轮。</p>
+<p><strong>摘要形状</strong>：要求审查正文以一行计数开头，如 <code>2 factual, 4 style</code>，并在这种情况下以”没有事实问题”开头。作者想在详细信息之前知道工作的形状。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p>这个 <code>REVIEW.md</code> 为后端服务重新校准严重程度，限制小问题，跳过生成的文件，并添加存储库特定检查。</p>
+<figure class="highlight markdown"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># 审查说明</span></span><br><span class="line"></span><br><span class="line"><span class="section">## 重要在这里的含义</span></span><br><span class="line"></span><br><span class="line">保留重要用于会破坏行为、泄露数据或阻止回滚的发现：不正确的逻辑、无范围的数据库查询、日志或错误消息中的 PII，以及不向后兼容的迁移。风格、命名和重构建议最多是小问题。</span><br><span class="line"></span><br><span class="line"><span class="section">## 限制小问题</span></span><br><span class="line"></span><br><span class="line">每次审查最多报告五个小问题。如果您发现了更多，请在摘要中说&quot;加上 N 个类似项目&quot;而不是内联发布它们。如果您发现的一切都是小问题，请以&quot;没有阻止问题&quot;开头摘要。</span><br><span class="line"></span><br><span class="line"><span class="section">## 不要报告</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> CI 已经强制执行的任何内容：lint、格式化、类型错误</span><br><span class="line"><span class="bullet">-</span> <span class="code">`src/gen/`</span> 下生成的文件和任何 <span class="code">`*.lock`</span> 文件</span><br><span class="line"><span class="bullet">-</span> 故意违反生产规则的仅测试代码</span><br><span class="line"></span><br><span class="line"><span class="section">## 始终检查</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> 新 API 路由有集成测试</span><br><span class="line"><span class="bullet">-</span> 日志行不包括电子邮件地址、用户 ID 或请求正文</span><br><span class="line"><span class="bullet">-</span> 数据库查询的范围限定为调用者的租户</span><br></pre></td></tr></table></figure>
+
+<h4 id="保持专注"><a href="#保持专注" class="headerlink" title="保持专注"></a>保持专注</h4><p>长度有成本：长 <code>REVIEW.md</code> 会稀释最重要的规则。将其保持为改变审查行为的说明，并将常规项目上下文留在 <code>CLAUDE.md</code> 中。</p>
+<h2 id="查看使用情况"><a href="#查看使用情况" class="headerlink" title="查看使用情况"></a>查看使用情况</h2><p>转到 <a target="_blank" rel="noopener" href="https://claude.ai/analytics/code-review">claude.ai&#x2F;analytics&#x2F;code-review</a> 以查看整个组织的 Code Review 活动。仪表板显示：</p>
+<table>
+<thead>
+<tr>
+<th align="left">部分</th>
+<th align="left">显示内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">审查的 PR</td>
+<td align="left">所选时间范围内每日审查的 pull request 计数</td>
+</tr>
+<tr>
+<td align="left">每周成本</td>
+<td align="left">Code Review 的每周支出</td>
+</tr>
+<tr>
+<td align="left">反馈</td>
+<td align="left">因开发人员解决问题而自动解决的审查评论计数</td>
+</tr>
+<tr>
+<td align="left">存储库分解</td>
+<td align="left">每个存储库的审查 PR 计数和已解决评论</td>
+</tr>
+</tbody></table>
+<p>管理员设置中的存储库表也显示每个存储库的平均审查成本。仪表板成本数字是用于监控活动的估计；对于发票准确的支出，请参考您的 Anthropic 账单。</p>
+<h2 id="定价"><a href="#定价" class="headerlink" title="定价"></a>定价</h2><p>Code Review 根据令牌使用情况计费。每次审查平均花费 $15-25，随 PR 大小、代码库复杂性和需要验证的问题数量而扩展。Code Review 使用通过<a target="_blank" rel="noopener" href="https://support.claude.com/zh-CN/articles/12429409-extra-usage-for-paid-claude-plans">使用额度</a>单独计费，不计入您的计划包含的使用。</p>
+<p>您选择的审查触发器影响总成本：</p>
+<ul>
+<li><strong>PR 创建后一次</strong>：每个 PR 运行一次</li>
+<li><strong>每次推送后</strong>：在每次推送时运行，将成本乘以推送次数</li>
+<li><strong>手动</strong>：在有人在 PR 上注释 <code>@claude review</code> 之前没有审查</li>
+</ul>
+<p>在任何模式下，注释 <code>@claude review</code> <a href="#manually-trigger-reviews">选择 PR 进入推送触发审查</a>，因此在该注释后每次推送都会产生额外成本。要运行单次审查而不订阅未来推送，请改为注释 <code>@claude review once</code>。</p>
+<p>无论您的组织是否为其他 Claude Code 功能使用 Amazon Bedrock 或 Google Vertex AI，成本都会出现在您的 Anthropic 账单上。要为 Code Review 设置每月支出上限，请转到 <a target="_blank" rel="noopener" href="https://claude.ai/admin-settings/usage">claude.ai&#x2F;admin-settings&#x2F;usage</a> 并为 Claude Code Review 服务配置限制。</p>
+<p>通过<a href="#view-usage">分析</a>中的每周成本图表或管理员设置中的每个存储库平均成本列监控支出。</p>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><p>审查运行是尽力而为的。失败的运行永远不会阻止您的 PR，但它也不会自动重试。本部分介绍如何从失败的运行中恢复，以及当检查运行报告您找不到的问题时在哪里查看。</p>
+<h3 id="重新触发失败或超时的审查"><a href="#重新触发失败或超时的审查" class="headerlink" title="重新触发失败或超时的审查"></a>重新触发失败或超时的审查</h3><p>当审查基础设施遇到内部错误或超过时间限制时，检查运行完成，标题为 <strong>Code review encountered an error</strong> 或 <strong>Code review timed out</strong>。结论仍然是中立的，因此没有任何东西阻止您的合并，但没有发现被发布。</p>
+<p>要再次运行审查，在 PR 上注释 <code>@claude review once</code>。这启动一个新的审查，不订阅 PR 到未来推送。如果 PR 已订阅推送触发审查，推送新提交也会启动新审查。</p>
+<p>GitHub 检查选项卡中的<strong>重新运行</strong>按钮不会重新触发 Code Review。改用注释命令或新推送。</p>
+<h3 id="审查未运行，PR-显示支出上限消息"><a href="#审查未运行，PR-显示支出上限消息" class="headerlink" title="审查未运行，PR 显示支出上限消息"></a>审查未运行，PR 显示支出上限消息</h3><p>当您的组织的每月支出上限达到时，Code Review 在 PR 上发布单条评论，解释审查被跳过。审查在下一个计费周期开始时自动恢复，或当管理员在 <a target="_blank" rel="noopener" href="https://claude.ai/admin-settings/usage">claude.ai&#x2F;admin-settings&#x2F;usage</a> 提高上限时立即恢复。</p>
+<h3 id="查找未显示为内联评论的问题"><a href="#查找未显示为内联评论的问题" class="headerlink" title="查找未显示为内联评论的问题"></a>查找未显示为内联评论的问题</h3><p>如果检查运行标题说发现了问题但您在差异上看不到内联审查评论，请在这些其他位置查看发现的位置：</p>
+<ul>
+<li><strong>检查运行 Details</strong>：在检查选项卡中的 Claude Code Review 检查旁边点击 <strong>Details</strong>。严重程度表列出每个发现及其文件、行和摘要，无论内联评论是否被接受。</li>
+<li><strong>Files changed 注释</strong>：在 PR 上打开 <strong>Files changed</strong> 选项卡。发现呈现为直接附加到差异行的注释，与审查评论分开。</li>
+<li><strong>审查正文</strong>：如果您在审查运行时推送到 PR，某些发现可能引用当前差异中不再存在的行。这些出现在审查正文文本中的 <strong>Additional findings</strong> 标题下，而不是作为内联评论。</li>
+</ul>
+<h2 id="在本地审查差异"><a href="#在本地审查差异" class="headerlink" title="在本地审查差异"></a>在本地审查差异</h2><p><a href="/zh-CN/commands"><code>/code-review</code> 命令</a>在您的终端中审查差异，无需安装 GitHub App。在任何 Claude Code 会话中运行它：它报告当前差异中的正确性错误，以及{&#x2F;* min-version: 2.1.151 *&#x2F;}重用、简化和效率清理。传递 <code>--comment</code> 以将发现作为内联 PR 评论发布，或传递 <code>--fix</code> 以在审查后将发现应用到您的工作树。</p>
+<p>较低的<a href="/zh-CN/model-config#adjust-effort-level">工作量级别</a>返回较少、更高置信度的发现，而 <code>high</code> 到 <code>max</code> 提供更广泛的覆盖范围，可能包括不确定的发现。没有工作量参数，审查使用会话的当前工作量。传递路径或 PR 引用以审查特定目标而不是当前差异。</p>
+<p><code>/code-review ultra --fix</code> 在云中运行更深入的 <a href="/zh-CN/ultrareview">ultrareview</a>，然后在发现到达您的会话时将其应用到您的工作树。</p>
+<p>该命令在 v2.1.147 之前被命名为 <code>/simplify</code>，当时它默认应用修复。{&#x2F;* min-version: 2.1.154 *&#x2F;}从 v2.1.154 开始，<code>/simplify</code> 运行单独的仅清理审查，应用修复而不寻找错误。如果您为错误查找编写了 <code>/simplify</code> 脚本，请切换到 <code>/code-review --fix</code>，它保持不变。</p>
+<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><p>Code Review 旨在与 Claude Code 的其余部分一起工作。如果您想在打开 PR 之前在本地运行审查、需要自托管设置或想深入了解 <code>CLAUDE.md</code> 如何在工具中塑造 Claude 的行为，这些页面是很好的下一步：</p>
+<ul>
+<li><a href="/zh-CN/commands">Commands</a>：在本地 Claude Code 会话中运行 <code>/code-review</code> 以在推送前检查差异</li>
+<li><a href="/zh-CN/github-actions">GitHub Actions</a>：在您自己的 GitHub Actions 工作流中运行 Claude，以实现超越代码审查的自定义自动化</li>
+<li><a href="/zh-CN/gitlab-ci-cd">GitLab CI&#x2F;CD</a>：GitLab 管道的自托管 Claude 集成</li>
+<li><a href="/zh-CN/memory">Memory</a>：<code>CLAUDE.md</code> 文件如何在 Claude Code 中工作</li>
+<li><a href="/zh-CN/analytics">Analytics</a>：跟踪超越代码审查的 Claude Code 使用情况</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/04/10/code-review/">https://hzhzxfs.github.io/2026/04/10/code-review/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/11/common-workflows/" title="common-workflows"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">common-workflows</div></div><div class="info-2"><div class="info-item-1">常见工作流程 使用 Claude Code 探索代码库、修复错误、重构、测试和其他日常任务的分步指南。  本页收集了日常开发的简短工作流程。有关提示和上下文管理的更高级指导，请参阅最佳实践。 本页涵盖：  提示工作流程，用于探索代码、修复错误、重构、测试、PR 和文档 恢复以前的对话，以便任务可以跨越多个会话 使用 worktrees 运行并行会话，以便并发编辑不会冲突 编辑前规划，以在更改接触磁盘前审查更改 将研究委派给 subagents，以保持主上下文清洁 将 Claude 管道输入脚本，用于 CI 和批处理  提示工作流程这些是日常任务的提示模式，如探索陌生代码、调试、重构、编写测试和创建 PR。每个都可以在任何 Claude Code 界面中工作；根据您的项目调整措辞。 理解新的代码库有关在 monorepo 或大型代码库中配置 Claude Code 的信息，请参阅 Monorepos 和大型存储库。 快速获取代码库概览假设您刚加入一个新项目，需要快速了解其结构。         theme1cd /path/to/project             theme1...</div></div></div></a><a class="pagination-related" href="/2026/04/09/cli-reference/" title="cli-reference"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">cli-reference</div></div><div class="info-2"><div class="info-item-1">CLI 参考 Claude Code 命令行界面的完整参考，包括命令和标志。  CLI 命令您可以使用这些命令启动会话、管道内容、恢复对话和管理更新：    命令 描述 示例    claude 启动交互式会话 claude   claude &quot;query&quot; 使用初始提示启动交互式会话 claude &quot;explain this project&quot;   claude -p &quot;query&quot; 通过 SDK 查询，然后退出 claude -p &quot;explain this function&quot;   cat file | claude -p &quot;query&quot; 处理管道内容 cat logs.txt | claude -p &quot;explain&quot;   claude -c 在当前目录中继续最近的对话 claude -c   claude -c -p &quot;query&quot; 通过 SDK 继续 claude -c -p &quot;Check for type errors&q...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/03/agents/" title="agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-03</div><div class="info-item-2">agents</div></div><div class="info-2"><div class="info-item-1">并行运行代理 比较 Claude Code 同时处理多个任务的方式：子代理、代理视图、代理团队和动态工作流。  子代理、代理视图、代理团队 和 动态工作流 各自以不同的方式并行化工作。正确的选择取决于您是否想在每个对话中保持参与、交付任务并稍后检查，或让 Claude 为您协调一组工作人员。    方法 它提供什么 何时使用    子代理 在一个会话内的委派工作人员，在自己的上下文中执行辅助任务并返回摘要 辅助任务会用搜索结果、日志或文件内容淹没您的主对话，而您不会再次引用这些内容   代理视图 一个屏幕来分派和监控在后台运行的会话，使用 claude agents 打开。研究预览 您有多个独立任务，想要交付它们，一目了然地检查状态，并仅在需要时介入   代理团队 多个协调的会话，具有共享任务列表和代理间消息传递，由主导者管理。实验性功能，默认禁用 您希望 Claude 将项目分成多个部分、分配它们，并保持工作人员同步   动态工作流 一个脚本，运行许多子代理并交叉检查其结果，用于一个太大而无法一次协调的工作或需要多次处理的工作。研究预览 一个任务对于少数几个子代理来说太大了，或...</div></div></div></a><a class="pagination-related" href="/2026/03/01/mcp-quickstart/" title="mcp-quickstart"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-01</div><div class="info-item-2">mcp-quickstart</div></div><div class="info-2"><div class="info-item-1">连接到 MCP 服务器 将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。  Model Context Protocol (MCP) 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。 本指南将引导您通过 Claude Code CLI 端到端地连接一个 MCP 服务器。完成后，您将拥有一个已连接且响应的服务器，了解其配置在磁盘上的位置，并知道如何修复最常见的连接错误。    您也可以从其他界面添加 MCP 服务器，包括桌面应用、VS Code 和网络版。请参阅[从其他界面连接](#connect-from-other-surfaces)。   有关在 Claude Code 中连接和配置 MCP 服务器的所有方式，请参阅 MCP 参考。 开始之前确保您拥有：  已安装并验证了 Claude Code 在项目目录中打开的终端。任何目录都可以，包括空目录。  添加并验证服务器下面的示例连接到 Claude Code 文...</div></div></div></a><a class="pagination-related" href="/2026/03/13/sessions/" title="sessions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-13</div><div class="info-item-2">sessions</div></div><div class="info-2"><div class="info-item-1">管理会话 命名、恢复、分支和在 Claude Code 对话之间切换。涵盖 --continue、--resume、--from-pr、/resume 选择器、会话命名和文本记录存储位置。  会话是与项目目录关联的已保存对话。Claude Code 在您工作时将其本地存储，因此您可以从中断处恢复、分支以尝试不同的方法，或在任务之间切换。 桌面应用、网页版 Claude Code 和 VS Code 扩展各自维护自己的会话历史记录。本页涵盖 CLI：  恢复之前的对话（通过标志、名称或 PR） 命名会话以便稍后查找 使用 /resume 选择器浏览会话 分支对话以尝试不同的方法 导出文本记录并在磁盘上找到它们  恢复会话会话在您工作时持续保存到本地文本记录文件，因此您可以在退出或运行 /clear 后返回到一个会话。使用这些入口点：    命令 功能    claude --continue 恢复当前目录中最近的会话   claude --resume 打开会话选择器   claude --resume &lt;name&gt; 直接恢复命名的会话   claude --from-...</div></div></div></a><a class="pagination-related" href="/2026/04/14/features-overview/" title="features-overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">features-overview</div></div><div class="info-2"><div class="info-item-1">扩展 Claude Code 了解何时使用 CLAUDE.md、Skills、subagents、hooks、MCP 和 plugins。  Claude Code 结合了一个能够推理代码的模型和内置工具，用于文件操作、搜索、执行和网络访问。内置工具涵盖了大多数编码任务。本指南涵盖扩展层：您添加的功能，用于自定义 Claude 的知识、将其连接到外部服务以及自动化工作流。    有关核心代理循环如何工作的信息，请参阅 [Claude Code 如何工作](/zh-CN/how-claude-code-works)。   初次使用 Claude Code？ 从 CLAUDE.md 开始了解项目约定，然后根据需要添加其他扩展当特定触发器出现时。 概述扩展插入代理循环的不同部分：  CLAUDE.md 添加 Claude 每个会话都能看到的持久上下文 Skills 添加可重用的知识和可调用的工作流 代码智能 将 Claude 连接到语言服务器，用于符号级导航和实时类型错误 MCP 将 Claude 连接到外部服务和工具 Subagents 在隔离的上下文中运行自己的循环，返回摘要 Ag...</div></div></div></a><a class="pagination-related" href="/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="13-内置Agent设计模式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-13</div><div class="info-item-2">13-内置Agent设计模式</div></div><div class="info-2"><div class="info-item-1">第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计 本篇是《深入 Claude Code 源码》系列第 13 篇。我们将深入 6 个内置 Agent 的 System Prompt 设计，揭示如何通过 prompt 工程将同一套工具系统塑造出截然不同的 Agent 人格与行为模式，并解析自定义 Agent 的 markdown frontmatter 配置全貌。  为什么需要内置 Agent？在第 12 篇中，我们了解了 Agent 系统的整体架构 —— AgentDefinition 数据结构、runAgent() 生命周期、createSubagentContext() 的隔离机制。但架构只是骨架，真正赋予 Agent “灵魂”的是它们的 System Prompt 设计。 一个核心问题：Claude Code 拥有 40+ 个工具，为什么不让一个通用 Agent 做所有事？答案藏在工程实践中：  成本控制 —— Explore Agent 用 Haiku 模型就够了，不需要用 Opus 来做文件搜索 安全...</div></div></div></a><a class="pagination-related" href="/2026/04/11/common-workflows/" title="common-workflows"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-11</div><div class="info-item-2">common-workflows</div></div><div class="info-2"><div class="info-item-1">常见工作流程 使用 Claude Code 探索代码库、修复错误、重构、测试和其他日常任务的分步指南。  本页收集了日常开发的简短工作流程。有关提示和上下文管理的更高级指导，请参阅最佳实践。 本页涵盖：  提示工作流程，用于探索代码、修复错误、重构、测试、PR 和文档 恢复以前的对话，以便任务可以跨越多个会话 使用 worktrees 运行并行会话，以便并发编辑不会冲突 编辑前规划，以在更改接触磁盘前审查更改 将研究委派给 subagents，以保持主上下文清洁 将 Claude 管道输入脚本，用于 CI 和批处理  提示工作流程这些是日常任务的提示模式，如探索陌生代码、调试、重构、编写测试和创建 PR。每个都可以在任何 Claude Code 界面中工作；根据您的项目调整措辞。 理解新的代码库有关在 monorepo 或大型代码库中配置 Claude Code 的信息，请参阅 Monorepos 和大型存储库。 快速获取代码库概览假设您刚加入一个新项目，需要快速了解其结构。         theme1cd /path/to/project             theme1...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Code-Review"><span class="toc-number">1.</span> <span class="toc-text">Code Review</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A1%E6%9F%A5%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">审查工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A5%E9%87%8D%E7%A8%8B%E5%BA%A6%E7%BA%A7%E5%88%AB"><span class="toc-number">1.1.1.</span> <span class="toc-text">严重程度级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%8F%91%E7%8E%B0%E8%BF%9B%E8%A1%8C%E8%AF%84%E5%88%86%E5%92%8C%E5%9B%9E%E5%A4%8D"><span class="toc-number">1.1.2.</span> <span class="toc-text">对发现进行评分和回复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E8%BF%90%E8%A1%8C%E8%BE%93%E5%87%BA"><span class="toc-number">1.1.3.</span> <span class="toc-text">检查运行输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Review-%E6%A3%80%E6%9F%A5%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.1.4.</span> <span class="toc-text">Code Review 检查的内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE-Code-Review"><span class="toc-number">1.2.</span> <span class="toc-text">设置 Code Review</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E8%A7%A6%E5%8F%91%E5%AE%A1%E6%9F%A5"><span class="toc-number">1.3.</span> <span class="toc-text">手动触发审查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AE%A1%E6%9F%A5"><span class="toc-number">1.4.</span> <span class="toc-text">自定义审查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CLAUDE-md"><span class="toc-number">1.4.1.</span> <span class="toc-text">CLAUDE.md</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#REVIEW-md"><span class="toc-number">1.4.2.</span> <span class="toc-text">REVIEW.md</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%82%A8%E5%8F%AF%E4%BB%A5%E8%B0%83%E6%95%B4%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">您可以调整的内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%9D%E6%8C%81%E4%B8%93%E6%B3%A8"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">保持专注</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">1.5.</span> <span class="toc-text">查看使用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%BB%B7"><span class="toc-number">1.6.</span> <span class="toc-text">定价</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">1.7.</span> <span class="toc-text">故障排除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E8%A7%A6%E5%8F%91%E5%A4%B1%E8%B4%A5%E6%88%96%E8%B6%85%E6%97%B6%E7%9A%84%E5%AE%A1%E6%9F%A5"><span class="toc-number">1.7.1.</span> <span class="toc-text">重新触发失败或超时的审查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A1%E6%9F%A5%E6%9C%AA%E8%BF%90%E8%A1%8C%EF%BC%8CPR-%E6%98%BE%E7%A4%BA%E6%94%AF%E5%87%BA%E4%B8%8A%E9%99%90%E6%B6%88%E6%81%AF"><span class="toc-number">1.7.2.</span> <span class="toc-text">审查未运行，PR 显示支出上限消息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E6%9C%AA%E6%98%BE%E7%A4%BA%E4%B8%BA%E5%86%85%E8%81%94%E8%AF%84%E8%AE%BA%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.7.3.</span> <span class="toc-text">查找未显示为内联评论的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%9C%AC%E5%9C%B0%E5%AE%A1%E6%9F%A5%E5%B7%AE%E5%BC%82"><span class="toc-number">1.8.</span> <span class="toc-text">在本地审查差异</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90"><span class="toc-number">1.9.</span> <span class="toc-text">相关资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

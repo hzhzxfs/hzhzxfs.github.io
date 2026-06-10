@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Multi-Agent | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最近，小J在尝试用 AI Agent 为一个中等规模的代码库完整添加国际化（i18n）支持。 理论上，这是一类非常适合 AI 处理的任务：规则明确，需要识别所有硬编码字符串并替换为t(‘KEY’)的形式，同时在语言文件中补充对应键值；任务重复性高，几乎不需要创造性。 一开始进展顺利。Agent 像一台推土机一样，一个文件接一个文件地处理代码。但几个小时后，情况开始失控。对话历史、数百行代码搜索结果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multi-Agent">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/03/Multi-Agent/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="最近，小J在尝试用 AI Agent 为一个中等规模的代码库完整添加国际化（i18n）支持。 理论上，这是一类非常适合 AI 处理的任务：规则明确，需要识别所有硬编码字符串并替换为t(‘KEY’)的形式，同时在语言文件中补充对应键值；任务重复性高，几乎不需要创造性。 一开始进展顺利。Agent 像一台推土机一样，一个文件接一个文件地处理代码。但几个小时后，情况开始失控。对话历史、数百行代码搜索结果">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-03T02:57:05.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.622Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Multi-Agent",
+  "url": "https://hzhzxfs.github.io/2026/06/03/Multi-Agent/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-03T02:57:05.000Z",
+  "dateModified": "2026-06-10T02:14:46.622Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/03/Multi-Agent/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Multi-Agent',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Multi-Agent</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Multi-Agent</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.622Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>最近，小J在尝试用 AI Agent 为一个中等规模的代码库完整添加国际化（i18n）支持。</p>
+<p>理论上，这是一类非常适合 AI 处理的任务：规则明确，需要识别所有硬编码字符串并替换为t(‘KEY’)的形式，同时在语言文件中补充对应键值；任务重复性高，几乎不需要创造性。</p>
+<p>一开始进展顺利。Agent 像一台推土机一样，一个文件接一个文件地处理代码。但几个小时后，情况开始失控。对话历史、数百行代码搜索结果、工具调用日志、Linter 报错、人工补充指令……所有信息都被不断塞进同一个上下文窗口。Agent 的响应速度从秒级下降到分钟级，随后开始“胡言乱语”。它会突然忘记之前已经处理过的文件，在一个无关的函数里问我“这个变量是什么意思”，甚至开始修改一些完全不相关的业务逻辑。</p>
+<p>最终，当一个简单的 JSON 配置文件也被改得面目全非时，小宁只能选择终止任务。原本寄予厚望的 AI 助手，变成了一个堆满草稿、废弃代码和错误日志的“垃圾场”。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/B3R0OuMlHjaufdnsCvBRu2oSz2mYeru0mib1LG5cQTUQ7dPuSISjJM8TfSXFic0YAjbdaiawov95YMaCJss8Zv5TLRKpFPSAjUjibtKCl6GqIKI/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1" alt="image.png"></p>
+<p>单一 Agent 模式中，上下文不断堆积，噪声与历史信息会持续侵蚀主流程</p>
+<p><strong>这次失败揭示了一个关键问题：当任务复杂度超过一定阈值时，单一 Agent 模式极易因为上下文污染而失控。</strong></p>
+<p> <strong>1.</strong> <strong>上下文灾难：单一 Agent 的死胡同</strong> </p>
+<p>回顾这一失败案例，可以将单一 Agent 的问题归纳为三个典型的“上下文灾难”。</p>
+<h3 id="1）上下文干扰"><a href="#1）上下文干扰" class="headerlink" title="1）上下文干扰"></a><strong>1）上下文干扰</strong></h3><p>在长周期任务中，代码库、知识库、网页搜索结果等高噪声信息会不断进入上下文。</p>
+<p>这些信息就像未经处理的原材料，被堆在同一张工作台上。Agent 必须持续判断哪些是当前任务所需信息，哪些只是历史残留数据。</p>
+<p>随着信息不断积累，<strong>上下文信噪比持续下降</strong>，模型行为也会逐渐变得不稳定。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/B3R0OuMlHjaErRNY6xqYtZRLibLQ1NRGPZ99u81rwus13Tg4ICBrVKYvx8OSmGvusSmQUNR0OMJxjdYzib99DUIFAhthqeHPbRicUicKPKrbVN0/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=2" alt="image.png"></p>
+<p>当噪声信息不断涌入，真正有价值的内容会在注意力分配中被稀释</p>
+<h3 id="2）上下文溢出"><a href="#2）上下文溢出" class="headerlink" title="2）上下文溢出"></a><strong>2）上下文溢出</strong></h3><p>很多人认为，只要上下文窗口足够大，就可以解决问题。</p>
+<p>从 4K 到 200K，再到百万级窗口，看似“大力出奇迹”。但斯坦福大学《Lost in the Middle》研究已经指出：即使是先进模型，在长上下文中也更容易记住开头和结尾的信息，而忽略中间的关键内容。</p>
+<p>这意味着，即使没有真正达到窗口上限，<strong>认知层面的信息丢失仍然会发生</strong>。</p>
+<p>把所有信息塞进一个巨大窗口，本质上就像拥有一本永远读不完的厚书——最终什么也记不住。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/B3R0OuMlHjYeHCtXTeQUGvb8D4ib2LSpIK4Uiaz6hSYvIXdEAsJgvyFWfCooTUeuwNmnZmDvJL5jkSKdlNTbInRwpJIsWUJ4rU1hibbCvTOxhQ/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=3" alt="image.png"></p>
+<p>长上下文并不等于高质量记忆，中段信息往往最容易被忽略</p>
+<h3 id="3）串行效率瓶颈"><a href="#3）串行效率瓶颈" class="headerlink" title="3）串行效率瓶颈"></a><strong>3）串行效率瓶颈</strong></h3><p>单一 Agent 的工作流程通常是：</p>
+<p><strong>思考 → 执行 → 观察</strong></p>
+<p>这一循环本质上是<strong>单线程串行机制</strong>。无论模型推理能力多强，一次只能处理一件任务。在需要并行探索多个方向的复杂任务中，这种模式的效率瓶颈会迅速显现。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/B3R0OuMlHjbj5jRC6Yv7rVDP185wQiaIo9C5amFPxWSVz8a9aW7VQWcLnyUCbKUDTN8C3A9z9fjcuYz1du0eec8o56pYWLQvBJA9WmGKHFjw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=4" alt="image.png"></p>
+<p>单一 Agent 是串行执行，而多 Agent 的优势在于将任务拆解并并行推进</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p> <strong>2. 分而治之：Multi-Agent 的架构启示</strong> </p>
+<p>解决思路并不在于寻找更强大的单一模型，而在于<strong>重新组织 Agent 的协作方式</strong>。</p>
+<p>Multi-Agent 的核心思想就是：<strong>分而治之</strong>。</p>
+<p>与单一 Agent 在拥挤上下文中处理所有任务不同，Multi-Agent 会将任务拆解，并交给多个拥有独立上下文的 Agent 执行。这种架构带来了几个关键优势：</p>
+<h3 id="1）上下文隔离"><a href="#1）上下文隔离" class="headerlink" title="1）上下文隔离"></a><strong>1）上下文隔离</strong></h3><p>以 i18n 项目为例，Multi-Agent 的流程可以这样设计：</p>
+<p>**•**<strong>Planner Agent（规划者）</strong></p>
+<p>负责分析代码库结构并生成任务列表。</p>
+<p>**•**<strong>Explorer Agents（探索者）</strong></p>
+<p>为每个模块或目录启动独立 Agent，扫描文件并识别需要国际化的字符串。</p>
+<p>每个 Explorer 都在自己的上下文中运行。无论探索过程中产生多少日志和中间信息，最终提交给 Planner 的只有一份<strong>结构化报告</strong>。</p>
+<p>这样，核心工作流始终保持干净，不会被探索阶段的噪声污染。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/B3R0OuMlHjY3pJhnQhiaag7nYA0pScLhTtaicL3Q6ibAcKMuibIK1jGs3SHRnfftgYicW1mw3ibyD0oRaT9JrleXickXUPPwoticTsmlTLoeLmoV2vA/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=5" alt="Sub-Agent模式上下文隔离与并行探索示意图"></p>
+<p>Sub-Agent 模式的价值，不在于角色变多，而在于上下文隔离与并行探索</p>
+<h3 id="2）模型经济学"><a href="#2）模型经济学" class="headerlink" title="2）模型经济学"></a><strong>2）模型经济学</strong></h3><p>不同任务对模型能力的需求并不相同。</p>
+<p>•<strong>探索任务</strong>：信息量大、重复性强，可使用更快、更便宜的小模型</p>
+<p>•<strong>规划决策</strong>：需要更强推理能力，可使用高性能模型</p>
+<p>这种分层策略类似技术团队中的资源配置：把最昂贵的计算资源用于最关键的决策环节。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/B3R0OuMlHjYxBNJhSYVMcN2P7VaOkEshLP3V9jk8yPvma0MOMolYedMD6edGC6WUACXicNRJq3KLuWF3Sibb69GFBKHyCJf3m1LAbiagwibYe4k/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=6" alt="image.png"></p>
+<p>让不同能力、不同成本的模型承担不同任务，才是更合理的系统经济学</p>
+<h3 id="3）系统智能-个体智能"><a href="#3）系统智能-个体智能" class="headerlink" title="3）系统智能 &gt; 个体智能"></a><strong>3）系统智能 &gt; 个体智能</strong></h3><p>实践经验表明：</p>
+<p><strong>一个设计良好的 Multi-Agent 系统，往往优于一个单独的顶级 Agent。</strong></p>
+<p>真正的智能，不只是模型能力，更体现在系统架构和协作设计上。</p>
+<h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2><p> <strong>3. 工程师的现实主义：警惕过度工程化</strong></p>
+<p>Multi-Agent 也并非万能方案。在实践中，很容易走向另一个极端：<strong>过度工程化</strong>。</p>
+<p>如果沉迷于构建一个角色极其精细的 Agent 系统，有“产品经理”“架构师”“程序员”“测试工程师”……这个系统看起来像完整的软件团队，但在真实工程实践中，复杂编排往往带来新的问题,如Agent 协作逻辑难以调试、系统运行成本增加等等，最终的产出，往往还不如一个简单的 <strong>“Planner + 并行 Explorers”架构</strong>来得直接有效。</p>
+<p>系统瓶颈往往不在架构，而在需求本身。如果需求不清晰，再复杂的 Agent 系统也只是在<strong>更高效地执行错误指令</strong>。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/B3R0OuMlHjbaFJqaFmk02E6QfrAGoo0WOKicmXgKhU9ZNHmspc3urOs0p3KeMMibCr2Rg6W6NeLibLbqcTM62VLmSRkG74LJnNkbyPRAGzl0zw/640?from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=7" alt="image.png"></p>
+<p>Multi-Agent 不是角色越多越强，关键在于结构是否简单、清晰、可维护</p>
+<p> <strong>4. 一份更务实的实践清单</strong> </p>
+<p>结合实际工程经验，可以总结出几条更现实的实践原则。</p>
+<h3 id="1）优先使用现成的-Sub-agent-方案"><a href="#1）优先使用现成的-Sub-agent-方案" class="headerlink" title="1）优先使用现成的 Sub-agent 方案"></a><strong>1）优先使用现成的 Sub-agent 方案</strong></h3><p>许多工具已经内置成熟方案，例如：</p>
+<p>• Cursor</p>
+<p>• Claude Code</p>
+<p>• OpenCode</p>
+<p>这些工具提供的 <strong>@Explorer</strong>、<strong>@Planner</strong> 等子 Agent，已经解决了上下文隔离和状态管理问题。优先使用成熟工具，通常比自行构建系统更可靠。</p>
+<h3 id="2）只读先行"><a href="#2）只读先行" class="headerlink" title="2）只读先行"></a><strong>2）只读先行</strong></h3><p>在绝大多数场景下，子 Agent 只负责<strong>读取与分析任务</strong>：</p>
+<p>• 代码探索</p>
+<p>• 文档分析</p>
+<p>• API 设计评审</p>
+<p>写操作只在最终阶段由专门 Agent 执行。这种策略既能获得并行效率，也能避免文件冲突和状态混乱。</p>
+<h3 id="3）明确-Multi-Agent-的使用场景"><a href="#3）明确-Multi-Agent-的使用场景" class="headerlink" title="3）明确 Multi-Agent 的使用场景"></a><strong>3）明确 Multi-Agent 的使用场景</strong></h3><p>Multi-Agent 适用于两类典型问题：</p>
+<p><strong>① 可拆分的并行任务</strong></p>
+<p>例如：对大量 API 端点进行独立测试、批量代码扫描。</p>
+<p><strong>② 上下文需要严格保护的核心流程</strong></p>
+<p>例如：长期维护的系统设计文档、关键架构决策过程。</p>
+<p>  <strong>结语</strong>  </p>
+<p>从单一 Agent 到 Multi-Agent 的演进，不只是技术架构的变化。更重要的是，它改变了人与 AI 的协作方式。</p>
+<p>过去，AI 更多被视为一个“回答问题的模型”；而现在，它正在成为可以被编排、协作和管理的<strong>系统组件</strong>。</p>
+<p>开发者的角色也随之发生转变：从单纯的模型使用者，逐渐走向 <strong>AI 系统设计者</strong>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/03/Multi-Agent/">https://hzhzxfs.github.io/2026/06/03/Multi-Agent/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Multi-Agent vs Single-Agent</div></div><div class="info-2"><div class="info-item-1">一、最新研究进展Google DeepMind 联合 MIT，做了一件业界期待已久的事：用 180 组控制实验，定量回答”多 Agent 到底比单 Agent 强多少”。 论文叫《Towards a Science of Scaling Agent Systems》（arXiv: 2512.08296），跨 3 个模型家族（OpenAI、Google、Anthropic）、5 种架构、4 个基准任务。不是理论推导，不是案例论证，这是真金白银烧 token 跑出来的实验数据。 结论一句话：  “More Agents Is NOT All You Need.”  更多的 Agent 不等于更好的结果。在大多数场景下，多 Agent 系统的表现不仅没有显著优于单 Agent，反而因为协调开销而更差。  二、论文里的六个关键数字这篇论文最大的价值不是观点，是数据。以下是六个关键定量发现，每一个都直接对应我们日常使用中的某种”体感”： 1：工具协调惩罚系数 &#x3D; -0.330在论文的 20 参数回归模型中，工具 - 协调交互项是最大的负因子。 翻译成人话：你给多 Agent 系统...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/06/explore-agentic-frameworks__azure-ai-foundry-agent-creation/" title="explore-agentic-frameworks__azure-ai-foundry-agent-creation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-06</div><div class="info-item-2">explore-agentic-frameworks__azure-ai-foundry-agent-creation</div></div><div class="info-2"><div class="info-item-1">Azure AI代理服务开发在本练习中，您将使用 Microsoft Foundry 门户 中的 Azure AI 代理服务工具创建航班预订代理。该代理将能够与用户交互并提供有关航班的信息。 先决条件要完成此练习，您需要具备以下条件：  具有有效订阅的 Azure 帐户。 免费创建帐户。 您需要获得创建 Microsoft Foundry 中心的权限或有人为您创建一个中心。 如果您的角色是贡献者或所有者，您可以按照本教程中的步骤操作。    创建 Microsoft Foundry 中心 注： Microsoft Foundry 以前称为 Azure AI Studio。   请按照 Microsoft Foundry 博客文章中的指南创建 Microsoft Foundry 中心。  创建项目后，关闭显示的所有提示并查看 Microsoft Foundry 门户中的项目页面，该页面应类似于下图：     部署模型 在项目左侧窗格的 我的资产 部分中，选择 模型 + 端点 页面。  在 模型 + 端点 页面的 模型部署 选项卡中，在 + 部署模型 菜单中，选择 部署基础模型。  ...</div></div></div></a><a class="pagination-related" href="/2025/09/13/multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-13</div><div class="info-item-2">multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition</div></div><div class="info-2"><div class="info-item-1">🔀 使用 Azure AI Foundry (.NET) 的条件代理工作流程📋 基于智能决策的工作流程教程本笔记本演示了使用 Azure AI Foundry 和 Microsoft Agent Framework for .NET 的条件工作流模式。您将学习如何构建复杂的、决策驱动的工作流程，根据人工智能分析、业务规则和企业级自动化的动态条件智能地路由处理。 🎯 学习目标🧠 智能决策架构 条件逻辑实现：构建具有多个分支点的复杂决策树 AI 支持的路由：使用 Azure AI Foundry 模型做出智能路由决策 动态工作流程适应：根据运行时分析和条件修改工作流程行为 企业规则集成：将业务逻辑和合规性要求纳入工作流程中  🔀 高级条件模式 多标准决策：评估路由决策的多个因素 上下文感知处理：根据累积的工作流上下文和历史记录做出决策 自适应工作流程修改：根据实时情况动态调整处理路径 规则引擎集成：在工作流程中实施复杂的业务规则引擎  🏢 企业有条件申请 文档分类和路由：自动分类文档并将其路由到适当的工作流程 客户服务分类：将客户询问智能路由至专业处理团队 合规与风险处理...</div></div></div></a><a class="pagination-related" href="/2025/09/02/agentic-protocols__code_samples__github-mcp__MCP_SETUP/" title="agentic-protocols__code_samples__github-mcp__MCP_SETUP"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-02</div><div class="info-item-2">agentic-protocols__code_samples__github-mcp__MCP_SETUP</div></div><div class="info-2"><div class="info-item-1">MCP 服务器集成指南先决条件 安装 Node.js（版本 14 或更高版本） npm 包管理器 具有所需依赖项的Python环境  设置步骤 安装MCP服务器包 1npm install -g @modelcontextprotocol/server-github 启动MCP服务器 1npx @modelcontextprotocol/server-github 服务器应启动并显示连接 URL。  验证连接  在 Chainlit 界面中查找插头图标 (🔌) 插头图标旁边应出现数字 (1)，表示连接成功 控制台应显示：“GitHub 插件设置成功完成”（以及其他状态行）    故障排除常见问题 端口冲突 1Error: listen EADDRINUSE: address already in use 解决方案：使用以下命令更改端口： 1npx @modelcontextprotocol/server-github --port 3001 身份验证问题  确保 GitHub 凭据配置正确 检查 .env 文件包含所需的令牌 验证 GitHub API 访问   连接失败  确...</div></div></div></a><a class="pagination-related" href="/2026/01/12/%E4%BB%BB%E5%8A%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E8%A7%84%E6%A0%BC/" title="任务模型与后台执行规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-12</div><div class="info-item-2">任务模型与后台执行规格</div></div><div class="info-2"><div class="info-item-1">11. 任务模型与后台执行规格1. 目标任务系统负责把“一个 agent 在做什么”变成可追踪对象，而不是只存在于对话文本里。 2. 任务类型Python 版建议至少支持：  main_session_task local_agent_task background_agent_task shell_task verification_task remote_task（可后置）  3. 核心任务字段123456789101112131415class TaskRecord:    task_id: str    type: str    session_id: str    parent_task_id: str | None    agent_id: str | None    description: str    status: str    created_at: float    started_at: float | None    finished_at: float | None    output_path: str | None    error: str |...</div></div></div></a><a class="pagination-related" href="/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" title="Python实现注意事项"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-04</div><div class="info-item-2">Python实现注意事项</div></div><div class="info-2"><div class="info-item-1">16. Python 实现注意事项1. 实现原则目标不是逐字复刻原实现，而是用 Python 重建同样的产品能力结构。 2. 模块建议建议 Python 项目按以下模块拆：  runtime/：query loop, orchestration messages/：message schemas tools/：tool registry and execution permissions/：permission engine memory/：memory loading and retrieval tasks/：background task model storage/：transcript and session persistence agents/：agent definitions extensions/：skills&#x2F;plugins&#x2F;mcp verification/：verification runner  3. 推荐先用的数据模型优先用：  pydantic &#x2F; dataclasses 定义消息与状态 sqlite 或 JSONL 先...</div></div></div></a><a class="pagination-related" href="/2025/09/09/multi-agent__code_samples__08-dotnet-agent-framework/" title="multi-agent__code_samples__08-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="info-item-2">multi-agent__code_samples__08-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🤝 企业多代理工作流系统 (.NET)📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 GitHub 模型构建复杂的企业级多代理系统。您将学习如何通过结构化工作流程协调多个专业代理一起工作，利用 .NET 的企业功能来实现生产就绪的解决方案。 您将构建的企业多代理功能：  👥 代理协作：具有编译时验证的类型安全代理协调 🔄 工作流编排：使用 .NET 异步模式的声明式工作流定义 🎭 角色专业化：强类型的座席个性和专业领域 🏢 企业集成：具有监控和错误处理功能的生产就绪模式  ⚙️ 先决条件和设置开发环境：  .NET 9.0 SDK 或更高版本 Visual Studio 2022 或带有 C# 扩展的 VS Code Azure 订阅（用于持久代理）  所需的 NuGet 包： 1234567&lt;PackageReference Include=&quot;Microsoft.Extensions.AI.Abstractions&quot; Version=&quot;9.9.0&quot; /&gt;&...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B9%B2%E6%89%B0"><span class="toc-number">1.</span> <span class="toc-text">1）上下文干扰</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%BA%A2%E5%87%BA"><span class="toc-number">2.</span> <span class="toc-text">2）上下文溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E4%B8%B2%E8%A1%8C%E6%95%88%E7%8E%87%E7%93%B6%E9%A2%88"><span class="toc-number">3.</span> <span class="toc-text">3）串行效率瓶颈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E9%9A%94%E7%A6%BB"><span class="toc-number">4.1.</span> <span class="toc-text">1）上下文隔离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E6%A8%A1%E5%9E%8B%E7%BB%8F%E6%B5%8E%E5%AD%A6"><span class="toc-number">4.2.</span> <span class="toc-text">2）模型经济学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E7%B3%BB%E7%BB%9F%E6%99%BA%E8%83%BD-%E4%B8%AA%E4%BD%93%E6%99%BA%E8%83%BD"><span class="toc-number">4.3.</span> <span class="toc-text">3）系统智能 &gt; 个体智能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#-1"><span class="toc-number">5.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%BC%98%E5%85%88%E4%BD%BF%E7%94%A8%E7%8E%B0%E6%88%90%E7%9A%84-Sub-agent-%E6%96%B9%E6%A1%88"><span class="toc-number">5.1.</span> <span class="toc-text">1）优先使用现成的 Sub-agent 方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%8F%AA%E8%AF%BB%E5%85%88%E8%A1%8C"><span class="toc-number">5.2.</span> <span class="toc-text">2）只读先行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E6%98%8E%E7%A1%AE-Multi-Agent-%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">5.3.</span> <span class="toc-text">3）明确 Multi-Agent 的使用场景</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

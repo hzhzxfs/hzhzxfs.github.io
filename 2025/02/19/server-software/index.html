@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>server-software | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="server-software">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/02/19/server-software/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-02-19T12:50:10.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.421Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "server-software",
+  "url": "https://hzhzxfs.github.io/2025/02/19/server-software/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-02-19T12:50:10.000Z",
+  "dateModified": "2026-06-10T02:14:46.421Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/02/19/server-software/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'server-software',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">server-software</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">server-software</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-19T12:50:10.000Z" title="发表于 2025-02-19 20:50:10">2025-02-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.421Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="服务器软件的分类"><a href="#服务器软件的分类" class="headerlink" title="服务器软件的分类"></a>服务器软件的分类</h1><blockquote>
+<p>静态服务：主要提供静态资源，不同用户访问到的资源相同<br>动态服务：提供动态服务，不同用户访问到的资源不同<br>服务器的几个叫法：<br>web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件<br>HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务<br>应用服务器(动态服务)：一个特定应用的承载容器<br>常见的轻量级服务器软件：<br>1、Nginx：典型的静态服务器，可做反向代理、负载均衡，一般放在最前面直面用户，和后端Tomcat打配合；纯C写的，性能贼高、内存消耗极少、稳定性也相当好，互联网公司重度使用<br>2、Tengine：阿里出品，基于Nginx服务器做的改造(加强和封装)，对大流量场景做了很多高级功能，性能、稳定性优秀<br>3、Apache http server：也是静态服务器，但是不如Nginx<br>3、IIS：微软开发，只能用在Windows下，具有应用服务器能力的http服务器<br>4、Tomcat：Apache出品，典型的应用服务器软件，符合Servlet标准的应用容器，也可以提供http服务，但一般不会作为http服务器；是Spring Boot框架默认的内置服务器<br>5、Jetty：跟Tomcat是一个性质的东西，符合Servlet标准的应用容器，也是Spring Boot框架支持的服务器，但不是默认的<br>6、Undertow：红帽子出品，跟Tomcat、Jetty一样也是Spring Boot框架支持的服务器，但不是默认的；高并发时性能优于Tomcat、Jetty<br>几款商用重量级的服务器软件：<br>1、JBoss(从8版开始更名为WildFly)：不仅是Servlet应用容器，更是EJB的应用容器，整套JavaEE框架部署的解决方案<br>2、WebLogic：Oracle公司出品，用于部署企业级JavaEE应用，全能型，几乎支持JavaEE所有的应用规范<br>3、WebSphere：IBM公司出品，支持更多JavaEE的应用规范的综合应用服务器</p>
+</blockquote>
+<p>转自<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1ra4y1t7rs">服务器软件大科普！</a> 评论区</p>
+<blockquote>
+<p>服务器软件：<br>运行在服务器操作系统之上，绑定了服务器特定的IP地址，并且在某一个端口监听用户的请求 ，提供服务的软件，都可以叫做服务器软件<br>静态服务和动态服务<br>静态服务返回的是静态资源，不同用户无论何时只要访问同一个服务，闹到的内容是一模一样的，<br>动态服务返回的是动态资源，根据用户不同的身份和权限信息返回不同的内容和资源服务器软件的三个基础概念：<br>Web服务器<br>提供web化服务<br>【网站页面化服务、邮件服务、网络下载的服务】<br>响应用户的需求，然后提供服务<br>HTTP服务器<br>当今Web服务器，应用层通讯协议，主要就是HTTP协议<br>HTTP服务器只是把服务器上的资源通过HTPP协议形式传输给客户端<br>应用服务器【常称为动态服务器、动态容器】<br>一个特定应用的承载容器，需要有运行环境的支持<br>如Java领域：常用的应用服务器Tomcat，<br>【<br>Nginx：典型的HTTP服务器【静态服务器】<br>Nginx服务器也可以在诸如Lua脚本等辅助下做二次开发，可以变成一个提供动态服务的应用服务器，也就是大名鼎鼎的OpenRestyTengineApche HTTP Service<br>IIS 微软下的HTTP服务器<br>】<br>【<br>Tomcat 典型的Java应用服务器软件【Web容器】<br>SpringBoot 内嵌的默认应用服务器<br>Jetty 也是SpringBoot框架支持的内嵌应用容器之一<br>官网：Jetty是一个开源的HTTP服务器+应用容器，因此既可以提供静态服务，也可以提供动态服务<br>Jetty和Tomcat ,两者在功能上几乎是一致的<br>Jetty比Tomcat更加轻量一些，配置简单一些<br>Undertow 也是SpringBoot框架支持的内嵌应用容器之一<br>红帽，基于Java编写的重量级的应用服务器<br>JBoss ·······》WildflyWebLogic 是Oracle<br>WebSphere IBM出品<br>】</p>
+</blockquote>
+<p>转自<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1ra4y1t7rs">服务器软件大科普！</a> 评论区</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/02/19/server-software/">https://hzhzxfs.github.io/2025/02/19/server-software/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/20/sql-learning/" title="sql-learning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">sql-learning</div></div><div class="info-2"><div class="info-item-1">数据库系统概论笔记1. 关系数据库标准语言SQL1.1 数据定义SQL的数据定义语句    操作对象 操作方法       创建 删除 修改   模式 CREATE SCHEMA DROP SCHEMA    表 CREATE TABLE DROP TABLE ALTER TABLE   视图 CRRATE VIEW DROP VIEW    索引 CREATE INDEX DROP INDEX ALTER INDEX   1.1.1 模式的定义和删除定义模式12CREATE SCHEMA &lt;模式名&gt; AUTHORIZATION &lt;用户名&gt;;CREATE SCHEMA &quot;S-T&quot; AUTHORIZATION WANG;   在CREATE SCHEMA中可以接受CREATE TABLE,CREATE VIEW和GRANT子句。 即  1234567CREATE SCHEMA TEST AUTHORIZATION ZHANGCREATE TABLE TAB1( COL1 SMALLINT,                   COL2 I...</div></div></div></a><a class="pagination-related" href="/2025/02/18/redis-notes/" title="redis-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">redis-notes</div></div><div class="info-2"><div class="info-item-1">Redis Notes使用命令行.&#x2F;redis-server启动的redis服务所产生的rdb文件将存于当前工作路径下，所以更换工作路径后，持久化的文件将发生变化可以使用service 和 systemctl 来启动redis服务 flushall命令将清空所有库中的键值对以及持久化的rdb文件在AOP启用的情况下,redis-server启动后将从aop文件中恢复持久化的数据,若不存在aop文件,则创建一个 配置文件bind允许本机的哪个IP的请求访问Redis注意: 放开防火墙的6379&#x2F;tcp端口的入站请求 Sentinel哨兵可能会修改Redis的配置文件,和自身的sentinel.conf文件 lua能够保证lua中操作的原子性,能够在高并发的情况下保证数据的一致性 Redis集群1.安装ruby环境CentOS: 12sudo yum install rubysudo yum install rubygems  2.修改redis.conf中的集群配置123cluster-enabled yes                 # 打开集群模式cl...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/08/PyTorch%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5/" title="PyTorch深度学习实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-08</div><div class="info-item-2">PyTorch深度学习实践</div></div><div class="info-2"><div class="info-item-1">PyTorch 深度学习实践概述 课程链接：  《PyTorch深度学习实践》完结合集。   环境配置 安装教程：  最详细的 Windows 下 PyTorch 入门深度学习环境安装与配置 CPU GPU 版 | 土堆教程_哔哩哔哩_bilibili。   确认 GPUGPU（Graphics Processing Unit），显卡，用于在屏幕上显示图像、视频。 驱动：让计算机识别特定的硬件。 深度学习显卡，一般是用 NVIDIA（英伟达），AMD 的显卡不能用于深度学习。因为英伟达有 CUDA 平台，让用户可以通过 CUDA 操纵显卡，从而加速深度学习的训练。 CUDA 软件的版本（Cuda runtime version）要 &lt;&#x3D; CUDA 硬件驱动的版本（Cuda driver version）。 GPU 为什么可以加速训练？因为相比于 CPU，GPU 具有大量的 ALU（逻辑处理单元）用于计算。 安装 Anaconda虚拟环境： 1234567891011121314151617181920创建虚拟环境：conda create -n [环境名称] py...</div></div></div></a><a class="pagination-related" href="/2025/03/15/8_node_js_backend_basics/" title="8_node_js_backend_basics"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-15</div><div class="info-item-2">8_node_js_backend_basics</div></div><div class="info-2"><div class="info-item-1">Node.js 后端基础知识 — 个人笔记 1. 包包&#x3D;现成的代码库（使用npm安装） 用于避免从头开始编写所有内容。 示例： *快递→服务器banane ke liye  bcrypt → 密码哈希 jsonwebtoken → 身份验证 猫鼬 → 数据库连接  安装： 1npm install express 定义：  包是通过 npm 分发的可重用模块的集合。   2. 模块（Node.js 文件）模块 &#x3D; ek 单文件 jisme 特定 kaam ka 代码 hota hai Project ko parts mein tod dete hain：  服务器.js 数据库.js 用户控制器.js 验证.js  har 文件 ek 模块 hai.  3. require() 与 import   要求 进口    旧的 Node 系统 (CommonJS) 现代 JS 系统（ES 模块）   默认节点行为 “类型”：“模块”   同步 静态&#x2F;现代   启用导入： 123&#123;  &quot;type&quot;: &quot;module...</div></div></div></a><a class="pagination-related" href="/2025/01/12/RESTApiDesign/" title="RESTApiDesign"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-12</div><div class="info-item-2">RESTApiDesign</div></div><div class="info-2"><div class="info-item-1">完整的 REST API 设计指南专业 REST API 设计原则、历史和最佳实践的综合指南。本文档总结了 RESTful 架构背后的关键思想以及如何设计干净、可扩展且对开发人员友好的 API。  概述API设计是后端工程师最关键的技能之一。 好的 API 不仅仅是功能 - 它们是关于创建其他开发人员可以轻松理解和集成的清晰、直观和标准化的界面。 本指南重点介绍使用 REST（表述性状态传输） 架构风格设计 API。  网络简史1990 年 — 网络的诞生蒂姆·伯纳斯·李在 CERN 工作期间发明了 万维网。 他介绍了当今网络的三项基本技术：  1.URI（统一资源标识符）URI 标识互联网上的资源。 例子： 1https://api.example.com/users/10 这里：  /users → 资源集合   /10 → 特定资源  这代表 ID &#x3D; 10 的用户。  2. HTTP（超文本传输协议）HTTP 定义客户端和服务器如何通过网络进行通信。 常见的HTTP方法：    方法 目的    获取 检索数据   发布 创建数据   放置 替换数据   补丁 ...</div></div></div></a><a class="pagination-related" href="/2025/02/08/Linux%E5%9F%BA%E7%A1%80%E8%AF%A6%E7%BB%86/" title="Linux基础详细"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-08</div><div class="info-item-2">Linux基础详细</div></div><div class="info-2"><div class="info-item-1">Linux基础Linux介绍Linux是什么Linux是一种自由和开放源码的类UNIX操作系统。该操作系统的内核由林纳斯·托瓦兹在1991年10月5日首次发布，在加上用户空间的应用程序之后，成为Linux操作系统。Linux严格来说是单指操作系统的内核，因操作系统中包含了许多用户图形接口和其他实用工具。如今Linux常用来指基于Linux的完整操作系统，内核则改以Linux内核称之。 UNIXUNIX操作系统（英语：UNIX），是美国AT&amp;T公司贝尔实验室于1969年完成的操作系统。 GNULinus林纳斯·班奈狄克·托瓦兹（Linus Benedict Torvalds，1969年12月28日－），生于芬兰赫尔辛基市，拥有美国国籍，Linux内核的最早作者，随后发起了这个开源项目，担任Linux内核的首要架构师与项目协调者，是当今世界最著名的电脑程序员、黑客之一。他还发起了开源项目Git，并为主要的开发者。 Linux的特色 自由与开放的使用与学习环境由于Linux是基于GPL的授权之下，因此它是自由软件，任何人都可以自由使用或是修改其中的源码。 配置需求低廉 内核功能...</div></div></div></a><a class="pagination-related" href="/2025/06/01/01.Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/" title="01.Go语言入门——基本语法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-01</div><div class="info-item-2">01.Go语言入门——基本语法</div></div><div class="info-2"><div class="info-item-1">Go语言上手 - 基础语言｜青训营笔记 这是我参与「第三届青训营 -后端场」笔记创作活动的的第 1 篇笔记。 一、本堂课内容重点 Go 语言基本语法 猜数字游戏 简易字典 SOCKS 5 代理  二、详细知识点介绍1. Go 语言基本语法（1）基本结构 main 包中的 main 函数是程序开始执行的地方。 import 导入函数包。  123456789package mainimport (	&quot;fmt&quot;)func main() &#123;	fmt.Println(&quot;hello world&quot;)&#125;  （2）变量 go 语言可以自动识别变量的数据类型。 var 变量名 数据类型 &#x3D; 值 var 变量名 &#x3D; 值 变量名 :&#x3D; 值  12345678910111213141516171819202122232425262728package mainimport (   &quot;fmt&quot;   &quot;math&quot;)func main() &#123;   var a = &quo...</div></div></div></a><a class="pagination-related" href="/2025/01/05/Databases/" title="Databases"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-05</div><div class="info-item-2">Databases</div></div><div class="info-2"><div class="info-item-1">使用 PostgreSQL 掌握数据库核心概念为什么选择数据库？从本质上讲，数据库是一个旨在跨不同会话保留信息的系统。持久性确保数据即使在创建数据的程序或进程终止后也能继续存在。 存储层次结构：RAM 与磁盘现代后端系统通过利用不同的存储介质来平衡速度和成本：    特色 内存中 (RAM) 磁盘（SSD&#x2F;HDD）    速度 极快 比 RAM 慢   成本 贵 相对便宜   坚持 易失性（断电后丢失） 非易失性（持久）   示例 Redis、Memcached PostgreSQL、MongoDB、MySQL    数据库管理系统 (DBMS)DBMS 是一个软件层，其唯一职责是高效地向客户端提供 CRUD 操作：  Create：插入新数据。 Read：查询现有数据。 Update：修改当前记录。 Delete：删除数据。  DBMS 的职责：1）数据的组织——DBMS 定义了数据的结构方式（通常为表、行和列），以确保数据以逻辑方式存储并可以有效地检索。它管理磁盘上的物理存储，因此开发人员不必担心原始文件管理。 2）访问——CRUD操作该系统提供标准化接口（如 SQ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">服务器软件的分类</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

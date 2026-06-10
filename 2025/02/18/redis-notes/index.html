@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>redis-notes | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis Notes使用命令行.&#x2F;redis-server启动的redis服务所产生的rdb文件将存于当前工作路径下，所以更换工作路径后，持久化的文件将发生变化可以使用service 和 systemctl 来启动redis服务 flushall命令将清空所有库中的键值对以及持久化的rdb文件在AOP启用的情况下,redis-server启动后将从aop文件中恢复持久化的数据,若不存在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis-notes">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/02/18/redis-notes/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Redis Notes使用命令行.&#x2F;redis-server启动的redis服务所产生的rdb文件将存于当前工作路径下，所以更换工作路径后，持久化的文件将发生变化可以使用service 和 systemctl 来启动redis服务 flushall命令将清空所有库中的键值对以及持久化的rdb文件在AOP启用的情况下,redis-server启动后将从aop文件中恢复持久化的数据,若不存在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-02-18T08:30:23.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.420Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "redis-notes",
+  "url": "https://hzhzxfs.github.io/2025/02/18/redis-notes/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-02-18T08:30:23.000Z",
+  "dateModified": "2026-06-10T02:14:46.420Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/02/18/redis-notes/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'redis-notes',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">redis-notes</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">redis-notes</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-18T08:30:23.000Z" title="发表于 2025-02-18 16:30:23">2025-02-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.420Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Redis-Notes"><a href="#Redis-Notes" class="headerlink" title="Redis Notes"></a>Redis Notes</h1><p>使用命令行.&#x2F;redis-server启动的redis服务所产生的rdb文件将存于当前工作路径下，所以更换工作路径后，持久化的文件将发生变化<br>可以使用service 和 systemctl 来启动redis服务</p>
+<p>flushall命令将清空所有库中的键值对以及持久化的rdb文件<br>在AOP启用的情况下,redis-server启动后将从aop文件中恢复持久化的数据,若不存在aop文件,则创建一个</p>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h3><p>允许本机的哪个IP的请求访问Redis<br>注意: 放开防火墙的6379&#x2F;tcp端口的入站请求</p>
+<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>哨兵可能会修改Redis的配置文件,和自身的sentinel.conf文件</p>
+<h2 id="lua"><a href="#lua" class="headerlink" title="lua"></a>lua</h2><p>能够保证lua中操作的原子性,能够在高并发的情况下保证数据的一致性</p>
+<h2 id="Redis集群"><a href="#Redis集群" class="headerlink" title="Redis集群"></a>Redis集群</h2><h3 id="1-安装ruby环境"><a href="#1-安装ruby环境" class="headerlink" title="1.安装ruby环境"></a>1.安装ruby环境</h3><p>CentOS:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install ruby</span><br><span class="line">sudo yum install rubygems</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-修改redis-conf中的集群配置"><a href="#2-修改redis-conf中的集群配置" class="headerlink" title="2.修改redis.conf中的集群配置"></a>2.修改redis.conf中的集群配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cluster-enabled yes                 # 打开集群模式</span><br><span class="line">cluster-config-file nodes.conf      # 设定节点配置文件名</span><br><span class="line">cluster-node-timeout 15000          # 设定节点失联超时时间(毫秒),集群自动进行主从切换</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-合体"><a href="#3-合体" class="headerlink" title="3.合体"></a>3.合体</h3><p>已过时</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/opt/redis-x.x.x/redis-trib.rb create --replica 1 \</span><br><span class="line">cluster ip:port cluster ip:port</span><br><span class="line">cluster ip:port cluster ip:port</span><br><span class="line">cluster ip:port cluster ip:port</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">You should use redis-cli instead.</span><br><span class="line"></span><br><span class="line">All commands and features belonging to redis-trib.rb have been moved</span><br><span class="line">to redis-cli.</span><br><span class="line">In order to use them you should call redis-cli with the --cluster</span><br><span class="line">option followed by the subcommand name, arguments and options.</span><br><span class="line"></span><br><span class="line">Use the following syntax:</span><br><span class="line">redis-cli --cluster SUBCOMMAND [ARGUMENTS] [OPTIONS]</span><br><span class="line"></span><br><span class="line">Example:</span><br><span class="line">redis-cli --cluster create 192.168.2.200:6379 192.168.2.200:6380 192.168.2.201:6379 192.168.2.201:6380 192.168.2.202:6379 192.168.2.202:6380 --cluster-replicas 1</span><br><span class="line"></span><br><span class="line">To get help about all subcommands, type:</span><br><span class="line">redis-cli --cluster help</span><br></pre></td></tr></table></figure>
+
+<p>选项<code>–replicas 1</code>表示我们希望为集群中的每个主节点创建一个从节点。</p>
+<p>登录任意一个集群节点,选项<code>-c</code>表示cluster模式的客户端,能够根据key的hash自动重定向到对应的节点中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -c -p port</span><br></pre></td></tr></table></figure>
+
+<p>查看集群的连接状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CLUSTER NODES</span><br></pre></td></tr></table></figure>
+
+<p>当一个节点的主机下线后,其从机将上位称为master,如果所有从节点都下线了,则集群不可用<br>可以设置以下配置,使集群在hash slots不完整的情况下也能提供服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cluster-require-full-coverage no</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cluster keyslot &lt;key&gt;                   # 计算key应该分配到哪个hash槽上</span><br><span class="line">cluster countkeysinslot &lt;slot&gt;          # 返回指定slot目前包含的键值对数量</span><br><span class="line">cluster getkeysinslot &lt;slot&gt; &lt;count&gt;    # 返回count个slot中的key</span><br></pre></td></tr></table></figure>
+
+<h3 id="指定多个key在一个节点hash分片中"><a href="#指定多个key在一个节点hash分片中" class="headerlink" title="指定多个key在一个节点hash分片中"></a>指定多个key在一个节点hash分片中</h3><blockquote>
+<p>Hash tags are documented in the Redis Cluster specification, but the gist is that if there is a substring between {} brackets in a key, only what is inside the string is hashed, so for example this{foo}key and another{foo}key are guaranteed to be in the same hash slot, and can be used together in a command with multiple keys as arguments.</p>
+</blockquote>
+<h3 id="NOTE"><a href="#NOTE" class="headerlink" title="NOTE"></a>NOTE</h3><p>在集群通信时,需要使用到集群总线端口,该端口为对应的redis服务的端口+10000,(sentinel为+20000)<br>所以一定要在防火墙中放开这些端口的入站请求</p>
+<blockquote>
+<p>Every Redis Cluster node requires two TCP connections open. The normal Redis TCP port used to serve clients, for example 6379, plus the port obtained by adding 10000 to the data port, so 16379 in the example.<br>This second high port is used for the Cluster bus, that is a node-to-node communication channel using a binary protocol. The Cluster bus is used by nodes for failure detection, configuration update, failover authorization and so forth. Clients should never try to communicate with the cluster bus port, but always with the normal Redis command port, however make sure you open both ports in your firewall, otherwise Redis cluster nodes will be not able to communicate.<br>The command port and cluster bus port offset is fixed and is always 10000.<br>Note that for a Redis Cluster to work properly you need, for each node:<br>The normal client communication port (usually 6379) used to communicate with clients to be open to all the clients that need to reach the cluster, plus all the other cluster nodes (that use the client port for keys migrations).<br>The cluster bus port (the client port + 10000) must be reachable from all the other cluster nodes.<br>If you don’t open both TCP ports, your cluster will not work as expected.<br>The cluster bus uses a different, binary protocol, for node to node data exchange, which is more suited to exchange information between nodes using little bandwidth and processing time.</p>
+</blockquote>
+<h2 id="Cluster与Sentinel的区别"><a href="#Cluster与Sentinel的区别" class="headerlink" title="Cluster与Sentinel的区别"></a>Cluster与Sentinel的区别</h2><p>Cluster能够自动的对数据进行分片,是负载均衡的一种解决方法,Sentinel是解决主从节点的高可用的方案,能够实现故障节点自动切换</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/02/18/redis-notes/">https://hzhzxfs.github.io/2025/02/18/redis-notes/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/19/server-software/" title="server-software"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">server-software</div></div><div class="info-2"><div class="info-item-1">服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服务器，可做反向代理、负载均衡，一般放在最前面直面用户，和后端Tomcat打配合；纯C写的，性能贼高、内存消耗极少、稳定性也相当好，互联网公司重度使用2、Tengine：阿里出品，基于Nginx服务器做的改造(加强和封装)，对大流量场景做了很多高级功能，性能、稳定性优秀3、Apache http server：也是静态服务器，但是不如Nginx3、IIS：微软开发，只能用在Windows下，具有应用服务器能力的http服务器4、Tomcat：Apache出品，典型的应用服务器软件，符合Servlet标准的应用容器，也可以提供http服务，但一般不会作为http服务器；是Spring Boo...</div></div></div></a><a class="pagination-related" href="/2025/02/17/principles-of-concurrent-programming/" title="principles-of-concurrent-programming"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">principles-of-concurrent-programming</div></div><div class="info-2"><div class="info-item-1">Principles of Concurrent ProgrammingThreadLocal PrinciplePlease refer to P40. Each Thread object has two instance fields. Principles of LongAccumulator下文中的 slot 值 Striped64 中 cells[] 数据的元素。 LongAccumulator.java123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051// accumulate function decide how to accumulate old value and new valueprivate final LongBinaryOperator function;// the identity value equivalent to superclass instance field base.// In the cons...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/02/26/youtube-dl-note/" title="youtube-dl-note"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-26</div><div class="info-item-2">youtube-dl-note</div></div><div class="info-2"><div class="info-item-1">youtube-dl0x00 Github Repository ForkGithub Repository 0x01 Installation12sudo curl -L https://github.com/l1ving/youtube-dl/releases/latest/download/youtube-dl -o /usr/local/bin/youtube-dlsudo chmod a+rx /usr/local/bin/youtube-dl  0x02 Usage1youtube-dl [OPTIONS] URL [URL...]  0x03 how-to-select-video-quality-from-youtube-dlhow-to-select-video-quality-from-youtube-dl 1youtube-dl -F &#x27;http://www.youtube.com/watch?v=P9pzm5b6FFY&#x27;  Here is the output: 123456789101112131415161718[youtube] ...</div></div></div></a><a class="pagination-related" href="/2025/02/06/JavaScript%E9%AB%98%E7%BA%A7%E7%AC%94%E8%AE%B0/" title="JavaScript高级笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-06</div><div class="info-item-2">JavaScript高级笔记</div></div><div class="info-2"><div class="info-item-1">今日内容：1. JavaScript： 	1. ECMAScript： 	2. BOM： 	3. DOM： 		1. 事件  DOM简单学习：为了满足案例要求* 功能：控制html文档的内容 * 获取页面标签(元素)对象：Element 	* document.getElementById(&quot;id值&quot;):通过元素的id获取元素对象  * 操作Element对象： 	1. 修改属性值： 		1. 明确获取的对象是哪一个？ 		2. 查看API文档，找其中有哪些属性可以设置 	2. 修改标签体内容： 		* 属性：innerHTML 		1. 获取元素对象 		2. 使用innerHTML属性修改标签体内容  事件简单学习* 功能： 某些组件被执行了某些操作后，触发某些代码的执行。 	* 造句：  xxx被xxx,我就xxx 		* 我方水晶被摧毁后，我就责备对友。 		* 敌方水晶被摧毁后，我就夸奖自己。  * 如何绑定事件 	1. 直接在html标签上，指定事件的属性(操作)，属性值就是js代码 		1. 事件：onclick--- 单击事件  	2. 通过j...</div></div></div></a><a class="pagination-related" href="/2025/01/04/ConfigureManagement/" title="ConfigureManagement"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-04</div><div class="info-item-2">ConfigureManagement</div></div><div class="info-2"><div class="info-item-1">配置管理 控制应用程序行为方式的一切 - 无需触及任何逻辑代码。   核心类比    角色    🧠 代码 大脑——逻辑   🧬 配置 DNA——行为规则   ⚙️ 结果 相同的代码 + 不同的配置 &#x3D; 完全不同的行为   如果 DNA 很混乱 → 即使是健康的大脑也会表现出不可预测的行为。  01 — 配置实际涵盖什么配置经常被误认为只是“秘密”。事实上，它控制的更多： 应用程序设置 端口号 日志级别（debug &#x2F; info &#x2F; error） 连接池大小 超时持续时间  数据库配置 主机和端口 用户名&#x2F;密码 数据库名称 连接字符串  外部服务 电子邮件 API（例如 SendGrid） 付款（例如 Stripe） 身份验证（例如职员） 云存储  功能标志 仅为测试版用户启用功能 A&#x2F;B 测试和逐步推出 终止开关可立即禁用有缺陷的功能  业务规则 最大订单限制 会话到期时间 折扣门槛 速率限制  性能和日志记录 缓存大小 重试限制 队列并发 日志详细程度（开发中的调试，产品中的错误）   02 — 环境及其优先级相同的代码库...</div></div></div></a><a class="pagination-related" href="/2025/06/11/disaggregated_encoder_epd/" title="disaggregated_encoder_epd"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-11</div><div class="info-item-2">disaggregated_encoder_epd</div></div><div class="info-2"><div class="info-item-1">vLLM Disaggregated Encoder (EPD) 特性代码走读技术文档 文档版本: 1.0分析代码版本: vLLM main 分支（截至 2026-04）最后更新: 2026-04-02   文档概述本文档深入分析 vLLM 的 Disaggregated Encoder（EPD 分离） 特性。EPD 将多模态大模型推理拆分为 Encoder (E)、Prefill (P)、Decode (D) 三个独立阶段，分别运行在不同的 GPU 实例上，从而实现细粒度的资源调度与弹性扩展。 目标读者: 对 vLLM 推理引擎有一定了解，希望深入理解多模态模型服务化部署优化的工程师。 阅读指南:    部分 内容 建议读者    第一部分 EPD 原理与架构总览 所有读者   第二部分 核心接口与基类分析 开发者、定制化需求者   第三部分 核心实现深度分析 引擎开发者   第四部分 部署拓扑与连接器对比 运维工程师、架构师   第五部分 配置与使用指南 所有用户    第一部分: EPD 基础与架构总览1.1 EPD 原理1.1.1 基本思想多模态大模型（如 Qwen2.5...</div></div></div></a><a class="pagination-related" href="/2025/06/13/mooncake_ec_zmq_msgspec_analysis/" title="mooncake_ec_zmq_msgspec_analysis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-13</div><div class="info-item-2">mooncake_ec_zmq_msgspec_analysis</div></div><div class="info-2"><div class="info-item-1">MooncakeECConnector：ZMQ 与 msgspec 深度分析报告 文件范围：vllm/distributed/ec_transfer/ec_connector/mooncake/分析日期：2026-04-10   目录 整体架构概览 ZMQ 通道设计 通道拓扑与端口规划 PUB&#x2F;SUB：调度器哈希通知通道 ROUTER&#x2F;DEALER：Worker 数据握手通道   msgspec 消息协议 消息类型一览 编解码器的创建与复用   完整交互时序 各组件 ZMQ&#x2F;msgspec 使用详解 mooncake_ec_metadata.py：协议消息定义 mooncake_ec_worker.py：Worker 数据平面 mooncake_ec_scheduler.py：调度器控制平面   设计决策解析 为什么用 ZMQ 而不是 gRPC&#x2F;HTTP？ 为什么用 ROUTER&#x2F;DEALER 而不是 REQ&#x2F;REP？ 为什么用 PUB&#x2F;SUB 而不是 PUSH&#x2F;PULL？ 为什么用 msgspec ...</div></div></div></a><a class="pagination-related" href="/2025/03/07/16_jsonwebtoken/" title="16_jsonwebtoken"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-07</div><div class="info-item-2">16_jsonwebtoken</div></div><div class="info-2"><div class="info-item-1">JWT（JSON Web 令牌）——核心概念1.智威汤逊凯亚·霍塔海？JWT ek 签名令牌 hota hai jo 服务器生成 karta hai aur 客户端 ko deta hai。 Iska 目的 hota hai 用户 ki 身份 ko 无状态 tareeke se 验证 karna。 无状态 ka matlab：服务器 ko 会话存储 karne ki zarurat nahi hoti。 Har 请求 ke sath 令牌 aata hai aur 服务器 usko 验证 karta hai。  2. JWT Ka 结构JWT 3 部分 par mushtamil hota hai：  头部（算法信息） Payload（用户数据jaise id、角色）3.签名（秘钥se签名kiya gaya部分）  签名确保karti hai ke token不可篡改nahi hua。  3. JWT 身份验证流程登录 kebaad:  用户凭据验证hote hain2.服务器JWT生成karta hai 客户端 ko token diya jata hai (cookie ya...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis-Notes"><span class="toc-number">1.</span> <span class="toc-text">Redis Notes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#bind"><span class="toc-number">1.1.1.</span> <span class="toc-text">bind</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sentinel"><span class="toc-number">1.2.</span> <span class="toc-text">Sentinel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lua"><span class="toc-number">1.3.</span> <span class="toc-text">lua</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4"><span class="toc-number">1.4.</span> <span class="toc-text">Redis集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85ruby%E7%8E%AF%E5%A2%83"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.安装ruby环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9redis-conf%E4%B8%AD%E7%9A%84%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.修改redis.conf中的集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%88%E4%BD%93"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.合体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E5%A4%9A%E4%B8%AAkey%E5%9C%A8%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9hash%E5%88%86%E7%89%87%E4%B8%AD"><span class="toc-number">1.4.4.</span> <span class="toc-text">指定多个key在一个节点hash分片中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NOTE"><span class="toc-number">1.4.5.</span> <span class="toc-text">NOTE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cluster%E4%B8%8ESentinel%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.5.</span> <span class="toc-text">Cluster与Sentinel的区别</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

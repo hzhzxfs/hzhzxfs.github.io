@@ -1,0 +1,522 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>13-内置Agent设计模式 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计 本篇是《深入 Claude Code 源码》系列第 13 篇。我们将深入 6 个内置 Agent 的 System Prompt 设计，揭示如何通过 prompt 工程将同一套工具系统塑造出截然不同的 Agent 人格与行为模式，并解析自定义 Agent 的 markdown">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13-内置Agent设计模式">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计 本篇是《深入 Claude Code 源码》系列第 13 篇。我们将深入 6 个内置 Agent 的 System Prompt 设计，揭示如何通过 prompt 工程将同一套工具系统塑造出截然不同的 Agent 人格与行为模式，并解析自定义 Agent 的 markdown">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-05-13T00:16:23.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.611Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "13-内置Agent设计模式",
+  "url": "https://hzhzxfs.github.io/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-05-13T00:16:23.000Z",
+  "dateModified": "2026-06-10T02:14:46.611Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '13-内置Agent设计模式',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">13-内置Agent设计模式</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">13-内置Agent设计模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-13T00:16:23.000Z" title="发表于 2026-05-13 08:16:23">2026-05-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.611Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="第-13-篇：内置-Agent-设计模式-—-Explore、Plan、Verification-的-Prompt-设计"><a href="#第-13-篇：内置-Agent-设计模式-—-Explore、Plan、Verification-的-Prompt-设计" class="headerlink" title="第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计"></a>第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计</h1><blockquote>
+<p>本篇是《深入 Claude Code 源码》系列第 13 篇。我们将深入 6 个内置 Agent 的 System Prompt 设计，揭示如何通过 prompt 工程将同一套工具系统塑造出截然不同的 Agent 人格与行为模式，并解析自定义 Agent 的 markdown frontmatter 配置全貌。</p>
+</blockquote>
+<h2 id="为什么需要内置-Agent？"><a href="#为什么需要内置-Agent？" class="headerlink" title="为什么需要内置 Agent？"></a>为什么需要内置 Agent？</h2><p>在第 12 篇中，我们了解了 Agent 系统的整体架构 —— <code>AgentDefinition</code> 数据结构、<code>runAgent()</code> 生命周期、<code>createSubagentContext()</code> 的隔离机制。但架构只是骨架，真正赋予 Agent “灵魂”的是它们的 <strong>System Prompt 设计</strong>。</p>
+<p>一个核心问题：Claude Code 拥有 40+ 个工具，为什么不让一个通用 Agent 做所有事？答案藏在工程实践中：</p>
+<ol>
+<li><strong>成本控制</strong> —— Explore Agent 用 Haiku 模型就够了，不需要用 Opus 来做文件搜索</li>
+<li><strong>安全隔离</strong> —— Verification Agent 禁止修改项目目录，否则”检验者”自己改代码就失去了意义</li>
+<li><strong>prompt 精度</strong> —— 越专注的角色定义，模型的行为越可预测</li>
+<li><strong>token 节约</strong> —— 只读 Agent 不需要 CLAUDE.md 中的 commit&#x2F;PR&#x2F;lint 规则，省下 5-15 Gtok&#x2F;周</li>
+</ol>
+<p>Claude Code 通过 6 个内置 Agent（General-purpose、Statusline-setup、Explore、Plan、Guide、Verification），展示了一套<strong>角色化 prompt 设计模式</strong> —— 同样的工具集合，通过不同的 System Prompt 约束，产生完全不同的行为。本篇重点剖析其中 5 个设计最具代表性的 Agent（Statusline-setup 偏领域特化，仅在架构图中列出）。</p>
+<hr>
+<h2 id="一、内置-Agent-全景：注册与门控"><a href="#一、内置-Agent-全景：注册与门控" class="headerlink" title="一、内置 Agent 全景：注册与门控"></a>一、内置 Agent 全景：注册与门控</h2><p>所有内置 Agent 的注册入口在 <code>builtInAgents.ts</code> 中的 <code>getBuiltInAgents()</code> 函数：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/builtInAgents.ts:22-72</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getBuiltInAgents</span>(<span class="params"></span>): <span class="title class_">AgentDefinition</span>[] &#123;</span><br><span class="line">  <span class="comment">// SDK 用户可通过环境变量禁用所有内置 Agent</span></span><br><span class="line">  <span class="keyword">if</span> (</span><br><span class="line">    <span class="title function_">isEnvTruthy</span>(process.<span class="property">env</span>.<span class="property">CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS</span>) &amp;&amp;</span><br><span class="line">    <span class="title function_">getIsNonInteractiveSession</span>()</span><br><span class="line">  ) &#123;</span><br><span class="line">    <span class="keyword">return</span> []</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Coordinator 模式下替换为 worker agents</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">feature</span>(<span class="string">&#x27;COORDINATOR_MODE&#x27;</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">isEnvTruthy</span>(process.<span class="property">env</span>.<span class="property">CLAUDE_CODE_COORDINATOR_MODE</span>)) &#123;</span><br><span class="line">      <span class="keyword">const</span> &#123; getCoordinatorAgents &#125; =</span><br><span class="line">        <span class="built_in">require</span>(<span class="string">&#x27;../../coordinator/workerAgent.js&#x27;</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">getCoordinatorAgents</span>()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="attr">agents</span>: <span class="title class_">AgentDefinition</span>[] = [</span><br><span class="line">    <span class="variable constant_">GENERAL_PURPOSE_AGENT</span>,</span><br><span class="line">    <span class="variable constant_">STATUSLINE_SETUP_AGENT</span>,</span><br><span class="line">  ]</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">areExplorePlanAgentsEnabled</span>()) &#123;</span><br><span class="line">    agents.<span class="title function_">push</span>(<span class="variable constant_">EXPLORE_AGENT</span>, <span class="variable constant_">PLAN_AGENT</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 非 SDK 入口才加载 Guide Agent</span></span><br><span class="line">  <span class="keyword">if</span> (isNonSdkEntrypoint) &#123;</span><br><span class="line">    agents.<span class="title function_">push</span>(<span class="variable constant_">CLAUDE_CODE_GUIDE_AGENT</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Verification Agent 受 feature flag + GrowthBook 双重门控</span></span><br><span class="line">  <span class="keyword">if</span> (</span><br><span class="line">    <span class="title function_">feature</span>(<span class="string">&#x27;VERIFICATION_AGENT&#x27;</span>) &amp;&amp;</span><br><span class="line">    <span class="title function_">getFeatureValue_CACHED_MAY_BE_STALE</span>(<span class="string">&#x27;tengu_hive_evidence&#x27;</span>, <span class="literal">false</span>)</span><br><span class="line">  ) &#123;</span><br><span class="line">    agents.<span class="title function_">push</span>(<span class="variable constant_">VERIFICATION_AGENT</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> agents</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码有几个值得注意的设计：</p>
+<table>
+<thead>
+<tr>
+<th>设计要点</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SDK 禁用开关</td>
+<td><code>CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS</code> 让 SDK 用户获得”白板”</td>
+</tr>
+<tr>
+<td>Coordinator 替换</td>
+<td>Coordinator 模式下内置 Agent 被完全替换为 worker agents</td>
+</tr>
+<tr>
+<td>Explore&#x2F;Plan 受 A&#x2F;B 测试</td>
+<td><code>areExplorePlanAgentsEnabled()</code> 通过 GrowthBook <code>tengu_amber_stoat</code> 控制</td>
+</tr>
+<tr>
+<td>Verification 双重门控</td>
+<td>编译期 <code>feature()</code> + 运行时 <code>getFeatureValue_CACHED_MAY_BE_STALE()</code></td>
+</tr>
+<tr>
+<td>General-purpose 始终可用</td>
+<td>作为兜底，无条件注册</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、五个内置-Agent-逐一解析"><a href="#二、五个内置-Agent-逐一解析" class="headerlink" title="二、五个内置 Agent 逐一解析"></a>二、五个内置 Agent 逐一解析</h2><h3 id="2-1-Explore-Agent：只读搜索专家"><a href="#2-1-Explore-Agent：只读搜索专家" class="headerlink" title="2.1 Explore Agent：只读搜索专家"></a>2.1 Explore Agent：只读搜索专家</h3><p><strong>文件</strong>：<code>tools/AgentTool/built-in/exploreAgent.ts</code></p>
+<p>Explore Agent 的核心定位是<strong>快速、只读的代码搜索</strong>。它的 System Prompt 开头就树立了严格的身份约束：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/exploreAgent.ts:24-56</span></span><br><span class="line"><span class="keyword">return</span> <span class="string">`You are a file search specialist for Claude Code...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">=== CRITICAL: READ-ONLY MODE - NO FILE MODIFICATIONS ===</span></span><br><span class="line"><span class="string">This is a READ-ONLY exploration task. You are STRICTLY PROHIBITED from:</span></span><br><span class="line"><span class="string">- Creating new files (no Write, touch, or file creation of any kind)</span></span><br><span class="line"><span class="string">- Modifying existing files (no Edit operations)</span></span><br><span class="line"><span class="string">- Deleting files (no rm or deletion)</span></span><br><span class="line"><span class="string">- Moving or copying files (no mv or cp)</span></span><br><span class="line"><span class="string">- Creating temporary files anywhere, including /tmp</span></span><br><span class="line"><span class="string">- Using redirect operators (&gt;, &gt;&gt;, |) or heredocs to write to files</span></span><br><span class="line"><span class="string">- Running ANY commands that change system state</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">NOTE: You are meant to be a fast agent that returns output as quickly as possible.</span></span><br><span class="line"><span class="string">In order to achieve this you must:</span></span><br><span class="line"><span class="string">- Make efficient use of the tools that you have at your disposal</span></span><br><span class="line"><span class="string">- Wherever possible you should try to spawn multiple parallel tool calls...`</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Prompt 设计亮点</strong>：</p>
+<ol>
+<li><strong>“CRITICAL” 大写警告</strong> —— 从 prompt engineering 实践来看，全大写 + “STRICTLY PROHIBITED” 通常是约束模型行为的有效手段，Claude Code 在多个只读 Agent 的 prompt 中一致使用了这种模式</li>
+<li><strong>穷举禁止行为</strong> —— 不仅说”不能修改文件”，还列出了 7 种具体的修改方式（touch、mv、重定向等），堵住模型可能绕过的每条路</li>
+<li><strong>效率导向</strong> —— 明确要求”as quickly as possible”和”spawn multiple parallel tool calls”，引导模型并行执行工具</li>
+</ol>
+<p>Agent 定义中的配置同样精心设计：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/exploreAgent.ts:64-83</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">EXPLORE_AGENT</span>: <span class="title class_">BuiltInAgentDefinition</span> = &#123;</span><br><span class="line">  <span class="attr">agentType</span>: <span class="string">&#x27;Explore&#x27;</span>,</span><br><span class="line">  <span class="attr">disallowedTools</span>: [</span><br><span class="line">    <span class="variable constant_">AGENT_TOOL_NAME</span>,          <span class="comment">// 不能嵌套 Agent</span></span><br><span class="line">    <span class="variable constant_">EXIT_PLAN_MODE_TOOL_NAME</span>, <span class="comment">// 不需要 plan 模式</span></span><br><span class="line">    <span class="variable constant_">FILE_EDIT_TOOL_NAME</span>,      <span class="comment">// 不能编辑</span></span><br><span class="line">    <span class="variable constant_">FILE_WRITE_TOOL_NAME</span>,     <span class="comment">// 不能写入</span></span><br><span class="line">    <span class="variable constant_">NOTEBOOK_EDIT_TOOL_NAME</span>,  <span class="comment">// 不能编辑 notebook</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">// 内部用户继承主 Agent 模型；外部用户用 Haiku（速度优先）</span></span><br><span class="line">  <span class="attr">model</span>: process.<span class="property">env</span>.<span class="property">USER_TYPE</span> === <span class="string">&#x27;ant&#x27;</span> ? <span class="string">&#x27;inherit&#x27;</span> : <span class="string">&#x27;haiku&#x27;</span>,</span><br><span class="line">  <span class="comment">// 不需要 CLAUDE.md 中的 commit/PR/lint 规则</span></span><br><span class="line">  <span class="attr">omitClaudeMd</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> <span class="title function_">getExploreSystemPrompt</span>(),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>双重安全保障</strong>：System Prompt 通过自然语言告诉模型”不能修改”，<code>disallowedTools</code> 则在工具注册层面直接移除写入工具。这是”Prompt 约束 + 工具约束”的双保险模式。</p>
+<p><strong>成本优化</strong>：<code>omitClaudeMd: true</code> 是一个关键优化。在 <code>runAgent.ts:386-398</code> 中，这个标记使 Agent 启动时跳过 CLAUDE.md 注入：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/runAgent.ts:390-398</span></span><br><span class="line"><span class="keyword">const</span> shouldOmitClaudeMd =</span><br><span class="line">  agentDefinition.<span class="property">omitClaudeMd</span> &amp;&amp;</span><br><span class="line">  !<span class="keyword">override</span>?.<span class="property">userContext</span> &amp;&amp;</span><br><span class="line">  <span class="title function_">getFeatureValue_CACHED_MAY_BE_STALE</span>(<span class="string">&#x27;tengu_slim_subagent_claudemd&#x27;</span>, <span class="literal">true</span>)</span><br><span class="line"><span class="keyword">const</span> &#123; <span class="attr">claudeMd</span>: _omittedClaudeMd, ...userContextNoClaudeMd &#125; =</span><br><span class="line">  baseUserContext</span><br><span class="line"><span class="keyword">const</span> resolvedUserContext = shouldOmitClaudeMd</span><br><span class="line">  ? userContextNoClaudeMd</span><br><span class="line">  : baseUserContext</span><br></pre></td></tr></table></figure>
+
+<p>源码注释透露了惊人的数据：<strong>每周 3400 万+ 次 Explore Agent 调用</strong>，省掉 CLAUDE.md 可节约 5-15 Gtok&#x2F;周。同样，Explore 和 Plan 还省掉了 <code>gitStatus</code> 上下文（最多 40KB），因为它们需要的话会自己运行 <code>git status</code> 获取最新数据（<code>runAgent.ts:400-410</code>）。</p>
+<p>此外，<code>whenToUse</code> 字段还引入了”彻底程度”参数 —— 调用者可以指定 <code>&quot;quick&quot;</code>、<code>&quot;medium&quot;</code> 或 <code>&quot;very thorough&quot;</code> 来控制搜索深度。这是一个用自然语言做参数传递的巧妙设计。</p>
+<h3 id="2-2-Plan-Agent：只读架构师"><a href="#2-2-Plan-Agent：只读架构师" class="headerlink" title="2.2 Plan Agent：只读架构师"></a>2.2 Plan Agent：只读架构师</h3><p><strong>文件</strong>：<code>tools/AgentTool/built-in/planAgent.ts</code></p>
+<p>Plan Agent 和 Explore Agent 共享 READ-ONLY 约束，但角色定位完全不同 —— 它是<strong>软件架构师</strong>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/planAgent.ts:21-71</span></span><br><span class="line"><span class="keyword">return</span> <span class="string">`You are a software architect and planning specialist for Claude Code.</span></span><br><span class="line"><span class="string">Your role is to explore the codebase and design implementation plans.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">=== CRITICAL: READ-ONLY MODE - NO FILE MODIFICATIONS ===</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">## Your Process</span></span><br><span class="line"><span class="string">1. **Understand Requirements**: Focus on the requirements provided...</span></span><br><span class="line"><span class="string">2. **Explore Thoroughly**: Read files, find patterns, understand architecture...</span></span><br><span class="line"><span class="string">3. **Design Solution**: Create implementation approach...</span></span><br><span class="line"><span class="string">4. **Detail the Plan**: Step-by-step implementation strategy...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">## Required Output</span></span><br><span class="line"><span class="string">End your response with:</span></span><br><span class="line"><span class="string">### Critical Files for Implementation</span></span><br><span class="line"><span class="string">List 3-5 files most critical for implementing this plan:</span></span><br><span class="line"><span class="string">- path/to/file1.ts</span></span><br><span class="line"><span class="string">- path/to/file2.ts`</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Prompt 设计亮点</strong>：</p>
+<ol>
+<li><strong>结构化流程</strong> —— 用编号步骤（1-4）引导模型按顺序思考，而不是跳跃式分析</li>
+<li><strong>约定输出格式</strong> —— 要求以 “Critical Files for Implementation” 结尾。这是一个 prompt 层面的输出契约（prompt contract），使主 Agent 可以预期到结构化的文件列表输出。需要注意，源码中并未包含一个硬编码的解析器来提取这些文件——约束是通过 prompt 而非代码执行的</li>
+<li><strong>角色分离</strong> —— “your assigned perspective” 暗示调用方可以给不同的 Plan Agent 分配不同的视角（如安全性、性能、可维护性），实现”多视角审查”</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/planAgent.ts:73-92</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">PLAN_AGENT</span>: <span class="title class_">BuiltInAgentDefinition</span> = &#123;</span><br><span class="line">  <span class="attr">agentType</span>: <span class="string">&#x27;Plan&#x27;</span>,</span><br><span class="line">  <span class="attr">disallowedTools</span>: [ <span class="comment">/* 与 Explore 相同 */</span> ],</span><br><span class="line">  <span class="attr">tools</span>: <span class="variable constant_">EXPLORE_AGENT</span>.<span class="property">tools</span>,     <span class="comment">// 复用 Explore 的工具配置</span></span><br><span class="line">  <span class="attr">model</span>: <span class="string">&#x27;inherit&#x27;</span>,               <span class="comment">// 继承主 Agent 模型（需要更强的推理能力）</span></span><br><span class="line">  <span class="attr">omitClaudeMd</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> <span class="title function_">getPlanV2SystemPrompt</span>(),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意 Plan Agent 直接引用了 <code>EXPLORE_AGENT.tools</code>，避免了配置重复。与 Explore 使用 Haiku 不同，Plan 配置为 <code>&#39;inherit&#39;</code>（继承主 Agent 模型）—— 从配置意图来看，架构设计可能需要比文件搜索更强的推理能力。</p>
+<h3 id="2-3-Verification-Agent：对抗性验证者"><a href="#2-3-Verification-Agent：对抗性验证者" class="headerlink" title="2.3 Verification Agent：对抗性验证者"></a>2.3 Verification Agent：对抗性验证者</h3><p><strong>文件</strong>：<code>tools/AgentTool/built-in/verificationAgent.ts</code></p>
+<p>这是内置 Agent 中 System Prompt <strong>最长、设计最精密</strong> 的一个（约 130 行纯 prompt 文本）。它的核心理念是：<strong>验证者的价值在于找到问题，而不是确认正确</strong>。</p>
+<p>与 Explore&#x2F;Plan 的”完全 READ-ONLY”不同，Verification Agent 的约束更精细 —— <strong>项目目录只读，但允许在临时目录写入测试脚本</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">=== CRITICAL: DO NOT MODIFY THE PROJECT ===</span><br><span class="line">You are STRICTLY PROHIBITED from:</span><br><span class="line">- Creating, modifying, or deleting any files IN THE PROJECT DIRECTORY</span><br><span class="line">- Installing dependencies or packages</span><br><span class="line">- Running git write operations (add, commit, push)</span><br><span class="line"></span><br><span class="line">You MAY write ephemeral test scripts to a temp directory (/tmp or $TMPDIR)</span><br><span class="line">via Bash redirection when inline commands aren&#x27;t sufficient — e.g.,</span><br><span class="line">a multi-step race harness or a Playwright test. Clean up after yourself.</span><br></pre></td></tr></table></figure>
+
+<p>这是一个值得注意的设计区别：Explore&#x2F;Plan 使用 “NO FILE MODIFICATIONS” 绝对禁令（包括 <code>/tmp</code>），而 Verification Agent 允许在临时目录写入——因为某些验证场景（如并发竞态测试、多步骤 Playwright 脚本）确实需要临时文件。</p>
+<p>Prompt 开篇直击要害 —— 告诉模型它自己的两个天然弱点：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/verificationAgent.ts:10-12</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">VERIFICATION_SYSTEM_PROMPT</span> = <span class="string">`You are a verification specialist.</span></span><br><span class="line"><span class="string">Your job is not to confirm the implementation works — it&#x27;s to try to break it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">You have two documented failure patterns. First, verification avoidance:</span></span><br><span class="line"><span class="string">when faced with a check, you find reasons not to run it — you read code,</span></span><br><span class="line"><span class="string">narrate what you would test, write &quot;PASS,&quot; and move on. Second, being</span></span><br><span class="line"><span class="string">seduced by the first 80%: you see a polished UI or a passing test suite</span></span><br><span class="line"><span class="string">and feel inclined to pass it...`</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>这段可以理解为一种”元认知 Prompt”设计</strong> —— 它不是在教模型做什么，而是在告诉模型它会犯什么错。这种设计思路可能基于一个实践观察：LLM 倾向于”阅读代码然后宣布正确”，而不是真正去运行和测试。</p>
+<p>接下来，Prompt 用了大量篇幅列举<strong>具体的验证策略</strong>，按变更类型分类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">**Frontend changes**: Start dev server → check browser automation tools → curl subresources...</span><br><span class="line">**Backend/API changes**: Start server → curl endpoints → verify response shapes...</span><br><span class="line">**CLI/script changes**: Run with representative inputs → verify stdout/stderr/exit codes...</span><br><span class="line">**Bug fixes**: Reproduce the original bug → verify fix → run regression tests...</span><br><span class="line">**Refactoring**: Existing test suite MUST pass unchanged → diff public API surface...</span><br></pre></td></tr></table></figure>
+
+<p>然后是最有价值的部分 —— <strong>反躲避指令</strong>，直接预判并阻止模型的”理性化逃避”：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/verificationAgent.ts:54-61</span></span><br><span class="line">=== <span class="variable constant_">RECOGNIZE</span> <span class="variable constant_">YOUR</span> <span class="variable constant_">OWN</span> <span class="variable constant_">RATIONALIZATIONS</span> ===</span><br><span class="line"><span class="title class_">You</span> will feel the urge to skip checks. <span class="title class_">These</span> are the exact excuses you reach <span class="attr">for</span>:</span><br><span class="line">- <span class="string">&quot;The code looks correct based on my reading&quot;</span> — reading is not verification. <span class="title class_">Run</span> it.</span><br><span class="line">- <span class="string">&quot;The implementer&#x27;s tests already pass&quot;</span> — the implementer is an <span class="variable constant_">LLM</span>. <span class="title class_">Verify</span> independently.</span><br><span class="line">- <span class="string">&quot;This is probably fine&quot;</span> — probably is not verified. <span class="title class_">Run</span> it.</span><br><span class="line">- <span class="string">&quot;Let me start the server and check the code&quot;</span> — no. <span class="title class_">Start</span> the server and hit the endpoint.</span><br><span class="line">- <span class="string">&quot;I don&#x27;t have a browser&quot;</span> — did you actually check <span class="keyword">for</span> mcp__claude-<span class="keyword">in</span>-chrome__*?</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出格式强制执行</strong>，通过正反例对比教学：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Bad (rejected):</span><br><span class="line">### Check: POST /api/register validation</span><br><span class="line">**Result: PASS**</span><br><span class="line">Evidence: Reviewed the route handler in routes/auth.py...</span><br><span class="line">(No command run. Reading code is not verification.)</span><br><span class="line"></span><br><span class="line">Good:</span><br><span class="line">### Check: POST /api/register rejects short password</span><br><span class="line">**Command run:** curl -s -X POST localhost:8000/api/register ...</span><br><span class="line">**Output observed:** &#123;&quot;error&quot;: &quot;password must be at least 8 characters&quot;&#125;</span><br><span class="line">**Result: PASS**</span><br></pre></td></tr></table></figure>
+
+<p>最后是三级 verdict 协议：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VERDICT: PASS   — 所有检查通过</span><br><span class="line">VERDICT: FAIL   — 发现问题（必须包含复现步骤）</span><br><span class="line">VERDICT: PARTIAL — 仅限环境限制（无测试框架、工具不可用）</span><br></pre></td></tr></table></figure>
+
+<p>Verification Agent 的配置也有独到之处：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/verificationAgent.ts:134-152</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">VERIFICATION_AGENT</span>: <span class="title class_">BuiltInAgentDefinition</span> = &#123;</span><br><span class="line">  <span class="attr">agentType</span>: <span class="string">&#x27;verification&#x27;</span>,</span><br><span class="line">  <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span>,                    <span class="comment">// 红色 UI 标识 —— 警告性质</span></span><br><span class="line">  <span class="attr">background</span>: <span class="literal">true</span>,                <span class="comment">// 始终在后台运行</span></span><br><span class="line">  <span class="attr">disallowedTools</span>: [ <span class="comment">/* 不能编辑文件 */</span> ],</span><br><span class="line">  <span class="attr">model</span>: <span class="string">&#x27;inherit&#x27;</span>,</span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> <span class="variable constant_">VERIFICATION_SYSTEM_PROMPT</span>,</span><br><span class="line">  <span class="comment">// 每一轮都重复注入的关键提醒（注意措辞：项目目录禁写，tmp 允许）</span></span><br><span class="line">  <span class="attr">criticalSystemReminder_EXPERIMENTAL</span>:</span><br><span class="line">    <span class="string">&#x27;CRITICAL: This is a VERIFICATION-ONLY task. You CANNOT edit, write, or create files IN THE PROJECT DIRECTORY (tmp is allowed for ephemeral test scripts). You MUST end with VERDICT: PASS, VERDICT: FAIL, or VERDICT: PARTIAL.&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>criticalSystemReminder_EXPERIMENTAL</code> 是一个特殊字段 —— 它会在 Agent 的<strong>每个 user turn</strong> 都被重新注入，防止模型在长对话中”忘记”自己的约束。注意这条 reminder 的措辞精确区分了”项目目录禁写”和”tmp 允许”，与 System Prompt 中的约束保持一致。这在 <code>runAgent.ts:711</code> 中通过 <code>createSubagentContext()</code> 传递给 <code>ToolUseContext</code>。</p>
+<h3 id="2-4-General-purpose-Agent：通用万能工"><a href="#2-4-General-purpose-Agent：通用万能工" class="headerlink" title="2.4 General-purpose Agent：通用万能工"></a>2.4 General-purpose Agent：通用万能工</h3><p><strong>文件</strong>：<code>tools/AgentTool/built-in/generalPurposeAgent.ts</code></p>
+<p>与前三个 Agent 的长篇 prompt 形成鲜明对比，General-purpose Agent 的 System Prompt 极其精简：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/generalPurposeAgent.ts:3-16</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">SHARED_PREFIX</span> = <span class="string">`You are an agent for Claude Code...</span></span><br><span class="line"><span class="string">Given the user&#x27;s message, you should use the tools available to complete the task.</span></span><br><span class="line"><span class="string">Complete the task fully—don&#x27;t gold-plate, but don&#x27;t leave it half-done.`</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">SHARED_GUIDELINES</span> = <span class="string">`Your strengths:</span></span><br><span class="line"><span class="string">- Searching for code, configurations, and patterns across large codebases</span></span><br><span class="line"><span class="string">- Analyzing multiple files to understand system architecture</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">Guidelines:</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">- NEVER create files unless they&#x27;re absolutely necessary for achieving your goal.</span></span><br><span class="line"><span class="string">- NEVER proactively create documentation files (*.md) or README files.`</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>配置上的关键差异</strong>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/generalPurposeAgent.ts:25-34</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">GENERAL_PURPOSE_AGENT</span>: <span class="title class_">BuiltInAgentDefinition</span> = &#123;</span><br><span class="line">  <span class="attr">agentType</span>: <span class="string">&#x27;general-purpose&#x27;</span>,</span><br><span class="line">  <span class="attr">tools</span>: [<span class="string">&#x27;*&#x27;</span>],                  <span class="comment">// 通配符 —— 拥有所有工具</span></span><br><span class="line">  <span class="attr">source</span>: <span class="string">&#x27;built-in&#x27;</span>,</span><br><span class="line">  <span class="attr">baseDir</span>: <span class="string">&#x27;built-in&#x27;</span>,</span><br><span class="line">  <span class="comment">// model 故意省略 —— 使用 getDefaultSubagentModel()</span></span><br><span class="line">  <span class="attr">getSystemPrompt</span>: getGeneralPurposeSystemPrompt,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>tools: [&#39;*&#39;]</code> 是通配符模式，在 <code>agentToolUtils.ts:163-173</code> 中处理：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/agentToolUtils.ts:163-173</span></span><br><span class="line"><span class="keyword">const</span> hasWildcard =</span><br><span class="line">  agentTools === <span class="literal">undefined</span> ||</span><br><span class="line">  (agentTools.<span class="property">length</span> === <span class="number">1</span> &amp;&amp; agentTools[<span class="number">0</span>] === <span class="string">&#x27;*&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> (hasWildcard) &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">hasWildcard</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">resolvedTools</span>: allowedAvailableTools,  <span class="comment">// 所有可用工具</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>General-purpose Agent 在<strong>不指定 <code>subagent_type</code> 且 fork subagent 未启用时</strong>，是默认的回退选择。源码中的路由逻辑如下（<code>AgentTool.tsx:322</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// subagent_type 设置了 → 使用它</span></span><br><span class="line"><span class="comment">// subagent_type 省略 + fork 开启 → fork path（继承父 context）</span></span><br><span class="line"><span class="comment">// subagent_type 省略 + fork 关闭 → 默认 general-purpose</span></span><br><span class="line"><span class="keyword">const</span> effectiveType = subagent_type</span><br><span class="line">  ?? (<span class="title function_">isForkSubagentEnabled</span>() ? <span class="literal">undefined</span> : <span class="variable constant_">GENERAL_PURPOSE_AGENT</span>.<span class="property">agentType</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当 fork subagent 功能启用时（编译期 <code>feature(&#39;FORK_SUBAGENT&#39;)</code> + 非 Coordinator 模式 + 交互式会话），省略 <code>subagent_type</code> 会走 fork path 而非 general-purpose。Fork path 会让子 Agent 继承父 Agent 的完整对话上下文，这是一种完全不同的执行模式（详见第 12 篇）。</p>
+<p>General-purpose 的设计哲学是”不限制，但给引导” —— 不限制工具，但通过 prompt 引导”不要镀金（gold-plate）”和”不要主动创建文档”。</p>
+<h3 id="2-5-Claude-Code-Guide-Agent：文档导航专家"><a href="#2-5-Claude-Code-Guide-Agent：文档导航专家" class="headerlink" title="2.5 Claude Code Guide Agent：文档导航专家"></a>2.5 Claude Code Guide Agent：文档导航专家</h3><p><strong>文件</strong>：<code>tools/AgentTool/built-in/claudeCodeGuideAgent.ts</code></p>
+<p>Guide Agent 是最”动态”的内置 Agent —— 它的 System Prompt 会根据用户的当前配置动态生成：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/claudeCodeGuideAgent.ts:121-204</span></span><br><span class="line"><span class="title function_">getSystemPrompt</span>(<span class="params">&#123; toolUseContext &#125;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> commands = toolUseContext.<span class="property">options</span>.<span class="property">commands</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="attr">contextSections</span>: <span class="built_in">string</span>[] = []</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 1. 注入用户的自定义技能列表</span></span><br><span class="line">  <span class="keyword">const</span> customCommands = commands.<span class="title function_">filter</span>(<span class="function"><span class="params">cmd</span> =&gt;</span> cmd.<span class="property">type</span> === <span class="string">&#x27;prompt&#x27;</span>)</span><br><span class="line">  <span class="keyword">if</span> (customCommands.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    contextSections.<span class="title function_">push</span>(<span class="string">`**Available custom skills:**\n<span class="subst">$&#123;commandList&#125;</span>`</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2. 注入自定义 Agent 列表</span></span><br><span class="line">  <span class="keyword">const</span> customAgents = toolUseContext.<span class="property">options</span>.<span class="property">agentDefinitions</span></span><br><span class="line">    .<span class="property">activeAgents</span>.<span class="title function_">filter</span>(<span class="function"><span class="params">a</span> =&gt;</span> a.<span class="property">source</span> !== <span class="string">&#x27;built-in&#x27;</span>)</span><br><span class="line">  <span class="comment">// 3. 注入 MCP 服务器列表</span></span><br><span class="line">  <span class="comment">// 4. 注入插件命令列表</span></span><br><span class="line">  <span class="comment">// 5. 注入用户 settings.json</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Guide Agent 的独特配置：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/built-in/claudeCodeGuideAgent.ts:98-119</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="attr">CLAUDE_CODE_GUIDE_AGENT</span>: <span class="title class_">BuiltInAgentDefinition</span> = &#123;</span><br><span class="line">  <span class="attr">agentType</span>: <span class="string">&#x27;claude-code-guide&#x27;</span>,</span><br><span class="line">  <span class="attr">tools</span>: [<span class="variable constant_">GLOB_TOOL_NAME</span>, <span class="variable constant_">GREP_TOOL_NAME</span>, <span class="variable constant_">FILE_READ_TOOL_NAME</span>,</span><br><span class="line">          <span class="variable constant_">WEB_FETCH_TOOL_NAME</span>, <span class="variable constant_">WEB_SEARCH_TOOL_NAME</span>],  <span class="comment">// 精确工具列表</span></span><br><span class="line">  <span class="attr">model</span>: <span class="string">&#x27;haiku&#x27;</span>,                 <span class="comment">// 用最便宜的模型</span></span><br><span class="line">  <span class="attr">permissionMode</span>: <span class="string">&#x27;dontAsk&#x27;</span>,      <span class="comment">// 不弹权限对话框（只做只读操作）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>三个设计要点：</p>
+<ol>
+<li><strong>精确工具列表</strong>（而非通配符）—— 只需要搜索和网络访问工具。需要注意的是，当 <code>hasEmbeddedSearchTools()</code> 为 true 时（Ant 内部构建将 find&#x2F;grep 别名为嵌入式 bfs&#x2F;ugrep），Glob&#x2F;Grep 会被替换为 Bash + Read + WebFetch + WebSearch，即工具列表并非固定不变，而是根据构建环境适配</li>
+<li><strong><code>dontAsk</code> 权限模式</strong> —— Guide Agent 只做搜索和 fetch，不需要用户确认</li>
+<li><strong>动态 System Prompt</strong> —— <code>getSystemPrompt</code> 接收 <code>toolUseContext</code> 参数，是所有内置 Agent 中唯一使用运行时上下文来构建 prompt 的</li>
+</ol>
+<hr>
+<h2 id="三、内置-Agent-的共性设计模式"><a href="#三、内置-Agent-的共性设计模式" class="headerlink" title="三、内置 Agent 的共性设计模式"></a>三、内置 Agent 的共性设计模式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    subgraph &quot;内置 Agent 层次&quot;</span><br><span class="line">        BUILTIN[&quot;builtInAgents.ts&lt;br/&gt;注册中心&quot;]</span><br><span class="line">        BUILTIN --&gt; GP[&quot;General-purpose&lt;br/&gt;tools: [&#x27;*&#x27;], model: default&quot;]</span><br><span class="line">        BUILTIN --&gt; EX[&quot;Explore&lt;br/&gt;disallowedTools, model: haiku&quot;]</span><br><span class="line">        BUILTIN --&gt; PL[&quot;Plan&lt;br/&gt;disallowedTools, model: inherit&quot;]</span><br><span class="line">        BUILTIN --&gt; VE[&quot;Verification&lt;br/&gt;disallowedTools, background: true&quot;]</span><br><span class="line">        BUILTIN --&gt; GU[&quot;Guide&lt;br/&gt;tools: [精确列表], model: haiku&quot;]</span><br><span class="line">        BUILTIN --&gt; SL[&quot;Statusline-setup&lt;br/&gt;tools: [Read, Edit], model: sonnet&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph &quot;工具约束策略&quot;</span><br><span class="line">        W[&quot;Wildcard [&#x27;*&#x27;]&lt;br/&gt;全部工具&quot;] -.-&gt; GP</span><br><span class="line">        D[&quot;disallowedTools&lt;br/&gt;黑名单排除&quot;] -.-&gt; EX</span><br><span class="line">        D -.-&gt; PL</span><br><span class="line">        D -.-&gt; VE</span><br><span class="line">        A[&quot;tools: [精确列表]&lt;br/&gt;白名单限定&quot;] -.-&gt; GU</span><br><span class="line">        A -.-&gt; SL</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph &quot;Prompt 约束层级&quot;</span><br><span class="line">        P1[&quot;READ-ONLY 硬约束&lt;br/&gt;穷举禁止行为&quot;] -.-&gt; EX</span><br><span class="line">        P1 -.-&gt; PL</span><br><span class="line">        P2[&quot;项目只读 + 对抗性验证&lt;br/&gt;反躲避指令 + tmp可写&quot;] -.-&gt; VE</span><br><span class="line">        P3[&quot;精简引导&lt;br/&gt;不限制但给方向&quot;] -.-&gt; GP</span><br><span class="line">        P4[&quot;动态上下文注入&lt;br/&gt;感知用户配置&quot;] -.-&gt; GU</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    style BUILTIN fill:#ff9800,color:#fff</span><br><span class="line">    style GP fill:#4caf50,color:#fff</span><br><span class="line">    style EX fill:#2196f3,color:#fff</span><br><span class="line">    style PL fill:#2196f3,color:#fff</span><br><span class="line">    style VE fill:#f44336,color:#fff</span><br><span class="line">    style GU fill:#9c27b0,color:#fff</span><br><span class="line">    style SL fill:#795548,color:#fff</span><br></pre></td></tr></table></figure>
+
+<p>从内置 Agent 中，可以提炼出三种<strong>工具约束策略</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>代表 Agent</th>
+<th>实现方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>白名单（Allowlist）</td>
+<td>Guide、Statusline-setup</td>
+<td><code>tools: [&#39;Read&#39;, &#39;Edit&#39;]</code></td>
+<td>功能明确、工具少的专用 Agent</td>
+</tr>
+<tr>
+<td>黑名单（Denylist）</td>
+<td>Explore、Plan、Verification</td>
+<td><code>disallowedTools: [...]</code></td>
+<td>需要大部分工具，但排除危险操作</td>
+</tr>
+<tr>
+<td>通配符（Wildcard）</td>
+<td>General-purpose</td>
+<td><code>tools: [&#39;*&#39;]</code> 或省略</td>
+<td>通用 Agent，不限制工具</td>
+</tr>
+</tbody></table>
+<p>以及三种 <strong>Prompt 约束层级</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>代表</th>
+<th>手段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>绝对只读</td>
+<td>Explore&#x2F;Plan</td>
+<td>“STRICTLY PROHIBITED” + 穷举禁止行为（含 &#x2F;tmp）</td>
+</tr>
+<tr>
+<td>项目只读 + 对抗性约束</td>
+<td>Verification</td>
+<td>项目目录禁写但允许临时目录 + 预判模型逃避借口并驳斥</td>
+</tr>
+<tr>
+<td>软引导</td>
+<td>General-purpose</td>
+<td>“don’t gold-plate” 给方向但不严格限制</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、自定义-Agent：markdown-frontmatter-配置全解"><a href="#四、自定义-Agent：markdown-frontmatter-配置全解" class="headerlink" title="四、自定义 Agent：markdown frontmatter 配置全解"></a>四、自定义 Agent：markdown frontmatter 配置全解</h2><p>除了内置 Agent，用户可以在 <code>.claude/agents/</code> 目录下用 markdown 文件定义自定义 Agent。解析逻辑在 <code>loadAgentsDir.ts:541-755</code> 的 <code>parseAgentFromMarkdown()</code> 中实现。</p>
+<h3 id="4-1-Frontmatter-字段全表"><a href="#4-1-Frontmatter-字段全表" class="headerlink" title="4.1 Frontmatter 字段全表"></a>4.1 Frontmatter 字段全表</h3><p>一个完整的自定义 Agent markdown 文件格式如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: my-reviewer</span><br><span class="line">description: &quot;代码审查专家，用于审查 PR 变更&quot;</span><br><span class="line">model: inherit</span><br><span class="line">tools: Read, Glob, Grep, Bash</span><br><span class="line">disallowedTools: Agent</span><br><span class="line">permissionMode: plan</span><br><span class="line">maxTurns: 20</span><br><span class="line">color: blue</span><br><span class="line">effort: high</span><br><span class="line">memory: project</span><br><span class="line">isolation: worktree</span><br><span class="line">skills: my-linting-skill, code-standards</span><br><span class="line">mcpServers:</span><br><span class="line"><span class="bullet">  -</span> github                          # 按名称引用已有 MCP 服务器</span><br><span class="line"><span class="bullet">  -</span> custom-server:                   # 内联定义：&#123; serverName: config &#125; 格式</span><br><span class="line"><span class="code">      type: stdio</span></span><br><span class="line"><span class="code">      command: node</span></span><br><span class="line"><span class="code">      args: [&quot;server.js&quot;]</span></span><br><span class="line"><span class="code">hooks:</span></span><br><span class="line"><span class="code">  SubagentStart:</span></span><br><span class="line"><span class="code">    - command: echo &quot;Agent started&quot;</span></span><br><span class="line"><span class="code">      timeout: 5000</span></span><br><span class="line"><span class="code">---</span></span><br><span class="line"><span class="code">你是一个代码审查专家。你的职责是...</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">（这里是 System Prompt 正文，即 markdown body）</span><br></pre></td></tr></table></figure>
+
+<p><code>mcpServers</code> 字段接受两种格式（<code>AgentMcpServerSpec</code> 类型，<code>loadAgentsDir.ts:58-67</code>）：</p>
+<ol>
+<li><strong>字符串引用</strong> —— 如 <code>&quot;github&quot;</code>，引用已在 MCP 配置中定义的服务器</li>
+<li><strong>单键对象</strong> —— 如 <code>{ custom-server: { type: &quot;stdio&quot;, command: &quot;node&quot;, args: [...] } }</code>，以 <code>{ serverName: McpServerConfig }</code> 的形式内联定义</li>
+</ol>
+<p>注意内联格式<strong>不是</strong> <code>{ name, command, args }</code> 结构，而是以服务器名称为键、配置对象为值的 map。</p>
+<p>各字段的解析逻辑和作用：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>默认值</th>
+<th>作用</th>
+<th>源码位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>string</code> (必需)</td>
+<td>—</td>
+<td>Agent 类型标识，用于 <code>subagent_type</code> 参数</td>
+<td><code>loadAgentsDir.ts:549</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code> (必需)</td>
+<td>—</td>
+<td>描述何时使用，显示给主 Agent</td>
+<td><code>loadAgentsDir.ts:550</code></td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td><code>string</code></td>
+<td><code>getDefaultSubagentModel()</code></td>
+<td>模型选择，<code>&#39;inherit&#39;</code> 继承主 Agent</td>
+<td><code>loadAgentsDir.ts:568-573</code></td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td><code>string</code> (逗号分隔)</td>
+<td><code>undefined</code>（全部工具）</td>
+<td>工具白名单，<code>&#39;*&#39;</code> 表示全部</td>
+<td><code>loadAgentsDir.ts:660</code></td>
+</tr>
+<tr>
+<td><code>disallowedTools</code></td>
+<td><code>string</code> (逗号分隔)</td>
+<td><code>undefined</code></td>
+<td>工具黑名单</td>
+<td><code>loadAgentsDir.ts:677-681</code></td>
+</tr>
+<tr>
+<td><code>permissionMode</code></td>
+<td><code>string</code></td>
+<td>继承父级</td>
+<td>权限模式。解析层接受 <code>PERMISSION_MODES</code> 中的所有值（<code>default</code>&#x2F;<code>plan</code>&#x2F;<code>acceptEdits</code>&#x2F;<code>bypassPermissions</code>&#x2F;<code>dontAsk</code>，内部构建额外支持 <code>auto</code>），实际行为受运行环境约束</td>
+<td><code>loadAgentsDir.ts:635-645</code></td>
+</tr>
+<tr>
+<td><code>maxTurns</code></td>
+<td><code>number</code></td>
+<td>无限制</td>
+<td>最大对话轮次</td>
+<td><code>loadAgentsDir.ts:648-654</code></td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>string</code></td>
+<td>自动分配</td>
+<td>UI 标识颜色</td>
+<td><code>loadAgentsDir.ts:567</code></td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td><code>boolean</code></td>
+<td>未设置（行为上等价于非后台运行）</td>
+<td>始终在后台运行</td>
+<td><code>loadAgentsDir.ts:576-591</code></td>
+</tr>
+<tr>
+<td><code>effort</code></td>
+<td><code>&#39;low&#39;|&#39;medium&#39;|&#39;high&#39;|number</code></td>
+<td>继承父级</td>
+<td>推理努力级别</td>
+<td><code>loadAgentsDir.ts:624-632</code></td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td><code>&#39;user&#39;|&#39;project&#39;|&#39;local&#39;</code></td>
+<td>无记忆</td>
+<td>持久记忆作用域</td>
+<td><code>loadAgentsDir.ts:594-605</code></td>
+</tr>
+<tr>
+<td><code>isolation</code></td>
+<td><code>&#39;worktree&#39;|&#39;remote&#39;</code></td>
+<td>无隔离</td>
+<td>运行环境隔离</td>
+<td><code>loadAgentsDir.ts:608-621</code></td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td><code>string</code> (逗号分隔)</td>
+<td>无</td>
+<td>预加载的 Skill 列表</td>
+<td><code>loadAgentsDir.ts:684</code></td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td><code>array</code></td>
+<td>无</td>
+<td>Agent 专属 MCP 服务器</td>
+<td><code>loadAgentsDir.ts:693-708</code></td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td><code>object</code></td>
+<td>无</td>
+<td>Agent 生命周期钩子</td>
+<td><code>loadAgentsDir.ts:711</code></td>
+</tr>
+<tr>
+<td><code>initialPrompt</code></td>
+<td><code>string</code></td>
+<td>无</td>
+<td>首轮 user turn 前置内容</td>
+<td><code>loadAgentsDir.ts:686-689</code></td>
+</tr>
+</tbody></table>
+<h3 id="4-2-Agent-类型系统"><a href="#4-2-Agent-类型系统" class="headerlink" title="4.2 Agent 类型系统"></a>4.2 Agent 类型系统</h3><p>Agent 定义被分为三种类型，通过 TypeScript 联合类型建模：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/loadAgentsDir.ts:136-165</span></span><br><span class="line"><span class="comment">// 内置 Agent —— 动态 prompt，需要 toolUseContext 参数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">BuiltInAgentDefinition</span> = <span class="title class_">BaseAgentDefinition</span> &amp; &#123;</span><br><span class="line">  <span class="attr">source</span>: <span class="string">&#x27;built-in&#x27;</span></span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">(<span class="params"><span class="attr">params</span>: &#123;</span></span></span><br><span class="line"><span class="params"><span class="function">    toolUseContext: Pick&lt;ToolUseContext, <span class="string">&#x27;options&#x27;</span>&gt;</span></span></span><br><span class="line"><span class="params"><span class="function">  &#125;</span>) =&gt;</span> <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义 Agent —— 静态 prompt（从 markdown body 读取）</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">CustomAgentDefinition</span> = <span class="title class_">BaseAgentDefinition</span> &amp; &#123;</span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> <span class="built_in">string</span>  <span class="comment">// 无参数</span></span><br><span class="line">  <span class="attr">source</span>: <span class="title class_">SettingSource</span>           <span class="comment">// userSettings | projectSettings | policySettings</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 插件 Agent —— 类似自定义，但带插件元数据</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">PluginAgentDefinition</span> = <span class="title class_">BaseAgentDefinition</span> &amp; &#123;</span><br><span class="line">  <span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> <span class="built_in">string</span></span><br><span class="line">  <span class="attr">source</span>: <span class="string">&#x27;plugin&#x27;</span></span><br><span class="line">  <span class="attr">plugin</span>: <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">AgentDefinition</span> =</span><br><span class="line">  | <span class="title class_">BuiltInAgentDefinition</span></span><br><span class="line">  | <span class="title class_">CustomAgentDefinition</span></span><br><span class="line">  | <span class="title class_">PluginAgentDefinition</span></span><br></pre></td></tr></table></figure>
+
+<p>注意内置 Agent 的 <code>getSystemPrompt</code> 接收 <code>toolUseContext</code> 参数（Guide Agent 用它来注入用户配置），而自定义和插件 Agent 的 prompt 是无参数的闭包。</p>
+<h3 id="4-3-Agent-优先级与覆盖"><a href="#4-3-Agent-优先级与覆盖" class="headerlink" title="4.3 Agent 优先级与覆盖"></a>4.3 Agent 优先级与覆盖</h3><p>当多个来源定义了同名 Agent 时，<code>getActiveAgentsFromList()</code> 通过遍历顺序实现优先级覆盖：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/loadAgentsDir.ts:193-221</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getActiveAgentsFromList</span>(<span class="params"></span></span><br><span class="line"><span class="params">  <span class="attr">allAgents</span>: <span class="title class_">AgentDefinition</span>[],</span></span><br><span class="line"><span class="params"></span>): <span class="title class_">AgentDefinition</span>[] &#123;</span><br><span class="line">  <span class="keyword">const</span> agentGroups = [</span><br><span class="line">    builtInAgents,     <span class="comment">// 最低优先级</span></span><br><span class="line">    pluginAgents,</span><br><span class="line">    userAgents,</span><br><span class="line">    projectAgents,</span><br><span class="line">    flagAgents,</span><br><span class="line">    managedAgents,     <span class="comment">// 最高优先级</span></span><br><span class="line">  ]</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> agentMap = <span class="keyword">new</span> <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="title class_">AgentDefinition</span>&gt;()</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> agents <span class="keyword">of</span> agentGroups) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> agent <span class="keyword">of</span> agents) &#123;</span><br><span class="line">      agentMap.<span class="title function_">set</span>(agent.<span class="property">agentType</span>, agent)  <span class="comment">// 后写入覆盖先写入</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Array</span>.<span class="title function_">from</span>(agentMap.<span class="title function_">values</span>())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优先级从低到高：<code>built-in</code> → <code>plugin</code> → <code>userSettings</code> → <code>projectSettings</code> → <code>flagSettings</code> → <code>policySettings</code>。这意味着企业策略（managed&#x2F;policy）可以覆盖任何 Agent 定义，甚至内置 Agent。</p>
+<h3 id="4-4-Memory-与-Skill-注入"><a href="#4-4-Memory-与-Skill-注入" class="headerlink" title="4.4 Memory 与 Skill 注入"></a>4.4 Memory 与 Skill 注入</h3><p>当 Agent 启用 <code>memory</code> 时，解析阶段会自动注入文件读写工具并追加 memory prompt：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/loadAgentsDir.ts:663-674</span></span><br><span class="line"><span class="keyword">if</span> (<span class="title function_">isAutoMemoryEnabled</span>() &amp;&amp; memory &amp;&amp; tools !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> toolSet = <span class="keyword">new</span> <span class="title class_">Set</span>(tools)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> tool <span class="keyword">of</span> [<span class="variable constant_">FILE_WRITE_TOOL_NAME</span>, <span class="variable constant_">FILE_EDIT_TOOL_NAME</span>, <span class="variable constant_">FILE_READ_TOOL_NAME</span>]) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!toolSet.<span class="title function_">has</span>(tool)) &#123;</span><br><span class="line">      tools = [...tools, tool]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Skill 预加载发生在 <code>runAgent.ts:578-645</code> —— Agent 启动时，frontmatter 中指定的 Skill 内容被加载并作为 user message 注入到对话开头。</p>
+<hr>
+<h2 id="五、AgentTool-Prompt-的动态生成"><a href="#五、AgentTool-Prompt-的动态生成" class="headerlink" title="五、AgentTool Prompt 的动态生成"></a>五、AgentTool Prompt 的动态生成</h2><p><code>prompt.ts</code> 中的 <code>getPrompt()</code> 函数负责生成 AgentTool 的工具描述（即模型看到的关于如何使用 Agent 工具的说明）。它不是任何一个 Agent 的 System Prompt，而是<strong>主 Agent 用来决定何时调用哪个子 Agent 的指南</strong>。</p>
+<p>一个巧妙的优化是<strong>Agent 列表外置</strong>。源码注释揭示了动机：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/AgentTool/prompt.ts:53-63</span></span><br><span class="line"><span class="comment">// 动态 Agent 列表占 fleet cache_creation token 的 ~10.2%：</span></span><br><span class="line"><span class="comment">// MCP 异步连接、/reload-plugins、权限模式变更都会改变列表 →</span></span><br><span class="line"><span class="comment">// 描述变化 → 工具 schema 缓存完全失效。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">shouldInjectAgentListInMessages</span>(<span class="params"></span>): <span class="built_in">boolean</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">getFeatureValue_CACHED_MAY_BE_STALE</span>(<span class="string">&#x27;tengu_agent_list_attach&#x27;</span>, <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当此开关打开时，Agent 列表从工具描述中移出，改为通过 <code>system-reminder</code> 消息注入。工具描述变为静态字符串，避免因 Agent 列表变化导致的 prompt cache 失效。这是<strong>缓存稳定性与信息完整性之间的权衡</strong>。</p>
+<p><code>getPrompt()</code> 还会根据 fork subagent 是否启用，生成不同的使用指南和示例。当 fork 启用时，Prompt 中增加了 “When to fork” 章节和 fork 特有的示例；当不启用时，使用传统的 agent 调用示例。</p>
+<hr>
+<h2 id="六、可迁移的设计模式"><a href="#六、可迁移的设计模式" class="headerlink" title="六、可迁移的设计模式"></a>六、可迁移的设计模式</h2><h3 id="模式-1：角色化-Prompt-工具约束双保险"><a href="#模式-1：角色化-Prompt-工具约束双保险" class="headerlink" title="模式 1：角色化 Prompt + 工具约束双保险"></a>模式 1：角色化 Prompt + 工具约束双保险</h3><p>仅靠 System Prompt 告诉模型”不要做 X”是不够的 —— 模型有时会忽略指令。Claude Code 的做法是同时在两个层面限制：Prompt 中用自然语言约束行为，<code>disallowedTools</code> 在工具层面直接移除危险工具。两层独立生效，任何一层失效都不会导致安全问题。</p>
+<p><strong>适用场景</strong>：任何需要限制 AI Agent 行为边界的系统。</p>
+<h3 id="模式-2：对抗性-Prompt-——-预判逃避行为"><a href="#模式-2：对抗性-Prompt-——-预判逃避行为" class="headerlink" title="模式 2：对抗性 Prompt —— 预判逃避行为"></a>模式 2：对抗性 Prompt —— 预判逃避行为</h3><p>Verification Agent 的 “RECOGNIZE YOUR OWN RATIONALIZATIONS” 段落展示了一种高级 prompt 技巧：不是告诉模型”应该做什么”，而是告诉它”你会如何逃避，以及为什么那是错的”。这种”元认知 prompt”对需要模型执行高标准、违背其”懒惰倾向”的任务特别有效。</p>
+<p><strong>适用场景</strong>：代码审查、安全审计、质量检测等需要严格执行标准的 AI 任务。</p>
+<h3 id="模式-3：配置层级覆盖-——-从内置到企业策略"><a href="#模式-3：配置层级覆盖-——-从内置到企业策略" class="headerlink" title="模式 3：配置层级覆盖 —— 从内置到企业策略"></a>模式 3：配置层级覆盖 —— 从内置到企业策略</h3><p>Agent 定义支持 6 级来源（built-in → plugin → user → project → flag → managed），后者可以覆盖前者。这意味着：</p>
+<ul>
+<li>开发者可以通过 <code>.claude/agents/</code> 覆盖内置 Agent 的行为</li>
+<li>企业管理员可以通过 managed settings 强制特定的 Agent 配置</li>
+<li>插件可以贡献新的 Agent 类型</li>
+</ul>
+<p><strong>适用场景</strong>：需要支持多级配置的平台型产品（IDE 插件、CLI 工具、SaaS 平台）。</p>
+<hr>
+<h2 id="下一篇预告"><a href="#下一篇预告" class="headerlink" title="下一篇预告"></a>下一篇预告</h2><p><a href="./14-%E4%BB%BB%E5%8A%A1%E7%B3%BB%E7%BB%9F.md">第 14 篇：任务系统 — Agent 的并发执行引擎</a></p>
+<p>我们将深入 <code>tasks/</code> 目录，揭示 Agent 的前台&#x2F;后台执行模型、<code>TaskOutput</code> 的流式输出收集、以及 coordinator mode 下的多 Agent 协作架构。</p>
+<hr>
+<p><em>全部内容请关注 <a target="_blank" rel="noopener" href="https://github.com/luyao618/Claude-Code-Source-Study">https://github.com/luyao618/Claude-Code-Source-Study</a> (求一颗免费的小星星)</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">https://hzhzxfs.github.io/2026/05/13/13-%E5%86%85%E7%BD%AEAgent%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/14/14-%E4%BB%BB%E5%8A%A1%E7%B3%BB%E7%BB%9F/" title="14-任务系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">14-任务系统</div></div><div class="info-2"><div class="info-item-1">第 14 篇：任务系统 — Agent 的并发执行引擎 本篇是《深入 Claude Code 源码》系列的第 14 篇。我们将深入分析 Claude Code 如何通过一套统一的任务系统，管理从后台 Shell 命令到多 Agent 并行协作的所有异步工作。  为什么需要任务系统？在前几篇中，我们已经见过了 Agent 系统（第 12 篇）和内置 Agent 设计模式（第 13 篇）。但有一个关键问题尚未解决：当模型同时发起多个 Agent、多个后台 Shell 命令、甚至一个”做梦”式的记忆整理任务时，这些并发工作如何被统一管理？ 想象一个真实场景：Coordinator 模式下，主 Agent 同时派出 3 个 Worker 去研究代码库的不同部分，每个 Worker 又可能启动自己的后台 Shell 命令。此时系统需要：  追踪所有任务的生命周期（pending → running → completed&#x2F;failed&#x2F;killed） 安全地终止任务（包括清理子进程、释放文件句柄） 收集并转发任务输出（任务完成时通知主 Agent） 隔离任务状态（一个任...</div></div></div></a><a class="pagination-related" href="/2026/05/12/12-Agent-%E7%B3%BB%E7%BB%9F/" title="12-Agent-系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">12-Agent-系统</div></div><div class="info-2"><div class="info-item-1">第 12 篇：Agent 系统 — 从单体到多智能体协作 本篇是《深入 Claude Code 源码》系列的第 12 篇。我们将深入剖析 Agent 子系统的完整架构：从 Agent 定义的数据结构与加载机制，到 runAgent() 的完整生命周期，再到 createSubagentContext() 如何实现 context 隔离与选择性共享。  为什么需要多 Agent？当你让 Claude Code 帮你”重构整个模块的测试”时，一个单体 Agent 会怎么做？它会搜索文件、阅读代码、编写测试、运行验证——所有步骤串行执行，上下文窗口迅速膨胀。更糟糕的是，搜索过程中产生的大量中间输出（grep 结果、文件内容）会永久占据上下文，挤压真正有价值的信息空间。 Claude Code 的解决方案是多 Agent 协作：主 Agent 可以按需生成子 Agent，每个子 Agent 拥有独立的上下文窗口和对话循环，完成任务后只返回精炼的结果。这就像一个团队 lead 把任务分派给专人，每个人独立工作后汇报结论。 这个设计解决了三个核心问题：  上下文污染：搜索类任务的海量中间输出...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/02/02-%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/" title="02-启动优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-02</div><div class="info-item-2">02-启动优化</div></div><div class="info-2"><div class="info-item-1">第 2 篇：启动优化 – 毫秒级 CLI 启动的工程艺术 本篇是《深入 Claude Code 源码》系列的第 2 篇。我们将深入 cli.tsx 和 main.tsx 的启动路径，揭示 Claude Code 团队如何将 CLI 启动时间优化到毫秒级别。  为什么启动速度如此重要？CLI 工具的第一印象就是启动速度。用户在终端输入 claude 并回车的那一刻，心理预期是”即时响应”。如果启动需要 2 秒，用户会觉得卡顿；如果需要 5 秒，用户会开始怀疑是不是命令输错了。 对于 Claude Code 这样一个重量级应用——近 1900 个 TypeScript 文件、依赖 React&#x2F;Ink&#x2F;Yoga 渲染引擎、需要连接 MCP 服务器和 Anthropic API——要做到毫秒级启动，绝非易事。 本篇将揭示 Claude Code 采用的 6 大启动优化策略：  快速路径（Fast Path）：对简单命令实现零 import 返回 侧效果前置（Side-Effect Hoisting）：利用模块求值时间并行执行 I&#x2F;O API 预连接（Prec...</div></div></div></a><a class="pagination-related" href="/2026/05/15/15-MCP-%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0/" title="15-MCP-协议实现"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-15</div><div class="info-item-2">15-MCP-协议实现</div></div><div class="info-2"><div class="info-item-1">第 15 篇：MCP 协议实现 — 连接外部工具的标准化桥梁 本篇是《深入 Claude Code 源码》系列的第 15 篇。我们将剖析 Claude Code 如何实现 Model Context Protocol（MCP），包括类型系统设计、多层配置合并、传输层适配、连接生命周期管理、Tool 发现与代理，以及认证体系。  为什么需要 MCP？Claude Code 内置了 40+ 个工具（BashTool、FileEditTool、GlobTool 等），足以覆盖大部分编程场景。但真实世界的开发远不止于此——你可能需要查询 Jira 看板、操作 Slack 消息、调用公司内部的 API 网关、访问 GitHub Issues……这些能力不可能全部内置，也不应该内置。 Model Context Protocol（MCP） 就是这个问题的答案。它是 Anthropic 提出的一个开放标准，定义了 AI 应用（Client）与外部工具&#x2F;数据服务（Server）之间的通信协议。可以把 MCP 理解为 AI 世界的 “USB 接口”——只要服务实现了 MCP 协议，Cla...</div></div></div></a><a class="pagination-related" href="/2026/03/12/scheduled-tasks/" title="scheduled-tasks"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-12</div><div class="info-item-2">scheduled-tasks</div></div><div class="info-2"><div class="info-item-1">按计划运行提示词 使用 &#x2F;loop 和 cron 调度工具在 Claude Code 会话中重复运行提示词、轮询状态或设置一次性提醒。     计划任务需要 Claude Code v2.1.72 或更高版本。使用 `claude --version` 检查您的版本。   计划任务让 Claude 按间隔自动重新运行提示词。使用它们来轮询部署、监督 PR、检查长时间运行的构建，或在会话中稍后提醒自己做某事。要对事件进行实时反应而不是轮询，请参阅 Channels：您的 CI 可以直接将失败推送到会话中。要保持会话工作转向转向直到满足条件而不是按间隔，请参阅 /goal。 任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 --resume 或 --continue 恢复会带回任何尚未过期的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 Routines 在 Anthropic 管理的基础设施上创建例程、设置 Desktop 计划任务，或使用 GitHub Actions。 比较调度选项Cl...</div></div></div></a><a class="pagination-related" href="/2026/02/08/7.Skill%20with%20the%20Claude%20API%EF%BC%88%E5%9C%A8Claude%20API%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="7.Skill with the Claude API（在Claude API使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-08</div><div class="info-item-2">7.Skill with the Claude API（在Claude API使用skills）</div></div><div class="info-2"><div class="info-item-1">7.Skill with the Claude API.md Introduce Skills with the Claude API(通过 Claude API 介绍技能功能) 在第一课中，你已经了解了技能（Skills）在 Claude AI 中的运作方式。 现在，我们将开始使用 Claude API 来测试我们在上一课中创建了两个技能。 要在 Claude API 中使用技能，我们需要用到代码执行工具和文件 API。 这将让 Claude 获得文件系统的访问权限，使其能够读写文件，并通过 bash 执行代码。  我们开始吧。之前我们已经聊了很多关于技能的运作原理以及创建方法。 我们也简单提到了技能在 Claude 生态系统不同环境下的可移植性，以及在其他众多智能代理类应用中的表现。 我们先从 Claude AI 和 Claude Desktop 中的技能讲起，现在我们要转向介绍如何通过 Claude Messages API 使用技能。   重要注意事项有两点需要重点注意。 第一，你在 Claude AI 和 Claude Desktop 中创建的技能不会在 Claude ...</div></div></div></a><a class="pagination-related" href="/2026/03/17/slack/" title="slack"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">slack</div></div><div class="info-2"><div class="info-item-1">Slack 中的 Claude Code 直接从 Slack 工作区委派编码任务  Slack 中的 Claude Code 将 Claude Code 的强大功能直接引入您的 Slack 工作区。当您使用编码任务提及 @Claude 时，Claude 会自动检测意图并在网络上创建 Claude Code 会话，允许您在不离开团队对话的情况下委派开发工作。 此集成基于现有的 Claude for Slack 应用程序构建，但为与编码相关的请求添加了到网络上 Claude Code 的智能路由。 用例 Bug 调查和修复：要求 Claude 在 Slack 频道中报告 Bug 时立即调查和修复。 快速代码审查和修改：让 Claude 根据团队反馈实现小功能或重构代码。 协作调试：当团队讨论提供关键背景信息（例如错误重现或用户报告）时，Claude 可以使用该信息来指导其调试方法。 并行任务执行：在 Slack 中启动编码任务，同时继续其他工作，完成时收到通知。  前置条件在使用 Slack 中的 Claude Code 之前，请确保您具有以下条件：    要求 详情    Clau...</div></div></div></a><a class="pagination-related" href="/2026/04/04/best-practices/" title="best-practices"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-04</div><div class="info-item-2">best-practices</div></div><div class="info-2"><div class="info-item-1">Claude Code 最佳实践 从配置环境到跨并行会话扩展，充分利用 Claude Code 的提示和模式。  Claude Code 是一个代理式编码环境。与等待回答问题的聊天机器人不同，Claude Code 可以读取你的文件、运行命令、进行更改，并在你观看、重定向或完全离开的情况下自主解决问题。 这改变了你的工作方式。与其自己编写代码并要求 Claude 审查，不如描述你想要什么，让 Claude 弄清楚如何构建它。Claude 会探索、规划和实现。 但这种自主性仍然伴随着学习曲线。Claude 在某些约束条件下工作，你需要理解这些约束。 本指南涵盖了在 Anthropic 内部团队和在各种代码库、语言和环境中使用 Claude Code 的工程师中已被证明有效的模式。有关代理循环如何在幕后工作的信息，请参阅 Claude Code 如何工作。  大多数最佳实践都基于一个约束：Claude 的 context window 填充速度很快，随着填充，性能会下降。 Claude 的 context window 保存你的整个对话，包括每条消息、Claude 读取的每个文件和每...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-13-%E7%AF%87%EF%BC%9A%E5%86%85%E7%BD%AE-Agent-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E2%80%94-Explore%E3%80%81Plan%E3%80%81Verification-%E7%9A%84-Prompt-%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">第 13 篇：内置 Agent 设计模式 — Explore、Plan、Verification 的 Prompt 设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%86%85%E7%BD%AE-Agent%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要内置 Agent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%86%85%E7%BD%AE-Agent-%E5%85%A8%E6%99%AF%EF%BC%9A%E6%B3%A8%E5%86%8C%E4%B8%8E%E9%97%A8%E6%8E%A7"><span class="toc-number">1.2.</span> <span class="toc-text">一、内置 Agent 全景：注册与门控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BA%94%E4%B8%AA%E5%86%85%E7%BD%AE-Agent-%E9%80%90%E4%B8%80%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">二、五个内置 Agent 逐一解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Explore-Agent%EF%BC%9A%E5%8F%AA%E8%AF%BB%E6%90%9C%E7%B4%A2%E4%B8%93%E5%AE%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 Explore Agent：只读搜索专家</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Plan-Agent%EF%BC%9A%E5%8F%AA%E8%AF%BB%E6%9E%B6%E6%9E%84%E5%B8%88"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 Plan Agent：只读架构师</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Verification-Agent%EF%BC%9A%E5%AF%B9%E6%8A%97%E6%80%A7%E9%AA%8C%E8%AF%81%E8%80%85"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 Verification Agent：对抗性验证者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-General-purpose-Agent%EF%BC%9A%E9%80%9A%E7%94%A8%E4%B8%87%E8%83%BD%E5%B7%A5"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 General-purpose Agent：通用万能工</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Claude-Code-Guide-Agent%EF%BC%9A%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E4%B8%93%E5%AE%B6"><span class="toc-number">1.3.5.</span> <span class="toc-text">2.5 Claude Code Guide Agent：文档导航专家</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%86%85%E7%BD%AE-Agent-%E7%9A%84%E5%85%B1%E6%80%A7%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.</span> <span class="toc-text">三、内置 Agent 的共性设计模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89-Agent%EF%BC%9Amarkdown-frontmatter-%E9%85%8D%E7%BD%AE%E5%85%A8%E8%A7%A3"><span class="toc-number">1.5.</span> <span class="toc-text">四、自定义 Agent：markdown frontmatter 配置全解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Frontmatter-%E5%AD%97%E6%AE%B5%E5%85%A8%E8%A1%A8"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 Frontmatter 字段全表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Agent-%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 Agent 类型系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Agent-%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%8E%E8%A6%86%E7%9B%96"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 Agent 优先级与覆盖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-Memory-%E4%B8%8E-Skill-%E6%B3%A8%E5%85%A5"><span class="toc-number">1.5.4.</span> <span class="toc-text">4.4 Memory 与 Skill 注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81AgentTool-Prompt-%E7%9A%84%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90"><span class="toc-number">1.6.</span> <span class="toc-text">五、AgentTool Prompt 的动态生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%8F%AF%E8%BF%81%E7%A7%BB%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.7.</span> <span class="toc-text">六、可迁移的设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-1%EF%BC%9A%E8%A7%92%E8%89%B2%E5%8C%96-Prompt-%E5%B7%A5%E5%85%B7%E7%BA%A6%E6%9D%9F%E5%8F%8C%E4%BF%9D%E9%99%A9"><span class="toc-number">1.7.1.</span> <span class="toc-text">模式 1：角色化 Prompt + 工具约束双保险</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-2%EF%BC%9A%E5%AF%B9%E6%8A%97%E6%80%A7-Prompt-%E2%80%94%E2%80%94-%E9%A2%84%E5%88%A4%E9%80%83%E9%81%BF%E8%A1%8C%E4%B8%BA"><span class="toc-number">1.7.2.</span> <span class="toc-text">模式 2：对抗性 Prompt —— 预判逃避行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-3%EF%BC%9A%E9%85%8D%E7%BD%AE%E5%B1%82%E7%BA%A7%E8%A6%86%E7%9B%96-%E2%80%94%E2%80%94-%E4%BB%8E%E5%86%85%E7%BD%AE%E5%88%B0%E4%BC%81%E4%B8%9A%E7%AD%96%E7%95%A5"><span class="toc-number">1.7.3.</span> <span class="toc-text">模式 3：配置层级覆盖 —— 从内置到企业策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E7%AF%87%E9%A2%84%E5%91%8A"><span class="toc-number">1.8.</span> <span class="toc-text">下一篇预告</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

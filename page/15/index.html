@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/15/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/15/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/" title="Ascend NPU 硬件架构入门">Ascend NPU 硬件架构入门</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-02T04:23:36.000Z" title="发表于 2025-10-02 12:23:36">2025-10-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">Ascend NPU 硬件架构入门一、概述昇腾 NPU 是专门用于 AI 训练&#x2F;推理计算的 AI 专用处理器，其中的 AI Core 能够在很大程度上提高 AI 计算的效率。 本文将主要介绍 ASCEND NPU 的硬件架构 &amp; 工作原理、AI Core 的计算模式以及异构计算平台 CANN 等内容。 二、NPU 硬件架构2.1 NPU SOC 架构2.1.1 Ascend 310 架构 AI Core：计算核心，负责执行矩阵、向量、标量计算密集的算子任务，采用达芬奇架构； AI CPU：承担非矩阵类复杂计算，即负责执行不适合跑在 AI Core 上的算子； TS Core：作为任务调度器（Task Scheduler，TS），以实现计算任务在 AI Core 上的高效分配和调度（专门服务于 AI Core 和 AI CPU，不承担任何其它的工作）； ARM CPU：控制芯片整体运行； DVPP：数字视觉预处理子系统，完成图像视频编解码； Cache &amp; Buffer。   2.1.2 Ascend 910 架构 AI Core：32 个，上下各 16 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/01/AI%E8%AE%AD%E7%BB%83&amp;%E6%8E%A8%E7%90%86%E5%B8%B8%E7%94%A8%E4%BE%9D%E8%B5%96%E5%BA%93/" title="AI训练&amp;推理常用依赖库">AI训练&amp;推理常用依赖库</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-01T08:12:44.000Z" title="发表于 2025-10-01 16:12:44">2025-10-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/LLM/">LLM</a></span></div><div class="content">AI 训练 &amp; 推理常用依赖库PyTorchtorch…… torchaudiotorchaudio 是 PyTorch 官方用于处理音频数据和进行音频相关深度学习任务的工具包，提供了音频数据的加载和保存、频谱分析、预训练的音频模型（支持音频分类、语音识别等任务）、与 PyTorch 的数据集和数据加载器集成等功能。 torchaudio.load() 是 torchaudio 库中的一个函数，用于加载音频文件并返回音频数据及其采样率。它可以方便地将音频文件加载到 PyTorch 的张量中，以便进行后续的音频处理和深度学习任务。 具体功能包括：  读取音频文件：支持多种音频格式（如 WAV、MP3 等）； 返回数据和采样率：返回两个值：音频信号的张量表示（通常是浮点数）和音频的采样率（Hz），方便后续处理和分析。  torchaudio.functional.resample(y, orig_freq=xxx, new_freq=xxx) 是用于对音频信号进行重采样的函数。该函数适用于需要调整音频采样率的场景，如匹配不同音频源的采样频率或准备音频数据以供模型训练。 具体功...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/15/tool-use__code_samples__04-dotnet-agent-framework/" title="tool-use__code_samples__04-dotnet-agent-framework">tool-use__code_samples__04-dotnet-agent-framework</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-15T15:12:10.000Z" title="发表于 2025-09-15 23:12:10">2025-09-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🛠️ GitHub 模型 (.NET) 的高级工具使用📋 学习目标本笔记本演示了使用 .NET 中的 Microsoft Agent Framework 与 GitHub 模型的企业级工具集成模式。您将学习利用 C# 的强类型和 .NET 的企业功能，使用多种专用工具构建复杂的代理。 您将掌握的高级工具功能 🔧 多工具架构：构建具有多种专业功能的代理 🎯 类型安全工具执行：利用 C# 的编译时验证 📊 企业工具模式：生产就绪的工具设计和错误处理 🔗 工具组合：组合复杂业务工作流程的工具  🎯 .NET 工具架构的优点企业工具功能 编译时验证：强类型确保工具参数的正确性 依赖注入：用于工具管理的 IoC 容器集成 异步&#x2F;等待模式：通过适当的资源管理实现非阻塞工具执行 结构化日志记录：用于工具执行监控的内置日志记录集成  生产就绪模式 异常处理：使用类型化异常进行全面的错误管理 资源管理：正确的处置模式和内存管理 性能监控：内置指标和性能计数器 配置管理：带有验证的类型安全配置  🔧 技术架构核心 .NET 工具组件 Microsoft.Extensions...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/14/planning-design__code_samples__07-dotnet-agent-framework/" title="planning-design__code_samples__07-dotnet-agent-framework">planning-design__code_samples__07-dotnet-agent-framework</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-14T12:25:15.000Z" title="发表于 2025-09-14 20:25:15">2025-09-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🎯 使用 GitHub 模型 (.NET) 进行规划和设计模式📋 学习目标本笔记本演示了使用 .NET 中的 Microsoft Agent Framework 和 GitHub 模型构建智能代理的企业级规划和设计模式。您将学习创建可以分解复杂问题、规划多步骤解决方案以及使用 .NET 企业功能执行复杂工作流程的代理。 ⚙️ 先决条件和设置开发环境：  .NET 9.0 SDK 或更高版本 Visual Studio 2022 或带有 C# 扩展的 VS Code GitHub 模型 API 访问  所需的依赖项： 123&lt;PackageReference Include=&quot;Microsoft.Extensions.AI&quot; Version=&quot;9.9.0&quot; /&gt;&lt;PackageReference Include=&quot;Microsoft.Extensions.AI.OpenAI&quot; Version=&quot;9.9.0-preview.1.25458.4&quot; /&gt;&lt;PackageRef...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/13/multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition">multi-agent__code_samples__workflows-agent-framework__dotNET__04.dotnet-agent-framework-workflow-aifoundry-condition</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-13T14:02:05.000Z" title="发表于 2025-09-13 22:02:05">2025-09-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🔀 使用 Azure AI Foundry (.NET) 的条件代理工作流程📋 基于智能决策的工作流程教程本笔记本演示了使用 Azure AI Foundry 和 Microsoft Agent Framework for .NET 的条件工作流模式。您将学习如何构建复杂的、决策驱动的工作流程，根据人工智能分析、业务规则和企业级自动化的动态条件智能地路由处理。 🎯 学习目标🧠 智能决策架构 条件逻辑实现：构建具有多个分支点的复杂决策树 AI 支持的路由：使用 Azure AI Foundry 模型做出智能路由决策 动态工作流程适应：根据运行时分析和条件修改工作流程行为 企业规则集成：将业务逻辑和合规性要求纳入工作流程中  🔀 高级条件模式 多标准决策：评估路由决策的多个因素 上下文感知处理：根据累积的工作流上下文和历史记录做出决策 自适应工作流程修改：根据实时情况动态调整处理路径 规则引擎集成：在工作流程中实施复杂的业务规则引擎  🏢 企业有条件申请 文档分类和路由：自动分类文档并将其路由到适当的工作流程 客户服务分类：将客户询问智能路由至专业处理团队 合规与风险处理...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/12/multi-agent__code_samples__workflows-agent-framework__dotNET__03.dotnet-agent-framework-workflow-ghmodel-concurrent/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__03.dotnet-agent-framework-workflow-ghmodel-concurrent">multi-agent__code_samples__workflows-agent-framework__dotNET__03.dotnet-agent-framework-workflow-ghmodel-concurrent</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-12T07:52:34.000Z" title="发表于 2025-09-12 15:52:34">2025-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">⚡ 使用 GitHub 模型的并发代理工作流程 (.NET)📋 高性能并行处理教程本笔记本演示了使用 Microsoft Agent Framework for .NET 和 GitHub 模型的并发工作流模式。您将学习如何构建高性能、并行处理工作流程，通过同时执行多个 AI 代理来最大限度地提高吞吐量，同时保持协调和数据一致性。 🎯 学习目标🚀 并发处理基础知识 并行代理执行：同时运行多个 AI 代理以获得最佳性能 异步&#x2F;等待模式：利用.NET的异步编程模型实现高效并发 GitHub 模型集成：协调对 GitHub 的 AI 模型推理服务的多个并发调用 资源管理：跨并发操作高效管理 AI 模型资源  🏗️ 高级并发架构 基于任务的并行：使用 .NET 任务并行库实现最佳并发执行 同步模式：协调并发代理，同时避免竞争条件 负载平衡：在可用的并发处理能力之间有效地分配工作 容错：处理单个代理故障而不停止整个工作流程  🏢 企业并发应用 大容量文档处理：同时处理多个文档 实时内容分析：传入数据流的并发分析 批处理优化：最大化大规模数据处理操作的吞吐量 多模态分析：...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/11/multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential">multi-agent__code_samples__workflows-agent-framework__dotNET__02.dotnet-agent-framework-workflow-ghmodel-sequential</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-11T01:56:39.000Z" title="发表于 2025-09-11 09:56:39">2025-09-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">⏩ 使用 GitHub 模型 (.NET) 的顺序代理工作流程📋 高级顺序处理教程本笔记本演示了使用 Microsoft Agent Framework for .NET 和 GitHub 模型的顺序工作流模式。您将学习如何构建复杂的分步处理管道，其中代理按特定顺序执行，每个阶段都基于前一阶段的结果。 🎯 学习目标🔄 顺序处理架构 线性工作流程设计：创建具有明确依赖性的分步处理管道 状态管理：维护跨连续工作流程阶段的上下文和数据流 GitHub 模型集成：在多阶段 .NET 工作流程中利用 GitHub 的 AI 模型 企业管道模式：构建生产就绪的顺序处理系统  🏗️ 高级序列模式 阶段控制处理：在工作流程阶段之间实施验证检查点 上下文保存：在所有阶段维护状态和积累的知识 错误传播：在顺序处理链中优雅地处理故障 性能优化：以最小的开销实现高效的顺序执行  🏢 企业顺序应用程序 文档处理管道：多阶段文档分析、转换和验证 质量保证工作流程：顺序审查、验证和批准流程 内容制作流程：研究→写作→编辑→评论→出版 业务流程自动化：具有明确阶段依赖性的多步骤业务工作流程  ⚙️ 先...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/10/multi-agent__code_samples__workflows-agent-framework__dotNET__01.dotnet-agent-framework-workflow-ghmodel-basic/" title="multi-agent__code_samples__workflows-agent-framework__dotNET__01.dotnet-agent-framework-workflow-ghmodel-basic">multi-agent__code_samples__workflows-agent-framework__dotNET__01.dotnet-agent-framework-workflow-ghmodel-basic</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-10T00:02:52.000Z" title="发表于 2025-09-10 08:02:52">2025-09-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🔄 使用 GitHub 模型 (.NET) 的基本代理工作流程📋 工作流程编排教程本笔记本演示了如何使用 Microsoft Agent Framework for .NET 和 GitHub 模型构建复杂的代理工作流程。您将学习创建多步骤业务流程，其中 AI 代理通过结构化编排模式协作完成复杂的任务。 🎯 学习目标🏗️ 工作流程架构基础知识 工作流程构建器：设计和编排复杂的多步骤人工智能流程 代理协调：协调工作流程中的多个专业代理 GitHub 模型集成：在工作流程中利用 GitHub 的 AI 模型推理服务 可视化工作流程设计：创建和可视化工作流程结构以更好地理解  🔄 流程编排模式 顺序处理：按逻辑顺序链接多个代理任务 状态管理：维护跨工作流程阶段的上下文和数据流 错误处理：实施强大的错误恢复和工作流程弹性 性能优化：为企业规模运营设计高效的工作流程  🏢 企业工作流程应用程序 业务流程自动化：自动化复杂的组织工作流程 内容制作管道：具有审核和批准阶段的编辑工作流程 客户服务自动化：多步骤解决客户询问 数据处理工作流程：具有 AI 支持的转换的 ETL 工作流程...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/09/multi-agent__code_samples__08-dotnet-agent-framework/" title="multi-agent__code_samples__08-dotnet-agent-framework">multi-agent__code_samples__08-dotnet-agent-framework</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-09T08:10:01.000Z" title="发表于 2025-09-09 16:10:01">2025-09-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🤝 企业多代理工作流系统 (.NET)📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 GitHub 模型构建复杂的企业级多代理系统。您将学习如何通过结构化工作流程协调多个专业代理一起工作，利用 .NET 的企业功能来实现生产就绪的解决方案。 您将构建的企业多代理功能：  👥 代理协作：具有编译时验证的类型安全代理协调 🔄 工作流编排：使用 .NET 异步模式的声明式工作流定义 🎭 角色专业化：强类型的座席个性和专业领域 🏢 企业集成：具有监控和错误处理功能的生产就绪模式  ⚙️ 先决条件和设置开发环境：  .NET 9.0 SDK 或更高版本 Visual Studio 2022 或带有 C# 扩展的 VS Code Azure 订阅（用于持久代理）  所需的 NuGet 包： 1234567&lt;PackageReference Include=&quot;Microsoft.Extensions.AI.Abstractions&quot; Version=&quot;9.9.0&quot; /&gt;&...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/08/intro-to-ai-agents__code_samples__01-dotnet-agent-framework/" title="intro-to-ai-agents__code_samples__01-dotnet-agent-framework">intro-to-ai-agents__code_samples__01-dotnet-agent-framework</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-08T10:33:34.000Z" title="发表于 2025-09-08 18:33:34">2025-09-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="content">🌍 带有 Microsoft Agent Framework (.NET) 的 AI 旅行代理📋 场景概述此示例演示如何使用 Microsoft Agent Framework for .NET 构建智能旅行规划代理。该代理可以自动生成世界各地随机目的地的个性化一日游行程。 关键功能： 🎲 随机目的地选择：使用自定义工具选择度假地点 🗺️ 智能旅行规划：创建详细的每日行程 🔄 实时流式传输：支持即时响应和流式响应 🛠️ 自定义工具集成：演示如何扩展代理功能  🔧 技术架构核心技术 Microsoft Agent Framework：用于 AI 代理开发的最新 .NET 实现 GitHub 模型集成：使用 GitHub 的 AI 模型推理服务 OpenAI API 兼容性：利用具有自定义端点的 OpenAI 客户端库 安全配置：基于环境的API密钥管理  关键组件 AIAgent：处理会话流的主要代理协调器 自定义工具：代理可用的 GetRandomDestination() 函数 聊天客户端：GitHub 模型支持的对话界面 Streaming Support：实时...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/14/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/#content-inner">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/#content-inner">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/16/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

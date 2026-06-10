@@ -1,0 +1,323 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能） | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-02-10T09:30:36.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.569Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）",
+  "url": "https://hzhzxfs.github.io/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-02-10T09:30:36.000Z",
+  "dateModified": "2026-06-10T02:14:46.569Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-02-10T09:30:36.000Z" title="发表于 2026-02-10 17:30:36">2026-02-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.569Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="第九课：使用-Claude-Agent-SDK-构建实战级研究智能体"><a href="#第九课：使用-Claude-Agent-SDK-构建实战级研究智能体" class="headerlink" title="第九课：使用 Claude Agent SDK 构建实战级研究智能体"></a>第九课：使用 Claude Agent SDK 构建实战级研究智能体</h1><p>本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 <strong>Claude Agent SDK</strong> 以编程方式构建复杂的智能体应用。</p>
+<p>我们将从零开始构建一个 <strong>通用研究智能体 (Research Agent)</strong>。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专家” (Sub-agents) 进行分工协作，最终通过 MCP 将成果交付到外部系统 (Notion)。</p>
+<hr>
+<h2 id="1-核心架构：指挥官与专家团队-The-Architecture"><a href="#1-核心架构：指挥官与专家团队-The-Architecture" class="headerlink" title="1. 核心架构：指挥官与专家团队 (The Architecture)"></a>1. 核心架构：指挥官与专家团队 (The Architecture)</h2><p>我们使用 SDK 构建的系统架构可以映射为传统的企业组织结构：</p>
+<table>
+<thead>
+<tr>
+<th align="left">架构层级</th>
+<th align="left">概念隐喻 (Metaphor)</th>
+<th align="left">代码组件 (SDK Component)</th>
+<th align="left">本案具体实现 (Implementation)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>The Brain</strong></td>
+<td align="left"><strong>指挥官 &#x2F; 编排者</strong></td>
+<td align="left"><code>Main Agent</code> + <code>TaskTool</code></td>
+<td align="left">负责理解需求，加载技能制定计划，分派任务，最后合成报告。</td>
+</tr>
+<tr>
+<td align="left"><strong>The Arms</strong></td>
+<td align="left"><strong>专家 &#x2F; 执行者</strong></td>
+<td align="left"><code>AgentDefinition</code> (Sub-agents)</td>
+<td align="left"><strong>Docs Researcher</strong> (查文档)<br><strong>Repo Analyzer</strong> (跑代码)<br><strong>Web Researcher</strong> (搜视频)</td>
+</tr>
+<tr>
+<td align="left"><strong>Process</strong></td>
+<td align="left"><strong>标准作业程序 (SOP)</strong></td>
+<td align="left"><code>SkillTool</code></td>
+<td align="left"><code>learning-a-tool</code>: 一个定义了“如何学习新工具”的标准流程技能。</td>
+</tr>
+<tr>
+<td align="left"><strong>Connectivity</strong></td>
+<td align="left"><strong>外部连接器</strong></td>
+<td align="left"><code>MCP Server</code></td>
+<td align="left"><strong>Notion MCP</strong>: 用于将生成的 Markdown 报告写入云端 Notion 页面。</td>
+</tr>
+</tbody></table>
+<p><img src="/./images/9.1.png" alt="描述"></p>
+<blockquote>
+<p><strong>关键区别</strong>：在本案例中，<strong>技能 (Skill) 是专门给主智能体用的</strong>，作为其规划的指导手册；而<strong>子智能体 (Sub-agents)</strong> 则是去执行具体脏活累活的。</p>
+</blockquote>
+<hr>
+<h2 id="2-环境搭建与工程结构-Setup-Structure"><a href="#2-环境搭建与工程结构-Setup-Structure" class="headerlink" title="2. 环境搭建与工程结构 (Setup &amp; Structure)"></a>2. 环境搭建与工程结构 (Setup &amp; Structure)</h2><p>为了让 SDK 正确加载技能和代理定义，文件结构必须遵循特定规范。</p>
+<h3 id="2-1-项目目录结构"><a href="#2-1-项目目录结构" class="headerlink" title="2.1 项目目录结构"></a>2.1 项目目录结构</h3><p>根据视频演示，推荐的目录结构如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">research-agent/</span><br><span class="line">├── .env                  # 🔑 存放 ANTHROPIC_API_KEY, NOTION_API_TOKEN</span><br><span class="line">├── agent.py              # 🧠 主程序入口 (The Brain)</span><br><span class="line">├── agents/               # 🤖 子智能体定义 (The Arms)</span><br><span class="line">│   ├── docs_researcher.md</span><br><span class="line">│   ├── repo_analyzer.md</span><br><span class="line">│   └── web_researcher.md</span><br><span class="line">└── .claude/              # 📚 技能库 (Infrastructure)</span><br><span class="line">    └── skills/           # ⚠️ 必须命名为 &#x27;skills&#x27; (复数)</span><br><span class="line">        └── learning-a-tool/</span><br><span class="line">            ├── SKILL.md  # 技能入口文件</span><br><span class="line">            └── progressive_learning.md # 渐进式加载的详细内容</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-初始化与依赖安装"><a href="#2-2-初始化与依赖安装" class="headerlink" title="2.2 初始化与依赖安装"></a>2.2 初始化与依赖安装</h3><p>在终端中执行以下命令初始化项目并安装 Python 依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化 uv 项目</span></span><br><span class="line">uv init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 Claude Agent SDK 及相关工具</span></span><br><span class="line">uv add claude-agent-sdk python-dotenv asyncio</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-代码实现核心逻辑-agent-py-Anatomy"><a href="#3-代码实现核心逻辑-agent-py-Anatomy" class="headerlink" title="3. 代码实现核心逻辑 (agent.py Anatomy)"></a>3. 代码实现核心逻辑 (<code>agent.py</code> Anatomy)</h2><p><code>agent.py</code> 是整个系统的控制中心。以下是基于视频脚本的代码构建步骤解析：</p>
+<h3 id="第一步：导入与辅助函数"><a href="#第一步：导入与辅助函数" class="headerlink" title="第一步：导入与辅助函数"></a>第一步：导入与辅助函数</h3><p>视频中使用了 <code>display_message</code> 来美化终端输出，这对于调试智能体的思考过程非常重要。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> dotenv <span class="keyword">import</span> load_dotenv</span><br><span class="line"><span class="keyword">from</span> claude_agent_sdk.utils <span class="keyword">import</span> display_message <span class="comment"># 用于格式化输出</span></span><br><span class="line"><span class="comment"># ... 导入其他依赖</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="第二步：配置工具与权限-The-Tools"><a href="#第二步：配置工具与权限-The-Tools" class="headerlink" title="第二步：配置工具与权限 (The Tools)"></a>第二步：配置工具与权限 (The Tools)</h3><p>SDK 默认是<strong>只读且安全</strong>的。为了让智能体能写代码和上网，必须显式授权。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> claude_agent_sdk.tools <span class="keyword">import</span> Bash, Write, WebSearch, WebFetch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显式允许高权限工具</span></span><br><span class="line">allowed_tools = [</span><br><span class="line">    Write,      <span class="comment"># 允许写文件 (生成 README.md 等)</span></span><br><span class="line">    Bash,       <span class="comment"># 允许执行 Shell 命令 (如 git clone)</span></span><br><span class="line">    WebSearch,  <span class="comment"># 允许联网搜索</span></span><br><span class="line">    WebFetch    <span class="comment"># 允许抓取网页内容</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：集成-MCP-Notion"><a href="#第三步：集成-MCP-Notion" class="headerlink" title="第三步：集成 MCP (Notion)"></a>第三步：集成 MCP (Notion)</h3><p>通过代码连接 Notion MCP 服务器，赋予智能体操作外部笔记系统的能力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义 MCP Server 配置</span></span><br><span class="line">mcp_servers = &#123;</span><br><span class="line">    <span class="string">&quot;notion&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;command&quot;</span>: <span class="string">&quot;uv&quot;</span>,</span><br><span class="line">        <span class="string">&quot;args&quot;</span>: [<span class="string">&quot;run&quot;</span>, <span class="string">&quot;mcp-server-notion&quot;</span>], <span class="comment"># 运行 Notion MCP</span></span><br><span class="line">        <span class="string">&quot;env&quot;</span>: &#123;<span class="string">&quot;NOTION_API_TOKEN&quot;</span>: os.getenv(<span class="string">&quot;NOTION_API_TOKEN&quot;</span>)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ⚠️ 关键：必须将 MCP 工具加入允许列表</span></span><br><span class="line"><span class="comment"># 使用通配符允许所有 Notion 相关操作</span></span><br><span class="line">allowed_tools.append(<span class="string">&quot;mcp_notion_*&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：加载技能与任务调度-Skills-Orchestration"><a href="#第四步：加载技能与任务调度-Skills-Orchestration" class="headerlink" title="第四步：加载技能与任务调度 (Skills &amp; Orchestration)"></a>第四步：加载技能与任务调度 (Skills &amp; Orchestration)</h3><p>这是让“大脑”能运作的关键。必须添加 <code>SkillTool</code> 来读取技能，添加 <code>TaskTool</code> 来调度子智能体。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> claude_agent_sdk.tools <span class="keyword">import</span> SkillTool, TaskTool</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 配置 SkillTool</span></span><br><span class="line"><span class="comment"># setting_sources=[&quot;project&quot;] 告诉 SDK 在当前项目的 .claude/skills 中查找</span></span><br><span class="line">skill_tool = SkillTool(setting_sources=[<span class="string">&quot;project&quot;</span>, <span class="string">&quot;user&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 配置 TaskTool (需要先加载子智能体定义)</span></span><br><span class="line"><span class="comment"># 加载 prompts/defs ... (此处省略加载过程)</span></span><br><span class="line">task_tool = TaskTool(agents=sub_agent_definitions) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 将它们加入工具集</span></span><br><span class="line">allowed_tools.extend([skill_tool, task_tool])</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-角色定义与分工-Defining-Roles"><a href="#4-角色定义与分工-Defining-Roles" class="headerlink" title="4. 角色定义与分工 (Defining Roles)"></a>4. 角色定义与分工 (Defining Roles)</h2><p>在代码中，我们需要通过 <code>AgentDefinition</code> 类来定义每个子智能体的职责边界。</p>
+<table>
+<thead>
+<tr>
+<th align="left">角色 (Role)</th>
+<th align="left">核心职责</th>
+<th align="left">关键工具配置 (Key Tools)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Main Agent</strong></td>
+<td align="left"><strong>编排与合成</strong>。加载技能制定计划，分派任务给子智能体，汇总结果并写入 Notion。</td>
+<td align="left"><code>TaskTool</code>, <code>SkillTool</code>, <code>mcp_notion_*</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Docs Researcher</strong></td>
+<td align="left"><strong>文档研究</strong>。查找和阅读官方文档。</td>
+<td align="left"><code>WebSearch</code>, <code>WebFetch</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Repo Analyzer</strong></td>
+<td align="left"><strong>代码分析</strong>。克隆 GitHub 仓库，分析文件结构和代码逻辑。</td>
+<td align="left"><strong><code>Bash</code></strong> (执行 git clone), <code>Read</code>, <code>Grep</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Web Researcher</strong></td>
+<td align="left"><strong>广泛搜索</strong>。查找教程、视频（YouTube）和社区讨论。</td>
+<td align="left"><code>WebSearch</code>, <code>WebFetch</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>注意</strong>：子智能体的 <code>allowed_tools</code> 是独立的。例如，只有 Repo Analyzer 需要 <code>Bash</code> 权限，其他研究员不需要，这体现了<strong>最小权限原则</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="5-工作流演示：研究-“MinerU”-Execution-Flow"><a href="#5-工作流演示：研究-“MinerU”-Execution-Flow" class="headerlink" title="5. 工作流演示：研究 “MinerU” (Execution Flow)"></a>5. 工作流演示：研究 “MinerU” (Execution Flow)</h2><p>课程演示了从零开始研究开源 PDF 提取工具 “MinerU” 的完整生命周期。这个过程展示了如何处理非确定性任务。</p>
+<h3 id="阶段-1：规划-Planning-渐进式披露"><a href="#阶段-1：规划-Planning-渐进式披露" class="headerlink" title="阶段 1：规划 (Planning) &amp; 渐进式披露"></a>阶段 1：规划 (Planning) &amp; 渐进式披露</h3><ul>
+<li><strong>用户指令</strong>：<em>“Create a learning guide for MinerU, show me the plan first.”</em></li>
+<li><strong>动作</strong>：主智能体加载 <code>learning-a-tool</code> 技能。</li>
+<li><strong>技术细节 (Progressive Disclosure)</strong>：SDK 最初只加载技能的名称。当技能被触发时，它加载底层的 <code>SKILL.md</code>，并在需要时进一步加载引用的 <code>progressive_learning.md</code>。这保护了上下文窗口，避免一次性加载过多 Token。</li>
+</ul>
+<h3 id="阶段-2：并行执行-Parallel-Execution"><a href="#阶段-2：并行执行-Parallel-Execution" class="headerlink" title="阶段 2：并行执行 (Parallel Execution)"></a>阶段 2：并行执行 (Parallel Execution)</h3><ul>
+<li><strong>动作</strong>：主智能体根据计划，使用 <code>TaskTool</code> <strong>同时调度</strong>三个子智能体。</li>
+<li><strong>并行处理</strong>：<ul>
+<li><em>Docs Researcher</em> -&gt; 阅读官方文档。</li>
+<li><em>Repo Analyzer</em> -&gt; 执行 <code>git clone</code> 拉取代码并分析结构。</li>
+<li><em>Web Researcher</em> -&gt; 在 YouTube 搜索视频教程。</li>
+</ul>
+</li>
+<li><strong>优势</strong>：互不阻塞，极大提高了复杂任务的执行效率。</li>
+</ul>
+<h3 id="阶段-3：合成-Synthesis"><a href="#阶段-3：合成-Synthesis" class="headerlink" title="阶段 3：合成 (Synthesis)"></a>阶段 3：合成 (Synthesis)</h3><ul>
+<li><strong>动作</strong>：子智能体返回结果后，主智能体在本地文件系统生成标准化的目录结构：<ul>
+<li><code>README.md</code>: 包含学习路径和时间预估。</li>
+<li><code>resources.md</code>: 整理好的链接和参考文献。</li>
+<li><code>examples/</code>: 生成 Hello World 代码示例。</li>
+</ul>
+</li>
+</ul>
+<h3 id="阶段-4：交付-Delivery-via-MCP"><a href="#阶段-4：交付-Delivery-via-MCP" class="headerlink" title="阶段 4：交付 (Delivery via MCP)"></a>阶段 4：交付 (Delivery via MCP)</h3><ul>
+<li><strong>用户指令</strong>：<em>“Write the resources file to Notion.”</em></li>
+<li><strong>动作</strong>：主智能体调用 Notion MCP 工具 (<code>mcp_notion_append_block_children</code>)。</li>
+<li><strong>结果</strong>：它读取本地的 <code>resources.md</code>，将其转换为 Notion 的 <strong>Rich Blocks</strong>（富文本块），并自动写入到云端的 Notion 页面中。</li>
+</ul>
+<hr>
+<h2 id="6-关键启示与安全最佳实践-Key-Takeaways"><a href="#6-关键启示与安全最佳实践-Key-Takeaways" class="headerlink" title="6. 关键启示与安全最佳实践 (Key Takeaways)"></a>6. 关键启示与安全最佳实践 (Key Takeaways)</h2><h3 id="6-1-SDK-vs-Claude-Code-CLI"><a href="#6-1-SDK-vs-Claude-Code-CLI" class="headerlink" title="6.1 SDK vs Claude Code (CLI)"></a>6.1 SDK vs Claude Code (CLI)</h3><p>开发者常问：<em>“我应该用 Claude Code 命令行工具，还是自己写 Python SDK？”</em></p>
+<table>
+<thead>
+<tr>
+<th align="left">维度</th>
+<th align="left">Claude Code (CLI)</th>
+<th align="left">Claude Agent SDK (Python)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>定位</strong></td>
+<td align="left">交互式工具，用于辅助编程和一次性任务。</td>
+<td align="left"><strong>编程框架</strong>，用于构建可扩展的 AI 应用程序。</td>
+</tr>
+<tr>
+<td align="left"><strong>控制力</strong></td>
+<td align="left">由系统接管大部分决策。</td>
+<td align="left">开发者可精细控制 <strong>System Prompt</strong>、<strong>工具集</strong> 和 <strong>错误处理逻辑</strong>。</td>
+</tr>
+<tr>
+<td align="left"><strong>集成性</strong></td>
+<td align="left">独立运行。</td>
+<td align="left">可集成到现有的后端服务或产品中。</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-安全性警告-Security-Note"><a href="#6-2-安全性警告-Security-Note" class="headerlink" title="6.2 安全性警告 (Security Note)"></a>6.2 安全性警告 (Security Note)</h3><p>⚠️ <strong>Human-in-the-loop (人机回环)</strong><br>在课程的演示代码中，为了流程顺畅，我们直接允许了 <code>Bash</code> 和 <code>Write</code> 的自动执行。</p>
+<ul>
+<li><strong>生产环境风险</strong>：Agent 可能会执行危险命令（如删除文件）或覆盖重要数据。</li>
+<li><strong>最佳实践</strong>：在构建生产级应用时，必须实现<strong>拦截机制</strong>。当模型请求使用高风险工具时，暂停执行并向用户展示确认框（Permission Request），用户批准后方可继续。</li>
+</ul>
+<h3 id="6-3-技能的可移植性-Portability"><a href="#6-3-技能的可移植性-Portability" class="headerlink" title="6.3 技能的可移植性 (Portability)"></a>6.3 技能的可移植性 (Portability)</h3><p>我们在 <code>.claude/skills</code> 中编写的技能文件是符合 <strong>Open Standard</strong> 的。这意味着你在 Python SDK 中编写的技能，可以直接拖入 Claude Desktop 使用，也可以被其他支持该标准的 Agent 框架复用，无需修改代码。</p>
+<p><a href="./README.md">返回目录</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/">https://hzhzxfs.github.io/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/01/mcp-quickstart/" title="mcp-quickstart"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">mcp-quickstart</div></div><div class="info-2"><div class="info-item-1">连接到 MCP 服务器 将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。  Model Context Protocol (MCP) 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。 本指南将引导您通过 Claude Code CLI 端到端地连接一个 MCP 服务器。完成后，您将拥有一个已连接且响应的服务器，了解其配置在磁盘上的位置，并知道如何修复最常见的连接错误。    您也可以从其他界面添加 MCP 服务器，包括桌面应用、VS Code 和网络版。请参阅[从其他界面连接](#connect-from-other-surfaces)。   有关在 Claude Code 中连接和配置 MCP 服务器的所有方式，请参阅 MCP 参考。 开始之前确保您拥有：  已安装并验证了 Claude Code 在项目目录中打开的终端。任何目录都可以，包括空目录。  添加并验证服务器下面的示例连接到 Claude Code 文...</div></div></div></a><a class="pagination-related" href="/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="8.Skill with Claude Code（在Claude Code使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">8.Skill with Claude Code（在Claude Code使用skills）</div></div><div class="info-2"><div class="info-item-1">Skill with Claude Code(熟练运用 Claude Code)引言Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。 Claude Code 工作原理当您给 Claude Code 一个任务时，它会经历三个阶段：收集上下文、采取行动和验证结果。这些阶段相互融合，Claude 在整个过程中使用工具，无论是搜索文件以理解您的代码，编辑文件以进行更改，还是运行测试以检查其工作。这个循环会根据您的需求进行调整。对代码库的提问可能只需要收集上下文。修复错误则会反复经历所有三个阶段。重构可能涉及广泛的验证。Claude 根据从上一步中学到的内容决定每一步需要什么，将数十个操作串联起来并在过程中进行纠正。您也是这个循环的一部分。您可以随时中断以引导 Claude 走向不同的方向，提供额外的上下文，或要求它尝试不同的方法。Claude 自主工作，但对您的输入保持...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/15/15-MCP-%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0/" title="15-MCP-协议实现"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-15</div><div class="info-item-2">15-MCP-协议实现</div></div><div class="info-2"><div class="info-item-1">第 15 篇：MCP 协议实现 — 连接外部工具的标准化桥梁 本篇是《深入 Claude Code 源码》系列的第 15 篇。我们将剖析 Claude Code 如何实现 Model Context Protocol（MCP），包括类型系统设计、多层配置合并、传输层适配、连接生命周期管理、Tool 发现与代理，以及认证体系。  为什么需要 MCP？Claude Code 内置了 40+ 个工具（BashTool、FileEditTool、GlobTool 等），足以覆盖大部分编程场景。但真实世界的开发远不止于此——你可能需要查询 Jira 看板、操作 Slack 消息、调用公司内部的 API 网关、访问 GitHub Issues……这些能力不可能全部内置，也不应该内置。 Model Context Protocol（MCP） 就是这个问题的答案。它是 Anthropic 提出的一个开放标准，定义了 AI 应用（Client）与外部工具&#x2F;数据服务（Server）之间的通信协议。可以把 MCP 理解为 AI 世界的 “USB 接口”——只要服务实现了 MCP 协议，Cla...</div></div></div></a><a class="pagination-related" href="/2026/04/11/common-workflows/" title="common-workflows"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-11</div><div class="info-item-2">common-workflows</div></div><div class="info-2"><div class="info-item-1">常见工作流程 使用 Claude Code 探索代码库、修复错误、重构、测试和其他日常任务的分步指南。  本页收集了日常开发的简短工作流程。有关提示和上下文管理的更高级指导，请参阅最佳实践。 本页涵盖：  提示工作流程，用于探索代码、修复错误、重构、测试、PR 和文档 恢复以前的对话，以便任务可以跨越多个会话 使用 worktrees 运行并行会话，以便并发编辑不会冲突 编辑前规划，以在更改接触磁盘前审查更改 将研究委派给 subagents，以保持主上下文清洁 将 Claude 管道输入脚本，用于 CI 和批处理  提示工作流程这些是日常任务的提示模式，如探索陌生代码、调试、重构、编写测试和创建 PR。每个都可以在任何 Claude Code 界面中工作；根据您的项目调整措辞。 理解新的代码库有关在 monorepo 或大型代码库中配置 Claude Code 的信息，请参阅 Monorepos 和大型存储库。 快速获取代码库概览假设您刚加入一个新项目，需要快速了解其结构。         theme1cd /path/to/project             theme1...</div></div></div></a><a class="pagination-related" href="/2026/03/14/settings/" title="settings"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-14</div><div class="info-item-2">settings</div></div><div class="info-2"><div class="info-item-1">Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 /config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共享。了解作用域可以帮助您决定如何为个人使用、团队协作或企业部署配置 Claude Code。 可用作用域   作用域 位置 影响范围 与团队共享？    Managed 服务器管理的设置、plist &#x2F; 注册表或系统级 managed-settings.json 机器上的所有用户 是（由 IT 部署）   User ~/.claude/ 目录 您，跨所有项目 否   Project 存储库中的 .claude/ 此存储库上的所有协作者 是（提交到 git）   Local .claude/settings.local.json 您，仅在此存储库中 否（gitignored）  ...</div></div></div></a><a class="pagination-related" href="/2026/05/06/06-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/" title="06-上下文管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-06</div><div class="info-item-2">06-上下文管理</div></div><div class="info-2"><div class="info-item-1">第 6 篇：上下文管理 — 无限对话的秘密 本篇是《深入 Claude Code 源码》系列的第 6 篇。我们将深入分析 Claude Code 如何在有限的 context window 内支撑无限长度的对话——从 token 预算管理、多级压缩策略，到文件状态缓存与 compact 后恢复的设计。 范围说明：上下文的”构建”（System Prompt 组装、CLAUDE.md 注入、git status 获取）已在第 4 篇中覆盖，缓存策略的横切视角将在第 7 篇中展开。本篇聚焦于上下文构建完成后的压缩、清理与恢复——即当 context window 不够用时，Claude Code 如何在不中断对话的情况下释放空间并重建必要的工作上下文。  为什么上下文管理如此重要？LLM 的 context window 是有限的。Claude 的模型通常有 200K token 的窗口（部分模型支持 1M），看起来很大，但在实际使用中消耗极快：  一次 System Prompt 可能占 5K-15K token 用户附带的 CLAUDE.md 文件可能占 3K-10K token...</div></div></div></a><a class="pagination-related" href="/2026/02/08/7.Skill%20with%20the%20Claude%20API%EF%BC%88%E5%9C%A8Claude%20API%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="7.Skill with the Claude API（在Claude API使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-08</div><div class="info-item-2">7.Skill with the Claude API（在Claude API使用skills）</div></div><div class="info-2"><div class="info-item-1">7.Skill with the Claude API.md Introduce Skills with the Claude API(通过 Claude API 介绍技能功能) 在第一课中，你已经了解了技能（Skills）在 Claude AI 中的运作方式。 现在，我们将开始使用 Claude API 来测试我们在上一课中创建了两个技能。 要在 Claude API 中使用技能，我们需要用到代码执行工具和文件 API。 这将让 Claude 获得文件系统的访问权限，使其能够读写文件，并通过 bash 执行代码。  我们开始吧。之前我们已经聊了很多关于技能的运作原理以及创建方法。 我们也简单提到了技能在 Claude 生态系统不同环境下的可移植性，以及在其他众多智能代理类应用中的表现。 我们先从 Claude AI 和 Claude Desktop 中的技能讲起，现在我们要转向介绍如何通过 Claude Messages API 使用技能。   重要注意事项有两点需要重点注意。 第一，你在 Claude AI 和 Claude Desktop 中创建的技能不会在 Claude ...</div></div></div></a><a class="pagination-related" href="/2026/03/10/remote-control/" title="remote-control"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-10</div><div class="info-item-2">remote-control</div></div><div class="info-2"><div class="info-item-1">使用 Remote Control 从任何设备继续本地会话 使用 Remote Control 从您的手机、平板电脑或任何浏览器继续本地 Claude Code 会话。适用于 claude.ai&#x2F;code 和 Claude 移动应用。     Remote Control 处于研究预览阶段，在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。   Remote Control 将 claude.ai&#x2F;code 或 Claude 应用（iOS 和 Android）连接到在您的机器上运行的 Claude Code 会话。在您的办公桌上启动一个任务，然后从沙发上的手机或另一台计算机上的浏览器继续。 当您在机器上启动 Remote Control 会话时，Claude 始终在本地运行，因此没有任何内容移动到云端。使用 Remote Control，您...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E8%AF%BE%EF%BC%9A%E4%BD%BF%E7%94%A8-Claude-Agent-SDK-%E6%9E%84%E5%BB%BA%E5%AE%9E%E6%88%98%E7%BA%A7%E7%A0%94%E7%A9%B6%E6%99%BA%E8%83%BD%E4%BD%93"><span class="toc-number">1.</span> <span class="toc-text">第九课：使用 Claude Agent SDK 构建实战级研究智能体</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%EF%BC%9A%E6%8C%87%E6%8C%A5%E5%AE%98%E4%B8%8E%E4%B8%93%E5%AE%B6%E5%9B%A2%E9%98%9F-The-Architecture"><span class="toc-number">1.1.</span> <span class="toc-text">1. 核心架构：指挥官与专家团队 (The Architecture)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84-Setup-Structure"><span class="toc-number">1.2.</span> <span class="toc-text">2. 环境搭建与工程结构 (Setup &amp; Structure)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 项目目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%8E%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 初始化与依赖安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91-agent-py-Anatomy"><span class="toc-number">1.3.</span> <span class="toc-text">3. 代码实现核心逻辑 (agent.py Anatomy)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%AF%BC%E5%85%A5%E4%B8%8E%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">第一步：导入与辅助函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E9%85%8D%E7%BD%AE%E5%B7%A5%E5%85%B7%E4%B8%8E%E6%9D%83%E9%99%90-The-Tools"><span class="toc-number">1.3.2.</span> <span class="toc-text">第二步：配置工具与权限 (The Tools)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E9%9B%86%E6%88%90-MCP-Notion"><span class="toc-number">1.3.3.</span> <span class="toc-text">第三步：集成 MCP (Notion)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%8A%A0%E8%BD%BD%E6%8A%80%E8%83%BD%E4%B8%8E%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6-Skills-Orchestration"><span class="toc-number">1.3.4.</span> <span class="toc-text">第四步：加载技能与任务调度 (Skills &amp; Orchestration)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%A7%92%E8%89%B2%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%88%86%E5%B7%A5-Defining-Roles"><span class="toc-number">1.4.</span> <span class="toc-text">4. 角色定义与分工 (Defining Roles)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%B7%A5%E4%BD%9C%E6%B5%81%E6%BC%94%E7%A4%BA%EF%BC%9A%E7%A0%94%E7%A9%B6-%E2%80%9CMinerU%E2%80%9D-Execution-Flow"><span class="toc-number">1.5.</span> <span class="toc-text">5. 工作流演示：研究 “MinerU” (Execution Flow)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9A%E8%A7%84%E5%88%92-Planning-%E6%B8%90%E8%BF%9B%E5%BC%8F%E6%8A%AB%E9%9C%B2"><span class="toc-number">1.5.1.</span> <span class="toc-text">阶段 1：规划 (Planning) &amp; 渐进式披露</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9A%E5%B9%B6%E8%A1%8C%E6%89%A7%E8%A1%8C-Parallel-Execution"><span class="toc-number">1.5.2.</span> <span class="toc-text">阶段 2：并行执行 (Parallel Execution)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-3%EF%BC%9A%E5%90%88%E6%88%90-Synthesis"><span class="toc-number">1.5.3.</span> <span class="toc-text">阶段 3：合成 (Synthesis)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-4%EF%BC%9A%E4%BA%A4%E4%BB%98-Delivery-via-MCP"><span class="toc-number">1.5.4.</span> <span class="toc-text">阶段 4：交付 (Delivery via MCP)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%85%B3%E9%94%AE%E5%90%AF%E7%A4%BA%E4%B8%8E%E5%AE%89%E5%85%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-Key-Takeaways"><span class="toc-number">1.6.</span> <span class="toc-text">6. 关键启示与安全最佳实践 (Key Takeaways)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-SDK-vs-Claude-Code-CLI"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 SDK vs Claude Code (CLI)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%AE%89%E5%85%A8%E6%80%A7%E8%AD%A6%E5%91%8A-Security-Note"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 安全性警告 (Security Note)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E6%8A%80%E8%83%BD%E7%9A%84%E5%8F%AF%E7%A7%BB%E6%A4%8D%E6%80%A7-Portability"><span class="toc-number">1.6.3.</span> <span class="toc-text">6.3 技能的可移植性 (Portability)</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

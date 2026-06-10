@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="12345678# localscp -P 8333 images.zip root@139.9.155.20:&#x2F;media&#x2F;# remotesudo apt updatesudo apt install -y unzipcd &#x2F;mediaunzip images.zip  准备图片： 12345678910111213141516#!&#x2F;usr&#x2F;bin&#x2F;env bashimage_base64&#x3D;$">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="12345678# localscp -P 8333 images.zip root@139.9.155.20:&#x2F;media&#x2F;# remotesudo apt updatesudo apt install -y unzipcd &#x2F;mediaunzip images.zip  准备图片： 12345678910111213141516#!&#x2F;usr&#x2F;bin&#x2F;env bashimage_base64&#x3D;$">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-08-08T01:34:50.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.499Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错",
+  "url": "https://hzhzxfs.github.io/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-08-08T01:34:50.000Z",
+  "dateModified": "2026-06-10T02:14:46.499Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-08T01:34:50.000Z" title="发表于 2025-08-08 09:34:50">2025-08-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.499Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># local</span></span><br><span class="line">scp -P 8333 images.zip root@139.9.155.20:/media/</span><br><span class="line"></span><br><span class="line"><span class="comment"># remote</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install -y unzip</span><br><span class="line"><span class="built_in">cd</span> /media</span><br><span class="line">unzip images.zip</span><br></pre></td></tr></table></figure>
+
+<p>准备图片：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"></span><br><span class="line">image_base64=$(<span class="built_in">base64</span> -w 0 /media/b0.jpg)</span><br><span class="line"><span class="built_in">cat</span> &gt; /media/image_request.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    &quot;model&quot;: &quot;/root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct&quot;,</span></span><br><span class="line"><span class="string">    &quot;messages&quot;: [</span></span><br><span class="line"><span class="string">        &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;,</span></span><br><span class="line"><span class="string">        &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [</span></span><br><span class="line"><span class="string">            &#123;&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: &#123;&quot;url&quot;: &quot;data:image/jpeg;base64,$image_base64&quot;&#125;&#125;,</span></span><br><span class="line"><span class="string">            &#123;&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is the text in the illustrate?&quot;&#125;</span></span><br><span class="line"><span class="string">        ]&#125;</span></span><br><span class="line"><span class="string">    ]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PYTORCH_NPU_ALLOC_CONF=<span class="string">&#x27;expandable_segments:True&#x27;</span></span><br><span class="line"><span class="built_in">export</span> NPU_MEMORY_FRACTION=0.96</span><br><span class="line"></span><br><span class="line">vllm serve /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct \</span><br><span class="line">--max_model_len 32768 \</span><br><span class="line">--enforce-eager \</span><br><span class="line">--gpu-memory-utilization 0.75</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">curl -X POST http://localhost:8000/v1/chat/completions \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">-d @/media/image_request.json</span><br><span class="line"></span><br><span class="line">curl http://xxxx:50000/v1/chat/completions  -H <span class="string">&quot;Content-Type: application/json&quot;</span> -d @/tmp/request.json</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/">https://hzhzxfs.github.io/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/09/Qwen3-VL-8B%E6%8E%A8%E7%90%86%E7%BB%93%E6%9E%9C%E4%B8%BA%E7%A9%BA/" title="Qwen3-VL-8B推理结果为空"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Qwen3-VL-8B推理结果为空</div></div><div class="info-2"><div class="info-item-1">123456789101112131415161718192021222324252627python -m vllm.entrypoints.openai.api_server \--model /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct \--dtype bfloat16 \--gpu-memory-utilization 0.9 \--max-model-len 8192  \--max_num_batched_tokens 8192--host 0.0.0.0 \--port 8000 \--compilation-config &#x27;&#123;&quot;cudagraph_capture_sizes&quot;: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]&#125;&#x27;curl -X POST http://localhost:8000/v1/chat/completions \    -H &quot;Content-Type: app...</div></div></div></a><a class="pagination-related" href="/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/" title="Qwen3-Omni没有vllm_config属性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Qwen3-Omni没有vllm_config属性</div></div><div class="info-2"><div class="info-item-1">1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config = vllm_config </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/11/10/vLLM2.md/" title="vLLM2.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-10</div><div class="info-item-2">vLLM2.md</div></div><div class="info-2"><div class="info-item-1">一、引言vLLM V1 是 vLLM 团队基于 V0 的实践经验并参考工业界其它相关工作提出的最新架构，从 vLLM 0.8.x 版本开始，V1 Engine 将作为 vLLM 启动时的默认选项。 相比于 V0，vLLM V1 具有以下优势：  可读性：代码更加简洁易懂、更加模块化； 高性能：提供更好的推理性能，使用双进程异步处理不同的 CPU 操作，极大地降低了推理的时延和开销； 易扩展：可以轻松集成多样化的特性； 易用性：简化了配置，会默认开启一些特性，以提供更好的性能和体验。  下面，本文将揭秘 vLLM V1 从接收请求到算子执行的推理全流程（附超长流程图，画图不易，欢迎点赞 &amp; 收藏~）。 二、整体概览在深入具体细节之前，让我们先从整体上认识下 V1 Engine 的推理流程。 下面是 vLLM 官方博客中提供的 V1 Engine 在线推理架构图。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU 操作，减少了不同步骤之间相互等待的时间，因此能够更好地压榨硬件的计算性能。   Process 0...</div></div></div></a><a class="pagination-related" href="/2025/11/20/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F%E5%B2%97%E4%BD%8D%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/" title="大模型推理加速岗位学习路线"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-20</div><div class="info-item-2">大模型推理加速岗位学习路线</div></div><div class="info-2"><div class="info-item-1">大模型推理加速岗位学习路线基础知识  Transformer&#x2F;SelfAttention 原理（精读论文：Attention is all you need）  FlashAttention 原理（精读论文）  KVCache 原理  FasterTransformer&#x2F;DeepSpeed&#x2F;TensorRT-LLM 使用（推理加速）  CUDA&#x2F;CANN 编程（算子开发）  vLLM  精读 PagedAttention 论文  阅读 vLLM 源码  Prefill&#x2F;Decode 性能分析（PD 混合&#x2F;分离）  参考资料 Basic LLM Inference&#x2F;Generation  </div></div></div></a><a class="pagination-related" href="/2025/08/10/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADActor%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="Ray框架中Actor概念及作用详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">Ray框架中Actor概念及作用详解</div></div><div class="info-2"><div class="info-item-1">好的，我们来详细讲解一下 Ray 框架中的 Actor 概念。 1. Actor 是什么？在 Ray 中，Actor 是一个有状态的“工作进程”。你可以把它理解为一个“活的”对象。  普通 Python 类 vs. Ray Actor  一个普通的 Python 类 MyClass 在被实例化后（obj = MyClass()），obj 只是一个存在于当前进程内存中的对象。 一个 Ray Actor 是通过 ray.remote(MyClass) 创建的。当你实例化它时（actor_handle = MyClass.remote()），Ray 会在集群中的某个节点上（可能是在远程机器上）启动一个独立的进程，并在该进程中创建一个 MyClass 的实例。你得到的 actor_handle 并不是对象本身，而是一个指向远程对象（即那个进程中的实例）的引用或句柄。   核心特征：有状态Actor 的关键在于它可以在其整个生命周期内维护和修改内部状态（即它的实例变量，如 self.value）。所有对该 Actor 的方法调用都会在同一个进程中顺序执行，从而安全地修改和访问这个共享状态。...</div></div></div></a><a class="pagination-related" href="/2025/12/10/%E6%8E%A8%E7%90%86%E5%8A%A0%E9%80%9F/" title="推理加速"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-10</div><div class="info-item-2">推理加速</div></div><div class="info-2"><div class="info-item-1">推理加速模型量化数值类型LLM 的训练和推理要尽量使用 BF16，而不是 FP16&#x2F;HF16&#x2F;FP32。  FP32：单精度浮点数，用 8 bit 表示指数，23 bit 表示小数； FP16：半精度浮点数，用 5 bit 表示指数，10 bit 表示小数； BF16：对 FP32 单精度浮点数截断数据（小数部分），即用 8 bit 表示指数，7 bit 表示小数。    这里的计算方式不太懂？  BF16 vs HF16： BF16 拥有 7 位精度，而 HF16 拥有 10 位精度。这表明在表示接近于 1 的小数值时，HF16 比 BF16 能提供更高的精度。然而，BF16 拥有与 FP32 相同的 8 位指数部分，因而能够表示与 FP32 几乎一样广泛的数值范围，这对于避免上溢和下溢非常重要。尽管 BF16 在尾数精度上不如 HF16，但在深度学习应用中，这种较宽的数值范围通常比尾数的额外几位精度更为重要。这是因为深度学习模型通常对权重的尾数精度不是非常敏感，而更依赖于能够处理范围广泛的梯度和权重值。 总结： 量化后速度并不能明显提高，但占用的显存显著减...</div></div></div></a><a class="pagination-related" href="/2025/12/04/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E6%8E%A7%E5%88%B6%E9%9D%A2%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%9D%A2%E8%A7%A3%E6%9E%90/" title="分布式系统控制面与数据面解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-04</div><div class="info-item-2">分布式系统控制面与数据面解析</div></div><div class="info-2"><div class="info-item-1">好的，这是一个非常核心的分布式系统设计概念。我们可以用一个生动的比喻来开始，然后深入技术细节。 核心比喻：空中交通管制系统 控制面 就像是空中的交通管制塔和调度员。  他们不直接开飞机（处理乘客和货物）。 他们的工作是：规划航线、指挥飞机起飞和降落、监控所有飞机的状态和位置、处理紧急情况、分配跑道和空域。他们做出决策，确保整个系统安全、有序地运行。   数据面 就像是飞机本身和跑道。  它们负责实际的运输工作：搭载乘客、装载货物、在指定的航线上飞行。 它们不决定去哪、怎么飞，而是忠实地执行控制塔发出的指令，专注于高效、安全地完成“运输”这个核心任务。     详细解释1. 控制面控制面是系统的大脑和神经系统，负责管理、协调和决策。它不直接处理用户的业务请求，而是确保数据面能够正确、高效地处理这些请求。 主要职责：  系统配置与管理：管理网络配置、服务发现、负载均衡策略、安全策略（如防火墙规则）等。 状态监控与收集：收集整个系统中所有组件（数据面节点）的健康状态、性能指标（如CPU、内存、流量）、日志和拓扑信息。 路由决策：决定数据包的转发路径。例如，在微服务网络中，控制面决定一个...</div></div></div></a><a class="pagination-related" href="/2025/11/13/vLLM5.md/" title="vLLM5.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">vLLM5.md</div></div><div class="info-2"><div class="info-item-1">一、引言目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。 二、什么是 Guided Decoding？一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而，当我们需要 LLM 的输出符合特定的格式（如：JSON、SQL、正则表达式等）时——例如希望 LLM 根据我们的需求生成查询数据库的 SQL 语句，通过微调的方法通常很难达到我们预期的效果。这时，就需要用到 Guided Decoding 技术，它可以通过影响模型输出层的 Logits 分布（施加 Mask 过滤不满足要求的 Token）来达到规范模型输出格式的效果。 🌰 举个例子： 我们可以向 LLM 输入一个 Prompt 以及对应的格式数据： 12345678910111213141516171819# Guided decoding by JSON using Pydanti...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

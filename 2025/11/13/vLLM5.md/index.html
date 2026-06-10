@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>vLLM5.md | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、引言目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。 二、什么是 Guided Decoding？一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vLLM5.md">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/11/13/vLLM5.md/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="一、引言目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。 二、什么是 Guided Decoding？一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-11-13T00:52:10.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.529Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "vLLM5.md",
+  "url": "https://hzhzxfs.github.io/2025/11/13/vLLM5.md/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-11-13T00:52:10.000Z",
+  "dateModified": "2026-06-10T02:14:46.529Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/11/13/vLLM5.md/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vLLM5.md',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">vLLM5.md</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">vLLM5.md</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-13T00:52:10.000Z" title="发表于 2025-11-13 08:52:10">2025-11-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.529Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h1><p>目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。</p>
+<h1 id="二、什么是-Guided-Decoding？"><a href="#二、什么是-Guided-Decoding？" class="headerlink" title="二、什么是 Guided Decoding？"></a>二、什么是 Guided Decoding？</h1><p>一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而，当我们需要 LLM 的输出符合特定的格式（如：JSON、SQL、正则表达式等）时——例如希望 LLM 根据我们的需求生成查询数据库的 SQL 语句，通过微调的方法通常很难达到我们预期的效果。这时，就需要用到 Guided Decoding 技术，它可以通过影响模型输出层的 Logits 分布（施加 Mask 过滤不满足要求的 Token）来达到规范模型输出格式的效果。</p>
+<p><strong>🌰 举个例子：</strong></p>
+<p>我们可以向 LLM 输入一个 Prompt 以及对应的格式数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Guided decoding by JSON using Pydantic schema</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CarType</span>(<span class="built_in">str</span>, Enum):</span><br><span class="line">    sedan = <span class="string">&quot;sedan&quot;</span></span><br><span class="line">    suv = <span class="string">&quot;SUV&quot;</span></span><br><span class="line">    truck = <span class="string">&quot;Truck&quot;</span></span><br><span class="line">    coupe = <span class="string">&quot;Coupe&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CarDescription</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    brand: <span class="built_in">str</span></span><br><span class="line">    model: <span class="built_in">str</span></span><br><span class="line">    car_type: CarType</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">json_schema = CarDescription.model_json_schema()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">prompt = (<span class="string">&quot;Generate a JSON with the brand, model and car_type of&quot;</span></span><br><span class="line">          <span class="string">&quot;the most iconic car from the 90&#x27;s, think in 100 tokens&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>此时，LLM 就会根据我们的要求生成一个 JSON 格式的输出：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">content<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;brand&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Levels&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;model&quot;</span><span class="punctuation">:</span> <span class="string">&quot;racing equation&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;car_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;sedan&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="三、Outlines-原理详解"><a href="#三、Outlines-原理详解" class="headerlink" title="三、Outlines 原理详解"></a>三、Outlines 原理详解</h1><p>目前，实现了 Guided Decoding 支持的后端有 <code>outlines</code>、<code>xgrammar</code> 以及 <code>lm-format-enforcer</code> 等，下面将以 Outlines 为例，深入介绍 Guided Decoding 背后的实现原理。</p>
+<p><strong>Outlines 的核心技术点包括：</strong></p>
+<ul>
+<li><strong>基于 FSM（Finite-State Machine，有限状态机）</strong>，实现了当前输入与对应状态的匹配，并可以根据状态转移函数确定对应的 Mask；</li>
+<li><strong>建立了 FSM 的状态与其可接受 Token 的 Map</strong>，并为这些 Token 建立索引，从而避免了在每次 Decode 中遍历整个 Vocabulary 进行匹配，加快了匹配的速度。</li>
+</ul>
+<p><img src="/./images/fsm.png"></p>
+<p>下面，为了让大家更快速、更直观地理解 Outlines 的原理，本文将尽力避免大段公式和算法的罗列，而是尽量使用具体的例子进行讲解。</p>
+<h2 id="3-1-FSM-的工作原理"><a href="#3-1-FSM-的工作原理" class="headerlink" title="3.1 FSM 的工作原理"></a>3.1 FSM 的工作原理</h2><p><strong>🌰 举个例子：</strong></p>
+<p>假设我们需要模型输出一个浮点小数，即输出需要匹配的正则表达式为 <code>([0-9]*)?\.?[0-9]*</code>，并给定一个仅包含 <code>A</code>、<code>.</code>、<code>42</code>、<code>.2</code> 和 <code>1</code> 的 Vocabulary。</p>
+<p>“正则表达式”符号说明如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">`*`</span> ：匹配前面的子表达式零次或多次</span><br><span class="line"><span class="code">`?`</span> ：匹配前面的子表达式零次或一次</span><br><span class="line"><span class="code">`.`</span> ：匹配除换行符 <span class="code">`\n`</span> 之外的任何单字符</span><br><span class="line"><span class="code">`\.`</span>：匹配小数点符号 <span class="code">`.`</span>（需要使用 <span class="code">`\`</span> 进行转义）</span><br></pre></td></tr></table></figure>
+
+<p>当 LLM 开始 Decode 时，FSM 位于初始状态（<code>0</code>，用整数表示不同的状态），根据状态 <code>0</code> 的转移函数可知，当前状态可以接受的字符模式为 <code>[0-9]</code> 和 <code>[.]</code>，而在我们所给的词表中，只有 <code>A</code> 不符合，此时 FSM 会针对词表 <code>[&#39;A&#39;, &#39;.&#39;, &#39;42&#39;, &#39;.2&#39;, &#39;1&#39;]</code> 生成一个值为 <code>[0, 1, 1, 1, 1]</code> 的 Mask，即模型在本轮迭代进行采样时会排除掉 <code>A</code>（图中用黑色表示），如下图所示。</p>
+<p><img src="/./images/outlines-fsm-1.png"></p>
+<p>接下来，有两种情况：</p>
+<ol>
+<li><strong>模型本轮的采样值为 <code>.2</code>（图中用红色表示）</strong>，此时 <code>.2</code> 同时满足从状态 <code>0</code> 过渡到状态 <code>2</code> 再到状态 <code>3</code> 的条件，因此 FSM 的当前状态会跳转到状态 <code>3</code> 并生成下一次采样的 Mask。由于状态 <code>3</code> 可接受的字符模式仅为 <code>[0-9]</code>，只有 <code>42</code> 和 <code>1</code> 满足，因此此时的 Mask 为 <code>[0, 0, 1, 0, 1]</code>；</li>
+<li><strong>模型本轮的采样值为 <code>1</code>（图中用黄色表示）</strong>，同理，此时 FSM 会跳转到状态 <code>1</code> 并生成对应的 Mask，其值为 <code>[0, 1, 1, 1, 1]</code>。</li>
+</ol>
+<p>不断循环此过程，最终就能得到满足该正则表达式的输出。</p>
+<blockquote>
+<p>补充：在 vLLM 的实现中，其 Mask 使用 <code>0</code> 表示接受的 Token，用 <code>-inf</code>（负无穷）表示要排除的 Token，然后再将输出的 Logits 分布与 Mask 相加，从而达到屏蔽不满足要求的 Token 的效果。</p>
+</blockquote>
+<h2 id="3-2-FSM-的构建过程"><a href="#3-2-FSM-的构建过程" class="headerlink" title="3.2 FSM 的构建过程"></a>3.2 FSM 的构建过程</h2><p>在了解了 Outlines 中 FSM 的基本工作原理之后，接下来我们再看下，针对一个给定的正则表达式与 Vocabulary，Outlines 是如何构建这个 FSM 的。</p>
+<p>FSM 的构建过程主要分为两步：</p>
+<ol>
+<li><strong>收集每个 Token 能够匹配的状态转换路径</strong>：给定一个 Token，遍历所有状态，并从每一个状态开始，看是否存在能够完整接受该 Token 的路径，若存在，则将该路径记录到该 Token 对应的列表中；若不存在这样一条路径，则跳过当前状态，继续收集以下一个状态作为开始状态的可能路径；</li>
+<li><strong>收集每个状态能够接受的所有 Token</strong>：遍历每一个 Token，并针对该 Token 执行步骤一，获取该 Token 能够匹配的状态转换路径，然后遍历每一条路径并取路径中的第一个节点（开始状态），将该状态与该 Token 进行绑定（将该 Token 添加到该状态的集合中）。</li>
+</ol>
+<p><strong>🌰 举个例子：</strong></p>
+<p>这里我们继续使用上面的例子进行说明：</p>
+<p><img src="/./images/outlines-fsm-2.png"></p>
+<p><strong>对于 Token <code>A</code>，遍历每个状态：</strong></p>
+<ol>
+<li>从状态 <code>0</code> 开始，不满足，pass；</li>
+<li>从状态 <code>1</code> 开始，不满足，pass；</li>
+<li>从状态 <code>2</code> 开始，不满足，pass；</li>
+<li>从状态 <code>3</code> 开始，不满足，pass。</li>
+</ol>
+<p><strong>对于 Token <code>.</code>，遍历每个状态：</strong></p>
+<ol>
+<li>从状态 <code>0</code> 开始，可以转换到状态 <code>2</code>，记录路径 <code>0 -&gt; 2</code>；</li>
+<li>从状态 <code>1</code> 开始，可以转换到状态 <code>2</code>，记录路径 <code>1 -&gt; 2</code>；</li>
+<li>从状态 <code>2</code> 开始，不满足，pass；</li>
+<li>从状态 <code>3</code> 开始，不满足，pass。</li>
+</ol>
+<p>此时，我们可以收集到对于 Token <code>.</code>，其所能匹配到的所有状态转换路径集合：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0 -&gt; 2</span><br><span class="line">1 -&gt; 2</span><br></pre></td></tr></table></figure>
+
+<p>然后，将每条路径的起始状态与该 Token 进行绑定（一个 HashMap）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">状态 0 &lt;-&gt; set(&quot;.&quot;)</span><br><span class="line">状态 1 &lt;-&gt; set(&quot;.&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>对于 Token <code>42</code>，遍历每个状态：</strong></p>
+<ol>
+<li>从状态 <code>0</code> 开始，可以转换到状态 <code>1</code>，记录路径 <code>0 -&gt; 1</code>；</li>
+<li>从状态 <code>1</code> 开始，可以转换到状态 <code>1</code>，记录路径 <code>1</code>；</li>
+<li>从状态 <code>2</code> 开始，可以转换到状态 <code>3</code>，记录路径 <code>2 -&gt; 3</code>；</li>
+<li>从状态 <code>3</code> 开始，可以转换到状态 <code>3</code>，记录路径 <code>3</code>。</li>
+</ol>
+<p>Token <code>42</code> 能匹配到的所有路径集合如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 -&gt; 1</span><br><span class="line">1</span><br><span class="line">2 -&gt; 3</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+
+<p>同理，将所有起始状态与该 Token 进行绑定：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">状态 0 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;)</span><br><span class="line">状态 1 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;)</span><br><span class="line">状态 2 &lt;-&gt; set(&quot;42&quot;)</span><br><span class="line">状态 3 &lt;-&gt; set(&quot;42&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>对于 Token <code>.2</code>，遍历每个状态：</strong></p>
+<ol>
+<li>从状态 <code>0</code> 开始，记录路径 <code>0 -&gt; 2 -&gt; 3</code>；</li>
+<li>从状态 <code>1</code> 开始，记录路径 <code>1 -&gt; 2 -&gt; 3</code>；</li>
+<li>从状态 <code>2</code> 开始，不满足，pass；</li>
+<li>从状态 <code>3</code> 开始，不满足，pass。</li>
+</ol>
+<p>绑定状态与 Token：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">状态 0 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;, &quot;.2&quot;)</span><br><span class="line">状态 1 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;, &quot;.2&quot;)</span><br><span class="line">状态 2 &lt;-&gt; set(&quot;42&quot;)</span><br><span class="line">状态 3 &lt;-&gt; set(&quot;42&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>对于 Token <code>1</code>，遍历每个状态：</strong></p>
+<ol>
+<li>从状态 <code>0</code> 开始，记录路径 <code>0 -&gt; 1</code>；</li>
+<li>从状态 <code>1</code> 开始，记录路径 <code>1</code>；</li>
+<li>从状态 <code>2</code> 开始，记录路径 <code>2 -&gt; 3</code>；</li>
+<li>从状态 <code>3</code> 开始，记录路径 <code>3</code>。</li>
+</ol>
+<p>绑定状态与 Token：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">状态 0 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;, &quot;.2&quot;, &quot;1&quot;)</span><br><span class="line">状态 1 &lt;-&gt; set(&quot;.&quot;, &quot;42&quot;, &quot;.2&quot;, &quot;1&quot;)</span><br><span class="line">状态 2 &lt;-&gt; set(&quot;42&quot;, &quot;1&quot;)</span><br><span class="line">状态 3 &lt;-&gt; set(&quot;42&quot;, &quot;1&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>最后，我们就得到了每个 FSM 状态能够匹配的所有 Token 集合。</p>
+<p>在实际过程中，当 LLM 生成的内容进行到某一个状态时（比如：状态 <code>2</code>），Outlines 就能快速通过该 Map 获取到当前状态所能接受生成的 Token 集合（<code>42</code> 和 <code>1</code>），搜索的时间复杂度为 <code>O(1)</code>，并生成下一步 Decode 的 Mask（为 <code>[0, 0, 1, 0, 1]</code>，即过滤掉了其它 3 个 Token）。</p>
+<h2 id="3-3-总结"><a href="#3-3-总结" class="headerlink" title="3.3 总结"></a>3.3 总结</h2><p><strong>Outlines 的优缺点：</strong></p>
+<ul>
+<li><strong>优点：不会引入额外的推理延迟</strong>。FSM Map 的构建过程会在真正进行 Decode 之前就完成，因此并不会给实际运行时的推理过程引入太多额外的延迟（引入的额外计算仅包括生成 Mask 等，几乎可以忽略）；</li>
+<li><strong>缺点：会引入额外的内存占用</strong>。保存并加载这个 Map 会带来额外的内存占用，因此在实际应用中，我们需要对推理速度和内存占用这两方面做一个权衡。</li>
+</ul>
+<p>另外，Outlines 不仅可以支持使用正则表达式来限定模型的输出，还支持 <strong>CFGs（Context-Free Grammars，上下文无关文法）</strong>，比如：JSON、SQL 以及 Python 等语言。关于 CFGs 生成的原理，这里不再详细展开，感兴趣的读者可以自行阅读 Outlines 的<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.09702"><u>论文</u></a>与<a target="_blank" rel="noopener" href="https://github.com/dottxt-ai/outlines"><u>源码</u></a>。</p>
+<h1 id="四、vLLM-Guided-Decoding-源码解读"><a href="#四、vLLM-Guided-Decoding-源码解读" class="headerlink" title="四、vLLM Guided Decoding 源码解读"></a>四、vLLM Guided Decoding 源码解读</h1><p>目前，vLLM 的 Guided Decoding 功能支持 <code>outlines</code>、<code>xgrammar</code> 以及 <code>lm-format-enforcer</code> 这三种后端。下面，我们将使用 <code>Qwen2.5-7B-Instruct</code> 模型，并基于 <code>outlines</code> 后端，详细讲解 Guided Decoding 的整体流程及其代码实现。</p>
+<h2 id="4-1-加载-LogitsProcessor"><a href="#4-1-加载-LogitsProcessor" class="headerlink" title="4.1 加载 LogitsProcessor"></a>4.1 加载 LogitsProcessor</h2><p>当 <code>LLMEngine</code> 初始化时，会在 <code>_build_logits_processors()</code> 方法中调用 <code>get_local_guided_decoding_logits_processor()</code> 方法获取当前可用后端对应的 <code>LogitsProcessor</code>（位于 <code>vllm/model_executor/guided_decoding</code> 目录下）。</p>
+<p>此时，需要传入 Guided Decoding 相关的参数 <code>GuidedDecodingParams</code>，这些参数位于 <code>SamplingParams</code> 中，可以在启动 vLLM 时进行指定。最后，所有被成功加载的各种 <code>LogitsProcessor</code> 都会被存放到 <code>SamplingParams</code> 中。</p>
+<p>部分代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># llm_engine.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_build_logits_processors</span>(<span class="params">..., sampling_params, ...</span>):</span><br><span class="line"></span><br><span class="line">    logits_processors = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> sampling_params.guided_decoding <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        guided_decoding = sampling_params.guided_decoding</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        processor = get_local_guided_decoding_logits_processor(</span><br><span class="line">            guided_params=guided_decoding,</span><br><span class="line">            tokenizer=tokenizer,</span><br><span class="line">            model_config=<span class="variable language_">self</span>.model_config,</span><br><span class="line">            reasoning_backend=<span class="variable language_">self</span>.decoding_config.reasoning_backend,</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> processor:</span><br><span class="line">            logits_processors.append(processor)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">    sampling_params.logits_processors.extend(logits_processors)</span><br><span class="line">    <span class="keyword">return</span> sampling_params</span><br></pre></td></tr></table></figure>
+
+<p><code>GuidedDecodingParams</code> 包含的参数如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># sampling_params.py</span></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GuidedDecodingParams</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;One of these fields will be used to build a logit processor.&quot;&quot;&quot;</span></span><br><span class="line">    json: <span class="type">Optional</span>[<span class="type">Union</span>[<span class="built_in">str</span>, <span class="built_in">dict</span>]] = <span class="literal">None</span></span><br><span class="line">    regex: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span><br><span class="line">    choice: <span class="type">Optional</span>[<span class="built_in">list</span>[<span class="built_in">str</span>]] = <span class="literal">None</span></span><br><span class="line">    grammar: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span><br><span class="line">    json_object: <span class="type">Optional</span>[<span class="built_in">bool</span>] = <span class="literal">None</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;These are other options that can be set&quot;&quot;&quot;</span></span><br><span class="line">    backend: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span><br><span class="line">    whitespace_pattern: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<p>其中，前 5 个参数用于指定模型输出需要匹配的模式，剩下 2 个参数为一些可选配置。</p>
+<h2 id="4-2-整体推理流程"><a href="#4-2-整体推理流程" class="headerlink" title="4.2 整体推理流程"></a>4.2 整体推理流程</h2><p>当初始化完成后，vLLM 会开启一个循环并不断调用 <code>step()</code> 方法执行推理，每一次调用就是一个迭代。</p>
+<p>部分代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># llm.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_run_engine</span>(<span class="params">...</span>):</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">while</span> <span class="variable language_">self</span>.llm_engine.has_unfinished_requests():</span><br><span class="line">        step_outputs = <span class="variable language_">self</span>.llm_engine.step()</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> outputs</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>step()</code> 方法中，vLLM 的整体调用链路如下：</p>
+<p><img src="/./images/process-1.png"></p>
+<p>其中，与 Guided Decoding 有关的核心处理逻辑都被封装到了 <code>BaseLogitsProcessor</code> 的 <code>__call__()</code> 方法中，这样就可以直接通过 <code>logits_processor(...)</code> 的方式来进行调用。</p>
+<h2 id="4-3-计算-Mask"><a href="#4-3-计算-Mask" class="headerlink" title="4.3 计算 Mask"></a>4.3 计算 Mask</h2><p>具体地，<code>BaseLogitsProcessor: __call__()</code> 的部分代码（<code>#...</code> 代表省略）及其说明如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> outlines.fsm.guide <span class="keyword">import</span> (CFGGuide, CFGState, Generate, Guide,</span><br><span class="line">                                RegexGuide, Write)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BaseLogitsProcessor</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, guide: Guide, reasoner: <span class="type">Optional</span>[Reasoner]</span>):</span><br><span class="line">        <span class="variable language_">self</span>._guide: Guide = guide</span><br><span class="line">        <span class="variable language_">self</span>._fsm_state: DefaultDict[<span class="built_in">int</span>, <span class="type">Union</span>[<span class="built_in">int</span>, CFGState]] = defaultdict(<span class="built_in">int</span>)</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, input_ids: <span class="type">List</span>[<span class="built_in">int</span>],</span></span><br><span class="line"><span class="params">                 scores: torch.Tensor</span>) -&gt; torch.Tensor:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Use the FSM to bias the logits before sampling the next token.&quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">        seq_id = <span class="built_in">hash</span>(<span class="built_in">tuple</span>(input_ids))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(input_ids) &gt; <span class="number">0</span>:</span><br><span class="line">            last_token = input_ids[-<span class="number">1</span>]</span><br><span class="line">            last_seq_id = <span class="built_in">hash</span>(<span class="built_in">tuple</span>(input_ids[:-<span class="number">1</span>]))</span><br><span class="line">            <span class="comment"># 根据前一个 FSM 状态以及当前输入的 Token，从 Outlines 获取下一个状态</span></span><br><span class="line">            <span class="comment"># _fsm_state 是一个 Map：序列哈希 &lt;--&gt; FSM 状态</span></span><br><span class="line">            <span class="variable language_">self</span>._fsm_state[seq_id] = <span class="variable language_">self</span>._guide.get_next_state(</span><br><span class="line">                state=<span class="variable language_">self</span>._fsm_state[last_seq_id], token_id=last_token)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 从 Outlines 获取当前状态所能接受的 Token 集合</span></span><br><span class="line">        instruction = <span class="variable language_">self</span>._guide.get_next_instruction(</span><br><span class="line">            state=<span class="variable language_">self</span>._fsm_state[seq_id])</span><br><span class="line">        allowed_tokens = instruction.tokens</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 使用 -torch.inf 初始化 Mask</span></span><br><span class="line">        mask = torch.full((scores.shape[-<span class="number">1</span>], ),</span><br><span class="line">                          -torch.inf,</span><br><span class="line">                          device=scores.device)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将 Mask 中 allowed_tokens 的位置设为 0，其余为 -torch.inf（即要被过滤的）</span></span><br><span class="line">        mask.index_fill_(<span class="number">0</span>, allowed_tokens, <span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 将 Mask 应用到模型输出上：</span></span><br><span class="line">        <span class="comment"># 1.对于可接受的 Token：原本的概率 + Mask(0)，概率不变</span></span><br><span class="line">        <span class="comment"># 2.对于不接受的 Token：原本的概率 + Mask(负无穷)，概率为 0</span></span><br><span class="line">        scores.add_(mask)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> scores</span><br></pre></td></tr></table></figure>
+
+<p>总结：Guided Decoding 通过一个 Mask 机制实现了筛除模型生成的不满足当前格式限制的 Token 的效果。</p>
+<h2 id="4-4-支持-Reasoning"><a href="#4-4-支持-Reasoning" class="headerlink" title="4.4 支持 Reasoning"></a>4.4 支持 Reasoning</h2><p>目前，vLLM 还支持在 Reasoning 时，仅对最后的结果 <code>content</code> 执行 Guided Decoding 逻辑，而不影响原本推理部分的内容 <code>reasoning_content</code>。</p>
+<p>具体的代码可以参考这个 <a target="_blank" rel="noopener" href="https://github.com/vllm-project/vllm/pull/12955"><u>PR</u></a>，由 <a target="_blank" rel="noopener" href="https://github.com/gaocegege"><u>Ce Gao</u></a> 实现，感兴趣的读者可以自行了解，这里不再详细展开。</p>
+<h1 id="五、SGLang-Jump-Forward-Decoding"><a href="#五、SGLang-Jump-Forward-Decoding" class="headerlink" title="五、SGLang Jump-Forward Decoding"></a>五、SGLang Jump-Forward Decoding</h1><p>使用 FSM 实现 Guided Decoding 还有一个缺点——即只能逐个 Token 计算 Mask。然而，在 Guided Decoding 中，有一些特定的 Token 组合是绑定在一起的，对于这些 Token，其实没必要再一个一个地去生成，而是可以一次 Decode 直接生成几个 Token 的组合，从而可以加速 Guided Decoding 的推理过程。</p>
+<p>为了解决上述问题，SGLang 提出了一种基于 <strong>Compressed Finite State Machine</strong> 的 <strong>Jump-Forward Decoding</strong>。即当生成一些特定的 Token（后续模式固定且可预测，如：<code>{</code>）时，该算法可以在一次 Decode 中将连续的几个 Token 直接生成。</p>
+<p><img src="/./images/jump-forwad.png"></p>
+<p>具体地，Compressed FSM 通过先分析 FSM（根据用户给定的正则表达式生成），识别其中一些没有分支的节点（即只由一条边连接），并将这些路径上的节点合并，从而可以通过一次跳转（Decode），跨越多个状态（Token），直到下一个具有分支的节点，从而极大地提高了 Guided Decoding 的效率。</p>
+<p>更多细节可以参考 SGLang 的<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2312.07104"><u>论文</u></a>和<a target="_blank" rel="noopener" href="https://github.com/sgl-project/sglang"><u>代码</u></a>。</p>
+<h1 id="六、参考资料"><a href="#六、参考资料" class="headerlink" title="六、参考资料"></a>六、参考资料</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03100"><u>Robust Text-to-SQL Generation with Execution-Guided Decoding</u></a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.09702"><u>Efficient Guided Generation for Large Language Models</u></a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.vllm.ai/en/stable/features/structured_outputs.html#structured-outputs"><u>vLLM Docs | Structured Outputs</u></a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/vllm-project/vllm"><u>vLLM GitHub</u></a></li>
+<li><a target="_blank" rel="noopener" href="https://lmsys.org/blog/2024-02-05-compressed-fsm/"><u>Fast JSON Decoding for Local LLMs with Compressed Finite State Machine</u></a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2312.07104"><u>SGLang: Efficient Execution of Structured Language Model Programs</u></a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/11/13/vLLM5.md/">https://hzhzxfs.github.io/2025/11/13/vLLM5.md/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/14/vLLM6.md/" title="vLLM6.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">vLLM6.md</div></div><div class="info-2"><div class="info-item-1">一、引言Guided Decoding，又叫 Structured Output，是大模型推理领域中非常重要的一个特性，主要用于引导大模型输出符合某种特定格式（如：SQL、Json）的结果，以便更好地将大模型落地到具体的应用场景中。 在我的上一篇文章中，简要地介绍了 Guided Decoding 的原理，并详细分析了 vLLM 中相关代码的实现（V0），文章链接：vLLM 学习笔记｜Guided Decoding。 自从 vLLM v0.8.x 之后，V1 Engine 将作为 vLLM 启动时的默认选项。关于 V1 Engine 的系统设计以及具体的优化点，我将会在之后逐步梳理并分享出来（如果有空的话）。而在本文中，我将针对 V1 Engine，分享 Structured Output 模块的整体设计与具体实现。 二、V1 Engine 整体架构在介绍 Structured Output 模块的设计之前，让我们先来看下 vLLM V1 Engine 的整体架构。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU...</div></div></div></a><a class="pagination-related" href="/2025/11/12/vLLM4.md/" title="vLLM4.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">vLLM4.md</div></div><div class="info-2"><div class="info-item-1">一、引言随着 vLLM 逐渐成为生产级场景下大模型推理的通用解决方案之一，期望 vLLM 支持各式各样算力底座的需求日趋强烈。目前，在 vLLM 的官方仓库中维护着 NVIDIA GPU、AMD GPU 以及 Google TPU 等多家芯片厂商的代码，但除此之外，还有更多的 AI 芯片是通过“硬件插件化机制”来支持自家算力的。 所有不在 vLLM 官方仓库中支持的硬件，都被统称为 OOT（Out Of Tree）Device，包括：  官方插件（指存在于 vllm-project 官方项目下的插件）：vllm-ascend（华为昇腾 NPU）、vllm-spyre、vllm-gaudi（Intel Gaudi）、vllm-neuron（AWS Neuron）、vllm-metal（Apple Silicon）等； 非官方插件：vLLM-metax（沐曦 GPU）、vLLM-Kunlun（百度昆仑芯 XPU）等。  本文将深入介绍 vLLM 硬件插件化系统的原理，以及如何通过 CustomOp 完成自定义算子的注册与替换，从而使 vLLM 能够灵活地、高效地支持多样性算力。 二、...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/12/qwen3_vl_image_vs_video_inference/" title="qwen3_vl_image_vs_video_inference"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-12</div><div class="info-item-2">qwen3_vl_image_vs_video_inference</div></div><div class="info-2"><div class="info-item-1">Qwen3-VL：图像推理与视频推理的区别1. 输入预处理图像 输入为静态图片，经过 image_processor 处理 使用 Conv3dLayer（temporal_patch_size&#x3D;2）对图片做 patch 嵌入，但 t&#x3D;1（单帧） 输出 pixel_values（shape: [num_patches, flattened_patch_size]） grid 信息保存在 image_grid_thw，每条记录为 [1, H, W]  视频 输入为视频帧序列，经过 video_processor 处理 先均匀采样若干帧（如 16 帧），再按 temporal_patch_size=2 分组打包成时序 patch 输出 pixel_values_videos（shape: [num_patches, flattened_patch_size]） grid 信息保存在 video_grid_thw，每条记录为 [T, H, W]，T≥1 表示时序维度   2. 输入格式差异   维度 图像 视频    pixel values key pixel_va...</div></div></div></a><a class="pagination-related" href="/2025/08/01/Qwen2-VL/" title="Qwen2-VL"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-01</div><div class="info-item-2">Qwen2-VL</div></div><div class="info-2"><div class="info-item-1">Qwen2-VLLayers Qwen2VisionMLP:  fc1 &#x3D; ColumnParallelLinear act &#x3D; QuickGELU fc2 &#x3D; RowParallelLinear   Qwen2VisionAttention:  qkv &#x3D; ColumnParallelLinear proj &#x3D; RowParallelLinear rotary_pos_emb attention 3 types   Qwen2VisionBlock:  norm1 &#x3D; norm_layer norm2 &#x3D; norm_layer attn &#x3D; Qwen2VisionAttention mlp &#x3D; Qwen2VisionMLP   Qwen2VisionPatchEmbed:  proj &#x3D; nn.Conv3d   Qwen2VisionPatchMerger:  ln_q &#x3D; norm_layer mlp &#x3D; ColumnParallelLinear, nn.G...</div></div></div></a><a class="pagination-related" href="/2025/10/10/vLLM%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BD%9CGuided%20Decoding/" title="vLLM 学习笔记｜Guided Decoding"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-10</div><div class="info-item-2">vLLM 学习笔记｜Guided Decoding</div></div><div class="info-2"><div class="info-item-1">vLLM 学习笔记｜Guided Decoding一、引言目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。 二、什么是 Guided Decoding？一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而，当我们需要 LLM 的输出符合特定的格式（如：JSON、SQL、正则表达式等）时——例如希望 LLM 根据我们的需求生成查询数据库的 SQL 语句，通过微调的方法通常很难达到我们预期的效果。这时，就需要用到 Guided Decoding 技术，它可以通过影响模型输出层的 Logits 分布（施加 Mask 过滤不满足要求的 Token）来达到规范模型输出格式的效果。 🌰 举个例子： 我们可以向 LLM 输入一个 Prompt 以及对应的格式数据： 12345678910111213141516171819# Guided decod...</div></div></div></a><a class="pagination-related" href="/2025/11/14/vLLM6.md/" title="vLLM6.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-14</div><div class="info-item-2">vLLM6.md</div></div><div class="info-2"><div class="info-item-1">一、引言Guided Decoding，又叫 Structured Output，是大模型推理领域中非常重要的一个特性，主要用于引导大模型输出符合某种特定格式（如：SQL、Json）的结果，以便更好地将大模型落地到具体的应用场景中。 在我的上一篇文章中，简要地介绍了 Guided Decoding 的原理，并详细分析了 vLLM 中相关代码的实现（V0），文章链接：vLLM 学习笔记｜Guided Decoding。 自从 vLLM v0.8.x 之后，V1 Engine 将作为 vLLM 启动时的默认选项。关于 V1 Engine 的系统设计以及具体的优化点，我将会在之后逐步梳理并分享出来（如果有空的话）。而在本文中，我将针对 V1 Engine，分享 Structured Output 模块的整体设计与具体实现。 二、V1 Engine 整体架构在介绍 Structured Output 模块的设计之前，让我们先来看下 vLLM V1 Engine 的整体架构。在 V1 中，vLLM 将不同类型的 CPU 密集型操作拆分到了两个相互独立的进程中，以便能够异步执行不同的 CPU...</div></div></div></a><a class="pagination-related" href="/2025/08/10/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADActor%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="Ray框架中Actor概念及作用详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-10</div><div class="info-item-2">Ray框架中Actor概念及作用详解</div></div><div class="info-2"><div class="info-item-1">好的，我们来详细讲解一下 Ray 框架中的 Actor 概念。 1. Actor 是什么？在 Ray 中，Actor 是一个有状态的“工作进程”。你可以把它理解为一个“活的”对象。  普通 Python 类 vs. Ray Actor  一个普通的 Python 类 MyClass 在被实例化后（obj = MyClass()），obj 只是一个存在于当前进程内存中的对象。 一个 Ray Actor 是通过 ray.remote(MyClass) 创建的。当你实例化它时（actor_handle = MyClass.remote()），Ray 会在集群中的某个节点上（可能是在远程机器上）启动一个独立的进程，并在该进程中创建一个 MyClass 的实例。你得到的 actor_handle 并不是对象本身，而是一个指向远程对象（即那个进程中的实例）的引用或句柄。   核心特征：有状态Actor 的关键在于它可以在其整个生命周期内维护和修改内部状态（即它的实例变量，如 self.value）。所有对该 Actor 的方法调用都会在同一个进程中顺序执行，从而安全地修改和访问这个共享状态。...</div></div></div></a><a class="pagination-related" href="/2025/11/02/Profiling%20%E5%88%86%E6%9E%90%E6%8C%87%E5%8D%97/" title="Profiling 分析指南"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-02</div><div class="info-item-2">Profiling 分析指南</div></div><div class="info-2"><div class="info-item-1">Profiling 分析指南Ascend NPU + MindStudio Insight关键文件： trace_view.jsonkernel_details.csvop_stastic.csv kernel_details.csv 分析指南： 冻结首行，start time 排序，只看一个 layer 的数据。数量比较多的 stream id 就是“主流”，其它的是通信流、共享专家流（实现计算通信并行）。静态&#x2F;动态算子。Duration（优化目标）：尽量让算子达到计算 bound，减少访存 bound -&gt; 判断优化方向。判断性能瓶颈：每个算子的时间除以整个 layer 的时间，再转换为百分比的形式 -&gt; 判断优化重点。 trace_view.json 分析指南： 一般不用关注 CANN 这一层。算子的实际执行时间主要看 Ascend Hardware 这一层。AI Core Freq：当芯片温度比较高时，可能会出现降频，导致计算性能下降。 CV 并行：cube 和 vector 是相互独立的计算单元，可以放到两条流上并行计算（但是会争访存带宽）。 bu...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">一、引言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF-Guided-Decoding%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">二、什么是 Guided Decoding？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81Outlines-%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.</span> <span class="toc-text">三、Outlines 原理详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-FSM-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 FSM 的工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-FSM-%E7%9A%84%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 FSM 的构建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E6%80%BB%E7%BB%93"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81vLLM-Guided-Decoding-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB"><span class="toc-number">4.</span> <span class="toc-text">四、vLLM Guided Decoding 源码解读</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E5%8A%A0%E8%BD%BD-LogitsProcessor"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 加载 LogitsProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E6%95%B4%E4%BD%93%E6%8E%A8%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 整体推理流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-%E8%AE%A1%E7%AE%97-Mask"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 计算 Mask</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4-%E6%94%AF%E6%8C%81-Reasoning"><span class="toc-number">4.4.</span> <span class="toc-text">4.4 支持 Reasoning</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81SGLang-Jump-Forward-Decoding"><span class="toc-number">5.</span> <span class="toc-text">五、SGLang Jump-Forward Decoding</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">6.</span> <span class="toc-text">六、参考资料</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

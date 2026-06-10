@@ -1,0 +1,276 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>troubleshooting | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="故障排除 修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。  本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：    症状 转到    command not found、安装失败、PATH 问题、EACCES、TLS 错误 故障排除安装和登录   登录循环、OAu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="troubleshooting">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/03/21/troubleshooting/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="故障排除 修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。  本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：    症状 转到    command not found、安装失败、PATH 问题、EACCES、TLS 错误 故障排除安装和登录   登录循环、OAu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-03-21T12:34:13.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.585Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "troubleshooting",
+  "url": "https://hzhzxfs.github.io/2026/03/21/troubleshooting/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-03-21T12:34:13.000Z",
+  "dateModified": "2026-06-10T02:14:46.585Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/03/21/troubleshooting/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'troubleshooting',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">troubleshooting</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">troubleshooting</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-21T12:34:13.000Z" title="发表于 2026-03-21 20:34:13">2026-03-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.585Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h1><blockquote>
+<p>修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。</p>
+</blockquote>
+<p>本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：</p>
+<table>
+<thead>
+<tr>
+<th align="left">症状</th>
+<th align="left">转到</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>command not found</code>、安装失败、PATH 问题、<code>EACCES</code>、TLS 错误</td>
+<td align="left"><a href="/zh-CN/troubleshoot-install">故障排除安装和登录</a></td>
+</tr>
+<tr>
+<td align="left">登录循环、OAuth 错误、<code>403 Forbidden</code>、”organization disabled”、Bedrock&#x2F;Vertex&#x2F;Foundry 凭据</td>
+<td align="left"><a href="/zh-CN/troubleshoot-install#login-and-authentication">故障排除安装和登录</a></td>
+</tr>
+<tr>
+<td align="left">设置未应用、hooks 未触发、MCP 服务器未加载</td>
+<td align="left"><a href="/zh-CN/debug-your-config">调试您的配置</a></td>
+</tr>
+<tr>
+<td align="left"><code>API Error: 5xx</code>、<code>529 Overloaded</code>、<code>429</code>、请求验证错误</td>
+<td align="left"><a href="/zh-CN/errors">错误参考</a></td>
+</tr>
+<tr>
+<td align="left"><code>model not found</code> 或 <code>you may not have access to it</code></td>
+<td align="left"><a href="/zh-CN/errors#there%E2%80%99s-an-issue-with-the-selected-model">错误参考</a></td>
+</tr>
+<tr>
+<td align="left">VS Code 扩展未连接或未检测到 Claude</td>
+<td align="left"><a href="/zh-CN/vs-code#fix-common-issues">VS Code 集成</a></td>
+</tr>
+<tr>
+<td align="left">JetBrains 插件或 IDE 未检测到</td>
+<td align="left"><a href="/zh-CN/jetbrains#troubleshooting">JetBrains 集成</a></td>
+</tr>
+<tr>
+<td align="left">高 CPU 或内存、响应缓慢、挂起、搜索找不到文件</td>
+<td align="left"><a href="#performance-and-stability">性能和稳定性</a>下方</td>
+</tr>
+</tbody></table>
+<p>如果您不确定哪个适用，请在 Claude Code 内运行 <code>/doctor</code> 以自动检查您的安装、设置、MCP 服务器和上下文使用情况。如果 <code>claude</code> 根本无法启动，请从您的 shell 运行 <code>claude doctor</code>。</p>
+<h2 id="性能和稳定性"><a href="#性能和稳定性" class="headerlink" title="性能和稳定性"></a>性能和稳定性</h2><p>这些部分涵盖与资源使用、响应性和搜索行为相关的问题。</p>
+<h3 id="高-CPU-或内存使用"><a href="#高-CPU-或内存使用" class="headerlink" title="高 CPU 或内存使用"></a>高 CPU 或内存使用</h3><p>Claude Code 设计用于大多数开发环境，但在处理大型代码库时可能消耗大量资源。如果您遇到性能问题：</p>
+<ol>
+<li>定期使用 <code>/compact</code> 以减少上下文大小</li>
+<li>在主要任务之间关闭并重启 Claude Code</li>
+<li>考虑将大型构建目录添加到您的 <code>.gitignore</code> 文件</li>
+</ol>
+<p>如果内存使用在这些步骤后仍然很高，请运行 <code>/heapdump</code> 以将 JavaScript 堆快照和内存分解写入 <code>~/Desktop</code>。在 Linux 上没有 Desktop 文件夹的情况下，文件被写入您的主目录。</p>
+<p>分解显示驻留集大小、JS 堆、数组缓冲区和未计算的本机内存，这有助于识别增长是在 JavaScript 对象还是本机代码中。要检查保留者，请在 Chrome DevTools 中的 Memory → Load 下打开 <code>.heapsnapshot</code> 文件。在 <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code/issues">GitHub</a> 上报告内存问题时附加两个文件。</p>
+<h3 id="自动压缩停止并出现抖动错误"><a href="#自动压缩停止并出现抖动错误" class="headerlink" title="自动压缩停止并出现抖动错误"></a>自动压缩停止并出现抖动错误</h3><p>如果您看到 <code>Autocompact is thrashing: the context refilled to the limit...</code>，自动压缩成功，但文件或工具输出立即多次将上下文窗口重新填充到限制。Claude Code 停止重试以避免在没有取得进展的循环上浪费 API 调用。</p>
+<p>要恢复：</p>
+<ol>
+<li>要求 Claude 以较小的块读取超大文件，例如特定行范围或函数，而不是整个文件</li>
+<li>运行 <code>/compact</code>，重点是删除大输出，例如 <code>/compact keep only the plan and the diff</code></li>
+<li>将大文件工作移到 <a href="/zh-CN/sub-agents">subagent</a>，以便它在单独的上下文窗口中运行</li>
+<li>如果早期对话不再需要，运行 <code>/clear</code></li>
+</ol>
+<h3 id="命令挂起或冻结"><a href="#命令挂起或冻结" class="headerlink" title="命令挂起或冻结"></a>命令挂起或冻结</h3><p>如果 Claude Code 似乎无响应：</p>
+<ol>
+<li>按 Ctrl+C 尝试取消当前操作</li>
+<li>如果无响应，您可能需要关闭终端并重新启动</li>
+</ol>
+<p>重新启动不会丢失您的对话。在同一目录中运行 <code>claude --resume</code> 以继续会话。</p>
+<h3 id="编辑器集成终端中的文本乱码或损坏"><a href="#编辑器集成终端中的文本乱码或损坏" class="headerlink" title="编辑器集成终端中的文本乱码或损坏"></a>编辑器集成终端中的文本乱码或损坏</h3><p>如果在 VS Code、Cursor 或 Devin Desktop 集成终端中运行 Claude Code 时字符呈现为方框、涂抹或错误的字形，终端的 GPU 渲染器可能是原因。在 Claude Code 中运行 <code>/terminal-setup</code> 以将 <code>terminal.integrated.gpuAcceleration</code> 设置为 <code>&quot;off&quot;</code>，或在编辑器设置中手动设置并重新加载窗口。有关 <code>/terminal-setup</code> 写入的其他设置，请参阅<a href="/zh-CN/terminal-config">终端配置</a>。</p>
+<h3 id="搜索和发现问题"><a href="#搜索和发现问题" class="headerlink" title="搜索和发现问题"></a>搜索和发现问题</h3><p>如果搜索工具、<code>@file</code> 提及、自定义代理或自定义 skills 找不到文件，捆绑的 <code>ripgrep</code> 二进制文件可能无法在您的系统上运行。安装您平台的 <code>ripgrep</code> 包并告诉 Claude Code 改用它：</p>
+<Tabs>
+  <Tab title="macOS">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install ripgrep</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Ubuntu/Debian">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install ripgrep</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Alpine">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apk add ripgrep</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Arch">
+    <figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pacman -S ripgrep</span><br></pre></td></tr></table></figure>
+  </Tab>
+
+  <Tab title="Windows">
+    <figure class="highlight powershell"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winget install BurntSushi.ripgrep.MSVC</span><br></pre></td></tr></table></figure>
+  </Tab>
+</Tabs>
+
+<p>然后在您的<a href="/zh-CN/env-vars">环境</a>中设置 <code>USE_BUILTIN_RIPGREP=0</code>。</p>
+<h3 id="WSL-上的搜索速度缓慢或结果不完整"><a href="#WSL-上的搜索速度缓慢或结果不完整" class="headerlink" title="WSL 上的搜索速度缓慢或结果不完整"></a>WSL 上的搜索速度缓慢或结果不完整</h3><p>在 WSL 上<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/wsl/filesystems">跨文件系统工作</a>时的磁盘读取性能损失可能导致使用 Claude Code 在 WSL 上时搜索匹配数少于预期。搜索仍然有效，但返回的结果少于本机文件系统。</p>
+<Note>
+  在这种情况下，`/doctor` 将显示搜索为正常。
+</Note>
+
+<p><strong>解决方案：</strong></p>
+<ol>
+<li><p><strong>提交更具体的搜索</strong>：通过指定目录或文件类型来减少搜索的文件数：”在 auth-service 包中搜索 JWT 验证逻辑”或”在 JS 文件中查找 md5 哈希的使用”。</p>
+</li>
+<li><p><strong>将项目移到 Linux 文件系统</strong>：如果可能，确保您的项目位于 Linux 文件系统（<code>/home/</code>）而不是 Windows 文件系统（<code>/mnt/c/</code>）。</p>
+</li>
+<li><p><strong>改用本机 Windows</strong>：考虑在 Windows 上本机运行 Claude Code 而不是通过 WSL，以获得更好的文件系统性能。</p>
+</li>
+</ol>
+<h2 id="获取更多帮助"><a href="#获取更多帮助" class="headerlink" title="获取更多帮助"></a>获取更多帮助</h2><p>如果您遇到此处未涵盖的问题：</p>
+<ol>
+<li>运行 <code>/doctor</code> 以检查安装健康状况、设置有效性、MCP 配置和上下文使用情况</li>
+<li>在 Claude Code 中使用 <code>/feedback</code> 命令直接向 Anthropic 报告问题</li>
+<li>检查 <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code">GitHub 存储库</a> 以了解已知问题</li>
+<li>直接向 Claude 询问其功能和特性。Claude 可以内置访问其文档。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/03/21/troubleshooting/">https://hzhzxfs.github.io/2026/03/21/troubleshooting/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/01/admin-setup/" title="admin-setup"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">admin-setup</div></div><div class="info-2"><div class="info-item-1">为您的组织设置 Claude Code 针对部署 Claude Code 的管理员的决策地图，涵盖 API 提供商、托管设置、策略执行、使用情况监控和数据处理。  Claude Code 通过托管设置强制执行组织策略，这些设置优先于本地开发人员配置。您可以从 Claude 管理控制台、移动设备管理 (MDM) 系统或磁盘上的文件传递这些设置。这些设置控制 Claude 可以访问的工具、命令、服务器和网络目标。 本页按顺序介绍部署决策。每一行都链接到下面的部分和该区域的参考页面。    SSO、SCIM 预配和座位分配在 Claude 账户级别配置。有关这些步骤，请参阅 [Claude 企业管理员指南](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide) 和 [座位分配](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan)。      ...</div></div></div></a><a class="pagination-related" href="/2026/03/20/troubleshoot-install/" title="troubleshoot-install"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">troubleshoot-install</div></div><div class="info-2"><div class="info-item-1">排查安装和登录问题 修复安装或登录 Claude Code 时出现的命令未找到、PATH、权限、网络和身份验证错误。  如果安装失败或无法登录，请在下面找到您的错误。有关 Claude Code 正常工作后的运行时问题，请参阅 Troubleshooting。有关配置问题（例如设置未应用或 hooks 未触发），请参阅 Debug your configuration。 查找您的错误将您看到的错误消息或症状与解决方案相匹配：    您看到的内容 解决方案    command not found: claude 或 &#39;claude&#39; is not recognized 修复您的 PATH   syntax error near unexpected token &#39;&lt;&#39; 安装脚本返回 HTML   curl: (22) The requested URL returned error: 403 安装脚本返回 403   curl: (23) 或 curl: (56) Failure writing output to destination 检...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/15/15-MCP-%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0/" title="15-MCP-协议实现"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-15</div><div class="info-item-2">15-MCP-协议实现</div></div><div class="info-2"><div class="info-item-1">第 15 篇：MCP 协议实现 — 连接外部工具的标准化桥梁 本篇是《深入 Claude Code 源码》系列的第 15 篇。我们将剖析 Claude Code 如何实现 Model Context Protocol（MCP），包括类型系统设计、多层配置合并、传输层适配、连接生命周期管理、Tool 发现与代理，以及认证体系。  为什么需要 MCP？Claude Code 内置了 40+ 个工具（BashTool、FileEditTool、GlobTool 等），足以覆盖大部分编程场景。但真实世界的开发远不止于此——你可能需要查询 Jira 看板、操作 Slack 消息、调用公司内部的 API 网关、访问 GitHub Issues……这些能力不可能全部内置，也不应该内置。 Model Context Protocol（MCP） 就是这个问题的答案。它是 Anthropic 提出的一个开放标准，定义了 AI 应用（Client）与外部工具&#x2F;数据服务（Server）之间的通信协议。可以把 MCP 理解为 AI 世界的 “USB 接口”——只要服务实现了 MCP 协议，Cla...</div></div></div></a><a class="pagination-related" href="/2026/03/14/settings/" title="settings"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-14</div><div class="info-item-2">settings</div></div><div class="info-2"><div class="info-item-1">Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 /config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共享。了解作用域可以帮助您决定如何为个人使用、团队协作或企业部署配置 Claude Code。 可用作用域   作用域 位置 影响范围 与团队共享？    Managed 服务器管理的设置、plist &#x2F; 注册表或系统级 managed-settings.json 机器上的所有用户 是（由 IT 部署）   User ~/.claude/ 目录 您，跨所有项目 否   Project 存储库中的 .claude/ 此存储库上的所有协作者 是（提交到 git）   Local .claude/settings.local.json 您，仅在此存储库中 否（gitignored）  ...</div></div></div></a><a class="pagination-related" href="/2026/04/18/jetbrains/" title="jetbrains"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">jetbrains</div></div><div class="info-2"><div class="info-item-1">JetBrains IDEs 在 JetBrains IDE（包括 IntelliJ、PyCharm、WebStorm 等）中使用 Claude Code  Claude Code 通过专用插件与 JetBrains IDE 集成，提供交互式差异查看、选择上下文共享等功能。 支持的 IDEClaude Code 插件适用于大多数 JetBrains IDE，包括：  IntelliJ IDEA PyCharm Android Studio WebStorm PhpStorm GoLand  功能 快速启动：使用 Cmd+Esc（Mac）或 Ctrl+Esc（Windows&#x2F;Linux）直接从编辑器打开 Claude Code，或点击 UI 中的 Claude Code 按钮 差异查看：代码更改可以直接在 IDE 差异查看器中显示，而不是在终端中显示 选择上下文：IDE 中的当前选择或标签页会自动与 Claude Code 共享。Read 拒绝规则会阻止对匹配文件的此共享 文件引用快捷方式：使用 Cmd+Option+K（Mac）或 Alt+Ctrl+K（Linux&#x...</div></div></div></a><a class="pagination-related" href="/2026/03/10/remote-control/" title="remote-control"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-10</div><div class="info-item-2">remote-control</div></div><div class="info-2"><div class="info-item-1">使用 Remote Control 从任何设备继续本地会话 使用 Remote Control 从您的手机、平板电脑或任何浏览器继续本地 Claude Code 会话。适用于 claude.ai&#x2F;code 和 Claude 移动应用。     Remote Control 处于研究预览阶段，在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。   Remote Control 将 claude.ai&#x2F;code 或 Claude 应用（iOS 和 Android）连接到在您的机器上运行的 Claude Code 会话。在您的办公桌上启动一个任务，然后从沙发上的手机或另一台计算机上的浏览器继续。 当您在机器上启动 Remote Control 会话时，Claude 始终在本地运行，因此没有任何内容移动到云端。使用 Remote Control，您...</div></div></div></a><a class="pagination-related" href="/2026/03/11/routines/" title="routines"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-11</div><div class="info-item-2">routines</div></div><div class="info-2"><div class="info-item-1">使用例程自动化工作 让 Claude Code 自动运行。定义在计划上运行、通过 API 调用触发或对来自 Anthropic 管理的云基础设施的 GitHub 事件做出反应的例程。     Routines 处于研究预览阶段。行为、限制和 API 表面可能会改变。   例程是一个保存的 Claude Code 配置：一个提示、一个或多个存储库和一组 connectors，打包一次并自动运行。例程在 Anthropic 管理的云基础设施上执行，因此当您的笔记本电脑关闭时它们仍然可以工作。 每个例程可以附加一个或多个触发器：  Scheduled：按照每小时、每晚或每周等定期节奏运行，或在特定的未来时间运行一次 API：通过向每个例程端点发送带有持有者令牌的 HTTP POST 来按需触发 GitHub：自动响应存储库事件（如拉取请求或发布）运行  单个例程可以组合触发器。例如，PR 审查例程可以每晚运行、从部署脚本触发，也可以对每个新 PR 做出反应。 Routines 在启用了 Claude Code on the web 的 Pro、Max、Team 和 Enterprise...</div></div></div></a><a class="pagination-related" href="/2026/04/02/agent-view/" title="agent-view"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-02</div><div class="info-item-2">agent-view</div></div><div class="info-2"><div class="info-item-1">使用 agent view 管理多个代理 从一个屏幕调度和管理多个 Claude Code 会话。Agent view 显示每个会话正在做什么以及哪些会话需要你的输入。  Agent view 通过 claude agents 打开，是所有后台会话的一个屏幕：什么正在运行、什么需要你的输入、什么已完成。调度新会话，一目了然地查看它们的状态而不是滚动浏览记录，只在需要时才介入。每个后台会话都是一个完整的 Claude Code 对话，在没有终端连接的情况下继续运行，所以你可以随时打开它、回复并离开。     当你有多个独立任务 Claude 可以在不需要你观看每一步的情况下处理时，使用 agent view。调度一个 bug 修复、一个拉取请求审查和一个不稳定测试调查作为三行，在另一个窗口中继续工作，当一行显示它需要你或有结果时检查回来。 当你想在任何代理的会话中更直接地工作时，附加到该行以进入完整对话。 要比较 agent view 与 subagents、agent teams 和 worktrees，请参阅 并行运行代理。    Agent view 是研究预览版，需要 Cl...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">1.</span> <span class="toc-text">故障排除</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%92%8C%E7%A8%B3%E5%AE%9A%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">性能和稳定性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98-CPU-%E6%88%96%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">高 CPU 或内存使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8E%8B%E7%BC%A9%E5%81%9C%E6%AD%A2%E5%B9%B6%E5%87%BA%E7%8E%B0%E6%8A%96%E5%8A%A8%E9%94%99%E8%AF%AF"><span class="toc-number">1.1.2.</span> <span class="toc-text">自动压缩停止并出现抖动错误</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%8C%82%E8%B5%B7%E6%88%96%E5%86%BB%E7%BB%93"><span class="toc-number">1.1.3.</span> <span class="toc-text">命令挂起或冻结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E9%9B%86%E6%88%90%E7%BB%88%E7%AB%AF%E4%B8%AD%E7%9A%84%E6%96%87%E6%9C%AC%E4%B9%B1%E7%A0%81%E6%88%96%E6%8D%9F%E5%9D%8F"><span class="toc-number">1.1.4.</span> <span class="toc-text">编辑器集成终端中的文本乱码或损坏</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E5%92%8C%E5%8F%91%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.5.</span> <span class="toc-text">搜索和发现问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WSL-%E4%B8%8A%E7%9A%84%E6%90%9C%E7%B4%A2%E9%80%9F%E5%BA%A6%E7%BC%93%E6%85%A2%E6%88%96%E7%BB%93%E6%9E%9C%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="toc-number">1.1.6.</span> <span class="toc-text">WSL 上的搜索速度缓慢或结果不完整</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9B%B4%E5%A4%9A%E5%B8%AE%E5%8A%A9"><span class="toc-number">1.2.</span> <span class="toc-text">获取更多帮助</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

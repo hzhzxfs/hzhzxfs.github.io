@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Python_Decorator | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Python Decorator基本原理…… 内置装饰器@property@property：把一个方法变成属性调用。 示例一： 把一个 getter 方法变成属性，只需要加上 @property 就可以了，此时，@property 本身又创建了另一个装饰器 @score.setter，负责把一个 setter 方法变成属性赋值。 123456789101112class Student(obje">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python_Decorator">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/07/03/Python_Decorator/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Python Decorator基本原理…… 内置装饰器@property@property：把一个方法变成属性调用。 示例一： 把一个 getter 方法变成属性，只需要加上 @property 就可以了，此时，@property 本身又创建了另一个装饰器 @score.setter，负责把一个 setter 方法变成属性赋值。 123456789101112class Student(obje">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-07-03T06:30:49.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.487Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Python_Decorator",
+  "url": "https://hzhzxfs.github.io/2025/07/03/Python_Decorator/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-07-03T06:30:49.000Z",
+  "dateModified": "2026-06-10T02:14:46.487Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/07/03/Python_Decorator/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Python_Decorator',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Python_Decorator</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Python_Decorator</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-03T06:30:49.000Z" title="发表于 2025-07-03 14:30:49">2025-07-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.487Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python/">Python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Python-Decorator"><a href="#Python-Decorator" class="headerlink" title="Python Decorator"></a>Python Decorator</h1><h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>……</p>
+<h2 id="内置装饰器"><a href="#内置装饰器" class="headerlink" title="内置装饰器"></a>内置装饰器</h2><h3 id="property"><a href="#property" class="headerlink" title="@property"></a>@property</h3><p><code>@property</code>：把一个方法变成属性调用。</p>
+<p><strong>示例一：</strong></p>
+<p>把一个 getter 方法变成属性，只需要加上 <code>@property</code> 就可以了，此时，<code>@property</code> 本身又创建了另一个装饰器 <code>@score.setter</code>，负责把一个 setter 方法变成属性赋值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._score</span><br><span class="line"></span><br><span class="line"><span class="meta">    @score.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must be an integer!&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">0</span> <span class="keyword">or</span> value &gt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;score must between 0 ~ 100!&#x27;</span>)</span><br><span class="line">        <span class="variable language_">self</span>._score = value</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例二：</strong></p>
+<p><code>@property</code> 的作用：</p>
+<ul>
+<li>重命名类的变量；</li>
+<li>控制哪些变量是只读的（只有 <code>@property</code>），哪些是可写的（还有 <code>@local_path.setter</code>）。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LoRARequest</span>(</span><br><span class="line">        msgspec.Struct,</span><br><span class="line">        omit_defaults=<span class="literal">True</span>,</span><br><span class="line">        array_like=<span class="literal">True</span>):</span><br><span class="line"></span><br><span class="line">    __metaclass__ = AdapterRequest</span><br><span class="line"></span><br><span class="line">    lora_name: <span class="built_in">str</span></span><br><span class="line">    lora_int_id: <span class="built_in">int</span></span><br><span class="line">    lora_path: <span class="built_in">str</span> = <span class="string">&quot;&quot;</span></span><br><span class="line">    lora_local_path: <span class="type">Optional</span>[<span class="built_in">str</span>] = msgspec.field(default=<span class="literal">None</span>)</span><br><span class="line">    long_lora_max_len: <span class="type">Optional</span>[<span class="built_in">int</span>] = <span class="literal">None</span></span><br><span class="line">    base_model_name: <span class="type">Optional</span>[<span class="built_in">str</span>] = msgspec.field(default=<span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">adapter_id</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lora_int_id</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">name</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lora_name</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">path</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lora_path</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">local_path</span>(<span class="params">self</span>):</span><br><span class="line">        warnings.warn(</span><br><span class="line">            <span class="string">&quot;The &#x27;local_path&#x27; attribute is deprecated &quot;</span></span><br><span class="line">            <span class="string">&quot;and will be removed in a future version. &quot;</span></span><br><span class="line">            <span class="string">&quot;Please use &#x27;path&#x27; instead.&quot;</span>,</span><br><span class="line">            DeprecationWarning,</span><br><span class="line">            stacklevel=<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lora_path</span><br><span class="line"></span><br><span class="line"><span class="meta">    @local_path.setter</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">local_path</span>(<span class="params">self, value</span>):</span><br><span class="line">        warnings.warn(</span><br><span class="line">            <span class="string">&quot;The &#x27;local_path&#x27; attribute is deprecated &quot;</span></span><br><span class="line">            <span class="string">&quot;and will be removed in a future version. &quot;</span></span><br><span class="line">            <span class="string">&quot;Please use &#x27;path&#x27; instead.&quot;</span>,</span><br><span class="line">            DeprecationWarning,</span><br><span class="line">            stacklevel=<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.lora_path = value</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考资料：</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://liaoxuefeng.com/books/python/oop-adv/property/index.html"><u>使用 @property - 廖雪峰</u></a></li>
+</ul>
+<h3 id="abstractmethod"><a href="#abstractmethod" class="headerlink" title="@abstractmethod"></a>@abstractmethod</h3><p><code>@abstractmethod</code> 由标准模块 <code>abc</code> 提供。</p>
+<p>使用 <code>@abstractmethod</code> 抽象方法：</p>
+<ul>
+<li>所在的 class 继承 <code>abc.ABC</code>；</li>
+<li>给需要抽象的实例方法添加装饰器 <code>@abstractmethod</code>。</li>
+</ul>
+<p>完成这两步后，这个 class 就变成了抽象类，不能被直接实例化，要想使用抽象类，必须继承该类并实现该类的所有抽象方法。</p>
+<p><strong>示例一：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">info</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Animal&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span>(<span class="title class_ inherited__">Animal</span>):</span><br><span class="line">    <span class="comment"># 实现抽象方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">info</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 调用基类方法（即便是抽象方法）</span></span><br><span class="line">        <span class="built_in">super</span>().info()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Bird&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>除了继承 <code>abc.ABC</code>，也可以使用 metaclass 达到相同的效果。</p>
+<blockquote>
+<p>注意：如果抽象方法不仅是实例方法, 而且还是类方法或静态方法, 则应分别使用 <code>@abstractclassmethod</code> 和 <code>@abstractstaticmethod</code>。</p>
+</blockquote>
+<p><strong>示例二：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABCMeta</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span>(metaclass=ABCMeta):</span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">info</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Animal&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例三：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AdapterRequest</span>(<span class="title class_ inherited__">ABC</span>):</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">adapter_id</span>(<span class="params">self</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"><span class="comment"># -----------------------------------</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LoRARequest</span>(msgspec.Struct, omit_defaults=<span class="literal">True</span>, array_like=<span class="literal">True</span>):</span><br><span class="line"></span><br><span class="line">    __metaclass__ = AdapterRequest</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">adapter_id</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lora_int_id</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://python3-cookbook.readthedocs.io/zh-cn/latest/c09/p01_put_wrapper_around_function.html#"><u>python3-cookbook</u></a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/07/03/Python_Decorator/">https://hzhzxfs.github.io/2025/07/03/Python_Decorator/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/04/Python_Entry_Points/" title="Python_Entry_Points"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Python_Entry_Points</div></div><div class="info-2"><div class="info-item-1">Python Entry Points基本原理setup.py： entry_points&#x3D;{key: value}  key -&gt; Plugin group value -&gt; [“Plugin name &#x3D; Plugin value“, …]  Plugin value -&gt; python_module:function_name 示例（vLLM）123456789101112131415161718# inside `setup.py` filefrom setuptools import setupsetup(name=&#x27;vllm_add_dummy_model&#x27;,      version=&#x27;0.1&#x27;,      packages=[&#x27;vllm_add_dummy_model&#x27;],      entry_points=&#123;          &#x27;vllm.general_plugins&#x27;:          [&quot;register_dummy...</div></div></div></a><a class="pagination-related" href="/2025/07/02/PyTorch%E9%9D%9E%E9%98%BB%E5%A1%9E%E4%BC%A0%E8%BE%93%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/" title="PyTorch非阻塞传输参数详解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">PyTorch非阻塞传输参数详解</div></div><div class="info-2"><div class="info-item-1">torch.cuda.Event() 是PyTorch中用于精确测量GPU操作时间和实现细粒度同步的工具。 基本用法创建CUDA Event12345import torch# 创建CUDA事件start_event = torch.cuda.Event(enable_timing=True)  # 启用计时功能end_event = torch.cuda.Event(enable_timing=True)  record() 方法record() 方法在GPU的当前流中插入一个事件记录点。 基本record用法12345678# 在GPU流中记录事件start_event.record()  # 记录开始时间点# 执行一些GPU操作x = torch.randn(1000, 1000, device=&#x27;cuda&#x27;)y = x * x + 2 * x + 1end_event.record()  # 记录结束时间点  synchronize() 方法synchronize() 方法阻塞CPU执行，直到事件完成。 基本synchronize用法123456# 等...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/09/Python_Setup/" title="Python_Setup"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-09</div><div class="info-item-2">Python_Setup</div></div><div class="info-2"><div class="info-item-1">Python setup.py参考资料 What is setup.py? 花了两天，终于把 Python 的 setup.py 给整明白了  </div></div></div></a><a class="pagination-related" href="/2025/07/06/Python_Metaclass/" title="Python_Metaclass"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-06</div><div class="info-item-2">Python_Metaclass</div></div><div class="info-2"><div class="info-item-1">Python Metaclass参考资料 What are metaclasses in Python?  </div></div></div></a><a class="pagination-related" href="/2025/07/12/Python%E4%B8%ADcopy.deepcopy%E5%8E%9F%E7%90%86%E4%B8%8E%E7%94%A8%E6%B3%95/" title="Python中copy.deepcopy原理与用法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-12</div><div class="info-item-2">Python中copy.deepcopy原理与用法</div></div><div class="info-2"><div class="info-item-1">Python 中 copy.deepcopy 的原理和用法1. 基本概念copy.deepcopy() 是 Python 标准库 copy 模块中的一个函数，用于创建对象的深度拷贝（深拷贝）。 123456import copy# 浅拷贝 vs 深拷贝original_list = [1, 2, [3, 4]]shallow_copy = copy.copy(original_list)    # 浅拷贝deep_copy = copy.deepcopy(original_list)   # 深拷贝  2. 深拷贝的原理工作原理 递归复制：深度拷贝会递归地遍历对象的所有层级，为每一层创建新的对象 完全独立：新对象与原始对象完全独立，修改一个不会影响另一个 处理循环引用：能够正确处理对象间的循环引用关系  实现机制1234567891011121314151617181920212223242526# 简化的深拷贝原理示意def deep_copy(obj, memo=None):    if memo is None:        memo = &#123;&#125;    ...</div></div></div></a><a class="pagination-related" href="/2025/07/11/Python%E4%B8%ADb%E5%89%8D%E7%BC%80%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%90%AB%E4%B9%89%E8%A7%A3%E6%9E%90/" title="Python中b前缀字符串含义解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-11</div><div class="info-item-2">Python中b前缀字符串含义解析</div></div><div class="info-2"><div class="info-item-1">在Python中，字符串前面加b表示创建一个**字节串(bytes)**对象，而不是普通的字符串(str)对象。 基本概念1234567# 普通字符串 (str)text_str = &quot;hello&quot;print(type(text_str))  # &lt;class &#x27;str&#x27;&gt;# 字节串 (bytes)text_bytes = b&quot;hello&quot;  print(type(text_bytes))  # &lt;class &#x27;bytes&#x27;&gt;  主要区别   特性 字符串(str) 字节串(bytes)    编码 Unicode字符 原始字节序列   使用场景 文本处理 二进制数据、网络传输、文件I&#x2F;O   可读性 人类可读 机器可读   前缀 无或u b   实际应用示例1234567891011121314151617181920# 1. 网络编程import socketdata = b&quot;GET / HTTP/1.1\r\nHost: example.com\r\n...</div></div></div></a><a class="pagination-related" href="/2024/10/05/5_file_io/" title="5_file_io"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-05</div><div class="info-item-2">5_file_io</div></div><div class="info-2"><div class="info-item-1">File and IO文件和IO读写文本数据12with open(&quot;text.txt&quot;, &quot;rt&quot;, encoding=&quot;utf-8&quot;) as f:    pass  打印输出到文件中12with open(&quot;text.log&quot;, &quot;wt&quot;) as f:    print(&quot;Test log&quot;, file=f)  使用其它分隔符或打印终止符打印12345print(&#x27;abcd&#x27;, 1234, sep=&#x27;,&#x27;, end=&#x27;\t&#x27;)row = (&#x27;abcd&#x27;, 1234, &#x27;bcda&#x27;, 3)print(&#x27;,&#x27;.join(str(x) for x in row))print(*row, sep=&quot;,&quot;)  读写字节数据12with open(&quot;text.bin&quot;, &quot;rb&quot;) as f:...</div></div></div></a><a class="pagination-related" href="/2025/07/08/Python_Multiprocessing/" title="Python_Multiprocessing"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-08</div><div class="info-item-2">Python_Multiprocessing</div></div><div class="info-2"><div class="info-item-1">Python Multiprocessing multiprocessing — Process-based parallelism  </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Python-Decorator"><span class="toc-number">1.</span> <span class="toc-text">Python Decorator</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">内置装饰器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#property"><span class="toc-number">1.2.1.</span> <span class="toc-text">@property</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#abstractmethod"><span class="toc-number">1.2.2.</span> <span class="toc-text">@abstractmethod</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.3.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

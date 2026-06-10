@@ -1,0 +1,1523 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>settings | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 &#x2F;config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共">
+<meta property="og:type" content="article">
+<meta property="og:title" content="settings">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/03/14/settings/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 &#x2F;config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-03-14T04:53:14.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.579Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "settings",
+  "url": "https://hzhzxfs.github.io/2026/03/14/settings/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-03-14T04:53:14.000Z",
+  "dateModified": "2026-06-10T02:14:46.579Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/03/14/settings/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'settings',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">settings</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">settings</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-14T04:53:14.000Z" title="发表于 2026-03-14 12:53:14">2026-03-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.579Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Claude-Code-设置"><a href="#Claude-Code-设置" class="headerlink" title="Claude Code 设置"></a>Claude Code 设置</h1><blockquote>
+<p>使用全局和项目级设置以及环境变量配置 Claude Code。</p>
+</blockquote>
+<p>Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 <code>/config</code> 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。</p>
+<h2 id="配置作用域"><a href="#配置作用域" class="headerlink" title="配置作用域"></a>配置作用域</h2><p>Claude Code 使用<strong>作用域系统</strong>来确定配置应用的位置以及与谁共享。了解作用域可以帮助您决定如何为个人使用、团队协作或企业部署配置 Claude Code。</p>
+<h3 id="可用作用域"><a href="#可用作用域" class="headerlink" title="可用作用域"></a>可用作用域</h3><table>
+<thead>
+<tr>
+<th align="left">作用域</th>
+<th align="left">位置</th>
+<th align="left">影响范围</th>
+<th align="left">与团队共享？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Managed</strong></td>
+<td align="left">服务器管理的设置、plist &#x2F; 注册表或系统级 <code>managed-settings.json</code></td>
+<td align="left">机器上的所有用户</td>
+<td align="left">是（由 IT 部署）</td>
+</tr>
+<tr>
+<td align="left"><strong>User</strong></td>
+<td align="left"><code>~/.claude/</code> 目录</td>
+<td align="left">您，跨所有项目</td>
+<td align="left">否</td>
+</tr>
+<tr>
+<td align="left"><strong>Project</strong></td>
+<td align="left">存储库中的 <code>.claude/</code></td>
+<td align="left">此存储库上的所有协作者</td>
+<td align="left">是（提交到 git）</td>
+</tr>
+<tr>
+<td align="left"><strong>Local</strong></td>
+<td align="left"><code>.claude/settings.local.json</code></td>
+<td align="left">您，仅在此存储库中</td>
+<td align="left">否（gitignored）</td>
+</tr>
+</tbody></table>
+<h3 id="何时使用每个作用域"><a href="#何时使用每个作用域" class="headerlink" title="何时使用每个作用域"></a>何时使用每个作用域</h3><p><strong>Managed 作用域</strong>用于：</p>
+<ul>
+<li>必须在整个组织范围内强制执行的安全策略</li>
+<li>无法被覆盖的合规要求</li>
+<li>由 IT&#x2F;DevOps 部署的标准化配置</li>
+</ul>
+<p><strong>User 作用域</strong>最适合：</p>
+<ul>
+<li>您想在任何地方使用的个人偏好设置（主题、编辑器设置）</li>
+<li>您在所有项目中使用的工具和插件</li>
+<li>API 密钥和身份验证（安全存储）</li>
+</ul>
+<p><strong>Project 作用域</strong>最适合：</p>
+<ul>
+<li>团队共享的设置（权限、hooks、MCP servers）</li>
+<li>整个团队应该拥有的插件</li>
+<li>跨协作者标准化工具</li>
+</ul>
+<p><strong>Local 作用域</strong>最适合：</p>
+<ul>
+<li>特定项目的个人覆盖</li>
+<li>在与团队共享之前测试配置</li>
+<li>对其他人不适用的特定于机器的设置</li>
+</ul>
+<h3 id="作用域如何相互作用"><a href="#作用域如何相互作用" class="headerlink" title="作用域如何相互作用"></a>作用域如何相互作用</h3><p>当在多个作用域中出现相同的设置时，Claude Code 按优先级顺序应用它们：</p>
+<ol>
+<li><strong>Managed</strong>（最高）- 无法被任何内容覆盖</li>
+<li><strong>命令行参数</strong> - 临时会话覆盖</li>
+<li><strong>Local</strong> - 覆盖项目和用户设置</li>
+<li><strong>Project</strong> - 覆盖用户设置</li>
+<li><strong>User</strong>（最低）- 当没有其他内容指定设置时应用</li>
+</ol>
+<p>例如，如果您的用户设置将 <code>spinnerTipsEnabled</code> 设置为 <code>true</code>，而项目设置将其设置为 <code>false</code>，则项目值适用。权限规则的行为不同，因为它们跨作用域合并而不是覆盖。请参阅 <a href="#settings-precedence">Settings precedence</a>。</p>
+<h3 id="哪些功能使用作用域"><a href="#哪些功能使用作用域" class="headerlink" title="哪些功能使用作用域"></a>哪些功能使用作用域</h3><p>作用域适用于许多 Claude Code 功能：</p>
+<table>
+<thead>
+<tr>
+<th align="left">功能</th>
+<th align="left">User 位置</th>
+<th align="left">Project 位置</th>
+<th align="left">Local 位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Settings</strong></td>
+<td align="left"><code>~/.claude/settings.json</code></td>
+<td align="left"><code>.claude/settings.json</code></td>
+<td align="left"><code>.claude/settings.local.json</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Subagents</strong></td>
+<td align="left"><code>~/.claude/agents/</code></td>
+<td align="left"><code>.claude/agents/</code></td>
+<td align="left">无</td>
+</tr>
+<tr>
+<td align="left"><strong>MCP servers</strong></td>
+<td align="left"><code>~/.claude.json</code></td>
+<td align="left"><code>.mcp.json</code></td>
+<td align="left"><code>~/.claude.json</code>（每个项目）</td>
+</tr>
+<tr>
+<td align="left"><strong>Plugins</strong></td>
+<td align="left"><code>~/.claude/settings.json</code></td>
+<td align="left"><code>.claude/settings.json</code></td>
+<td align="left"><code>.claude/settings.local.json</code></td>
+</tr>
+<tr>
+<td align="left"><strong>CLAUDE.md</strong></td>
+<td align="left"><code>~/.claude/CLAUDE.md</code></td>
+<td align="left"><code>CLAUDE.md</code> 或 <code>.claude/CLAUDE.md</code></td>
+<td align="left"><code>CLAUDE.local.md</code></td>
+</tr>
+</tbody></table>
+<p>在 Windows 上，显示为 <code>~/.claude</code> 的路径解析为 <code>%USERPROFILE%\.claude</code>。</p>
+<hr>
+<h2 id="设置文件"><a href="#设置文件" class="headerlink" title="设置文件"></a>设置文件</h2><p><code>settings.json</code> 文件是通过分层设置配置 Claude Code 的官方机制：</p>
+<ul>
+<li><p><strong>用户设置</strong>在 <code>~/.claude/settings.json</code> 中定义，适用于所有项目。</p>
+</li>
+<li><p><strong>项目设置</strong>保存在您的项目目录中：</p>
+<ul>
+<li><code>.claude/settings.json</code> 用于检入源代码管理并与您的团队共享的设置</li>
+<li><code>.claude/settings.local.json</code> 用于未检入的设置，适用于个人偏好和实验。Claude Code 将在创建 <code>.claude/settings.local.json</code> 时配置 git 以忽略它。</li>
+</ul>
+</li>
+<li><p><strong>Managed 设置</strong>：对于需要集中控制的组织，Claude Code 支持多种 managed 设置的交付机制。所有机制都使用相同的 JSON 格式，无法被用户或项目设置覆盖：</p>
+<ul>
+<li><p><strong>服务器管理的设置</strong>：通过 Claude.ai 管理员控制台从 Anthropic 的服务器交付。请参阅<a href="/zh-CN/server-managed-settings">服务器管理的设置</a>。</p>
+</li>
+<li><p><strong>MDM&#x2F;OS 级别策略</strong>：通过 macOS 和 Windows 上的本机设备管理交付：</p>
+<ul>
+<li>macOS：<code>com.anthropic.claudecode</code> managed preferences 域。plist 的顶级键镜像 <code>managed-settings.json</code>，嵌套设置为字典，数组为 plist 数组。通过 Jamf、Iru (Kandji) 或类似 MDM 工具中的配置文件部署。</li>
+<li>Windows：<code>HKLM\SOFTWARE\Policies\ClaudeCode</code> 注册表项，带有包含 JSON 的 <code>Settings</code> 值（REG_SZ 或 REG_EXPAND_SZ）（通过组策略或 Intune 部署）</li>
+<li>Windows（用户级）：<code>HKCU\SOFTWARE\Policies\ClaudeCode</code>（最低策略优先级，仅在不存在管理员级源时使用）</li>
+</ul>
+</li>
+<li><p><strong>基于文件</strong>：<code>managed-settings.json</code> 和 <code>managed-mcp.json</code> 部署到系统目录：</p>
+<ul>
+<li>macOS：<code>/Library/Application Support/ClaudeCode/</code></li>
+<li>Linux 和 WSL：<code>/etc/claude-code/</code></li>
+<li>Windows：<code>C:\Program Files\ClaudeCode\</code></li>
+</ul>
+<Warning>
+  自 v2.1.75 起，不再支持旧的 Windows 路径 `C:\ProgramData\ClaudeCode\managed-settings.json`。已将设置部署到该位置的管理员必须将文件迁移到 `C:\Program Files\ClaudeCode\managed-settings.json`。
+</Warning>
+
+<p>基于文件的 managed 设置还支持在与 <code>managed-settings.json</code> 相同的系统目录中的 <code>managed-settings.d/</code> 放入目录。这让独立的团队可以部署独立的策略片段，而无需协调对单个文件的编辑。</p>
+<p>遵循 systemd 约定，<code>managed-settings.json</code> 首先作为基础合并，然后放入目录中的所有 <code>*.json</code> 文件按字母顺序排序并合并在顶部。对于标量值，后面的文件覆盖前面的文件；数组被连接和去重；对象被深度合并。以 <code>.</code> 开头的隐藏文件被忽略。</p>
+<p>使用数字前缀来控制合并顺序，例如 <code>10-telemetry.json</code> 和 <code>20-security.json</code>。</p>
+</li>
+</ul>
+<p>请参阅 <a href="/zh-CN/permissions#managed-only-settings">managed 设置</a> 和 <a href="/zh-CN/managed-mcp">Managed MCP 配置</a> 了解详情。</p>
+<p>此<a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code/tree/main/examples/mdm">存储库</a>包含 Jamf、Iru (Kandji)、Intune 和组策略的启动部署模板。使用这些作为起点并根据您的需求进行调整。</p>
+<Note>
+  Managed 部署还可以使用 `strictKnownMarketplaces` 限制**插件市场添加**。有关更多信息，请参阅 [Managed 市场限制](/zh-CN/plugin-marketplaces#managed-marketplace-restrictions)。
+</Note></li>
+<li><p><strong>其他配置</strong>存储在 <code>~/.claude.json</code> 中。此文件包含您的 OAuth 会话、<a href="/zh-CN/mcp">MCP server</a> 配置（用于用户和本地作用域）、每个项目的状态（允许的工具、信任设置）和各种缓存。项目作用域的 MCP servers 单独存储在 <code>.mcp.json</code> 中。</p>
+</li>
+</ul>
+<Note>
+  Claude Code 自动创建配置文件的时间戳备份，并保留最近五个备份以防止数据丢失。
+</Note>
+
+<figure class="highlight json"><figcaption><span>Example settings.json theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;$schema&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://json.schemastore.org/claude-code-settings.json&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;permissions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;allow&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;Bash(npm run lint)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Bash(npm run test *)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(~/.zshrc)&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;deny&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;Bash(curl *)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./.env)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./.env.*)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./secrets/**)&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;env&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CLAUDE_CODE_ENABLE_TELEMETRY&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;OTEL_METRICS_EXPORTER&quot;</span><span class="punctuation">:</span> <span class="string">&quot;otlp&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;companyAnnouncements&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;Welcome to Acme Corp! Review our code guidelines at docs.acme.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;Reminder: Code reviews required for all PRs&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;New security policy in effect&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面示例中的 <code>$schema</code> 行指向 Claude Code 设置的<a target="_blank" rel="noopener" href="https://json.schemastore.org/claude-code-settings.json">官方 JSON 架构</a>。将其添加到您的 <code>settings.json</code> 可在 VS Code、Cursor 和任何其他支持 JSON 架构验证的编辑器中启用自动完成和内联验证。</p>
+<p>已发布的架构会定期更新，可能不包括最近 CLI 版本中添加的设置，因此最近记录的字段上的验证警告不一定意味着您的配置无效。</p>
+<h3 id="编辑何时生效"><a href="#编辑何时生效" class="headerlink" title="编辑何时生效"></a>编辑何时生效</h3><p>Claude Code 监视您的设置文件，并在它们更改时重新加载它们，因此对大多数键的编辑会在运行的会话中应用，无需重启。这包括 <code>permissions</code>、<code>hooks</code> 和凭证助手（如 <code>apiKeyHelper</code>）。重新加载涵盖用户、项目、本地和 managed 设置，并为每个检测到的更改触发 <a href="/zh-CN/hooks#configchange"><code>ConfigChange</code> hook</a>。</p>
+<p>少数几个键在会话启动时读取一次，并在下次重启时应用：</p>
+<ul>
+<li><code>model</code>：使用 <a href="/zh-CN/model-config#setting-your-model"><code>/model</code></a> 在会话中切换</li>
+<li><a href="/zh-CN/output-styles"><code>outputStyle</code></a>：系统提示的一部分，在 <code>/clear</code> 或重启时重建</li>
+</ul>
+<h3 id="可用设置"><a href="#可用设置" class="headerlink" title="可用设置"></a>可用设置</h3><p><code>settings.json</code> 支持多个选项：</p>
+<table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>agent</code></td>
+<td align="left">将主线程作为命名 subagent 运行，并为从 <code>claude agents</code> 分派的会话设置默认 agent。应用该 subagent 的系统提示、工具限制和模型。请参阅<a href="/zh-CN/sub-agents#invoke-subagents-explicitly">显式调用 subagents</a></td>
+<td align="left"><code>&quot;code-reviewer&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowAllClaudeAiMcps</code></td>
+<td align="left">（仅 Managed 设置）加载 claude.ai connectors 与部署的 <code>managed-mcp.json</code> 一起，否则后者会获得独占控制并抑制它们。请参阅 <a href="/zh-CN/managed-mcp">Managed MCP 配置</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowedChannelPlugins</code></td>
+<td align="left">（仅 Managed 设置）可能推送消息的频道插件的允许列表。设置后替换默认 Anthropic 允许列表。未定义 &#x3D; 回退到默认值，空数组 &#x3D; 阻止所有频道插件。需要 <code>channelsEnabled: true</code>。请参阅<a href="/zh-CN/channels#restrict-which-channel-plugins-can-run">限制哪些频道插件可以运行</a></td>
+<td align="left"><code>[{ &quot;marketplace&quot;: &quot;claude-plugins-official&quot;, &quot;plugin&quot;: &quot;telegram&quot; }]</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowedHttpHookUrls</code></td>
+<td align="left">HTTP hooks 可能针对的 URL 模式的允许列表。支持 <code>*</code> 作为通配符。设置后，具有不匹配 URL 的 hooks 被阻止。未定义 &#x3D; 无限制，空数组 &#x3D; 阻止所有 HTTP hooks。数组跨设置源合并。请参阅 <a href="#hook-configuration">Hook 配置</a></td>
+<td align="left"><code>[&quot;https://hooks.example.com/*&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowedMcpServers</code></td>
+<td align="left">在 managed-settings.json 中设置时，用户可以配置的 MCP servers 的允许列表。未定义 &#x3D; 无限制，空数组 &#x3D; 锁定。适用于所有作用域。拒绝列表优先。请参阅 <a href="/zh-CN/managed-mcp">Managed MCP 配置</a></td>
+<td align="left"><code>[{ &quot;serverName&quot;: &quot;github&quot; }]</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowManagedHooksOnly</code></td>
+<td align="left">（仅 Managed 设置）仅加载 managed hooks、SDK hooks 和在 managed 设置 <code>enabledPlugins</code> 中强制启用的插件中的 hooks。用户、项目和所有其他插件 hooks 被阻止。请参阅 <a href="#hook-configuration">Hook 配置</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowManagedMcpServersOnly</code></td>
+<td align="left">（仅 Managed 设置）仅尊重来自 managed 设置的 <code>allowedMcpServers</code>。<code>deniedMcpServers</code> 仍从所有源合并。用户仍可以添加 MCP servers，但仅应用管理员定义的允许列表。请参阅 <a href="/zh-CN/managed-mcp">Managed MCP 配置</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowManagedPermissionRulesOnly</code></td>
+<td align="left">（仅 Managed 设置）防止用户和项目设置定义 <code>allow</code>、<code>ask</code> 或 <code>deny</code> 权限规则。仅应用 managed 设置中的规则。请参阅 <a href="/zh-CN/permissions#managed-only-settings">Managed 专用设置</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>alwaysThinkingEnabled</code></td>
+<td align="left">为所有会话默认启用<a href="/zh-CN/model-config#extended-thinking">扩展思考</a>。通常通过 <code>/config</code> 命令而不是直接编辑来配置。要强制禁用思考，无论此设置如何，请在 <code>env</code> 中设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_DISABLE_THINKING</code></a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>apiKeyHelper</code></td>
+<td align="left">自定义脚本，在 <code>/bin/sh</code> 中执行，以生成身份验证值。此值将作为 <code>X-Api-Key</code> 和 <code>Authorization: Bearer</code> 标头发送用于模型请求。使用 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_API_KEY_HELPER_TTL_MS</code></a> 设置刷新间隔</td>
+<td align="left"><code>/bin/generate_temp_api_key.sh</code></td>
+</tr>
+<tr>
+<td align="left"><code>attribution</code></td>
+<td align="left">自定义 git 提交和拉取请求的归属。请参阅<a href="#attribution-settings">归属设置</a></td>
+<td align="left"><code>{&quot;commit&quot;: &quot;🤖 Generated with Claude Code&quot;, &quot;pr&quot;: &quot;&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoMemoryDirectory</code></td>
+<td align="left"><a href="/zh-CN/memory#storage-location">自动内存</a>存储的自定义目录。接受绝对路径或 <code>~/</code> 前缀的路径。从项目或本地设置接受，仅在您接受工作区信任对话框后，因为克隆的存储库可能提供此文件</td>
+<td align="left"><code>&quot;~/my-memory-dir&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoMemoryEnabled</code></td>
+<td align="left">启用<a href="/zh-CN/memory#enable-or-disable-auto-memory">自动内存</a>。当为 <code>false</code> 时，Claude 不从自动内存目录读取或写入。默认：<code>true</code>。您也可以在会话期间使用 <code>/memory</code> 切换此选项。要通过环境变量禁用，请在 <code>env</code> 中设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code></a></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoMode</code></td>
+<td align="left">自定义<a href="/zh-CN/permission-modes#eliminate-prompts-with-auto-mode">自动模式</a>分类器阻止和允许的内容。包含 <code>environment</code>、<code>allow</code>、<code>soft_deny</code> 和 <code>hard_deny</code> 散文规则数组。在数组中包含字面字符串 <code>&quot;$defaults&quot;</code> 以在该位置继承内置规则。请参阅<a href="/zh-CN/auto-mode-config">配置自动模式</a>。不从共享项目设置读取</td>
+<td align="left"><code>{&quot;soft_deny&quot;: [&quot;$defaults&quot;, &quot;Never run terraform apply&quot;]}</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoScrollEnabled</code></td>
+<td align="left">在<a href="/zh-CN/fullscreen">全屏渲染</a>中，跟随新输出到对话的底部。默认：<code>true</code>。在 <code>/config</code> 中显示为<strong>自动滚动</strong>。权限提示仍在此关闭时滚动到视图中</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoUpdatesChannel</code></td>
+<td align="left">遵循更新的发布渠道。使用 <code>&quot;stable&quot;</code> 获取通常约一周前的版本并跳过有主要回归的版本，或使用 <code>&quot;latest&quot;</code>（默认）获取最新版本。要完全禁用自动更新，请在 <code>env</code> 中设置 <a href="/zh-CN/setup#disable-auto-updates"><code>DISABLE_AUTOUPDATER</code></a></td>
+<td align="left"><code>&quot;stable&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>availableModels</code></td>
+<td align="left">限制用户可以通过 <code>/model</code>、<code>--model</code> 或 <code>ANTHROPIC_MODEL</code> 选择的模型。不影响默认选项。请参阅<a href="/zh-CN/model-config#restrict-model-selection">限制模型选择</a></td>
+<td align="left"><code>[&quot;sonnet&quot;, &quot;haiku&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>awaySummaryEnabled</code></td>
+<td align="left">在您离开终端几分钟后返回时显示单行会话回顾。设置为 <code>false</code> 或在 <code>/config</code> 中关闭会话回顾以禁用。与 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_ENABLE_AWAY_SUMMARY</code></a> 相同</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>awsAuthRefresh</code></td>
+<td align="left">修改 <code>.aws</code> 目录的自定义脚本（请参阅<a href="/zh-CN/amazon-bedrock#advanced-credential-configuration">高级凭证配置</a>）</td>
+<td align="left"><code>aws sso login --profile myprofile</code></td>
+</tr>
+<tr>
+<td align="left"><code>awsCredentialExport</code></td>
+<td align="left">输出包含 AWS 凭证的 JSON 的自定义脚本（请参阅<a href="/zh-CN/amazon-bedrock#advanced-credential-configuration">高级凭证配置</a>）</td>
+<td align="left"><code>/bin/generate_aws_grant.sh</code></td>
+</tr>
+<tr>
+<td align="left"><code>blockedMarketplaces</code></td>
+<td align="left">（仅 Managed 设置）市场源的阻止列表。在市场添加和插件安装、更新、刷新和自动更新时强制执行，因此在设置策略之前添加的市场无法用于获取插件。被阻止的源在下载前被检查，因此它们永远不会接触文件系统。请参阅 <a href="/zh-CN/plugin-marketplaces#managed-marketplace-restrictions">Managed 市场限制</a></td>
+<td align="left"><code>[{ &quot;source&quot;: &quot;github&quot;, &quot;repo&quot;: &quot;untrusted/plugins&quot; }]</code></td>
+</tr>
+<tr>
+<td align="left"><code>channelsEnabled</code></td>
+<td align="left">（仅 Managed 设置）为组织允许 <a href="/zh-CN/channels">channels</a>。在 claude.ai Team 和 Enterprise 计划上，当此项未设置或为 <code>false</code> 时，channels 被阻止。对于使用 API 密钥身份验证的 <a href="/zh-CN/authentication#claude-console-authentication">Anthropic Console</a> 账户，channels 默认被允许，除非您的组织部署 managed 设置，在这种情况下此键必须设置为 <code>true</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>claudeMd</code></td>
+<td align="left">（仅 Managed 设置）CLAUDE.md 风格的说明，作为组织管理的内存注入。仅在 managed 或策略设置中设置时被尊重，在用户、项目和本地设置中被忽略。请参阅<a href="/zh-CN/memory#deploy-organization-wide-claude-md">组织范围的 CLAUDE.md</a></td>
+<td align="left"><code>&quot;Always run make lint before committing.&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>claudeMdExcludes</code></td>
+<td align="left">加载<a href="/zh-CN/memory">内存</a>时要跳过的 <code>CLAUDE.md</code> 文件的 Glob 模式或绝对路径。模式与绝对文件路径匹配。仅适用于用户、项目和本地内存；managed 策略文件无法被排除</td>
+<td align="left"><code>[&quot;**/vendor/**/CLAUDE.md&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>cleanupPeriodDays</code></td>
+<td align="left">非活跃时间超过此期间的会话在启动时被删除（默认：30 天，最少 1 天）。设置为 <code>0</code> 会被拒绝并显示验证错误。也控制<a href="/zh-CN/worktrees#clean-up-worktrees">孤立 subagent worktrees</a> 在启动时自动删除的年龄截止。要完全禁用记录写入，请设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_SKIP_PROMPT_HISTORY</code></a> 环境变量，或在非交互模式（<code>-p</code>）中使用 <code>--no-session-persistence</code> 标志或 <code>persistSession: false</code> SDK 选项。</td>
+<td align="left"><code>20</code></td>
+</tr>
+<tr>
+<td align="left"><code>companyAnnouncements</code></td>
+<td align="left">在启动时显示给用户的公告。如果提供多个公告，它们将随机循环显示。</td>
+<td align="left"><code>[&quot;Welcome to Acme Corp! Review our code guidelines at docs.acme.com&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>defaultShell</code></td>
+<td align="left">输入框 <code>!</code> 命令的默认 shell。接受 <code>&quot;bash&quot;</code>（默认）或 <code>&quot;powershell&quot;</code>。设置 <code>&quot;powershell&quot;</code> 会在 Windows 上通过 PowerShell 路由交互式 <code>!</code> 命令。需要 <code>CLAUDE_CODE_USE_POWERSHELL_TOOL=1</code>。请参阅 <a href="/zh-CN/tools-reference#powershell-tool">PowerShell tool</a></td>
+<td align="left"><code>&quot;powershell&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>deniedMcpServers</code></td>
+<td align="left">在 managed-settings.json 中设置时，明确阻止的 MCP servers 的拒绝列表。适用于所有作用域，包括 managed servers。拒绝列表优先于允许列表。请参阅 <a href="/zh-CN/managed-mcp">Managed MCP 配置</a></td>
+<td align="left"><code>[{ &quot;serverName&quot;: &quot;filesystem&quot; }]</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableAgentView</code></td>
+<td align="left">设置为 <code>true</code> 以关闭<a href="/zh-CN/agent-view">后台代理和代理视图</a>：<code>claude agents</code>、<code>--bg</code>、<code>/background</code> 和按需主管。通常在 <a href="/zh-CN/permissions#managed-settings">managed 设置</a>中设置。等同于将 <code>CLAUDE_CODE_DISABLE_AGENT_VIEW</code> 设置为 <code>1</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableAllHooks</code></td>
+<td align="left">禁用所有 <a href="/zh-CN/hooks">hooks</a> 和任何自定义<a href="/zh-CN/statusline">状态行</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableAutoMode</code></td>
+<td align="left">设置为 <code>&quot;disable&quot;</code> 以防止<a href="/zh-CN/permission-modes#eliminate-prompts-with-auto-mode">自动模式</a>被激活。从 <code>Shift+Tab</code> 循环中删除 <code>auto</code> 并在启动时拒绝 <code>--permission-mode auto</code>。在<a href="/zh-CN/permissions#managed-settings">managed 设置</a>中最有用，用户无法覆盖它</td>
+<td align="left"><code>&quot;disable&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableDeepLinkRegistration</code></td>
+<td align="left">设置为 <code>&quot;disable&quot;</code> 以防止 Claude Code 在启动时向操作系统注册 <code>claude-cli://</code> 协议处理程序。<a href="/zh-CN/deep-links">深链接</a>让外部工具通过预填充的提示打开 Claude Code 会话。在协议处理程序注册受限或单独管理的环境中很有用</td>
+<td align="left"><code>&quot;disable&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>disabledMcpjsonServers</code></td>
+<td align="left">要拒绝的 <code>.mcp.json</code> 文件中特定 MCP servers 的列表</td>
+<td align="left"><code>[&quot;filesystem&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableRemoteControl</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.128 *&#x2F;}禁用<a href="/zh-CN/remote-control">远程控制</a>：阻止 <code>claude remote-control</code>、<code>--remote-control</code> 标志、自动启动和会话内切换。通常放在<a href="/zh-CN/permissions#managed-settings">managed 设置</a>中用于每设备 MDM 强制执行，但适用于任何作用域。需要 Claude Code v2.1.128 或更高版本</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableSkillShellExecution</code></td>
+<td align="left">禁用 <a href="/zh-CN/skills">skills</a> 和来自用户、项目、插件或额外目录源的自定义命令中的 <code>!`...`</code> 和 <code>```!</code> 块的内联 shell 执行。命令被替换为 <code>[shell command execution disabled by policy]</code> 而不是被运行。捆绑和 managed skills 不受影响。在<a href="/zh-CN/permissions#managed-settings">managed 设置</a>中最有用，用户无法覆盖它</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableWorkflows</code></td>
+<td align="left">禁用<a href="/zh-CN/workflows#turn-workflows-off">动态工作流</a>和捆绑的工作流命令。默认：<code>false</code>。等同于将 <code>CLAUDE_CODE_DISABLE_WORKFLOWS</code> 设置为 <code>1</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>editorMode</code></td>
+<td align="left">输入提示的快捷键模式：<code>&quot;normal&quot;</code> 或 <code>&quot;vim&quot;</code>。默认：<code>&quot;normal&quot;</code>。在 <code>/config</code> 中显示为<strong>快捷键模式</strong></td>
+<td align="left"><code>&quot;vim&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>effortLevel</code></td>
+<td align="left">跨会话持久化<a href="/zh-CN/model-config#adjust-effort-level">努力级别</a>。接受 <code>&quot;low&quot;</code>、<code>&quot;medium&quot;</code>、<code>&quot;high&quot;</code> 或 <code>&quot;xhigh&quot;</code>。当您运行 <code>/effort</code> 时自动写入，带有这些值之一。<code>--effort</code> 和 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_EFFORT_LEVEL</code></a> 覆盖此用于一个会话。请参阅<a href="/zh-CN/model-config#adjust-effort-level">调整努力级别</a>了解支持的模型</td>
+<td align="left"><code>&quot;xhigh&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>enableAllProjectMcpServers</code></td>
+<td align="left">自动批准项目 <code>.mcp.json</code> 文件中定义的所有 MCP servers</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>enabledMcpjsonServers</code></td>
+<td align="left">要批准的 <code>.mcp.json</code> 文件中特定 MCP servers 的列表</td>
+<td align="left"><code>[&quot;memory&quot;, &quot;github&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>env</code></td>
+<td align="left">应用于每个会话和 Claude Code 从其生成的子进程的环境变量。{&#x2F;* min-version: 2.1.143 *&#x2F;}从 v2.1.143 开始，此处设置的 <code>NO_COLOR</code> 和 <code>FORCE_COLOR</code> 被传递到子进程，但不改变 Claude Code 自己的界面颜色。在启动 <code>claude</code> 前在您的 shell 中设置这些以改变界面颜色</td>
+<td align="left"><code>{&quot;FOO&quot;: &quot;bar&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>fastModePerSessionOptIn</code></td>
+<td align="left">当为 <code>true</code> 时，快速模式不会跨会话持久化。每个会话都以快速模式关闭开始，需要用户使用 <code>/fast</code> 启用它。用户的快速模式偏好仍被保存。请参阅<a href="/zh-CN/fast-mode#require-per-session-opt-in">需要每个会话的选择加入</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>feedbackSurveyRate</code></td>
+<td align="left">概率（0–1）<a href="/zh-CN/data-usage#session-quality-surveys">会话质量调查</a>在符合条件时出现。设置为 <code>0</code> 以完全抑制，或在 <code>env</code> 中设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY</code></a>。在使用 Bedrock、Vertex 或 Foundry 时很有用，其中默认采样率不适用</td>
+<td align="left"><code>0.05</code></td>
+</tr>
+<tr>
+<td align="left"><code>fileSuggestion</code></td>
+<td align="left">为 <code>@</code> 文件自动完成配置自定义脚本。请参阅<a href="#file-suggestion-settings">文件建议设置</a></td>
+<td align="left"><code>{&quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;~/.claude/file-suggestion.sh&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>forceLoginMethod</code></td>
+<td align="left">使用 <code>claudeai</code> 限制登录到 Claude.ai 账户，<code>console</code> 限制登录到 Claude Console 账户。在 managed 设置中设置时，由 <code>ANTHROPIC_API_KEY</code>、<code>ANTHROPIC_AUTH_TOKEN</code> 或 <code>apiKeyHelper</code> 进行身份验证的会话在启动时被阻止，因为两个值都无法在没有第一方 OAuth 的情况下满足。第三方提供商会话（如 Bedrock、Vertex 和 Foundry）不被阻止：它们针对您的云提供商而不是 Anthropic 进行身份验证</td>
+<td align="left"><code>claudeai</code></td>
+</tr>
+<tr>
+<td align="left"><code>forceLoginOrgUUID</code></td>
+<td align="left">要求登录属于特定 Anthropic 组织。接受单个 UUID 字符串（也在登录期间预选该组织）或 UUID 数组，其中任何列出的组织都被接受而无需预选。在 managed 设置中设置时，如果经过身份验证的账户不属于列出的组织，登录失败；由 <code>ANTHROPIC_API_KEY</code>、<code>ANTHROPIC_AUTH_TOKEN</code> 或 <code>apiKeyHelper</code> 进行身份验证的会话在启动时被阻止，因为无法为它们验证组织成员身份。第三方提供商会话（如 Bedrock、Vertex 和 Foundry）不被阻止：使用您的云 IAM 限制哪些云账户可以被使用。空数组失败关闭并使用配置错误消息阻止登录</td>
+<td align="left"><code>&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</code> 或 <code>[&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;, &quot;yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>forceRemoteSettingsRefresh</code></td>
+<td align="left">（仅 Managed 设置）阻止 CLI 启动，直到从服务器新鲜获取远程 managed 设置。如果获取失败，CLI 退出而不是继续使用缓存或无设置。未设置时，启动继续而不等待远程设置。请参阅<a href="/zh-CN/server-managed-settings#enforce-fail-closed-startup">失败关闭强制执行</a></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>gcpAuthRefresh</code></td>
+<td align="left">当 GCP Application Default Credentials 过期或无法加载时刷新它们的自定义脚本。请参阅<a href="/zh-CN/google-vertex-ai#advanced-credential-configuration">高级凭证配置</a></td>
+<td align="left"><code>gcloud auth application-default login</code></td>
+</tr>
+<tr>
+<td align="left"><code>hooks</code></td>
+<td align="left">配置自定义命令以在生命周期事件处运行。请参阅 <a href="/zh-CN/hooks">hooks 文档</a> 了解格式</td>
+<td align="left">请参阅 <a href="/zh-CN/hooks">hooks</a></td>
+</tr>
+<tr>
+<td align="left"><code>httpHookAllowedEnvVars</code></td>
+<td align="left">HTTP hooks 可能插入到标头中的环境变量名称的允许列表。设置后，每个 hook 的有效 <code>allowedEnvVars</code> 是与此列表的交集。未定义 &#x3D; 无限制。数组跨设置源合并。请参阅 <a href="#hook-configuration">Hook 配置</a></td>
+<td align="left"><code>[&quot;MY_TOKEN&quot;, &quot;HOOK_SECRET&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>includeCoAuthoredBy</code></td>
+<td align="left"><strong>已弃用</strong>：改用 <code>attribution</code>。是否在 git 提交和拉取请求中包含 <code>co-authored-by Claude</code> 署名（默认：<code>true</code>）</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>includeGitInstructions</code></td>
+<td align="left">在 Claude 的系统提示中包含内置提交和 PR 工作流说明和 git 状态快照（默认：<code>true</code>）。设置为 <code>false</code> 以删除这两者，例如在使用您自己的 git 工作流 skills 时。<code>CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS</code> 环境变量在设置时优先于此设置</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>language</code></td>
+<td align="left">配置 Claude 的首选响应语言（例如 <code>&quot;japanese&quot;</code>、<code>&quot;spanish&quot;</code>、<code>&quot;french&quot;</code>）。Claude 将默认以此语言响应。也设置<a href="/zh-CN/voice-dictation#change-the-dictation-language">语音听写</a>语言</td>
+<td align="left"><code>&quot;japanese&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>maxSkillDescriptionChars</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.105 *&#x2F;}<a href="/zh-CN/skills#skill-descriptions-are-cut-short">skill 列表</a>中每个 skill 的 <code>description</code> 和 <code>when_to_use</code> 文本组合的字符上限（默认：<code>1536</code>）。超过此长度的文本被截断。提高以保持长描述完整，代价是每轮更多上下文；降低以在 <a href="#available-settings"><code>skillListingBudgetFraction</code></a> 下适应更多 skills。需要 Claude Code v2.1.105 或更高版本</td>
+<td align="left"><code>2048</code></td>
+</tr>
+<tr>
+<td align="left"><code>minimumVersion</code></td>
+<td align="left">防止后台自动更新和 <code>claude update</code> 安装低于此版本的版本。从 <code>&quot;latest&quot;</code> 渠道切换到 <code>&quot;stable&quot;</code> 时通过 <code>/config</code> 提示您保持在当前版本或允许降级。选择保持设置此值。也在<a href="/zh-CN/permissions#managed-settings">managed 设置</a>中有用，以固定组织范围的最低版本</td>
+<td align="left"><code>&quot;2.1.100&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>model</code></td>
+<td align="left">覆盖用于 Claude Code 的默认模型。<code>--model</code> 和 <a href="/zh-CN/model-config#environment-variables"><code>ANTHROPIC_MODEL</code></a> 覆盖此用于一个会话</td>
+<td align="left"><code>&quot;claude-sonnet-4-6&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>modelOverrides</code></td>
+<td align="left">将 Anthropic 模型 ID 映射到特定于提供商的模型 ID，例如 Bedrock 推理配置文件 ARN。每个模型选择器条目在调用提供商 API 时使用其映射值。请参阅<a href="/zh-CN/model-config#override-model-ids-per-version">按版本覆盖模型 ID</a></td>
+<td align="left"><code>{&quot;claude-opus-4-6&quot;: &quot;arn:aws:bedrock:...&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>otelHeadersHelper</code></td>
+<td align="left">生成动态 OpenTelemetry 标头的脚本。在启动时和定期运行。使用 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS</code></a> 设置刷新间隔。请参阅<a href="/zh-CN/monitoring-usage#dynamic-headers">动态标头</a></td>
+<td align="left"><code>/bin/generate_otel_headers.sh</code></td>
+</tr>
+<tr>
+<td align="left"><code>outputStyle</code></td>
+<td align="left">配置输出样式以调整系统提示。请参阅<a href="/zh-CN/output-styles">输出样式文档</a></td>
+<td align="left"><code>&quot;Explanatory&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>parentSettingsBehavior</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.133 *&#x2F;}（仅 Managed 设置）控制由嵌入主机进程（例如 Agent SDK 或 IDE 扩展）以编程方式提供的 managed 设置在同时存在管理员部署的 managed 层时是否应用。<code>&quot;first-wins&quot;</code>：父级提供的设置被丢弃，仅应用管理员层。<code>&quot;merge&quot;</code>：父级提供的设置在管理员层下应用，经过筛选以便它们可以收紧策略但不能放松策略。当未部署管理员层时无效。默认：<code>&quot;first-wins&quot;</code>。需要 Claude Code v2.1.133 或更高版本</td>
+<td align="left"><code>&quot;merge&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>permissions</code></td>
+<td align="left">请参阅下表了解权限的结构。</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>plansDirectory</code></td>
+<td align="left">自定义 Plan Mode 文件的存储位置。路径相对于项目根目录。默认：<code>~/.claude/plans</code></td>
+<td align="left"><code>&quot;./plans&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>pluginSuggestionMarketplaces</code></td>
+<td align="left">（仅 Managed 设置）其插件可以显示为上下文安装建议的市场名称，除了官方市场。建议来自每个插件在其市场条目中的 <code>relevance</code> 声明。名称仅在市场在机器上注册且其注册源也在 managed 设置中声明时才生效，作为该名称的 <code>extraKnownMarketplaces</code> 条目或 <code>strictKnownMarketplaces</code> 的条目。从不同源注册的市场在允许列表名称下被忽略。</td>
+<td align="left"><code>[&quot;acme-corp-plugins&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>pluginTrustMessage</code></td>
+<td align="left">（仅 Managed 设置）在安装前显示的插件信任警告中附加的自定义消息。使用此添加组织特定的上下文，例如确认来自您内部市场的插件已获批准。</td>
+<td align="left"><code>&quot;All plugins from our marketplace are approved by IT&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>policyHelper</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.136 *&#x2F;}管理员部署的可执行文件，在启动时动态计算 managed 设置。仅从 MDM 或系统 <code>managed-settings.json</code> 文件受尊重。请参阅<a href="#compute-managed-settings-with-a-policy-helper">使用策略助手计算 managed 设置</a>。需要 Claude Code v2.1.136 或更高版本</td>
+<td align="left"><code>{&quot;path&quot;: &quot;/usr/local/bin/claude-policy&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>preferredNotifChannel</code></td>
+<td align="left">任务完成和权限提示通知的方法：<code>&quot;auto&quot;</code>、<code>&quot;terminal_bell&quot;</code>、<code>&quot;iterm2&quot;</code>、<code>&quot;iterm2_with_bell&quot;</code>、<code>&quot;kitty&quot;</code>、<code>&quot;ghostty&quot;</code> 或 <code>&quot;notifications_disabled&quot;</code>。默认：<code>&quot;auto&quot;</code>，在 iTerm2、Ghostty 和 Kitty 中发送桌面通知，在其他终端中不执行任何操作。设置 <code>&quot;terminal_bell&quot;</code> 以在任何终端中响铃。在 <code>/config</code> 中显示为<strong>通知</strong>。请参阅<a href="/zh-CN/terminal-config#get-a-terminal-bell-or-notification">获取终端铃声或通知</a></td>
+<td align="left"><code>&quot;terminal_bell&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>prefersReducedMotion</code></td>
+<td align="left">减少或禁用 UI 动画（微调器、闪烁、闪光效果）以实现可访问性</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>prUrlTemplate</code></td>
+<td align="left">PR 徽章的 URL 模板，显示在页脚和工具结果摘要中。替换来自 <code>gh</code> 报告的 PR URL 中的 <code>{host}</code>、<code>{owner}</code>、<code>{repo}</code>、<code>{number}</code> 和 <code>{url}</code>。使用指向内部代码审查工具而不是 <code>github.com</code> 的 PR 链接。不影响 Claude 散文中的 <code>#123</code> 自动链接</td>
+<td align="left"><code>&quot;https://reviews.example.com/{owner}/{repo}/pull/{number}&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>respectGitignore</code></td>
+<td align="left">控制 <code>@</code> 文件选择器是否尊重 <code>.gitignore</code> 模式。当为 <code>true</code>（默认）时，匹配 <code>.gitignore</code> 模式的文件被排除在建议之外</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>showClearContextOnPlanAccept</code></td>
+<td align="left">在 Plan Mode 接受屏幕上显示”清除上下文”选项。默认为 <code>false</code>。设置为 <code>true</code> 以恢复该选项</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>showThinkingSummaries</code></td>
+<td align="left">在交互式会话中显示<a href="/zh-CN/model-config#extended-thinking">扩展思考</a>摘要。未设置或 <code>false</code>（交互模式中的默认值）时，思考块由 API 编辑并显示为折叠的存根。编辑仅改变您看到的内容，而不是模型生成的内容：要减少思考支出，<a href="/zh-CN/model-config#extended-thinking">降低预算或禁用思考</a>。此设置在非交互模式（<code>-p</code>）、Agent SDK 或 IDE 扩展（如 VS Code）中无效</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>showTurnDuration</code></td>
+<td align="left">在响应后显示轮次持续时间消息，例如”Cooked for 1m 6s”。默认：<code>true</code>。在 <code>/config</code> 中显示为<strong>显示轮次持续时间</strong></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>skillListingBudgetFraction</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.105 *&#x2F;}为<a href="/zh-CN/skills#skill-descriptions-are-cut-short">skill 列表</a>预留的模型上下文窗口的分数，Claude 每轮看到（默认：<code>0.01</code> &#x3D; 1%）。当列表超过预算时，最少使用的 skills 的描述被折叠为仅名称，以便 Claude 仍可以调用它们但不会看到原因。提高以保持更多描述可见，代价是每轮更多上下文。<code>/doctor</code> 显示当前截断计数和受影响的 skills。需要 Claude Code v2.1.105 或更高版本</td>
+<td align="left"><code>0.02</code></td>
+</tr>
+<tr>
+<td align="left"><code>skillOverrides</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.129 *&#x2F;}按 skill 名称键入的每个 skill 可见性覆盖。值为 <code>&quot;on&quot;</code>、<code>&quot;name-only&quot;</code>、<code>&quot;user-invocable-only&quot;</code> 或 <code>&quot;off&quot;</code>。让您隐藏或折叠 skill 而无需编辑其 SKILL.md。不适用于插件 skills，这些通过 <code>/plugin</code> 管理。<code>/skills</code> 菜单将这些写入 <code>.claude/settings.local.json</code>。请参阅<a href="/zh-CN/skills#override-skill-visibility-from-settings">从设置覆盖 skill 可见性</a>。需要 Claude Code v2.1.129 或更高版本</td>
+<td align="left"><code>{&quot;legacy-context&quot;: &quot;name-only&quot;, &quot;deploy&quot;: &quot;off&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>skipWebFetchPreflight</code></td>
+<td align="left">跳过<a href="/zh-CN/data-usage#webfetch-domain-safety-check">WebFetch 域安全检查</a>，该检查在获取前将每个请求的主机名发送到 <code>api.anthropic.com</code>。在阻止到 Anthropic 的流量的环境中设置为 <code>true</code>，例如 Bedrock、Vertex AI 或 Foundry 部署，具有限制性出站。跳过时，WebFetch 尝试任何 URL 而不咨询阻止列表</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>spinnerTipsEnabled</code></td>
+<td align="left">在 Claude 工作时在微调器中显示提示。设置为 <code>false</code> 以禁用提示（默认：<code>true</code>）</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>spinnerTipsOverride</code></td>
+<td align="left">使用自定义字符串覆盖微调器提示。<code>tips</code>：提示字符串数组。<code>excludeDefault</code>：如果为 <code>true</code>，仅显示自定义提示；如果为 <code>false</code> 或不存在，自定义提示与内置提示合并</td>
+<td align="left"><code>{ &quot;excludeDefault&quot;: true, &quot;tips&quot;: [&quot;Use our internal tool X&quot;] }</code></td>
+</tr>
+<tr>
+<td align="left"><code>spinnerVerbs</code></td>
+<td align="left">自定义在微调器中显示的操作动词。将 <code>mode</code> 设置为 <code>&quot;replace&quot;</code> 以仅使用您的动词，或 <code>&quot;append&quot;</code> 以将它们添加到默认值</td>
+<td align="left"><code>{&quot;mode&quot;: &quot;append&quot;, &quot;verbs&quot;: [&quot;Pondering&quot;, &quot;Crafting&quot;]}</code></td>
+</tr>
+<tr>
+<td align="left"><code>sshConfigs</code></td>
+<td align="left">要在<a href="/zh-CN/desktop#pre-configure-ssh-connections-for-your-team">桌面</a>环境下拉菜单中显示的 SSH 连接。每个条目需要 <code>id</code>、<code>name</code> 和 <code>sshHost</code>；<code>sshPort</code>、<code>sshIdentityFile</code> 和 <code>startDirectory</code> 是可选的。在 managed 设置中设置时，连接对用户是只读的。仅从 managed 和用户设置读取</td>
+<td align="left"><code>[{&quot;id&quot;: &quot;dev-vm&quot;, &quot;name&quot;: &quot;Dev VM&quot;, &quot;sshHost&quot;: &quot;user@dev.example.com&quot;}]</code></td>
+</tr>
+<tr>
+<td align="left"><code>statusLine</code></td>
+<td align="left">配置自定义状态行以显示上下文。请参阅<a href="/zh-CN/statusline"><code>statusLine</code> 文档</a></td>
+<td align="left"><code>{&quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;~/.claude/statusline.sh&quot;}</code></td>
+</tr>
+<tr>
+<td align="left"><code>strictKnownMarketplaces</code></td>
+<td align="left">（仅 Managed 设置）插件市场源的允许列表。未定义 &#x3D; 无限制，空数组 &#x3D; 锁定。在市场添加和插件安装、更新、刷新和自动更新时强制执行，因此在设置策略之前添加的市场无法用于获取插件。请参阅 <a href="/zh-CN/plugin-marketplaces#managed-marketplace-restrictions">Managed 市场限制</a></td>
+<td align="left"><code>[{ &quot;source&quot;: &quot;github&quot;, &quot;repo&quot;: &quot;acme-corp/plugins&quot; }]</code></td>
+</tr>
+<tr>
+<td align="left"><code>strictPluginOnlyCustomization</code></td>
+<td align="left">（仅 Managed 设置）阻止 skills、agents、hooks 和 MCP servers 来自用户和项目源，因此它们只能来自插件或 managed 设置。<code>true</code> 锁定所有四个表面；数组仅锁定命名的表面。请参阅 <a href="#strictpluginonlycustomization"><code>strictPluginOnlyCustomization</code></a></td>
+<td align="left"><code>[&quot;skills&quot;, &quot;hooks&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>syntaxHighlightingDisabled</code></td>
+<td align="left">禁用 diffs、代码块和文件预览中的语法高亮</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>teammateMode</code></td>
+<td align="left"><a href="/zh-CN/agent-teams">agent team</a> 队友的显示方式：<code>auto</code>（在 tmux 或 iTerm2 中选择分割窗格，否则进程内）、<code>in-process</code> 或 <code>tmux</code>。<code>--teammate-mode</code> 覆盖此用于一个会话。请参阅<a href="/zh-CN/agent-teams#choose-a-display-mode">选择显示模式</a></td>
+<td align="left"><code>&quot;in-process&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>terminalProgressBarEnabled</code></td>
+<td align="left">在支持的终端中显示终端进度条：ConEmu、Ghostty 1.2.0+ 和 iTerm2 3.6.6+。默认：<code>true</code>。在 <code>/config</code> 中显示为<strong>终端进度条</strong></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>tui</code></td>
+<td align="left">终端 UI 渲染器。使用 <code>&quot;fullscreen&quot;</code> 获取无闪烁的<a href="/zh-CN/fullscreen">替代屏幕渲染器</a>，具有虚拟化滚动条。使用 <code>&quot;default&quot;</code> 获取经典主屏幕渲染器。通过 <code>/tui</code> 设置。您也可以设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_NO_FLICKER</code></a> 环境变量</td>
+<td align="left"><code>&quot;fullscreen&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>ultracode</code></td>
+<td align="left">为会话打开 <a href="/zh-CN/workflows#let-claude-decide-with-ultracode">ultracode</a>。仅限会话，不从 <code>settings.json</code> 读取。通过 <code>/effort ultracode</code>、<code>--settings</code> 或 Agent SDK 控制请求设置</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>useAutoModeDuringPlan</code></td>
+<td align="left">Plan Mode 在自动模式可用时是否使用自动模式语义。默认：<code>true</code>。不从共享项目设置读取。在 <code>/config</code> 中显示为”在计划期间使用自动模式”</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>viewMode</code></td>
+<td align="left">启动时的默认记录视图模式：<code>&quot;default&quot;</code>、<code>&quot;verbose&quot;</code> 或 <code>&quot;focus&quot;</code>。设置时覆盖粘性 <code>/focus</code> 选择。<code>--verbose</code> 标志覆盖此用于一个会话</td>
+<td align="left"><code>&quot;verbose&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>voice</code></td>
+<td align="left"><a href="/zh-CN/voice-dictation">语音听写</a>设置：<code>enabled</code> 打开听写，<code>mode</code> 选择 <code>&quot;hold&quot;</code> 或 <code>&quot;tap&quot;</code>，<code>autoSubmit</code> 在保持模式下按键释放时发送提示。当您运行 <code>/voice</code> 时自动写入。需要 Claude.ai 账户</td>
+<td align="left"><code>{ &quot;enabled&quot;: true, &quot;mode&quot;: &quot;tap&quot; }</code></td>
+</tr>
+<tr>
+<td align="left"><code>voiceEnabled</code></td>
+<td align="left"><code>voice.enabled</code> 的旧别名。优先使用 <code>voice</code> 对象</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>workflowKeywordTriggerEnabled</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.157 <em>&#x2F;}提示中的单词 <code>ultracode</code> 是否触发<a href="/zh-CN/workflows#ask-for-a-workflow-in-your-prompt">动态工作流</a>。设置为 <code>false</code> 以键入单词而不触发一个。Ultracode 努力设置、<code>/workflows</code> 和保存的工作流命令不受影响。默认：<code>true</code>。在 <code>/config</code> 中显示为*<em>Ultracode 关键字触发</em></em>。在 v2.1.157 中添加；在 v2.1.160 之前触发关键字是 <code>workflow</code></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>wslInheritsWindowsSettings</code></td>
+<td align="left">（仅 Windows managed 设置）当为 <code>true</code> 时，WSL 上的 Claude Code 除了 <code>/etc/claude-code</code> 外还从 Windows 策略链读取 managed 设置，Windows 源优先。仅在 HKLM 注册表项或 <code>C:\Program Files\ClaudeCode\managed-settings.json</code> 中设置时被尊重，两者都需要 Windows 管理员权限才能写入。为了让 HKCU 策略也在 WSL 上应用，该标志还必须在 HKCU 本身中设置。对本机 Windows 无效</td>
+<td align="left"><code>true</code></td>
+</tr>
+</tbody></table>
+<h3 id="全局配置设置"><a href="#全局配置设置" class="headerlink" title="全局配置设置"></a>全局配置设置</h3><p>这些设置存储在 <code>~/.claude.json</code> 中，而不是 <code>settings.json</code>。将它们添加到 <code>settings.json</code> 将触发架构验证错误。</p>
+<Note>
+  v2.1.119 之前的版本也在此处而不是在 `settings.json` 中存储 `autoScrollEnabled`、`editorMode`、`showTurnDuration`、`teammateMode` 和 `terminalProgressBarEnabled`。
+</Note>
+
+<table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>autoConnectIde</code></td>
+<td align="left">当 Claude Code 从外部终端启动时自动连接到运行的 IDE。默认：<code>false</code>。在 VS Code 或 JetBrains 终端外运行时在 <code>/config</code> 中显示为<strong>自动连接到 IDE（外部终端）</strong></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoInstallIdeExtension</code></td>
+<td align="left">从 VS Code 终端运行时自动安装 Claude Code IDE 扩展。默认：<code>true</code>。在 VS Code 或 JetBrains 终端内运行时在 <code>/config</code> 中显示为<strong>自动安装 IDE 扩展</strong>。您也可以设置 <a href="/zh-CN/env-vars"><code>CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL</code></a> 环境变量</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>externalEditorContext</code></td>
+<td align="left">当您使用 <code>Ctrl+G</code> 打开外部编辑器时，将 Claude 的上一个响应作为 <code>#</code> 注释上下文前置。默认：<code>false</code>。在 <code>/config</code> 中显示为<strong>在外部编辑器中显示最后响应</strong></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>teammateDefaultModel</code></td>
+<td align="left"><a href="/zh-CN/agent-teams">agent team</a> 队友的默认模型，当生成提示未指定时。设置为模型别名（如 <code>&quot;sonnet&quot;</code>），或 <code>null</code> 以继承主导的当前 <code>/model</code> 选择。在 <code>/config</code> 中显示为<strong>默认队友模型</strong></td>
+<td align="left"><code>&quot;sonnet&quot;</code></td>
+</tr>
+</tbody></table>
+<h3 id="Worktree-设置"><a href="#Worktree-设置" class="headerlink" title="Worktree 设置"></a>Worktree 设置</h3><p>配置 <code>--worktree</code> 如何创建和管理 git worktrees。</p>
+<table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>worktree.baseRef</code></td>
+<td align="left">新 worktrees 分支的参考。<code>&quot;fresh&quot;</code>（默认）从 <code>origin/&lt;default-branch&gt;</code> 分支以获得与远程匹配的干净树。<code>&quot;head&quot;</code> 从您当前的本地 <code>HEAD</code> 分支，因此未推送的提交和特性分支状态存在于 worktree 中。适用于 <code>--worktree</code>、<code>EnterWorktree</code> 工具和 subagent 隔离</td>
+<td align="left"><code>&quot;head&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>worktree.symlinkDirectories</code></td>
+<td align="left">要从主存储库符号链接到每个 worktree 的目录，以避免在磁盘上复制大型目录。默认情况下不符号链接任何目录</td>
+<td align="left"><code>[&quot;node_modules&quot;, &quot;.cache&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>worktree.sparsePaths</code></td>
+<td align="left">通过 git sparse-checkout 在每个 worktree 中检出的目录。仅将列出的目录加上根级文件写入磁盘，在大型 monorepos 中更快</td>
+<td align="left"><code>[&quot;packages/my-app&quot;, &quot;shared/utils&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>worktree.bgIsolation</code></td>
+<td align="left">{&#x2F;* min-version: 2.1.143 *&#x2F;}<a href="/zh-CN/agent-view#how-file-edits-are-isolated">后台会话</a>的隔离模式。<code>&quot;worktree&quot;</code>（默认）在调用 <code>EnterWorktree</code> 之前阻止主检出中的 <code>Edit</code>&#x2F;<code>Write</code>。<code>&quot;none&quot;</code> 让后台作业直接编辑工作副本。需要 Claude Code v2.1.143 或更高版本</td>
+<td align="left"><code>&quot;none&quot;</code></td>
+</tr>
+</tbody></table>
+<p>要将 gitignored 文件（如 <code>.env</code>）复制到新的 worktrees，请在项目根目录中使用 <a href="/zh-CN/worktrees#copy-gitignored-files-into-worktrees"><code>.worktreeinclude</code> 文件</a>，而不是设置。</p>
+<h3 id="权限设置"><a href="#权限设置" class="headerlink" title="权限设置"></a>权限设置</h3><table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>allow</code></td>
+<td align="left">允许工具使用的权限规则数组。请参阅下面的<a href="#permission-rule-syntax">权限规则语法</a>了解模式匹配详情</td>
+<td align="left"><code>[ &quot;Bash(git diff *)&quot; ]</code></td>
+</tr>
+<tr>
+<td align="left"><code>ask</code></td>
+<td align="left">在工具使用时要求确认的权限规则数组。请参阅下面的<a href="#permission-rule-syntax">权限规则语法</a></td>
+<td align="left"><code>[ &quot;Bash(git push *)&quot; ]</code></td>
+</tr>
+<tr>
+<td align="left"><code>deny</code></td>
+<td align="left">拒绝工具使用的权限规则数组。使用此排除敏感文件不被 Claude Code 访问。请参阅<a href="#permission-rule-syntax">权限规则语法</a>和 <a href="/zh-CN/permissions#tool-specific-permission-rules">Bash 权限限制</a></td>
+<td align="left"><code>[ &quot;WebFetch&quot;, &quot;Bash(curl *)&quot;, &quot;Read(./.env)&quot;, &quot;Read(./secrets/**)&quot; ]</code></td>
+</tr>
+<tr>
+<td align="left"><code>additionalDirectories</code></td>
+<td align="left">Claude 有权访问的额外<a href="/zh-CN/permissions#working-directories">工作目录</a>。大多数 <code>.claude/</code> 配置<a href="/zh-CN/permissions#additional-directories-grant-file-access-not-configuration">未从这些目录发现</a></td>
+<td align="left"><code>[ &quot;../docs/&quot; ]</code></td>
+</tr>
+<tr>
+<td align="left"><code>defaultMode</code></td>
+<td align="left">打开 Claude Code 时的默认<a href="/zh-CN/permission-modes">权限模式</a>。有效值：<code>default</code>、<code>acceptEdits</code>、<code>plan</code>、<code>auto</code>、<code>dontAsk</code>、<code>bypassPermissions</code>。{&#x2F;* min-version: 2.1.142 *&#x2F;}从 Claude Code v2.1.142 开始，当在项目或本地设置（<code>.claude/settings.json</code>、<code>.claude/settings.local.json</code>）中设置时，<code>auto</code> 被忽略，因此存储库无法授予自己自动模式。改为在 <code>~/.claude/settings.json</code> 中设置它。<code>--permission-mode</code> CLI 标志覆盖此设置用于单个会话</td>
+<td align="left"><code>&quot;acceptEdits&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>disableBypassPermissionsMode</code></td>
+<td align="left">设置为 <code>&quot;disable&quot;</code> 以防止激活 <code>bypassPermissions</code> 模式。禁用 <code>--dangerously-skip-permissions</code> 标志。在<a href="/zh-CN/permissions#managed-settings">managed 设置</a>中最有用，用户无法覆盖它</td>
+<td align="left"><code>&quot;disable&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><code>skipDangerousModePermissionPrompt</code></td>
+<td align="left">跳过通过 <code>--dangerously-skip-permissions</code> 或 <code>defaultMode: &quot;bypassPermissions&quot;</code> 进入 bypass permissions 模式前显示的确认提示。在项目设置（<code>.claude/settings.json</code>）中设置时被忽略，以防止不受信任的存储库自动绕过提示</td>
+<td align="left"><code>true</code></td>
+</tr>
+</tbody></table>
+<h3 id="权限规则语法"><a href="#权限规则语法" class="headerlink" title="权限规则语法"></a>权限规则语法</h3><p>权限规则遵循 <code>Tool</code> 或 <code>Tool(specifier)</code> 的格式。规则按顺序评估：首先是拒绝规则，然后是询问，最后是允许。第一个匹配的规则获胜。</p>
+<p>快速示例：</p>
+<table>
+<thead>
+<tr>
+<th align="left">规则</th>
+<th align="left">效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Bash</code></td>
+<td align="left">匹配所有 Bash 命令</td>
+</tr>
+<tr>
+<td align="left"><code>Bash(npm run *)</code></td>
+<td align="left">匹配以 <code>npm run</code> 开头的命令</td>
+</tr>
+<tr>
+<td align="left"><code>Read(./.env)</code></td>
+<td align="left">匹配读取 <code>.env</code> 文件</td>
+</tr>
+<tr>
+<td align="left"><code>WebFetch(domain:example.com)</code></td>
+<td align="left">匹配对 example.com 的获取请求</td>
+</tr>
+</tbody></table>
+<p>有关完整的规则语法参考，包括通配符行为、Read、Edit、WebFetch、MCP 和 Agent 规则的工具特定模式，以及 Bash 模式的安全限制，请参阅<a href="/zh-CN/permissions#permission-rule-syntax">权限规则语法</a>。</p>
+<h3 id="Sandbox-设置"><a href="#Sandbox-设置" class="headerlink" title="Sandbox 设置"></a>Sandbox 设置</h3><p>配置高级 sandboxing 行为。Sandboxing 将 bash 命令与您的文件系统和网络隔离。请参阅 <a href="/zh-CN/sandboxing">Sandboxing</a> 了解详情。</p>
+<table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>enabled</code></td>
+<td align="left">启用 bash sandboxing（macOS、Linux 和 WSL2）。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>failIfUnavailable</code></td>
+<td align="left">如果 <code>sandbox.enabled</code> 为 true 但 sandbox 无法启动（缺少依赖项或不支持的平台），则在启动时以错误退出。当为 false（默认）时，显示警告，命令无 sandbox 运行。用于需要 sandboxing 作为硬门的 managed 设置部署</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoAllowBashIfSandboxed</code></td>
+<td align="left">当 sandboxed 时自动批准 bash 命令。默认：true</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>excludedCommands</code></td>
+<td align="left">应在 sandbox 外运行的命令</td>
+<td align="left"><code>[&quot;docker *&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowUnsandboxedCommands</code></td>
+<td align="left">允许命令通过 <code>dangerouslyDisableSandbox</code> 参数在 sandbox 外运行。当设置为 <code>false</code> 时，<code>dangerouslyDisableSandbox</code> 逃生舱口完全禁用，所有命令必须 sandboxed（或在 <code>excludedCommands</code> 中）。对于需要严格 sandboxing 的企业策略很有用。默认：true</td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>filesystem.allowWrite</code></td>
+<td align="left">sandboxed 命令可以写入的额外路径。数组跨所有设置作用域合并：用户、项目和 managed 路径组合，不替换。也与 <code>Edit(...)</code> 允许权限规则中的路径合并。请参阅下面的<a href="#sandbox-path-prefixes">路径前缀</a>。</td>
+<td align="left"><code>[&quot;/tmp/build&quot;, &quot;~/.kube&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>filesystem.denyWrite</code></td>
+<td align="left">sandboxed 命令无法写入的路径。数组跨所有设置作用域合并。也与 <code>Edit(...)</code> 拒绝权限规则中的路径合并。</td>
+<td align="left"><code>[&quot;/etc&quot;, &quot;/usr/local/bin&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>filesystem.denyRead</code></td>
+<td align="left">sandboxed 命令无法读取的路径。数组跨所有设置作用域合并。也与 <code>Read(...)</code> 拒绝权限规则中的路径合并。</td>
+<td align="left"><code>[&quot;~/.aws/credentials&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>filesystem.allowRead</code></td>
+<td align="left">在 <code>denyRead</code> 区域内重新允许读取的路径。优先于 <code>denyRead</code>。数组跨所有设置作用域合并。使用此创建仅工作区读取访问模式。</td>
+<td align="left"><code>[&quot;.&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>filesystem.allowManagedReadPathsOnly</code></td>
+<td align="left">（仅 Managed 设置）仅尊重来自 managed 设置的 <code>filesystem.allowRead</code> 路径。<code>denyRead</code> 仍从所有源合并。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowUnixSockets</code></td>
+<td align="left">（仅 macOS）sandbox 中可访问的 Unix socket 路径。在 Linux 和 WSL2 上被忽略，其中 seccomp 过滤器无法检查 socket 路径；改用 <code>allowAllUnixSockets</code>。</td>
+<td align="left"><code>[&quot;~/.ssh/agent-socket&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowAllUnixSockets</code></td>
+<td align="left">允许 sandbox 中的所有 Unix socket 连接。在 Linux 和 WSL2 上这是允许 Unix sockets 的唯一方式，因为它跳过了 seccomp 过滤器，否则会阻止 <code>socket(AF_UNIX, ...)</code> 调用。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowLocalBinding</code></td>
+<td align="left">允许绑定到 localhost 端口（仅 macOS）。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowMachLookup</code></td>
+<td align="left">sandbox 可能查找的额外 XPC&#x2F;Mach 服务名称（仅 macOS）。支持单个尾部 <code>*</code> 用于前缀匹配。对于通过 XPC 通信的工具（如 iOS 模拟器或 Playwright）是必需的。</td>
+<td align="left"><code>[&quot;com.apple.coresimulator.*&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowedDomains</code></td>
+<td align="left">允许出站网络流量的域数组。支持通配符（例如 <code>*.example.com</code>）。</td>
+<td align="left"><code>[&quot;github.com&quot;, &quot;*.npmjs.org&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.deniedDomains</code></td>
+<td align="left">阻止出站网络流量的域数组。支持与 <code>allowedDomains</code> 相同的通配符语法。当两者都匹配时优先于 <code>allowedDomains</code>。无论 <code>allowManagedDomainsOnly</code> 如何，都从所有设置源合并。</td>
+<td align="left"><code>[&quot;sensitive.cloud.example.com&quot;]</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.allowManagedDomainsOnly</code></td>
+<td align="left">（仅 Managed 设置）仅尊重来自 managed 设置的 <code>allowedDomains</code> 和 <code>WebFetch(domain:...)</code> 允许规则。来自用户、项目和本地设置的域被忽略。非允许的域自动被阻止，不提示用户。拒绝的域仍从所有源受尊重。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.httpProxyPort</code></td>
+<td align="left">如果您想自带代理，使用的 HTTP 代理端口。如果未指定，Claude 将运行自己的代理。</td>
+<td align="left"><code>8080</code></td>
+</tr>
+<tr>
+<td align="left"><code>network.socksProxyPort</code></td>
+<td align="left">如果您想自带代理，使用的 SOCKS5 代理端口。如果未指定，Claude 将运行自己的代理。</td>
+<td align="left"><code>8081</code></td>
+</tr>
+<tr>
+<td align="left"><code>enableWeakerNestedSandbox</code></td>
+<td align="left">为无特权 Docker 环境启用较弱的 sandbox（仅 Linux 和 WSL2）。<strong>降低安全性。</strong> 默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>enableWeakerNetworkIsolation</code></td>
+<td align="left">（仅 macOS）允许在 sandbox 中访问系统 TLS 信任服务（<code>com.apple.trustd.agent</code>）。对于 Go 基础工具（如 <code>gh</code>、<code>gcloud</code> 和 <code>terraform</code>）在使用 <code>httpProxyPort</code> 与 MITM 代理和自定义 CA 时验证 TLS 证书是必需的。<strong>通过打开潜在的数据泄露路径降低安全性</strong>。默认：false</td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>bwrapPath</code></td>
+<td align="left">（仅 Managed 设置，Linux&#x2F;WSL2）bubblewrap (<code>bwrap</code>) 二进制文件的绝对路径。覆盖通过 <code>PATH</code> 的自动检测。仅从 <a href="/zh-CN/settings#settings-precedence">managed 设置</a>受尊重，不从用户或项目设置。在 managed 环境中 <code>bwrap</code> 安装在非标准位置时很有用。</td>
+<td align="left"><code>/opt/admin/bwrap</code></td>
+</tr>
+<tr>
+<td align="left"><code>socatPath</code></td>
+<td align="left">（仅 Managed 设置，Linux&#x2F;WSL2）用于 sandbox 网络代理的 <code>socat</code> 二进制文件的绝对路径。覆盖通过 <code>PATH</code> 的自动检测。仅从 managed 设置受尊重。</td>
+<td align="left"><code>/opt/admin/socat</code></td>
+</tr>
+</tbody></table>
+<h4 id="Sandbox-路径前缀"><a href="#Sandbox-路径前缀" class="headerlink" title="Sandbox 路径前缀"></a>Sandbox 路径前缀</h4><p><code>filesystem.allowWrite</code>、<code>filesystem.denyWrite</code>、<code>filesystem.denyRead</code> 和 <code>filesystem.allowRead</code> 中的路径支持这些前缀：</p>
+<table>
+<thead>
+<tr>
+<th align="left">前缀</th>
+<th align="left">含义</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>/</code></td>
+<td align="left">从文件系统根目录的绝对路径</td>
+<td align="left"><code>/tmp/build</code> 保持 <code>/tmp/build</code></td>
+</tr>
+<tr>
+<td align="left"><code>~/</code></td>
+<td align="left">相对于主目录</td>
+<td align="left"><code>~/.kube</code> 变为 <code>$HOME/.kube</code></td>
+</tr>
+<tr>
+<td align="left"><code>./</code> 或无前缀</td>
+<td align="left">相对于项目设置的项目根目录，或相对于用户设置的 <code>~/.claude</code></td>
+<td align="left"><code>./output</code> 在 <code>.claude/settings.json</code> 中解析为 <code>&lt;project-root&gt;/output</code></td>
+</tr>
+</tbody></table>
+<p>较旧的 <code>//path</code> 前缀用于绝对路径仍然有效。如果您之前使用单斜杠 <code>/path</code> 期望项目相对解析，请切换到 <code>./path</code>。此语法与<a href="/zh-CN/permissions#read-and-edit">读取和编辑权限规则</a>不同，后者使用 <code>//path</code> 用于绝对和 <code>/path</code> 用于项目相对。Sandbox 文件系统路径使用标准约定：<code>/tmp/build</code> 是绝对路径。</p>
+<p><strong>配置示例：</strong></p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;sandbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;autoAllowBashIfSandboxed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;excludedCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;docker *&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;filesystem&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;allowWrite&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/tmp/build&quot;</span><span class="punctuation">,</span> <span class="string">&quot;~/.kube&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;denyRead&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;~/.aws/credentials&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;network&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;allowedDomains&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;github.com&quot;</span><span class="punctuation">,</span> <span class="string">&quot;*.npmjs.org&quot;</span><span class="punctuation">,</span> <span class="string">&quot;registry.yarnpkg.com&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;deniedDomains&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;uploads.github.com&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;allowUnixSockets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;/var/run/docker.sock&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;allowLocalBinding&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>文件系统和网络限制</strong>可以通过两种合并在一起的方式配置：</p>
+<ul>
+<li><strong><code>sandbox.filesystem</code> 设置</strong>（如上所示）：在 OS 级 sandbox 边界处控制路径。这些限制适用于所有子进程命令（例如 <code>kubectl</code>、<code>terraform</code>、<code>npm</code>），而不仅仅是 Claude 的文件工具。</li>
+<li><strong>权限规则</strong>：使用 <code>Edit</code> 允许&#x2F;拒绝规则控制 Claude 的文件工具访问，<code>Read</code> 拒绝规则阻止读取，<code>WebFetch</code> 允许&#x2F;拒绝规则控制网络域。这些规则中的路径也合并到 sandbox 配置中。</li>
+</ul>
+<h3 id="归属设置"><a href="#归属设置" class="headerlink" title="归属设置"></a>归属设置</h3><p>Claude Code 为 git 提交和拉取请求添加归属。这些分别配置：</p>
+<ul>
+<li>提交默认使用 <a target="_blank" rel="noopener" href="https://git-scm.com/docs/git-interpret-trailers">git trailers</a>（如 <code>Co-Authored-By</code>），可以自定义或禁用</li>
+<li>拉取请求描述是纯文本</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">键</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>commit</code></td>
+<td align="left">git 提交的归属，包括任何 trailers。空字符串隐藏提交归属</td>
+</tr>
+<tr>
+<td align="left"><code>pr</code></td>
+<td align="left">拉取请求描述的归属。空字符串隐藏拉取请求归属</td>
+</tr>
+</tbody></table>
+<p><strong>默认提交归属：</strong></p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">🤖 Generated with [Claude Code](https://claude.com/claude-code)</span><br><span class="line"></span><br><span class="line">   Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>默认拉取请求归属：</strong></p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">🤖 Generated with [Claude Code](https://claude.com/claude-code)</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例：</strong></p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;attribution&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;commit&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Generated with AI\n\nCo-Authored-By: AI &lt;ai@example.com&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;pr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<Note>
+  `attribution` 设置优先于已弃用的 `includeCoAuthoredBy` 设置。要隐藏所有归属，将 `commit` 和 `pr` 设置为空字符串。
+</Note>
+
+<h3 id="文件建议设置"><a href="#文件建议设置" class="headerlink" title="文件建议设置"></a>文件建议设置</h3><p>为 <code>@</code> 文件路径自动完成配置自定义命令。内置文件建议使用快速文件系统遍历，但大型 monorepos 可能受益于项目特定的索引，例如预构建的文件索引或自定义工具。</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;fileSuggestion&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;~/.claude/file-suggestion.sh&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>该命令使用与 <a href="/zh-CN/hooks">hooks</a> 相同的环境变量运行，包括 <code>CLAUDE_PROJECT_DIR</code>。它通过 stdin 接收包含 <code>query</code> 字段的 JSON：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;src/comp&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>将换行符分隔的文件路径输出到 stdout（当前限制为 15）：</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">src/components/Button.tsx</span><br><span class="line">src/components/Modal.tsx</span><br><span class="line">src/components/Form.tsx</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例：</strong></p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">query=$(<span class="built_in">cat</span> | jq -r <span class="string">&#x27;.query&#x27;</span>)</span><br><span class="line">your-repo-file-index --query <span class="string">&quot;<span class="variable">$query</span>&quot;</span> | <span class="built_in">head</span> -20</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hook-配置"><a href="#Hook-配置" class="headerlink" title="Hook 配置"></a>Hook 配置</h3><p>这些设置控制允许运行哪些 hooks 以及 HTTP hooks 可以访问什么。<code>allowManagedHooksOnly</code> 设置只能在 <a href="#settings-files">managed 设置</a>中配置。URL 和环境变量允许列表可以在任何设置级别设置并跨源合并。</p>
+<p><strong>当 <code>allowManagedHooksOnly</code> 为 <code>true</code> 时的行为：</strong></p>
+<ul>
+<li>加载 Managed hooks 和 SDK hooks</li>
+<li>从在 managed 设置 <code>enabledPlugins</code> 中强制启用的插件加载 Hooks。这让管理员通过组织市场分发经过审查的 hooks，同时阻止其他所有内容。信任由完整的 <code>plugin@marketplace</code> ID 授予，因此来自不同市场的同名插件保持被阻止</li>
+<li>用户 hooks、项目 hooks 和所有其他插件 hooks 被阻止</li>
+</ul>
+<p><strong>限制 HTTP hook URL：</strong></p>
+<p>限制 HTTP hooks 可以针对的 URL。支持 <code>*</code> 作为匹配的通配符。定义数组后，针对不匹配 URL 的 HTTP hooks 被静默阻止。主机名匹配不区分大小写，忽略尾部 FQDN 点，匹配 DNS 语义。</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;allowedHttpHookUrls&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;https://hooks.example.com/*&quot;</span><span class="punctuation">,</span> <span class="string">&quot;http://localhost:*&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>限制 HTTP hook 环境变量：</strong></p>
+<p>限制 HTTP hooks 可以插入到标头值中的环境变量名称。每个 hook 的有效 <code>allowedEnvVars</code> 是其自己列表与此设置的交集。</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;httpHookAllowedEnvVars&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;MY_TOKEN&quot;</span><span class="punctuation">,</span> <span class="string">&quot;HOOK_SECRET&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用策略助手计算-managed-设置"><a href="#使用策略助手计算-managed-设置" class="headerlink" title="使用策略助手计算 managed 设置"></a>使用策略助手计算 managed 设置</h3><p><code>policyHelper</code> 设置指向一个可执行文件，在启动时动态计算 managed 设置，因此管理员可以从设备状态、身份或远程服务而不是静态文件派生策略。从 MDM 或系统 <code>managed-settings.json</code> 文件配置它。Claude Code 在 <code>policyHelper</code> 出现在任何其他作用域时忽略它，包括用户设置、项目设置、HKCU 注册表配置单元和<a href="/zh-CN/server-managed-settings">服务器管理的设置</a>。</p>
+<p>该设置接受这些键：</p>
+<table>
+<thead>
+<tr>
+<th>键</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>path</code></td>
+<td>string</td>
+<td>助手可执行文件的绝对路径</td>
+</tr>
+<tr>
+<td><code>timeoutMs</code></td>
+<td>number</td>
+<td>在将运行视为失败之前等待助手多长时间</td>
+</tr>
+<tr>
+<td><code>refreshIntervalMs</code></td>
+<td>number</td>
+<td>在后台重新运行助手的频率。设置为 <code>0</code> 以禁用刷新，或至少 <code>60000</code></td>
+</tr>
+</tbody></table>
+<p>助手将 JSON 信封写入 stdout。将设置放在 <code>managedSettings</code> 键下而不是顶级，因为裸设置对象解析时 <code>managedSettings</code> 未定义并应用任何内容：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;managedSettings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;permissions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;deny&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Read(//etc/secrets/**)&quot;</span><span class="punctuation">]</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;claudeMd&quot;</span><span class="punctuation">:</span> <span class="string">&quot;# Organization context\n...&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;appendSystemPrompt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Always cite the internal style guide.&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>当助手发出 <code>managedSettings</code> 时，该对象替换该运行的基于文件的 managed 设置。当助手在启动时以非零状态退出时，Claude Code 打印错误并拒绝启动，因此需要中断恢复的助手应从其自己的缓存提供并以 <code>0</code> 退出。</p>
+<h3 id="设置优先级"><a href="#设置优先级" class="headerlink" title="设置优先级"></a>设置优先级</h3><p>设置按优先级顺序应用。从最高到最低：</p>
+<ol>
+<li><p><strong>Managed 设置</strong>（<a href="/zh-CN/server-managed-settings">服务器管理</a>、<a href="#configuration-scopes">MDM&#x2F;OS 级别策略</a> 或 <a href="/zh-CN/settings#settings-files">managed 设置</a>）</p>
+<ul>
+<li>由 IT 通过服务器交付、MDM 配置文件、注册表策略或 managed 设置文件部署的策略</li>
+<li>无法被任何其他级别覆盖，包括命令行参数</li>
+<li>在 managed 层内，优先级为：server-managed &gt; MDM&#x2F;OS 级别策略 &gt; 基于文件（<code>managed-settings.d/*.json</code> + <code>managed-settings.json</code>）&gt; HKCU 注册表（仅 Windows）。仅使用一个 managed 源；源不合并跨层。在基于文件的层内，放入文件和基础文件被合并在一起。</li>
+<li>嵌入主机（如 Claude Desktop）可以通过 SDK <code>managedSettings</code> 选项提供策略。默认情况下，当存在任何 managed-settings 层时，这被忽略。管理员可以通过将 <a href="#available-settings"><code>parentSettingsBehavior</code></a> 设置为 <code>&quot;merge&quot;</code> 来选择加入。嵌入器的值被筛选，以便它们可以收紧 managed 策略但不能放松它。</li>
+</ul>
+</li>
+<li><p><strong>命令行参数</strong></p>
+<ul>
+<li>特定会话的临时覆盖。通过 <code>--settings &lt;file-or-json&gt;</code> 传递的 JSON 使用与其他层相同的规则与基于文件的设置合并：此处设置的键覆盖本地、项目或用户设置中的相同键，省略键会保留较低层的值</li>
+</ul>
+</li>
+<li><p><strong>本地项目设置</strong>（<code>.claude/settings.local.json</code>）</p>
+<ul>
+<li>个人项目特定设置</li>
+</ul>
+</li>
+<li><p><strong>共享项目设置</strong>（<code>.claude/settings.json</code>）</p>
+<ul>
+<li>源代码管理中的团队共享项目设置</li>
+</ul>
+</li>
+<li><p><strong>用户设置</strong>（<code>~/.claude/settings.json</code>）</p>
+<ul>
+<li>个人全局设置</li>
+</ul>
+</li>
+</ol>
+<p>此层次结构确保组织策略始终被强制执行，同时仍允许团队和个人自定义其体验。无论您从 CLI、<a href="/zh-CN/vs-code">VS Code 扩展</a> 还是 <a href="/zh-CN/jetbrains">JetBrains IDE</a> 运行 Claude Code，相同的优先级都适用。</p>
+<p>例如，如果您的用户设置允许 <code>Bash(npm run *)</code>，但项目的共享设置拒绝它，则项目设置优先，命令被阻止。</p>
+<Note>
+  **数组设置跨作用域合并。** 当相同的数组值设置（例如 `sandbox.filesystem.allowWrite` 或 `permissions.allow`）出现在多个作用域中时，数组被**连接和去重**，而不是替换。这意味着较低优先级的作用域可以添加条目而不覆盖由较高优先级作用域设置的条目，反之亦然。例如，如果 managed 设置将 `allowWrite` 设置为 `["/opt/company-tools"]`，用户添加 `["~/.kube"]`，则最终配置中包含两个路径。
+</Note>
+
+<h3 id="验证活跃设置"><a href="#验证活跃设置" class="headerlink" title="验证活跃设置"></a>验证活跃设置</h3><p>在 Claude Code 中运行 <code>/status</code> 以查看哪些设置源处于活跃状态。状态选项卡包含一条 <code>Setting sources</code> 行，列出 Claude Code 为当前会话加载的每一层，例如 <code>User settings</code> 或 <code>Project local settings</code>。当<a href="/zh-CN/managed-settings">managed 设置</a>生效时，该条目在括号中显示交付渠道，例如 <code>Enterprise managed settings (remote)</code>、<code>(plist)</code>、<code>(HKLM)</code>、<code>(HKCU)</code> 或 <code>(file)</code>。仅当该源至少加载一个键时，该层才出现在列表中，因此空列表意味着未找到任何设置源。</p>
+<p><code>Setting sources</code> 行确认正在读取哪些源。它不显示哪一层提供了每个单独的键。同一对话框中的 Config 选项卡是一个固定的切换集合（如主题和详细输出）的编辑器，而不是您的 <code>settings.json</code> 内容的视图。如果设置文件包含错误，例如无效的 JSON 或验证失败的值，<code>/status</code> 会报告问题，以便您可以修复它。</p>
+<h3 id="配置系统的关键点"><a href="#配置系统的关键点" class="headerlink" title="配置系统的关键点"></a>配置系统的关键点</h3><ul>
+<li><strong>内存文件（<code>CLAUDE.md</code>）</strong>：包含 Claude 在启动时加载的说明和上下文</li>
+<li><strong>设置文件（JSON）</strong>：配置权限、环境变量和工具行为</li>
+<li><strong>Skills</strong>：可以使用 <code>/skill-name</code> 调用或由 Claude 自动加载的自定义提示</li>
+<li><strong>MCP servers</strong>：使用额外的工具和集成扩展 Claude Code</li>
+<li><strong>优先级</strong>：更高级别的配置（Managed）覆盖较低级别的配置（User&#x2F;Project）</li>
+<li><strong>继承</strong>：设置被合并，更具体的设置添加到或覆盖更广泛的设置</li>
+</ul>
+<h3 id="系统提示"><a href="#系统提示" class="headerlink" title="系统提示"></a>系统提示</h3><p>Claude Code 的内部系统提示未发布。要添加自定义说明，请使用 <code>CLAUDE.md</code> 文件或 <code>--append-system-prompt</code> 标志。</p>
+<h3 id="排除敏感文件"><a href="#排除敏感文件" class="headerlink" title="排除敏感文件"></a>排除敏感文件</h3><p>要防止 Claude Code 访问包含敏感信息（如 API 密钥、secrets 和环境文件）的文件，请在您的 <code>.claude/settings.json</code> 文件中使用 <code>permissions.deny</code> 设置：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;permissions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;deny&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;Read(./.env)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./.env.*)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./secrets/**)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./config/credentials.json)&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;Read(./build)&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这替代了已弃用的 <code>ignorePatterns</code> 配置。匹配这些模式的文件被排除在文件发现和搜索结果之外，这些文件上的读取操作被拒绝。</p>
+<h2 id="Subagent-配置"><a href="#Subagent-配置" class="headerlink" title="Subagent 配置"></a>Subagent 配置</h2><p>Claude Code 支持可在用户和项目级别配置的自定义 AI subagents。这些 subagents 存储为带有 YAML frontmatter 的 Markdown 文件：</p>
+<ul>
+<li><strong>用户 subagents</strong>：<code>~/.claude/agents/</code> - 在所有项目中可用</li>
+<li><strong>项目 subagents</strong>：<code>.claude/agents/</code> - 特定于您的项目，可与您的团队共享</li>
+</ul>
+<p>Subagent 文件定义具有自定义提示和工具权限的专门 AI 助手。在 <a href="/zh-CN/sub-agents">subagents 文档</a>中了解有关创建和使用 subagents 的更多信息。</p>
+<h2 id="插件配置"><a href="#插件配置" class="headerlink" title="插件配置"></a>插件配置</h2><p>Claude Code 支持一个插件系统，让您可以使用 skills、agents、hooks 和 MCP servers 扩展功能。插件通过市场分发，可以在用户和存储库级别配置。</p>
+<h3 id="插件设置"><a href="#插件设置" class="headerlink" title="插件设置"></a>插件设置</h3><p><code>settings.json</code> 中的插件相关设置：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;enabledPlugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;formatter@acme-tools&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;deployer@acme-tools&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;analyzer@security-plugins&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;extraKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;acme-tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/claude-plugins&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="enabledPlugins"><a href="#enabledPlugins" class="headerlink" title="enabledPlugins"></a><code>enabledPlugins</code></h4><p>控制启用哪些插件。格式：<code>&quot;plugin-name@marketplace-name&quot;: true/false</code>。没有在任何作用域中有条目的插件会回退到其 <a href="/zh-CN/plugins-reference#default-enablement"><code>defaultEnabled</code></a> 值。</p>
+<p><strong>作用域</strong>：</p>
+<ul>
+<li><strong>用户设置</strong>（<code>~/.claude/settings.json</code>）：个人插件偏好</li>
+<li><strong>项目设置</strong>（<code>.claude/settings.json</code>）：与团队共享的项目特定插件</li>
+<li><strong>本地设置</strong>（<code>.claude/settings.local.json</code>）：每台机器的覆盖（未提交）</li>
+<li><strong>Managed 设置</strong>（<code>managed-settings.json</code>）：组织范围的策略覆盖，在所有作用域中阻止安装并从市场隐藏插件</li>
+</ul>
+<Note>
+  项目设置优先于用户设置，因此在 `~/.claude/settings.json` 中将插件设置为 `false` 不会禁用项目的 `.claude/settings.json` 启用的插件。要在您的机器上选择退出项目启用的插件，请改为在 `.claude/settings.local.json` 中将其设置为 `false`。
+
+<p>  由 managed 设置强制启用的插件无法以这种方式禁用，因为 managed 设置会覆盖本地设置。<br></Note></p>
+<p><strong>示例</strong>：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;enabledPlugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;code-formatter@team-tools&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;deployment-tools@team-tools&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;experimental-features@personal&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="extraKnownMarketplaces"><a href="#extraKnownMarketplaces" class="headerlink" title="extraKnownMarketplaces"></a><code>extraKnownMarketplaces</code></h4><p>定义应为存储库提供的额外市场。通常在存储库级别设置中使用，以确保团队成员有权访问所需的插件源。</p>
+<p><strong>当存储库包含 <code>extraKnownMarketplaces</code> 时</strong>：</p>
+<ol>
+<li>当他们信任文件夹时，团队成员被提示安装市场</li>
+<li>然后团队成员被提示从该市场安装插件</li>
+<li>用户可以跳过不需要的市场或插件（存储在用户设置中）</li>
+<li>安装尊重信任边界并需要明确同意</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;extraKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;acme-tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/claude-plugins&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;security-plugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;git&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://git.example.com/security/plugins.git&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>市场源类型</strong>：</p>
+<ul>
+<li><code>github</code>：GitHub 存储库（使用 <code>repo</code>）</li>
+<li><code>git</code>：任何 git URL（使用 <code>url</code>）</li>
+<li><code>directory</code>：本地文件系统路径（使用 <code>path</code>，仅用于开发）</li>
+<li><code>hostPattern</code>：正则表达式模式以匹配市场主机（使用 <code>hostPattern</code>）</li>
+<li><code>settings</code>：直接在 settings.json 中声明的内联市场，无需单独的托管存储库（使用 <code>name</code> 和 <code>plugins</code>）</li>
+</ul>
+<p>对于 <code>github</code> 和 <code>git</code> 源，在 <code>source</code> 对象内设置 <code>&quot;skipLfs&quot;: true</code>（与 <code>repo</code> 或 <code>url</code> 一起）以在 Claude Code 克隆或更新市场存储库时跳过 Git LFS 下载。LFS 指针文件保持为指针而不是下载其内容。当存储库包含与插件内容无关的大型 LFS 对象时，使用此选项。{&#x2F;* min-version: 2.1.153 *&#x2F;}需要 Claude Code v2.1.153 或更高版本。</p>
+<p>每个市场条目还接受可选的 <code>autoUpdate</code> 布尔值。在 <code>source</code> 旁边设置 <code>&quot;autoUpdate&quot;: true</code> 以使 Claude Code 在启动时刷新该市场并更新其已安装的插件。省略时，官方 Anthropic 市场默认为 <code>true</code>，所有其他市场默认为 <code>false</code>。请参阅<a href="/zh-CN/discover-plugins#configure-auto-updates">配置自动更新</a>。</p>
+<p>使用 <code>source: &#39;settings&#39;</code> 声明一小组插件内联，无需设置托管市场存储库。此处列出的插件必须引用外部源，例如 GitHub 或 npm。您仍需要在 <code>enabledPlugins</code> 中单独启用每个插件。</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;extraKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;team-tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;settings&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;team-tools&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;plugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;code-formatter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/code-formatter&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="strictKnownMarketplaces"><a href="#strictKnownMarketplaces" class="headerlink" title="strictKnownMarketplaces"></a><code>strictKnownMarketplaces</code></h4><p><strong>仅 Managed 设置</strong>：控制用户允许添加和安装插件的插件市场。此设置只能在 <a href="/zh-CN/settings#settings-files">managed 设置</a> 中配置，为管理员提供对市场源的严格控制。</p>
+<p><strong>Managed 设置文件位置</strong>：</p>
+<ul>
+<li><strong>macOS</strong>：<code>/Library/Application Support/ClaudeCode/managed-settings.json</code></li>
+<li><strong>Linux 和 WSL</strong>：<code>/etc/claude-code/managed-settings.json</code></li>
+<li><strong>Windows</strong>：<code>C:\Program Files\ClaudeCode\managed-settings.json</code></li>
+</ul>
+<p><strong>关键特征</strong>：</p>
+<ul>
+<li>仅在 managed 设置（<code>managed-settings.json</code>）中可用</li>
+<li>无法被用户或项目设置覆盖（最高优先级）</li>
+<li>在网络&#x2F;文件系统操作之前强制执行（被阻止的源永远不会执行）</li>
+<li>对源规范使用精确匹配（包括 <code>ref</code>、<code>path</code> 用于 git 源），除了 <code>hostPattern</code> 和 <code>pathPattern</code>，它们使用正则表达式匹配</li>
+</ul>
+<p><strong>允许列表行为</strong>：</p>
+<ul>
+<li><code>undefined</code>（默认）：无限制 - 用户可以添加任何市场</li>
+<li>空数组 <code>[]</code>：完全锁定 - 用户无法添加任何新市场</li>
+<li>源列表：用户只能添加与之完全匹配的市场</li>
+</ul>
+<p><strong>所有支持的源类型</strong>：</p>
+<p>允许列表支持多种市场源类型。大多数源使用精确匹配，而 <code>hostPattern</code> 和 <code>pathPattern</code> 分别使用正则表达式匹配市场主机和文件系统路径。</p>
+<ol>
+<li><strong>GitHub 存储库</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/approved-plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/security-tools&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;v2.0&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;main&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;marketplace&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>repo</code>（必需）、<code>ref</code>（可选：分支&#x2F;标签&#x2F;SHA）、<code>path</code>（可选：子目录）</p>
+<ol start="2">
+<li><strong>Git 存储库</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;git&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://gitlab.example.com/tools/plugins.git&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;git&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://bitbucket.org/acme-corp/plugins.git&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;production&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;git&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ssh://git@git.example.com/plugins.git&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;v3.1&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;approved&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>url</code>（必需）、<code>ref</code>（可选：分支&#x2F;标签&#x2F;SHA）、<code>path</code>（可选：子目录）</p>
+<ol start="3">
+<li><strong>基于 URL 的市场</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;url&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://plugins.example.com/marketplace.json&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;url&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://cdn.example.com/marketplace.json&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;headers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;Authorization&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bearer $&#123;TOKEN&#125;&quot;</span> <span class="punctuation">&#125;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>url</code>（必需）、<code>headers</code>（可选：用于身份验证访问的 HTTP 标头）</p>
+<Note>
+  基于 URL 的市场仅下载 `marketplace.json` 文件。它们不从服务器下载插件文件。基于 URL 的市场中的插件必须使用外部源（GitHub、npm 或 git URL）而不是相对路径。对于具有相对路径的插件，改用基于 Git 的市场。请参阅[故障排除](/zh-CN/plugin-marketplaces#plugins-with-relative-paths-fail-in-url-based-marketplaces)了解详情。
+</Note>
+
+<ol start="4">
+<li><strong>NPM 包</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;package&quot;</span><span class="punctuation">:</span> <span class="string">&quot;@acme-corp/claude-plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;package&quot;</span><span class="punctuation">:</span> <span class="string">&quot;@acme-corp/approved-marketplace&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>package</code>（必需，支持作用域包）</p>
+<ol start="5">
+<li><strong>文件路径</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/usr/local/share/claude/acme-marketplace.json&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/opt/acme-corp/plugins/marketplace.json&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>path</code>（必需：marketplace.json 文件的绝对路径）</p>
+<ol start="6">
+<li><strong>目录路径</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;directory&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/usr/local/share/claude/acme-plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;directory&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/opt/acme-corp/approved-marketplaces&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>path</code>（必需：包含 <code>.claude-plugin/marketplace.json</code> 的目录的绝对路径）</p>
+<ol start="7">
+<li><strong>主机模式匹配</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hostPattern&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;hostPattern&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^github\\.example\\.com$&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hostPattern&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;hostPattern&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^gitlab\\.internal\\.example\\.com$&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>hostPattern</code>（必需：与市场主机匹配的正则表达式模式）</p>
+<p>当您想允许来自特定主机的所有市场而不枚举每个存储库时，使用主机模式匹配。这对于具有内部 GitHub Enterprise 或 GitLab 服务器的组织很有用，开发人员在其中创建自己的市场。</p>
+<p>按源类型的主机提取：</p>
+<ul>
+<li><code>github</code>：始终与 <code>github.com</code> 匹配</li>
+<li><code>git</code>：从 URL 提取主机名（支持 HTTPS 和 SSH 格式）</li>
+<li><code>url</code>：从 URL 提取主机名</li>
+<li><code>npm</code>、<code>file</code>、<code>directory</code>：不支持主机模式匹配</li>
+</ul>
+<ol start="8">
+<li><strong>路径模式匹配</strong>：</li>
+</ol>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;pathPattern&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;pathPattern&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^/opt/approved/&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;pathPattern&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;pathPattern&quot;</span><span class="punctuation">:</span> <span class="string">&quot;.*&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>字段：<code>pathPattern</code>（必需：与 <code>file</code> 和 <code>directory</code> 源的 <code>path</code> 字段匹配的正则表达式模式）</p>
+<p>使用路径模式匹配来允许基于文件系统的市场与网络源的 <code>hostPattern</code> 限制一起使用。设置 <code>&quot;.*&quot;</code> 以允许所有本地路径，或使用更窄的模式来限制特定目录。</p>
+<p><strong>配置示例</strong>：</p>
+<p>示例：仅允许特定市场：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/approved-plugins&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/security-tools&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;v2.0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;url&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://plugins.example.com/marketplace.json&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;package&quot;</span><span class="punctuation">:</span> <span class="string">&quot;@acme-corp/compliance-plugins&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例 - 禁用所有市场添加：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：允许来自内部 git 服务器的所有市场：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hostPattern&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hostPattern&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^github\\.example\\.com$&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>精确匹配要求</strong>：</p>
+<p>市场源必须<strong>精确</strong>匹配才能允许用户的添加。对于基于 git 的源（<code>github</code> 和 <code>git</code>），这包括所有可选字段：</p>
+<ul>
+<li><code>repo</code> 或 <code>url</code> 必须精确匹配</li>
+<li><code>ref</code> 字段必须精确匹配（或两者都未定义）</li>
+<li><code>path</code> 字段必须精确匹配（或两者都未定义）</li>
+</ul>
+<p><strong>不匹配</strong>的源示例：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这些是不同的源：</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="string">&quot;main&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这些也是不同的：</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;marketplace&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>与 <code>extraKnownMarketplaces</code> 的比较</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方面</th>
+<th><code>strictKnownMarketplaces</code></th>
+<th><code>extraKnownMarketplaces</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>目的</strong></td>
+<td>组织策略强制执行</td>
+<td>团队便利</td>
+</tr>
+<tr>
+<td><strong>设置文件</strong></td>
+<td>仅 <code>managed-settings.json</code></td>
+<td>任何设置文件</td>
+</tr>
+<tr>
+<td><strong>行为</strong></td>
+<td>阻止非允许列表的添加</td>
+<td>自动安装缺失的市场</td>
+</tr>
+<tr>
+<td><strong>何时强制执行</strong></td>
+<td>在网络&#x2F;文件系统操作之前</td>
+<td>在用户信任提示之后</td>
+</tr>
+<tr>
+<td><strong>可以被覆盖</strong></td>
+<td>否（最高优先级）</td>
+<td>是（由更高优先级设置）</td>
+</tr>
+<tr>
+<td><strong>源格式</strong></td>
+<td>直接源对象</td>
+<td>具有嵌套源的命名市场</td>
+</tr>
+<tr>
+<td><strong>用例</strong></td>
+<td>合规、安全限制</td>
+<td>入职、标准化</td>
+</tr>
+</tbody></table>
+<p><strong>格式差异</strong>：</p>
+<p><code>strictKnownMarketplaces</code> 使用直接源对象：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>extraKnownMarketplaces</code> 需要命名市场：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;extraKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;acme-tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>同时使用两者</strong>：</p>
+<p><code>strictKnownMarketplaces</code> 是一个策略门：它控制用户可能添加什么，但不注册任何市场。要同时限制和为所有用户预注册市场，请在 <code>managed-settings.json</code> 中设置两者：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;extraKnownMarketplaces&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;acme-tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="string">&quot;github&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;repo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;acme-corp/plugins&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>仅设置 <code>strictKnownMarketplaces</code> 时，用户仍可以通过 <code>/plugin marketplace add</code> 手动添加允许的市场，但它不会自动可用。</p>
+<p><strong>重要说明</strong>：</p>
+<ul>
+<li>限制在任何网络请求或文件系统操作之前检查</li>
+<li>被阻止时，用户看到清晰的错误消息，指示源被 managed 策略阻止</li>
+<li>限制在市场添加和插件安装、更新、刷新和自动更新时强制执行。在策略设置之前添加的市场一旦其源不再与允许列表匹配，就无法用于安装或更新插件</li>
+<li>Managed 设置具有最高优先级，无法被覆盖</li>
+</ul>
+<p>请参阅 <a href="/zh-CN/plugin-marketplaces#managed-marketplace-restrictions">Managed 市场限制</a>了解面向用户的文档。</p>
+<h4 id="strictPluginOnlyCustomization"><a href="#strictPluginOnlyCustomization" class="headerlink" title="strictPluginOnlyCustomization"></a><code>strictPluginOnlyCustomization</code></h4><p><strong>仅 Managed 设置</strong>：阻止 skills、agents、hooks 和 MCP servers 来自用户和项目源，因此它们只能来自插件或 managed 设置。将其与 <code>strictKnownMarketplaces</code> 结合以控制完整的自定义供应链：市场允许列表控制用户可以安装哪些插件，此设置阻止所有不来自插件或 managed 设置的内容。</p>
+<Note>
+  `strictPluginOnlyCustomization` 需要 Claude Code v2.1.82 或更高版本。早期版本忽略该键并继续加载用户和项目自定义，因此锁定在客户端更新之前不会强制执行。
+</Note>
+
+<p>该值要么是 <code>true</code> 以锁定所有四个表面，要么是命名要锁定的表面的数组：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;strictPluginOnlyCustomization&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;skills&quot;</span><span class="punctuation">,</span> <span class="string">&quot;hooks&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于每个锁定的表面，Claude Code 跳过用户级和项目级源，仅加载插件提供的和 managed 源：</p>
+<table>
+<thead>
+<tr>
+<th align="left">表面</th>
+<th align="left">锁定时被阻止</th>
+<th align="left">仍然加载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>skills</code></td>
+<td align="left"><code>~/.claude/skills/</code>、<code>.claude/skills/</code></td>
+<td align="left">插件 skills、捆绑 skills、managed 策略目录中的 skills</td>
+</tr>
+<tr>
+<td align="left"><code>agents</code></td>
+<td align="left"><code>~/.claude/agents/</code>、<code>.claude/agents/</code></td>
+<td align="left">插件 agents、内置 agents、managed 策略目录中的 agents</td>
+</tr>
+<tr>
+<td align="left"><code>hooks</code></td>
+<td align="left">用户、项目和本地 <code>settings.json</code> 中的 hooks</td>
+<td align="left">插件 hooks、managed 设置中的 hooks</td>
+</tr>
+<tr>
+<td align="left"><code>mcp</code></td>
+<td align="left"><code>~/.claude.json</code> 和 <code>.mcp.json</code> 中的服务器</td>
+<td align="left">插件 MCP servers、<a href="/zh-CN/managed-mcp"><code>managed-mcp.json</code></a> 服务器</td>
+</tr>
+</tbody></table>
+<p>Claude Code 版本不识别的表面名称被忽略而不是导致设置文件失败，因此您可以在所有客户端更新之前添加新的表面名称。</p>
+<h3 id="管理插件"><a href="#管理插件" class="headerlink" title="管理插件"></a>管理插件</h3><p>使用 <code>/plugin</code> 命令以交互方式管理插件：</p>
+<ul>
+<li>浏览市场中的可用插件</li>
+<li>安装&#x2F;卸载插件</li>
+<li>启用&#x2F;禁用插件</li>
+<li>查看插件详情（提供的 skills、agents、hooks）</li>
+<li>添加&#x2F;删除市场</li>
+</ul>
+<p>在<a href="/zh-CN/plugins">插件文档</a>中了解有关插件系统的更多信息。</p>
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>环境变量让您可以控制 Claude Code 行为而无需编辑设置文件。任何变量也可以在 <a href="#available-settings"><code>settings.json</code></a> 中的 <code>env</code> 键下配置，以将其应用于每个会话或将其推出到您的团队。</p>
+<p>请参阅<a href="/zh-CN/env-vars">环境变量参考</a>了解完整列表。</p>
+<h2 id="Claude-可用的工具"><a href="#Claude-可用的工具" class="headerlink" title="Claude 可用的工具"></a>Claude 可用的工具</h2><p>Claude Code 可以访问一组用于读取、编辑、搜索、运行命令和编排 subagents 的工具。工具名称是您在权限规则和 hook 匹配器中使用的确切字符串。</p>
+<p>请参阅<a href="/zh-CN/tools-reference">工具参考</a>了解完整列表和 Bash 工具行为详情。</p>
+<h2 id="另请参阅"><a href="#另请参阅" class="headerlink" title="另请参阅"></a>另请参阅</h2><ul>
+<li><a href="/zh-CN/permissions">权限</a>：权限系统、规则语法、工具特定模式和 managed 策略</li>
+<li><a href="/zh-CN/authentication">身份验证</a>：设置用户对 Claude Code 的访问</li>
+<li><a href="/zh-CN/debug-your-config">调试您的配置</a>：诊断为什么设置、hook 或 MCP 服务器没有生效</li>
+<li><a href="/zh-CN/troubleshoot-install">故障排除安装和登录</a>：安装、身份验证和平台问题</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/03/14/settings/">https://hzhzxfs.github.io/2026/03/14/settings/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/15/setup/" title="setup"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">setup</div></div><div class="info-2"><div class="info-item-1">高级设置 Claude Code 的系统要求、特定平台安装、版本管理和卸载。  本页面涵盖系统要求、特定平台安装详情、更新和卸载。有关首次会话的引导式演练，请参阅快速入门。如果您从未使用过终端，请参阅终端指南。 系统要求Claude Code 在以下平台和配置上运行：  操作系统： macOS 13.0+ Windows 10 1809+ 或 Windows Server 2019+ Ubuntu 20.04+ Debian 10+ Alpine Linux 3.19+   硬件：4 GB+ RAM、x64 或 ARM64 处理器 网络：需要互联网连接。请参阅网络配置。 Shell：Bash、Zsh、PowerShell 或 CMD。 位置：Anthropic 支持的国家&#x2F;地区  其他依赖项 ripgrep：通常包含在 Claude Code 中。如果搜索失败，请参阅搜索故障排除。  安装 Claude Code   更喜欢图形界面？[桌面应用](/zh-CN/desktop-quickstart)让您无需使用终端即可使用 Claude Code。下载适用于 [macO...</div></div></div></a><a class="pagination-related" href="/2026/03/13/sessions/" title="sessions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">sessions</div></div><div class="info-2"><div class="info-item-1">管理会话 命名、恢复、分支和在 Claude Code 对话之间切换。涵盖 --continue、--resume、--from-pr、/resume 选择器、会话命名和文本记录存储位置。  会话是与项目目录关联的已保存对话。Claude Code 在您工作时将其本地存储，因此您可以从中断处恢复、分支以尝试不同的方法，或在任务之间切换。 桌面应用、网页版 Claude Code 和 VS Code 扩展各自维护自己的会话历史记录。本页涵盖 CLI：  恢复之前的对话（通过标志、名称或 PR） 命名会话以便稍后查找 使用 /resume 选择器浏览会话 分支对话以尝试不同的方法 导出文本记录并在磁盘上找到它们  恢复会话会话在您工作时持续保存到本地文本记录文件，因此您可以在退出或运行 /clear 后返回到一个会话。使用这些入口点：    命令 功能    claude --continue 恢复当前目录中最近的会话   claude --resume 打开会话选择器   claude --resume &lt;name&gt; 直接恢复命名的会话   claude --from-...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/21/21-Ink%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%BA%A6%E5%AE%9A%E5%88%B6/" title="21-Ink框架深度定制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">21-Ink框架深度定制</div></div><div class="info-2"><div class="info-item-1">第 21 篇：Ink 框架深度定制 — 在终端中运行 React 本篇深入 Claude Code 的 forked Ink 框架（ink/ 目录，约 90 个文件），揭示如何在终端中构建一个完整的 React 渲染引擎：从自定义 Reconciler、Yoga 布局、双缓冲渲染管线，到虚拟滚动、鼠标事件、文本选择等深度定制。  为什么要 Fork Ink？Ink 是一个开源框架，让你在终端中使用 React 组件编写 UI。官方 Ink 适合简单的 CLI 工具 —— 但 Claude Code 不是简单的 CLI。它需要：  全屏模式：Alt Screen 下的完整 UI，不是”追加式”输出 虚拟滚动：对话历史可能有上千行，不能全部渲染 鼠标交互：点击、拖拽选择文本、滚轮滚动 60fps 渲染：流式输出时每 16ms 刷新一帧，不能闪烁 IME 支持：CJK 输入法需要物理光标精确定位  官方 Ink 不支持这些。Claude Code 团队 fork 了 Ink 并进行了大量深度定制，最终形成了一个功能完备的终端 React 渲染引擎。  一、架构全景：从 React 到终...</div></div></div></a><a class="pagination-related" href="/2026/05/09/09-%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="09-工具系统设计"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-09</div><div class="info-item-2">09-工具系统设计</div></div><div class="info-2"><div class="info-item-1">第 9 篇：工具系统设计 — buildTool() 的抽象之美 本篇是《深入 Claude Code 源码》系列的第 9 篇。我们将深入工具系统的核心设计：从 Tool 接口的核心方法，到 buildTool() 的 builder 模式，到 tools.ts 的注册表架构，再到 ToolSearch 的延迟加载机制，揭示一个生产级 AI Agent 如何管理 40+ 个内置工具和无限数量的 MCP 工具。  为什么工具系统是 Agent 的灵魂？一个 AI Agent 与普通 chatbot 的本质区别在于：Agent 能执行动作。当模型决定读取一个文件、运行一条 Shell 命令、或搜索代码时，它依赖的就是工具系统。 Claude Code 拥有 40+ 个内置工具（BashTool、FileReadTool、GlobTool……）和通过 MCP 协议接入的无限数量外部工具。管理这样规模的工具集面临几个核心挑战：  接口一致性：每个工具需要统一的调用、验证、权限检查、UI 渲染协议 安全默认：工具涉及文件系统和 Shell 操作，默认行为必须 fail-closed 条件注...</div></div></div></a><a class="pagination-related" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-24</div><div class="info-item-2">24-Skill-Plugin开发实战</div></div><div class="info-2"><div class="info-item-1">第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点为什么需要理解扩展点？Claude Code 的核心是一个 AI Agent 运行时。但不同团队、不同项目的需求千差万别 —— 有人需要自动化代码审查流程，有人需要集成内部工具链，有人需要约束 Agent 只做特定任务。 Claude Code 提供了四个层级的扩展机制，从轻量到重量依次为： 1Hook 脚本 → Skill 文件 → Agent 定义 → Plugin 包   Hook：在特定事件（工具调用前后、会话开始结束）触发 Shell 命令 Skill：一个 Markdown 文件，定义一段 prompt + 行为约束，模型可以自主调用 Agent：一个 Markdown 文件，定义一个独立的 AI 角色（有自己的 prompt、工具集、模型） Plugin：一个完整的目录包，可以同时提供 Skill、Agent、Hook、MCP 服务器  本篇将逐一解析这四个扩展点的编写方式，并指出它们在源码中是如何被发现、解析和执行的。  一、自定义 Skill 编写1.1 目录结构与发现机制Skil...</div></div></div></a><a class="pagination-related" href="/2026/04/12/computer-use/" title="computer-use"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-12</div><div class="info-item-2">computer-use</div></div><div class="info-2"><div class="info-item-1">让 Claude 从 CLI 使用您的计算机 在 Claude Code CLI 中启用 computer use，使 Claude 能够在 macOS 上打开应用、点击、输入和查看您的屏幕。测试原生应用、调试视觉问题，以及自动化仅限 GUI 的工具，无需离开您的终端。     {/* plan-availability: feature=computer-use plans=pro,max */}    Computer use 是 macOS 上的研究预览版，需要 Pro 或 Max 计划。它在 Team 或 Enterprise 计划上不可用。它需要 Claude Code v2.1.85 或更高版本以及交互式会话，因此在使用 -p 标志的非交互式模式下不可用。 Computer use 让 Claude 能够打开应用、控制您的屏幕，并以您的方式在您的机器上工作。从 CLI 中，Claude 可以编译 Swift 应用、启动它、点击每个按钮，并截图结果，所有这些都在编写代码的同一对话中进行。 本页面介绍 computer use 在 CLI 中的工作原理。对于 macOS ...</div></div></div></a><a class="pagination-related" href="/2026/05/08/08-Thinking-%E4%B8%8E%E6%8E%A8%E7%90%86%E6%8E%A7%E5%88%B6/" title="08-Thinking-与推理控制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-08</div><div class="info-item-2">08-Thinking-与推理控制</div></div><div class="info-2"><div class="info-item-1">第 8 篇：Thinking 与推理控制 — 让模型”想”多少 本篇是《深入 Claude Code 源码》系列的第 8 篇。我们将深入分析 Claude Code 如何精细控制模型的推理深度——从 Extended Thinking 的三种模式、Effort 级别系统、ultrathink 关键词触发，到 Advisor 这一”更强模型审阅”机制。 这些机制共同回答了一个核心问题：在速度、质量和成本之间，如何给用户最大的控制权？  为什么需要推理控制？大语言模型的推理能力不是免费的。当模型”想得更深”时，它消耗更多的 token、花费更多的时间、产生更高的成本。但并非所有任务都需要深度推理——重命名一个变量和重构整个模块的架构，需要的思考量天差地别。 Claude Code 面对的工程挑战是：如何让用户（和系统）灵活地在”快速响应”和”深度思考”之间切换，同时确保不同模型版本的行为一致性？ 源码中围绕这个问题构建了四个相互关联的子系统：  ThinkingConfig — 控制模型是否开启 Extended Thinking 及其模式 Effort — 控制模型的推理努力程度（...</div></div></div></a><a class="pagination-related" href="/2026/03/12/scheduled-tasks/" title="scheduled-tasks"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-12</div><div class="info-item-2">scheduled-tasks</div></div><div class="info-2"><div class="info-item-1">按计划运行提示词 使用 &#x2F;loop 和 cron 调度工具在 Claude Code 会话中重复运行提示词、轮询状态或设置一次性提醒。     计划任务需要 Claude Code v2.1.72 或更高版本。使用 `claude --version` 检查您的版本。   计划任务让 Claude 按间隔自动重新运行提示词。使用它们来轮询部署、监督 PR、检查长时间运行的构建，或在会话中稍后提醒自己做某事。要对事件进行实时反应而不是轮询，请参阅 Channels：您的 CI 可以直接将失败推送到会话中。要保持会话工作转向转向直到满足条件而不是按间隔，请参阅 /goal。 任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 --resume 或 --continue 恢复会带回任何尚未过期的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 Routines 在 Anthropic 管理的基础设施上创建例程、设置 Desktop 计划任务，或使用 GitHub Actions。 比较调度选项Cl...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Claude-Code-%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">Claude Code 设置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.1.</span> <span class="toc-text">配置作用域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%94%A8%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.1.1.</span> <span class="toc-text">可用作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8%E6%AF%8F%E4%B8%AA%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.1.2.</span> <span class="toc-text">何时使用每个作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%A6%82%E4%BD%95%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8"><span class="toc-number">1.1.3.</span> <span class="toc-text">作用域如何相互作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%AA%E4%BA%9B%E5%8A%9F%E8%83%BD%E4%BD%BF%E7%94%A8%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">1.1.4.</span> <span class="toc-text">哪些功能使用作用域</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">设置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E4%BD%95%E6%97%B6%E7%94%9F%E6%95%88"><span class="toc-number">1.2.1.</span> <span class="toc-text">编辑何时生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E7%94%A8%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.2.</span> <span class="toc-text">可用设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">全局配置设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Worktree-%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.4.</span> <span class="toc-text">Worktree 设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.5.</span> <span class="toc-text">权限设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E8%A7%84%E5%88%99%E8%AF%AD%E6%B3%95"><span class="toc-number">1.2.6.</span> <span class="toc-text">权限规则语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sandbox-%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.7.</span> <span class="toc-text">Sandbox 设置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Sandbox-%E8%B7%AF%E5%BE%84%E5%89%8D%E7%BC%80"><span class="toc-number">1.2.7.1.</span> <span class="toc-text">Sandbox 路径前缀</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E5%B1%9E%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.8.</span> <span class="toc-text">归属设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%BB%BA%E8%AE%AE%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.9.</span> <span class="toc-text">文件建议设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hook-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.10.</span> <span class="toc-text">Hook 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%AD%96%E7%95%A5%E5%8A%A9%E6%89%8B%E8%AE%A1%E7%AE%97-managed-%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.11.</span> <span class="toc-text">使用策略助手计算 managed 设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.2.12.</span> <span class="toc-text">设置优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%B4%BB%E8%B7%83%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.13.</span> <span class="toc-text">验证活跃设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E9%94%AE%E7%82%B9"><span class="toc-number">1.2.14.</span> <span class="toc-text">配置系统的关键点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA"><span class="toc-number">1.2.15.</span> <span class="toc-text">系统提示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E9%99%A4%E6%95%8F%E6%84%9F%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.16.</span> <span class="toc-text">排除敏感文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Subagent-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.</span> <span class="toc-text">Subagent 配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">插件配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.4.1.</span> <span class="toc-text">插件设置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#enabledPlugins"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">enabledPlugins</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#extraKnownMarketplaces"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">extraKnownMarketplaces</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#strictKnownMarketplaces"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">strictKnownMarketplaces</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#strictPluginOnlyCustomization"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">strictPluginOnlyCustomization</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E6%8F%92%E4%BB%B6"><span class="toc-number">1.4.2.</span> <span class="toc-text">管理插件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.5.</span> <span class="toc-text">环境变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-%E5%8F%AF%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.</span> <span class="toc-text">Claude 可用的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%A6%E8%AF%B7%E5%8F%82%E9%98%85"><span class="toc-number">1.7.</span> <span class="toc-text">另请参阅</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

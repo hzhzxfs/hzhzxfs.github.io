@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>dotnet-agent-framework | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="🔍 带有 Azure AI Foundry (.NET) 的企业 RAG📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 Azure AI Foundry 构建企业级检索增强生成 (RAG) 系统。您将学习创建可用于搜索文档并提供准确的上下文感知响应以及企业安全性和可扩展性的生产就绪代理。 您将构建的企业 RAG 功能：  📚 文档智">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dotnet-agent-framework">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/09/05/dotnet-agent-framework/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="🔍 带有 Azure AI Foundry (.NET) 的企业 RAG📋 学习目标本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 Azure AI Foundry 构建企业级检索增强生成 (RAG) 系统。您将学习创建可用于搜索文档并提供准确的上下文感知响应以及企业安全性和可扩展性的生产就绪代理。 您将构建的企业 RAG 功能：  📚 文档智">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-09-05T05:09:56.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.506Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "dotnet-agent-framework",
+  "url": "https://hzhzxfs.github.io/2025/09/05/dotnet-agent-framework/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-09-05T05:09:56.000Z",
+  "dateModified": "2026-06-10T02:14:46.506Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/09/05/dotnet-agent-framework/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'dotnet-agent-framework',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">dotnet-agent-framework</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">dotnet-agent-framework</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-05T05:09:56.000Z" title="发表于 2025-09-05 13:09:56">2025-09-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.506Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="🔍-带有-Azure-AI-Foundry-NET-的企业-RAG"><a href="#🔍-带有-Azure-AI-Foundry-NET-的企业-RAG" class="headerlink" title="🔍 带有 Azure AI Foundry (.NET) 的企业 RAG"></a>🔍 带有 Azure AI Foundry (.NET) 的企业 RAG</h1><h2 id="📋-学习目标"><a href="#📋-学习目标" class="headerlink" title="📋 学习目标"></a>📋 学习目标</h2><p>本笔记本演示了如何使用 .NET 中的 Microsoft Agent Framework 和 Azure AI Foundry 构建企业级检索增强生成 (RAG) 系统。您将学习创建可用于搜索文档并提供准确的上下文感知响应以及企业安全性和可扩展性的生产就绪代理。</p>
+<p><strong>您将构建的企业 RAG 功能：</strong></p>
+<ul>
+<li>📚 <strong>文档智能</strong>：使用 Azure AI 服务进行高级文档处理</li>
+<li>🔍 <strong>语义搜索</strong>：具有企业功能的高性能矢量搜索</li>
+<li>🛡️ <strong>安全集成</strong>：基于角色的访问和数据保护模式</li>
+<li>🏢 <strong>可扩展架构</strong>：具有监控功能的生产就绪 RAG 系统</li>
+</ul>
+<h2 id="🎯-企业-RAG-架构"><a href="#🎯-企业-RAG-架构" class="headerlink" title="🎯 企业 RAG 架构"></a>🎯 企业 RAG 架构</h2><h3 id="核心企业组件"><a href="#核心企业组件" class="headerlink" title="核心企业组件"></a>核心企业组件</h3><ul>
+<li><strong>Azure AI Foundry</strong>：具有安全性和合规性的托管企业 AI 平台</li>
+<li><strong>持久代理</strong>：具有对话历史记录和上下文管理的状态代理</li>
+<li><strong>矢量存储管理</strong>：企业级文档索引和检索</li>
+<li><strong>身份集成</strong>：Azure AD 身份验证和基于角色的访问控制</li>
+</ul>
+<h3 id="NET-企业优势"><a href="#NET-企业优势" class="headerlink" title=".NET 企业优势"></a>.NET 企业优势</h3><ul>
+<li><strong>类型安全</strong>：RAG 操作和数据结构的编译时验证</li>
+<li><strong>异步性能</strong>：非阻塞文档处理和搜索操作</li>
+<li><strong>内存管理</strong>：大型文档集合的高效资源利用</li>
+<li><strong>集成模式</strong>：具有依赖项注入的本机 Azure 服务集成</li>
+</ul>
+<h2 id="🏗️-技术架构"><a href="#🏗️-技术架构" class="headerlink" title="🏗️ 技术架构"></a>🏗️ 技术架构</h2><h3 id="企业-RAG-管道"><a href="#企业-RAG-管道" class="headerlink" title="企业 RAG 管道"></a>企业 RAG 管道</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Document Upload → Security Validation → Vector Processing → Index Creation</span><br><span class="line">                      ↓                    ↓                  ↓</span><br><span class="line">User Query → Authentication → Semantic Search → Context Ranking → AI Response</span><br></pre></td></tr></table></figure>
+<h3 id="核心-NET-组件"><a href="#核心-NET-组件" class="headerlink" title="核心 .NET 组件"></a>核心 .NET 组件</h3><ul>
+<li><strong>Azure.AI.Agents.Persistent</strong>：具有状态持久性的企业代理管理</li>
+<li><strong>Azure.Identity</strong>：用于安全 Azure 服务访问的集成身份验证</li>
+<li><strong>Microsoft.Agents.AI.AzureAI</strong>：Azure 优化的代理框架实现</li>
+<li><strong>System.Linq.Async</strong>：高性能异步LINQ操作</li>
+</ul>
+<h2 id="🔧-企业特色和优势"><a href="#🔧-企业特色和优势" class="headerlink" title="🔧 企业特色和优势"></a>🔧 企业特色和优势</h2><h3 id="安全与合规性"><a href="#安全与合规性" class="headerlink" title="安全与合规性"></a>安全与合规性</h3><ul>
+<li><strong>Azure AD 集成</strong>：企业身份管理和身份验证</li>
+<li><strong>基于角色的访问</strong>：文档访问和操作的细粒度权限</li>
+<li><strong>数据保护</strong>：敏感文档的静态和传输中加密</li>
+<li><strong>审核日志</strong>：针对合规性要求的全面活动跟踪</li>
+</ul>
+<h3 id="性能和可扩展性"><a href="#性能和可扩展性" class="headerlink" title="性能和可扩展性"></a>性能和可扩展性</h3><ul>
+<li><strong>连接池</strong>：高效的 Azure 服务连接管理</li>
+<li><strong>异步处理</strong>：高吞吐量场景的非阻塞操作</li>
+<li><strong>缓存策略</strong>：对经常访问的文档进行智能缓存</li>
+<li><strong>负载均衡</strong>：大规模部署的分布式处理</li>
+</ul>
+<h3 id="管理与监控"><a href="#管理与监控" class="headerlink" title="管理与监控"></a>管理与监控</h3><ul>
+<li><strong>运行状况检查</strong>：RAG 系统组件的内置监控</li>
+<li><strong>性能指标</strong>：搜索质量和响应时间的详细分析</li>
+<li><strong>错误处理</strong>：具有重试策略的全面异常管理</li>
+<li><strong>配置管理</strong>：具有验证的环境特定设置</li>
+</ul>
+<h2 id="⚙️-先决条件和设置"><a href="#⚙️-先决条件和设置" class="headerlink" title="⚙️ 先决条件和设置"></a>⚙️ 先决条件和设置</h2><p><strong>开发环境：</strong></p>
+<ul>
+<li>.NET 9.0 SDK 或更高版本</li>
+<li>Visual Studio 2022 或带有 C# 扩展的 VS Code</li>
+<li>具有 AI Foundry 访问权限的 Azure 订阅</li>
+</ul>
+<p><strong>所需的 NuGet 包：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">PackageReference</span> <span class="attr">Include</span>=<span class="string">&quot;Microsoft.Extensions.AI&quot;</span> <span class="attr">Version</span>=<span class="string">&quot;9.9.0&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PackageReference</span> <span class="attr">Include</span>=<span class="string">&quot;Azure.AI.Agents.Persistent&quot;</span> <span class="attr">Version</span>=<span class="string">&quot;1.2.0-beta.5&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PackageReference</span> <span class="attr">Include</span>=<span class="string">&quot;Azure.Identity&quot;</span> <span class="attr">Version</span>=<span class="string">&quot;1.15.0&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PackageReference</span> <span class="attr">Include</span>=<span class="string">&quot;System.Linq.Async&quot;</span> <span class="attr">Version</span>=<span class="string">&quot;6.0.3&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PackageReference</span> <span class="attr">Include</span>=<span class="string">&quot;DotNetEnv&quot;</span> <span class="attr">Version</span>=<span class="string">&quot;3.1.1&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>Azure 身份验证设置：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install Azure CLI and authenticate</span></span><br><span class="line">az login</span><br><span class="line">az account <span class="built_in">set</span> --subscription <span class="string">&quot;your-subscription-id&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>环境配置：</strong></p>
+<ul>
+<li>Azure AI Foundry 配置（通过 Azure CLI 自动处理）</li>
+<li>确保您已通过正确的 Azure 订阅身份验证</li>
+</ul>
+<h2 id="📊-企业-RAG-模式"><a href="#📊-企业-RAG-模式" class="headerlink" title="📊 企业 RAG 模式"></a>📊 企业 RAG 模式</h2><h3 id="文档管理模式"><a href="#文档管理模式" class="headerlink" title="文档管理模式"></a>文档管理模式</h3><ul>
+<li><strong>批量上传</strong>：高效处理大型文档集合</li>
+<li><strong>增量更新</strong>：实时文档添加和修改</li>
+<li><strong>版本控制</strong>：文档版本控制和更改跟踪</li>
+<li><strong>元数据管理</strong>：丰富的文档属性和分类</li>
+</ul>
+<h3 id="搜索和检索模式"><a href="#搜索和检索模式" class="headerlink" title="搜索和检索模式"></a>搜索和检索模式</h3><ul>
+<li><strong>混合搜索</strong>：结合语义和关键字搜索以获得最佳结果</li>
+<li><strong>分面搜索</strong>：多维度过滤和分类</li>
+<li><strong>相关性调整</strong>：针对特定领域需求的自定义评分算法</li>
+<li><strong>结果排名</strong>：结合业务逻辑的高级排名</li>
+</ul>
+<h3 id="安全模式"><a href="#安全模式" class="headerlink" title="安全模式"></a>安全模式</h3><ul>
+<li><strong>文档级安全性</strong>：每个文档的细粒度访问控制</li>
+<li><strong>数据分类</strong>：自动敏感度标记和保护</li>
+<li><strong>审计跟踪</strong>：所有 RAG 操作的综合记录</li>
+<li><strong>隐私保护</strong>：PII 检测和编辑功能</li>
+</ul>
+<h2 id="🔒-企业安全功能"><a href="#🔒-企业安全功能" class="headerlink" title="🔒 企业安全功能"></a>🔒 企业安全功能</h2><h3 id="身份验证和授权"><a href="#身份验证和授权" class="headerlink" title="身份验证和授权"></a>身份验证和授权</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Azure AD integrated authentication</span></span><br><span class="line"><span class="keyword">var</span> credential = <span class="keyword">new</span> AzureCliCredential();</span><br><span class="line"><span class="keyword">var</span> agentsClient = <span class="keyword">new</span> PersistentAgentsClient(endpoint, credential);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Role-based access validation</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">await</span> ValidateUserPermissions(user, documentId))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnauthorizedAccessException(<span class="string">&quot;Insufficient permissions&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="数据保护"><a href="#数据保护" class="headerlink" title="数据保护"></a>数据保护</h3><ul>
+<li><strong>加密</strong>：文档和搜索索引的端到端加密</li>
+<li><strong>访问控制</strong>：与 Azure AD 集成以获取用户和组权限</li>
+<li><strong>数据驻留</strong>：地理数据位置控制以确保合规性</li>
+<li><strong>备份和恢复</strong>：自动备份和灾难恢复功能</li>
+</ul>
+<h2 id="📈-性能优化"><a href="#📈-性能优化" class="headerlink" title="📈 性能优化"></a>📈 性能优化</h2><h3 id="异步处理模式"><a href="#异步处理模式" class="headerlink" title="异步处理模式"></a>异步处理模式</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Efficient async document processing</span></span><br><span class="line"><span class="keyword">await</span> <span class="keyword">foreach</span> (<span class="keyword">var</span> document <span class="keyword">in</span> documentStream.AsAsyncEnumerable())</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">await</span> ProcessDocumentAsync(document, cancellationToken);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><ul>
+<li><strong>流处理</strong>：处理大型文档而不会出现内存问题</li>
+<li><strong>资源池</strong>：昂贵资源的高效重用</li>
+<li><strong>垃圾收集</strong>：优化的内存分配模式</li>
+<li><strong>连接管理</strong>：正确的 Azure 服务连接生命周期</li>
+</ul>
+<h3 id="缓存策略"><a href="#缓存策略" class="headerlink" title="缓存策略"></a>缓存策略</h3><ul>
+<li><strong>查询缓存</strong>：缓存经常执行的搜索</li>
+<li><strong>文档缓存</strong>：热文档的内存缓存</li>
+<li><strong>索引缓存</strong>：优化的向量索引缓存</li>
+<li><strong>结果缓存</strong>：生成响应的智能缓存</li>
+</ul>
+<h2 id="📊-企业用例"><a href="#📊-企业用例" class="headerlink" title="📊 企业用例"></a>📊 企业用例</h2><h3 id="知识管理"><a href="#知识管理" class="headerlink" title="知识管理"></a>知识管理</h3><ul>
+<li><strong>企业维基</strong>：跨公司知识库的智能搜索</li>
+<li><strong>政策和程序</strong>：自动合规性和程序指导</li>
+<li><strong>培训材料</strong>：智能学习和发展援助</li>
+<li><strong>研究数据库</strong>：学术和研究论文分析系统</li>
+</ul>
+<h3 id="客户支持"><a href="#客户支持" class="headerlink" title="客户支持"></a>客户支持</h3><ul>
+<li><strong>支持知识库</strong>：自动客户服务响应</li>
+<li><strong>产品文档</strong>：智能产品信息检索</li>
+<li><strong>故障排除指南</strong>：上下文问题解决帮助</li>
+<li><strong>常见问题解答系统</strong>：从文档集合动态生成常见问题解答</li>
+</ul>
+<h3 id="监管合规性"><a href="#监管合规性" class="headerlink" title="监管合规性"></a>监管合规性</h3><ul>
+<li><strong>法律文件分析</strong>：合同和法律文件情报</li>
+<li><strong>合规性监控</strong>：自动监管合规性检查</li>
+<li><strong>风险评估</strong>：基于文档的风险分析和报告</li>
+<li><strong>审计支持</strong>：用于审计的智能文档发现</li>
+</ul>
+<h2 id="🚀-生产部署"><a href="#🚀-生产部署" class="headerlink" title="🚀 生产部署"></a>🚀 生产部署</h2><h3 id="监控和可观察性"><a href="#监控和可观察性" class="headerlink" title="监控和可观察性"></a>监控和可观察性</h3><ul>
+<li><strong>应用程序洞察</strong>：详细的遥测和性能监控</li>
+<li><strong>自定义指标</strong>：特定于业务的 KPI 跟踪和警报</li>
+<li><strong>分布式跟踪</strong>：跨服务的端到端请求跟踪</li>
+<li><strong>运行状况仪表板</strong>：实时系统运行状况和性能可视化</li>
+</ul>
+<h3 id="可扩展性和可靠性"><a href="#可扩展性和可靠性" class="headerlink" title="可扩展性和可靠性"></a>可扩展性和可靠性</h3><ul>
+<li><strong>自动缩放</strong>：根据负载和性能指标自动缩放</li>
+<li><strong>高可用性</strong>：具有故障转移功能的多区域部署</li>
+<li><strong>负载测试</strong>：企业负载条件下的性能验证</li>
+<li><strong>灾难恢复</strong>：自动备份和恢复过程</li>
+</ul>
+<p>准备好构建可以大规模处理敏感文档的企业级 RAG 系统了吗？让我们一起为企业构建智能知识体系吧！ 🏢📖✨</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>本课程的完整工作代码示例可在 <code>05-dotnet-agent-framework.cs</code> 中找到。 </p>
+<p>运行该示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Make the script executable (Linux/macOS)</span></span><br><span class="line"><span class="built_in">chmod</span> +x 05-dotnet-agent-framework.cs</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the .NET Single File App</span></span><br><span class="line">./05-dotnet-agent-framework.cs</span><br></pre></td></tr></table></figure>
+<p>或者直接使用 <code>dotnet run</code> ：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet run 05-dotnet-agent-framework.cs</span><br></pre></td></tr></table></figure>
+<p>代码演示了：</p>
+<ol>
+<li><strong>包安装</strong>：安装 Azure AI 代理所需的 NuGet 包</li>
+<li><strong>环境配置</strong>：加载Azure AI Foundry端点和模型设置</li>
+<li><strong>文档上传</strong>：上传文档进行RAG处理</li>
+<li><strong>向量存储创建</strong>：创建用于语义搜索的向量存储</li>
+<li><strong>代理配置</strong>：设置具有文件搜索功能的AI代理</li>
+<li><strong>查询执行</strong>：对上传的文档运行查询</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/09/05/dotnet-agent-framework/">https://hzhzxfs.github.io/2025/09/05/dotnet-agent-framework/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/09/06/explore-agentic-frameworks__azure-ai-foundry-agent-creation/" title="explore-agentic-frameworks__azure-ai-foundry-agent-creation"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">explore-agentic-frameworks__azure-ai-foundry-agent-creation</div></div><div class="info-2"><div class="info-item-1">Azure AI代理服务开发在本练习中，您将使用 Microsoft Foundry 门户 中的 Azure AI 代理服务工具创建航班预订代理。该代理将能够与用户交互并提供有关航班的信息。 先决条件要完成此练习，您需要具备以下条件：  具有有效订阅的 Azure 帐户。 免费创建帐户。 您需要获得创建 Microsoft Foundry 中心的权限或有人为您创建一个中心。 如果您的角色是贡献者或所有者，您可以按照本教程中的步骤操作。    创建 Microsoft Foundry 中心 注： Microsoft Foundry 以前称为 Azure AI Studio。   请按照 Microsoft Foundry 博客文章中的指南创建 Microsoft Foundry 中心。  创建项目后，关闭显示的所有提示并查看 Microsoft Foundry 门户中的项目页面，该页面应类似于下图：     部署模型 在项目左侧窗格的 我的资产 部分中，选择 模型 + 端点 页面。  在 模型 + 端点 页面的 模型部署 选项卡中，在 + 部署模型 菜单中，选择 部署基础模型。  ...</div></div></div></a><a class="pagination-related" href="/2025/09/04/course-setup__AzureSearch/" title="course-setup__AzureSearch"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">course-setup__AzureSearch</div></div><div class="info-2"><div class="info-item-1">Azure AI 搜索设置指南本指南将帮助你使用 Azure 门户设置 Azure AI 搜索。请按照以下步骤创建和配置 Azure AI 搜索服务。 先决条件在开始之前，请确保您具备以下条件：  Azure 订阅。如果没有 Azure 订阅，可以在 Azure 免费帐户 创建免费帐户。  第 1 步：创建 Azure 存储帐户 按照创建 Azure 存储帐户 说明创建新的 Azure 存储帐户。注意：确保存储帐户的类型是标准通用 V2。  步骤 2：创建 Azure AI 搜索服务 登录Azure 门户。 在左侧导航窗格中，单击“创建资源”。 在搜索框中，键入“Azure AI 搜索”，然后从结果列表中选择 Azure AI 搜索。 单击创建按钮。 在 Basics 选项卡中，提供以下信息： 订阅：选择您的 Azure 订阅。 资源组：创建新资源组或选择现有资源组。 资源名称：输入搜索服务的唯一名称。 区域：选择最接近您的用户的区域。 定价层：选择适合您要求的定价层。您可以从免费套餐开始进行测试。   单击“查看 + 创建”。 检查设置并单击“创建”以创建搜索服务。  步骤 3...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/21/%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F%E8%A7%84%E6%A0%BC/" title="配置系统规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-21</div><div class="info-item-2">配置系统规格</div></div><div class="info-2"><div class="info-item-1">14. 配置系统规格1. 目标配置系统负责把产品的默认行为、用户偏好、项目约束和扩展能力统一管理，而不是散落在代码里。 2. 配置来源Python 版建议支持以下来源：  全局用户配置 项目级配置 session 级配置 plugin &#x2F; skill frontmatter 配置 环境变量 CLI 参数覆盖  3. 配置优先级建议优先级从高到低：  runtime override &#x2F; CLI 参数 session 配置 项目配置 用户全局配置 默认配置  4. 必须可配置的项目 默认模型 语言 输出风格 permission mode hook 开关与 hook 配置 MCP server 配置 plugin 路径 skill 路径 token &#x2F; task budget 自动 compact 开关 transcript 持久化开关  5. Agent 级配置需求每个 agent 定义建议支持：  agent_type when_to_use allowed_tools &#x2F; disallowed_tools model memory sc...</div></div></div></a><a class="pagination-related" href="/2025/09/14/planning-design__code_samples__07-dotnet-agent-framework/" title="planning-design__code_samples__07-dotnet-agent-framework"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-14</div><div class="info-item-2">planning-design__code_samples__07-dotnet-agent-framework</div></div><div class="info-2"><div class="info-item-1">🎯 使用 GitHub 模型 (.NET) 进行规划和设计模式📋 学习目标本笔记本演示了使用 .NET 中的 Microsoft Agent Framework 和 GitHub 模型构建智能代理的企业级规划和设计模式。您将学习创建可以分解复杂问题、规划多步骤解决方案以及使用 .NET 企业功能执行复杂工作流程的代理。 ⚙️ 先决条件和设置开发环境：  .NET 9.0 SDK 或更高版本 Visual Studio 2022 或带有 C# 扩展的 VS Code GitHub 模型 API 访问  所需的依赖项： 123&lt;PackageReference Include=&quot;Microsoft.Extensions.AI&quot; Version=&quot;9.9.0&quot; /&gt;&lt;PackageReference Include=&quot;Microsoft.Extensions.AI.OpenAI&quot; Version=&quot;9.9.0-preview.1.25458.4&quot; /&gt;&lt;PackageRef...</div></div></div></a><a class="pagination-related" href="/2026/01/18/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%8A%B6%E6%80%81%E8%A7%84%E6%A0%BC/" title="消息模型与状态规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">消息模型与状态规格</div></div><div class="info-2"><div class="info-item-1">09. 消息模型与状态规格1. 为什么消息模型必须先定义这类 Agent 系统的核心不是“函数调用”，而是“结构化消息驱动状态变化”。如果消息模型不稳定，后面的 memory、resume、工具执行、agent 任务都会混乱。 2. 顶层消息类型Python 版本建议至少定义以下消息类型：  system user assistant tool_use tool_result progress attachment summary compact_boundary notification tombstone（可选，用于删除&#x2F;隐藏历史消息后的链修复）  3. 核心消息字段所有消息建议共享： 123456class BaseMessage:    id: str    type: str    created_at: float    parent_id: str | None    session_id: str  assistant 消息1234class AssistantMessage(BaseMessage):    content_blocks: list  ...</div></div></div></a><a class="pagination-related" href="/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/" title="Python版本MVP范围"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-05</div><div class="info-item-2">Python版本MVP范围</div></div><div class="info-2"><div class="info-item-1">15. Python 版本 MVP 范围1. 目标避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。 2. MVP 必须包含2.1 主循环 多轮 query loop tool call -&gt; tool result -&gt; next turn  2.2 基础工具 read file write file edit file grep&#x2F;search bash  2.3 基础权限系统 allow &#x2F; ask &#x2F; deny 被拒后不原样重试  2.4 基础 transcript &#x2F; session 消息持久化 resume 会话  2.5 基础 memory 用户 &#x2F; 项目记忆注入 简单记忆文件结构  2.6 基础 agent orchestration main agent 至少一个 verification agent 可选一个 explore &#x2F; plan agent  2.7 基础 compact 超长消息时压缩历史 工具结果 budget 裁剪  3. MVP 可以后置的能力...</div></div></div></a><a class="pagination-related" href="/2025/09/03/agentic-protocols__code_samples__github-mcp__event-descriptions/" title="agentic-protocols__code_samples__github-mcp__event-descriptions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-03</div><div class="info-item-2">agentic-protocols__code_samples__github-mcp__event-descriptions</div></div><div class="info-2"><div class="info-item-1">活动名称：使用 Azure AI 代理服务构建代码优先应用程序（欧洲、中东和非洲&#x2F;美国产品）描述Azure AI 代理服务是服务和 SDK 的无缝结合，可简化强大的 AI 驱动解决方案的开发。在本次会议中，你将了解如何使用 Azure 构建自己的代码优先 AI 代理，该代理可以回答问题、执行数据分析以及集成外部数据源。您还将探索更复杂的架构，包括多个代理一起工作。 网址https://developer.microsoft.com/en-us/reactor/events/25325/  活动名称：使用语义内核通过多代理 AI 转变业务流程描述通过现场演示和实践学习，了解多智能体人工智能系统的强大功能，包括群聊、反射、选择器和群体模式。利用语义内核流程框架来自动化和扩展关键业务流程，从客户支持到使用 Python 的项目管理 网址https://developer.microsoft.com/en-us/reactor/events/25313/  活动名称：使用 AutoGen v0.4 构建代理应用程序描述开始使用 AutoGen v0.4 构建代理和多代理团队。我...</div></div></div></a><a class="pagination-related" href="/2026/01/19/%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D%E4%B8%8EAgent%E7%BC%96%E6%8E%92%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/" title="系统提示词与Agent编排需求文档"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-19</div><div class="info-item-2">系统提示词与Agent编排需求文档</div></div><div class="info-2"><div class="info-item-1">01. 系统提示词与 Agent 编排需求文档1. 系统提示词为什么不是一段固定文案从源码结构可以反推，这个产品要求系统提示词具备“动态拼装”能力，而不是固定模板。 需求原因用户环境、工具集、语言、输出风格、会话状态、MCP 连接状态都可能变化。如果系统提示词不能动态组装，就会出现：  规则不匹配当前会话 工具说明失效 记忆无法注入 token 成本失控  2. 系统提示词层的核心需求2.1 基础身份定义系统需要明确告诉模型：  你是执行型协作者 你的主要任务是软件工程支持 你的输出直接给用户看  2.2 做任务规范系统需要内建一套工程行为规范，例如：  不要乱加功能 不要过度抽象 不要假装验证过 先读代码再改代码 不要随意创建文件  这不是“风格偏好”，而是稳定性需求。 2.3 风险动作规范系统需要明确哪些操作有 blast radius，需要额外确认。例如：  删除 推送 外部可见动作 修改共享状态  2.4 工具使用语法系统不仅要告诉模型“有什么工具”，还要告诉它：  什么时候读文件 什么时候搜索 什么时候编辑 什么时候用 shell 什么时候并行调用  3. 动态区块需求...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%94%8D-%E5%B8%A6%E6%9C%89-Azure-AI-Foundry-NET-%E7%9A%84%E4%BC%81%E4%B8%9A-RAG"><span class="toc-number">1.</span> <span class="toc-text">🔍 带有 Azure AI Foundry (.NET) 的企业 RAG</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8B-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">📋 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-%E4%BC%81%E4%B8%9A-RAG-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">🎯 企业 RAG 架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E4%BC%81%E4%B8%9A%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">核心企业组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NET-%E4%BC%81%E4%B8%9A%E4%BC%98%E5%8A%BF"><span class="toc-number">1.2.2.</span> <span class="toc-text">.NET 企业优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8F%97%EF%B8%8F-%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">🏗️ 技术架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%81%E4%B8%9A-RAG-%E7%AE%A1%E9%81%93"><span class="toc-number">1.3.1.</span> <span class="toc-text">企业 RAG 管道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83-NET-%E7%BB%84%E4%BB%B6"><span class="toc-number">1.3.2.</span> <span class="toc-text">核心 .NET 组件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%A7-%E4%BC%81%E4%B8%9A%E7%89%B9%E8%89%B2%E5%92%8C%E4%BC%98%E5%8A%BF"><span class="toc-number">1.4.</span> <span class="toc-text">🔧 企业特色和优势</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E5%90%88%E8%A7%84%E6%80%A7"><span class="toc-number">1.4.1.</span> <span class="toc-text">安全与合规性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%92%8C%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="toc-number">1.4.2.</span> <span class="toc-text">性能和可扩展性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E4%B8%8E%E7%9B%91%E6%8E%A7"><span class="toc-number">1.4.3.</span> <span class="toc-text">管理与监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%9A%99%EF%B8%8F-%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6%E5%92%8C%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.5.</span> <span class="toc-text">⚙️ 先决条件和设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8A-%E4%BC%81%E4%B8%9A-RAG-%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">📊 企业 RAG 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E7%AE%A1%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.1.</span> <span class="toc-text">文档管理模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E5%92%8C%E6%A3%80%E7%B4%A2%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.2.</span> <span class="toc-text">搜索和检索模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.3.</span> <span class="toc-text">安全模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%92-%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E5%8A%9F%E8%83%BD"><span class="toc-number">1.7.</span> <span class="toc-text">🔒 企业安全功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E5%92%8C%E6%8E%88%E6%9D%83"><span class="toc-number">1.7.1.</span> <span class="toc-text">身份验证和授权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.7.2.</span> <span class="toc-text">数据保护</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%88-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-number">1.8.</span> <span class="toc-text">📈 性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E5%A4%84%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">异步处理模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="toc-number">1.8.2.</span> <span class="toc-text">内存管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5"><span class="toc-number">1.8.3.</span> <span class="toc-text">缓存策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8A-%E4%BC%81%E4%B8%9A%E7%94%A8%E4%BE%8B"><span class="toc-number">1.9.</span> <span class="toc-text">📊 企业用例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%AE%A1%E7%90%86"><span class="toc-number">1.9.1.</span> <span class="toc-text">知识管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E6%94%AF%E6%8C%81"><span class="toc-number">1.9.2.</span> <span class="toc-text">客户支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%91%E7%AE%A1%E5%90%88%E8%A7%84%E6%80%A7"><span class="toc-number">1.9.3.</span> <span class="toc-text">监管合规性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9A%80-%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2"><span class="toc-number">1.10.</span> <span class="toc-text">🚀 生产部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E5%8F%AF%E8%A7%82%E5%AF%9F%E6%80%A7"><span class="toc-number">1.10.1.</span> <span class="toc-text">监控和可观察性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7%E5%92%8C%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="toc-number">1.10.2.</span> <span class="toc-text">可扩展性和可靠性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.11.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

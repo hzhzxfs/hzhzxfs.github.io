@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/31/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/31/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/13/Routes/" title="Routes">Routes</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-13T12:53:22.000Z" title="发表于 2025-01-13 20:53:22">2025-01-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">后端路由基础知识基于 Srinously 的教程，关于后端系统如何将传入的 HTTP 请求映射到特定业务逻辑的综合指南。 🚀 概述路由是请求的“何处”。它结合了 HTTP 方法（意图）和 URL 路径（位置）来查找服务器上正确的处理程序。 🛠 核心概念1. 静态与动态路由 静态路由： 常量路径，如 /api/books。它们总是指向相同的资源。 动态路由： 包含变量的路径，称为 路径参数。 示例： /api/users/:id 其中 :id 可以是 123。 用法： 从语义上识别特定资源。    2. 查询参数主要用于 GET 请求来发送没有请求正文的元数据。  语法： /api/books?page=2&amp;limit=20 常见用例： 分页（例如，page=2） 过滤（例如，category=tech） 排序（例如，sort=asc）    3.嵌套路由表达资源之间的关系。  示例： /api/users/:userId/posts/:postId 含义：“获取属于特定用户的特定帖子。”  4. API 版本控制和弃用允许进行重大更改而不会使现有客户端应用程序崩溃。 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/12/RESTApiDesign/" title="RESTApiDesign">RESTApiDesign</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-12T11:03:17.000Z" title="发表于 2025-01-12 19:03:17">2025-01-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">完整的 REST API 设计指南专业 REST API 设计原则、历史和最佳实践的综合指南。本文档总结了 RESTful 架构背后的关键思想以及如何设计干净、可扩展且对开发人员友好的 API。  概述API设计是后端工程师最关键的技能之一。 好的 API 不仅仅是功能 - 它们是关于创建其他开发人员可以轻松理解和集成的清晰、直观和标准化的界面。 本指南重点介绍使用 REST（表述性状态传输） 架构风格设计 API。  网络简史1990 年 — 网络的诞生蒂姆·伯纳斯·李在 CERN 工作期间发明了 万维网。 他介绍了当今网络的三项基本技术：  1.URI（统一资源标识符）URI 标识互联网上的资源。 例子： 1https://api.example.com/users/10 这里：  /users → 资源集合   /10 → 特定资源  这代表 ID &#x3D; 10 的用户。  2. HTTP（超文本传输协议）HTTP 定义客户端和服务器如何通过网络进行通信。 常见的HTTP方法：    方法 目的    获取 检索数据   发布 创建数据   放置 替换数据   补丁 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/11/Middlerwares/" title="Middlerwares">Middlerwares</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-11T03:25:54.000Z" title="发表于 2025-01-11 11:25:54">2025-01-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">中间件：请求管道 什么是中间件？中间件是位于传入请求和控制器&#x2F;处理程序之间的函数（或组件）。 它可以：  检查请求   修改请求   阻止请求   修改响应   记录请求   添加安全检查  在你的控制器运行之前。 将中间件视为：  进入主楼前的安全检查站。   🏗 中间件在流程中的位置客户↓中间件1↓中间件2↓中间件3↓控制器（处理程序）↓服务↓存储库↓数据库 每个请求在到达控制器之前都会经过中间件。  为什么需要中间件？没有中间件：  控制器过载 安全逻辑被重复 记录逻辑到处重复 难以执行全球政策  中间件解决：  集中安全 集中记录 集中验证 更清洁的控制器 更好的可扩展性   它解决了什么问题？重复问题而不是在每个控制器中编写身份验证逻辑： 12if not verify_token():    return 401 真实示例流程用户发送请求： 12GET /profileAuthorization: Bearer eyJhbGciOiJIUzI1NiIs... 步骤 1️⃣ CORS 中间件 检查：此前端域是否允许？ 如果不是：立即拒绝请求 步骤 2️⃣ 速...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/10/Introduction/" title="Introduction">Introduction</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-10T01:10:55.000Z" title="发表于 2025-01-10 09:10:55">2025-01-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">什么是后端？后端是在服务器上运行的应用程序的一部分监听 HTTP、WebSocket、gRPC（gRPC 远程过程调用）或其他协议等请求。 它负责：  接收来自客户端的请求（浏览器、移动应用程序、其他服务） 处理逻辑 与数据库和外部服务通信 将响应发送回客户端  后端服务在特定端口上运行（例如3000、5000、8080）以便客户可以通过互联网访问它们。 后端被称为服务器，因为它提供以下服务：  静态文件（HTML、CSS、JS） 动态数据（JSON、文件、媒体） 前端和移动应用程序使用的 API  后端如何工作（高级流程）生产中的典型请求流程： 客户端（浏览器&#x2F;应用程序）→ DNS 服务器（解析域）→ 负载均衡器（AWS&#x2F;云）→ 防火墙&#x2F;安全规则→ 服务器实例（EC2&#x2F;虚拟机&#x2F;容器）→ 网络服务器（Nginx &#x2F; Apache）→ 后端应用程序（Node.js、Java 等）→ 数据库&#x2F;外部服务→ 回复客户 为什么我们需要后端？考虑这个例子： 您喜欢您朋友在 Instagram 上发布的帖子。您的朋友立即收到...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/09/HandlersServicesrepositorymodels/" title="HandlersServicesrepositorymodels">HandlersServicesrepositorymodels</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-09T14:32:37.000Z" title="发表于 2025-01-09 22:32:37">2025-01-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">三层模式（真实项目的干净架构）在构建可扩展的后端系统（API、机器人、Web 应用程序）时，我们将职责分层。 为什么？ 因为将所有内容混合在一个文件中会导致：  意大利面条代码  硬调试 硬测试 硬缩放 客户改变需求时的痛苦  所以我们使用：  什么是三层模式？它是一种代码组织结构，将应用程序分为三个逻辑层： 1.处理层（表示层）2.服务层（业务逻辑层）3. 存储库层（数据层） 每一层都只有一个职责。 简单的想法。强大的影响力。  为什么需要它？想象一下您的 OMR Streamlit 应用程序。 如果您：  检测图像 分析答案 转换为 JSON 存储在 MongoDB 中 返回响应  全部都在一个函数内…… 现在客户说：  “存储在 PostgreSQL 而不是 Mongo 中。”  现在你必须修改一切😵 但如果你使用图层：  仅存储库层发生变化。 应用程序的其余部分保持不变。  这就是清洁工程。  它解决了什么问题？   无层 分层    乱码 清洁分离   调试困难 轻松调试   难以测试 简单的单元测试   紧耦合 松耦合   改变打破一切 更改仅影响一层   该模式解...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/08/HTTP/" title="HTTP">HTTP</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-08T00:49:53.000Z" title="发表于 2025-01-08 08:49:53">2025-01-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">HTTP 基础知识HTTP（超文本传输协议）是网络上的交流。 HTTP 的核心基于两个基本思想：  无状态模型 客户端-服务器模型  1.无状态模型HTTP 遵循 无状态 通信模型。 无状态意味着服务器不记得之前与客户的任何互动。每个 HTTP 请求都被视为一个全新的请求。 无状态意味着什么？ 每个请求都包含所有必需的信息 信息通过以下方式发送： 标题 网址 方法（GET、POST 等） 身体（如果需要）   一旦服务器发送响应，它就会丢弃该请求 下一个请求被认为是独立的  换句话说，HTTP 请求是独立的。 无状态模型的好处1. 简单无状态系统更容易设计和维护因为服务器不需要存储客户端会话数据。 2. 可扩展性由于服务器上没有存储会话状态，请求可以分布在多个服务器上使用负载平衡器。 3. 可靠性如果一台服务器出现故障，另一台服务器可以处理请求而不丢失会话数据。 4. 状态管理的灵活性虽然HTTP本身是无状态的，应用程序可以使用以下方式保持连续性：  饼干 会议 令牌（JWT、OAuth）  这些机制构建于HTTP之上，不是 HTTP 本身的一部分。 2. 客户端-服务器模型HT...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/07/Errorhandling/" title="Errorhandling">Errorhandling</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-07T11:38:39.000Z" title="发表于 2025-01-07 19:38:39">2025-01-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">错误处理和容错系统 后端工程师实用参考——技术深度、浅显易懂   1. 心态错误是不可避免的您无法阻止每个错误 - 目标是快速检测、遏制和恢复。停止思考*“我如何阻止它损坏？”并开始思考“当*损坏时会发生什么？” 容错心态在最坏的情况发生之前就进行设计。即使内部组件出现故障，构建良好的系统也能保证用户交易无缝进行。  2. 常见错误类型A. 逻辑错误 🔴 最危险的类型 — 无声故障，没有崩溃或异常  系统继续运行——没有崩溃，没有例外——但它产生错误的结果。这些都是无声的杀手：表面上一切看起来都很好，但实际上却有错误的数据流过。 为什么它们很难捕捉：  没有可见的崩溃或堆栈跟踪 该应用程序似乎运行正常 通常是通过错误的输出或用户投诉发现的——为时已晚  现实世界的例子：  电子商务折扣计算中的错误导致系统“向用户付款”而不是向他们收费——负交易价值仅出现在财务报告中。  根本原因：  误解业务需求 算法实现不正确 未考虑边缘情况  预防策略：  强大的单元+集成测试 边缘情况验证（例如最低价格 &#x3D; 0） 专注于业务逻辑的代码审查 监控异常输出值（例如负交易金额）  影...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/06/Elasticsearch/" title="ElasticSearch">ElasticSearch</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-06T12:14:26.000Z" title="发表于 2025-01-06 20:14:26">2025-01-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">1. 问题：关系数据库的限制⚠️ 效率低下带通配符的标准 LIKE 查询（例如 %laptop%）会触发全表扫描，这使得它们的计算成本很高，并且随着数据集扩展到数百万条记录而变得越来越慢。 ⚠️缺乏相关性传统的 SQL 查询返回匹配没有排名或相关性评分。这意味着结果没有优先顺序，例如，一本“关于”机器学习的书与仅简要提及它的书被视为相同。 ⚠️ 可扩展性问题随着系统扩展（例如，亚马逊或谷歌等平台），需要亚毫秒级搜索延迟。传统的关系数据库很难有效地满足这些性能需求。 用于搜索的关系数据库的其他限制⚠️ 全文搜索支持不佳关系数据库并非专为高级全文搜索功能而设计，例如：  代币化 词干提取（例如，“运行”→“运行”） 同义词处理与专用搜索引擎相比，这使得搜索不太智能。  ⚠️没有内置排名算法没有对相关性评分算法（例如 TF-IDF 或 BM25）的本机支持，而这些算法对于对搜索结果进行有意义的排名至关重要。 ⚠️ 难以处理拼写错误和模糊搜索关系数据库面临以下问题：  拼写错误（例如，“laptpo”而不是“laptop”） 近似匹配实现模糊搜索既复杂又低效。  ⚠️ 有限的水平可扩展性...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/05/Databases/" title="Databases">Databases</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-05T06:36:40.000Z" title="发表于 2025-01-05 14:36:40">2025-01-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">使用 PostgreSQL 掌握数据库核心概念为什么选择数据库？从本质上讲，数据库是一个旨在跨不同会话保留信息的系统。持久性确保数据即使在创建数据的程序或进程终止后也能继续存在。 存储层次结构：RAM 与磁盘现代后端系统通过利用不同的存储介质来平衡速度和成本：    特色 内存中 (RAM) 磁盘（SSD&#x2F;HDD）    速度 极快 比 RAM 慢   成本 贵 相对便宜   坚持 易失性（断电后丢失） 非易失性（持久）   示例 Redis、Memcached PostgreSQL、MongoDB、MySQL    数据库管理系统 (DBMS)DBMS 是一个软件层，其唯一职责是高效地向客户端提供 CRUD 操作：  Create：插入新数据。 Read：查询现有数据。 Update：修改当前记录。 Delete：删除数据。  DBMS 的职责：1）数据的组织——DBMS 定义了数据的结构方式（通常为表、行和列），以确保数据以逻辑方式存储并可以有效地检索。它管理磁盘上的物理存储，因此开发人员不必担心原始文件管理。 2）访问——CRUD操作该系统提供标准化接口（如 SQ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/01/04/ConfigureManagement/" title="ConfigureManagement">ConfigureManagement</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-01-04T15:37:18.000Z" title="发表于 2025-01-04 23:37:18">2025-01-04</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="content">配置管理 控制应用程序行为方式的一切 - 无需触及任何逻辑代码。   核心类比    角色    🧠 代码 大脑——逻辑   🧬 配置 DNA——行为规则   ⚙️ 结果 相同的代码 + 不同的配置 &#x3D; 完全不同的行为   如果 DNA 很混乱 → 即使是健康的大脑也会表现出不可预测的行为。  01 — 配置实际涵盖什么配置经常被误认为只是“秘密”。事实上，它控制的更多： 应用程序设置 端口号 日志级别（debug &#x2F; info &#x2F; error） 连接池大小 超时持续时间  数据库配置 主机和端口 用户名&#x2F;密码 数据库名称 连接字符串  外部服务 电子邮件 API（例如 SendGrid） 付款（例如 Stripe） 身份验证（例如职员） 云存储  功能标志 仅为测试版用户启用功能 A&#x2F;B 测试和逐步推出 终止开关可立即禁用有缺陷的功能  业务规则 最大订单限制 会话到期时间 折扣门槛 速率限制  性能和日志记录 缓存大小 重试限制 队列并发 日志详细程度（开发中的调试，产品中的错误）   02 — 环境及其优先级相同的代码库...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/30/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/#content-inner">30</a><span class="page-number current">31</span><a class="page-number" href="/page/32/#content-inner">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/50/#content-inner">50</a><a class="extend next" rel="next" href="/page/32/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">71</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Netty/" style="font-size: 1.1em; color: #999">Netty</a> <a href="/tags/PyG/" style="font-size: 1.15em; color: #999b9e">PyG</a> <a href="/tags/Stacking/" style="font-size: 1.1em; color: #999">Stacking</a> <a href="/tags/Pandas/" style="font-size: 1.25em; color: #999fa7">Pandas</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Tornado/" style="font-size: 1.35em; color: #99a3b1">Tornado</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/Heap-Memory/" style="font-size: 1.1em; color: #999">Heap Memory</a> <a href="/tags/Tree/" style="font-size: 1.3em; color: #99a1ac">Tree</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Redis/" style="font-size: 1.15em; color: #999b9e">Redis</a> <a href="/tags/GAT/" style="font-size: 1.15em; color: #999b9e">GAT</a> <a href="/tags/MySQL/" style="font-size: 1.25em; color: #999fa7">MySQL</a> <a href="/tags/Computer-Basics/" style="font-size: 1.4em; color: #99a5b6">Computer Basics</a> <a href="/tags/JVM-Architecture/" style="font-size: 1.1em; color: #999">JVM Architecture</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/List/" style="font-size: 1.1em; color: #999">List</a> <a href="/tags/Kruskal/" style="font-size: 1.1em; color: #999">Kruskal</a> <a href="/tags/Algorithm/" style="font-size: 1.15em; color: #999b9e">Algorithm</a> <a href="/tags/Object-Identification/" style="font-size: 1.1em; color: #999">Object Identification</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/LOF/" style="font-size: 1.15em; color: #999b9e">LOF</a> <a href="/tags/Grid-search/" style="font-size: 1.1em; color: #999">Grid search</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/Embedding/" style="font-size: 1.15em; color: #999b9e">Embedding</a> <a href="/tags/OLSE/" style="font-size: 1.15em; color: #999b9e">OLSE</a> <a href="/tags/Prim/" style="font-size: 1.1em; color: #999">Prim</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/AI-Agent/" style="font-size: 1.45em; color: #99a7ba">AI Agent</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/GNN/" style="font-size: 1.2em; color: #999da3">GNN</a> <a href="/tags/Thread/" style="font-size: 1.15em; color: #999b9e">Thread</a> <a href="/tags/Compilation/" style="font-size: 1.1em; color: #999">Compilation</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">19</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">491</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-10T02:38:06.932Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

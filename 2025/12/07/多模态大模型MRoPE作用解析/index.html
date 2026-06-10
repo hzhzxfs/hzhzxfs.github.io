@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>多模态大模型MRoPE作用解析 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="好的，这是一个非常专业且深入的问题。我们来详细解析一下多模态大模型中的 MRoPE（Modality-aware Rotary Position Embedding） 算子的作用。 首先，我们需要理解它的基础——RoPE。 1. 基础：RoPE（旋转位置编码）RoPE是像LLaMA、GPT-NeoX等众多主流大语言模型所采用的位置编码方式。  核心思想： 不是将位置信息作为一个独立的数字（如绝对位">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多模态大模型MRoPE作用解析">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/12/07/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8BMRoPE%E4%BD%9C%E7%94%A8%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="好的，这是一个非常专业且深入的问题。我们来详细解析一下多模态大模型中的 MRoPE（Modality-aware Rotary Position Embedding） 算子的作用。 首先，我们需要理解它的基础——RoPE。 1. 基础：RoPE（旋转位置编码）RoPE是像LLaMA、GPT-NeoX等众多主流大语言模型所采用的位置编码方式。  核心思想： 不是将位置信息作为一个独立的数字（如绝对位">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-12-07T12:01:38.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.540Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "多模态大模型MRoPE作用解析",
+  "url": "https://hzhzxfs.github.io/2025/12/07/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8BMRoPE%E4%BD%9C%E7%94%A8%E8%A7%A3%E6%9E%90/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-12-07T12:01:38.000Z",
+  "dateModified": "2026-06-10T02:14:46.540Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/12/07/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8BMRoPE%E4%BD%9C%E7%94%A8%E8%A7%A3%E6%9E%90/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '多模态大模型MRoPE作用解析',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">多模态大模型MRoPE作用解析</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">多模态大模型MRoPE作用解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-07T12:01:38.000Z" title="发表于 2025-12-07 20:01:38">2025-12-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.540Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>好的，这是一个非常专业且深入的问题。我们来详细解析一下多模态大模型中的 <strong>MRoPE（Modality-aware Rotary Position Embedding）</strong> 算子的作用。</p>
+<p>首先，我们需要理解它的基础——<strong>RoPE</strong>。</p>
+<h3 id="1-基础：RoPE（旋转位置编码）"><a href="#1-基础：RoPE（旋转位置编码）" class="headerlink" title="1. 基础：RoPE（旋转位置编码）"></a>1. 基础：RoPE（旋转位置编码）</h3><p>RoPE是像LLaMA、GPT-NeoX等众多主流大语言模型所采用的位置编码方式。</p>
+<ul>
+<li><strong>核心思想</strong>： 不是将位置信息作为一个独立的数字（如绝对位置）或向量（如正弦余弦函数）直接加到词向量上，而是通过<strong>旋转</strong>的方式来注入位置信息。</li>
+<li><strong>形象比喻</strong>： 想象一个二维平面，每个词对应一个二维向量。RoPE会根据这个词在序列中的位置，将这个向量旋转一个与位置成比例的角度。位置1旋转θ度，位置2旋转2θ度，以此类推。这样，两个词向量的内积（代表它们的关联程度）就只与它们的内容和相对位置差有关，而与它们的绝对位置无关。</li>
+<li><strong>优势</strong>：<ul>
+<li><strong>很好的外推性</strong>： 模型在训练时见过的序列长度有限，但在推理时能处理更长的序列，因为旋转操作是连续且可扩展的。</li>
+<li><strong>显式编码相对位置</strong>： 模型能天然地理解“距离”的概念。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-多模态的挑战：为什么需要“M”？"><a href="#2-多模态的挑战：为什么需要“M”？" class="headerlink" title="2. 多模态的挑战：为什么需要“M”？"></a>2. 多模态的挑战：为什么需要“M”？</h3><p>当我们将大模型从纯文本扩展到多模态（如图文）时，一个核心问题出现了：<strong>如何将图像和文本在同一个序列中进行对齐和融合？</strong></p>
+<p>一个简单的做法是：</p>
+<ol>
+<li>将图像分割成块，编码成视觉Token。</li>
+<li>将这些视觉Token和文本Token拼接成一个长序列，送给Transformer模型。</li>
+</ol>
+<p>但这里存在一个根本性的不匹配：</p>
+<ul>
+<li><strong>文本是强序列性的</strong>： “猫追老鼠”和“老鼠追猫”意思完全不同。文本Token之间的相对位置关系至关重要。</li>
+<li><strong>图像是空间结构性的</strong>： 一个图像块的意义更多地取决于它在二维空间中的<strong>绝对坐标</strong>（x, y），以及它与其他块的相对空间关系，而不是它在被拉平后的一维序列中的“位置”。</li>
+</ul>
+<p>如果我们对视觉Token也使用和文本Token一样的RoPE，会产生问题：</p>
+<ul>
+<li>一个在序列开头（紧接文本之后）的视觉Token，和一个在序列末尾的视觉Token，会被赋予完全不同的位置编码，尽管它们在原始图像中可能只是相邻的像素块。</li>
+<li>模型难以从这种一维的位置编码中恢复出图像原始的二维空间结构信息。</li>
+</ul>
+<h3 id="3-MRoPE的作用：-modality-aware（模态感知）"><a href="#3-MRoPE的作用：-modality-aware（模态感知）" class="headerlink" title="3. MRoPE的作用： modality-aware（模态感知）"></a>3. MRoPE的作用： modality-aware（模态感知）</h3><p><strong>MRoPE就是为了解决上述不匹配而设计的。它的核心作用是：为不同模态（如图像和文本）提供与其特性相匹配的、独立的位置编码方案。</strong></p>
+<p>具体来说，MRoPE主要做以下几件事：</p>
+<p><strong>1. 模态感知的位置索引</strong></p>
+<ul>
+<li>它不再使用单一的、在整个序列中连续递增的位置索引（例如，文本Token是1到N，视觉Token是N+1到N+M）。</li>
+<li>而是为每个模态<strong>独立地重置位置索引</strong>。<ul>
+<li><strong>文本模态</strong>： 使用传统的、一维的、连续递增的位置索引。<code>pos_text = [0, 1, 2, ...]</code></li>
+<li><strong>视觉模态</strong>： 使用基于图像原始<strong>二维坐标</strong>的位置索引。例如，将一个3x3的图像网格，其位置索引不是<code>[0,1,2,3,4,5,6,7,8]</code>，而是<code>[(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)]</code>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 模态特定的旋转操作</strong></p>
+<ul>
+<li><strong>对于文本Token</strong>： 应用标准的一维RoPE。使用<code>(pos_text)</code>来计算旋转角度。</li>
+<li><strong>对于视觉Token</strong>： 应用扩展的<strong>二维RoPE</strong>。它分别对x坐标和y坐标进行旋转，然后将结果结合起来。这相当于在二维平面上进行了一个与绝对坐标<code>(x, y)</code>相关的旋转操作。</li>
+</ul>
+<p><strong>3. 跨模态交互时的关键处理</strong></p>
+<ul>
+<li>当计算一个文本Token和一个视觉Token之间的注意力时，它们的相对位置是没有直接物理意义的（一个在语言序列中，一个在图像空间里）。</li>
+<li>MRoPE的一个常见处理方式是，在计算跨模态注意力分数时，<strong>不使用位置编码</strong>，或者使用一种中性的、预设的相对位置关系（例如，将所有跨模态的相对位置差视为一个固定的值）。</li>
+<li>这样，模型学习跨模态关联时，可以更专注于内容本身的匹配，而不被无意义的位置关系所干扰。</li>
+</ul>
+<h3 id="总结：MRoPE的主要作用"><a href="#总结：MRoPE的主要作用" class="headerlink" title="总结：MRoPE的主要作用"></a>总结：MRoPE的主要作用</h3><table>
+<thead>
+<tr>
+<th align="left">作用</th>
+<th align="left">描述</th>
+<th align="left">解决的问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>1. 保持模态内结构</strong></td>
+<td align="left">为文本保留一维序列结构，为图像保留二维空间结构。</td>
+<td align="left">防止图像的空间信息在被拉平为一维序列后丢失。</td>
+</tr>
+<tr>
+<td align="left"><strong>2. 促进跨模态对齐</strong></td>
+<td align="left">通过分离跨模态的位置影响，让模型更专注于内容语义的匹配。</td>
+<td align="left">让模型能更好地理解“图片中的狗”和“文本‘狗’”之间的对应关系，而不受它们在序列中绝对位置的影响。</td>
+</tr>
+<tr>
+<td align="left"><strong>3. 提升模型性能</strong></td>
+<td align="left">通过提供更合理的位置先验，帮助模型更准确、更高效地学习多模态表示。</td>
+<td align="left">在图像描述、视觉问答等任务上获得更好的效果。</td>
+</tr>
+<tr>
+<td align="left"><strong>4. 维持外推性</strong></td>
+<td align="left">继承了RoPE在处理长序列和未知尺寸图像方面的优势。</td>
+<td align="left">模型可以处理训练时未见过的分辨率或长文本。</td>
+</tr>
+</tbody></table>
+<p><strong>一个简单的比喻：</strong></p>
+<ul>
+<li><strong>标准RoPE</strong>： 像在一个<strong>单一的、长长的队伍</strong>里给每个人发号牌。1号、2号、3号……无论你是来自文本部门还是图像部门。</li>
+<li><strong>MRoPE</strong>： 像在两个<strong>独立的部门</strong>里。<ul>
+<li><strong>文本部门</strong>的员工在一条线上排队，领<strong>线性号牌</strong>（1, 2, 3…）。</li>
+<li><strong>图像部门</strong>的员工在一个网格上站位，领<strong>坐标号牌</strong>（A1, B2, C3…）。</li>
+<li>当两个部门的员工需要协作时，他们不看对方的号牌，只看对方胸牌上的<strong>名字（内容）</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>因此，<strong>MRoPE是多模态大模型能够有效融合和理解不同模态信息的关键技术组件之一</strong>，它通过“因材施教”的位置编码方式，极大地提升了模型对多模态数据的建模能力。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/12/07/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8BMRoPE%E4%BD%9C%E7%94%A8%E8%A7%A3%E6%9E%90/">https://hzhzxfs.github.io/2025/12/07/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8BMRoPE%E4%BD%9C%E7%94%A8%E8%A7%A3%E6%9E%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/12/08/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E4%B8%80%E4%B8%AA%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" title="如何快速上手一个开源项目"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">如何快速上手一个开源项目</div></div><div class="info-2"><div class="info-item-1">如何快速上手一个开源项目项目洞察社区治理 运作方式（独裁、共建）； 核心人物（commiter）； 参与方； release 节奏（feature、bugfix 版本周期）； 社区交流方式（PR&#x2F;ISSUE、邮件列表、SLACK&#x2F;IRC&#x2F;微信）； 当前&#x2F;未来发展； ……  源码托管 托管平台（GitHub、gitee、私仓）； 贡献方式； License； CLA&#x2F;CCLA；  CI&#x2F;CD CI 系统（GitHub action、Jenkins、circle CI、trivia CI）； 架构（x86&#x2F;arm、CPU&#x2F;GPU、……）； CI job 内容（unit test、集成测试、端到端测试、……）。  学习方法 官方网站、文档、源码（重点）【非翻译版】； 主流媒体（官方 blog、知乎专栏、知乎订阅号、领域 KOL）； 搜索引擎（Google）； 其它（教学视频、自行发现等）。   注意：  刚开始尽量看英文原版的文档（信息最完整、准确），有了整体的认识之后，可以再针对某些部分去看一些中文的网站...</div></div></div></a><a class="pagination-related" href="/2025/12/06/%E5%A4%9A%E5%8D%A1%E6%8E%A8%E7%90%86%E4%B8%ADCUDA-Graph%E5%8D%8F%E5%90%8C%E8%AE%A1%E7%AE%97%E8%A7%A3%E6%9E%90/" title="多卡推理中CUDA-Graph协同计算解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">多卡推理中CUDA-Graph协同计算解析</div></div><div class="info-2"><div class="info-item-1">这是一个非常好的问题，它触及了现代大模型推理优化的核心。我们来详细拆解一下 torch.compile() 生成的 CUDA Graph 是如何在分布式多卡环境下协同工作的。 首先，要明确一个关键点：torch.compile 和 CUDA Graph 是两种不同但可以协同工作的优化技术。  torch.compile： 它是一个编译器。它捕获你的 PyTorch 模型（一个动态图），将其编译成一个优化的、静态的计算图。这个优化后的图可以由不同的后端执行，其中最强大的后端就是 inductor。 CUDA Graph： 它是一种执行模式。它通过捕获在 GPU 上执行的一系列内核（kernel）来创建一个“图”，然后可以多次、高效地重放这个图，避免了 CPU 驱动开销、启动内核的开销等。  在 torch.compile 的 inductor 后端中，一个非常重要的优化就是自动生成并利用 CUDA Graph 来执行编译好的计算图。 现在，我们来看多卡（分布式）推理的场景。这里通常使用 Tensor Parallelism（张量并行） 或 Pipeline Parallelism（...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/12/08/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E4%B8%80%E4%B8%AA%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" title="如何快速上手一个开源项目"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-08</div><div class="info-item-2">如何快速上手一个开源项目</div></div><div class="info-2"><div class="info-item-1">如何快速上手一个开源项目项目洞察社区治理 运作方式（独裁、共建）； 核心人物（commiter）； 参与方； release 节奏（feature、bugfix 版本周期）； 社区交流方式（PR&#x2F;ISSUE、邮件列表、SLACK&#x2F;IRC&#x2F;微信）； 当前&#x2F;未来发展； ……  源码托管 托管平台（GitHub、gitee、私仓）； 贡献方式； License； CLA&#x2F;CCLA；  CI&#x2F;CD CI 系统（GitHub action、Jenkins、circle CI、trivia CI）； 架构（x86&#x2F;arm、CPU&#x2F;GPU、……）； CI job 内容（unit test、集成测试、端到端测试、……）。  学习方法 官方网站、文档、源码（重点）【非翻译版】； 主流媒体（官方 blog、知乎专栏、知乎订阅号、领域 KOL）； 搜索引擎（Google）； 其它（教学视频、自行发现等）。   注意：  刚开始尽量看英文原版的文档（信息最完整、准确），有了整体的认识之后，可以再针对某些部分去看一些中文的网站...</div></div></div></a><a class="pagination-related" href="/2025/12/05/%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%AA%E6%8C%87%E5%AE%9Amax_model_len%E5%AF%BC%E8%87%B4%E9%80%9A%E4%BF%A1%E5%8D%A1%E6%AD%BB/" title="启动时未指定max_model_len导致通信卡死"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-05</div><div class="info-item-2">启动时未指定max_model_len导致通信卡死</div></div><div class="info-2"><div class="info-item-1">启动时未指定 max_model_len 导致通信卡死排查记录12345vllm serve /root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-30B-A3B-Instruct \--tensor-parallel-size 4 \--enable-expert-parallel \--enforce-eager \--max_model_len 131072  1234INFO 10-25 02:18:40 [parallel_state.py:1208] rank 0 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0INFO 10-25 02:18:40 [parallel_state.py:1208] rank 1 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 1, EP rank 1INFO 10-25 02:18:40 [parallel_state....</div></div></div></a><a class="pagination-related" href="/2025/12/14/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90Python%E5%8C%85%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" title="深入解析Python包调用原理与最佳实践"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-14</div><div class="info-item-2">深入解析Python包调用原理与最佳实践</div></div><div class="info-2"><div class="info-item-1">深入解析 Python 包调用原理与最佳实践[toc] 一、引言写下这篇文章的起因，是最近我在参与 vLLM 项目的开发过程中，发现其中使用了一种动态加载对象的方式值得学习，并由此想对 Python 语言加载依赖的方式做一个研究和总结。本文将通过实验的方式，对 Python import 的原理以及不同 import 方式的区别进行介绍，并针对具体开发过程中可能会遇到的一些问题，分享一些最佳实践的解决方案。 二、什么是 Python 的包？Python 中的模块、包以及库有什么区别？ 一种简单且直观的理解：  模块（module）：任何 .py 文件都可以作为一个“模块”（除了 .py 文件之外，模块还可以有其它形式）； 包（package）：任何包含了一个 __init__.py 文件的文件夹都是一个“包”，一个包里可以包含其它的包和模块； 库（library）：“库”更多地是一种编程上的概念，表示可重复利用的代码。   关于这个问题，更深入的分析和讲解可以参考知乎上“风影忍者”和“看图学”的这两个回答，这里不再深入进行介绍。  三、深入解析 Python import 原理下...</div></div></div></a><a class="pagination-related" href="/2025/08/11/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADPlacement%20Group%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8/" title="Ray框架中Placement Group概念及作用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="info-item-2">Ray框架中Placement Group概念及作用</div></div><div class="info-2"><div class="info-item-1">好的，我们来详细解释一下 Ray 框架中的 Placement Group 概念及其作用。 核心概念：什么是 Placement Group？Placement Group 是 Ray 中用于精细化控制任务或角色资源布局的抽象概念。它允许你提前声明一“组”资源，并指定这组资源在集群中的“摆放策略”，然后你可以将任务或演员调度到这组资源的“插槽”中。 你可以把它想象成：  传统调度：就像你去餐厅，告诉服务员“我需要两个座位”，服务员会随机找两个空位给你。 使用 Placement Group：就像你提前预定了一个包含特定座位（比如一个沙发座和两个普通座）的卡座，并指定这个卡座要靠窗。之后你的朋友们会直接到这个预定好的卡座就坐。   为什么需要 Placement Group？它的作用是什么？在没有 Placement Group 的情况下，Ray 的默认调度器虽然能高效地分配资源，但它主要关注的是“资源量”（例如，需要 2 个 CPU），而不太关心“资源的位置”。这在很多高级场景下会成为一个瓶颈。 Placement Group 的主要作用体现在以下几个方面： 1. 实现任务间的紧...</div></div></div></a><a class="pagination-related" href="/2025/08/13/qwen3_vl_mm_kwargs_analysis/" title="qwen3_vl_mm_kwargs_analysis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-13</div><div class="info-item-2">qwen3_vl_mm_kwargs_analysis</div></div><div class="info-2"><div class="info-item-1">Qwen3-VL mm_kwargs 多模态输入分析报告 分析文件：vllm/model_executor/models/qwen3_vl.py   核心结论mm_kwargs 不是单个视觉输入（单张图片或单个视频）的表示，而是请求级别（request-level）的聚合结构，包含该请求中所有图像和&#x2F;或视频的数据。 mm_kwargs 在 Qwen3-VL 中有两种截然不同的含义，出现在不同的调用层次：  处理时（Processing-time）mm_kwargs：用户传入的”控制参数”，指定如何对媒体数据进行预处理（分辨率、帧率等）。 前向推理时（Forward-time）mm_kwargs：经过处理后传入模型 forward 的”张量数据”，包含该请求所有图像&#x2F;视频的 pixel values 和 grid 信息。   一、处理时 mm_kwargs（用户侧配置参数）出现在 _get_vision_info、_call_hf_processor、get_max_video_tokens 等处理阶段，由用户在发起请求时传入，用于覆盖处理器的默认配置。 1.1...</div></div></div></a><a class="pagination-related" href="/2025/08/05/Qwen2.5-VL_1/" title="Qwen2.5-VL_1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-05</div><div class="info-item-2">Qwen2.5-VL_1</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VL 差异对比Qwen2_5_VLForConditionalGeneration__init__()123456789101112131415161718192021222324252627282930# vllmself.use_data_parallel = multimodal_config.mm_encoder_tp_mode == &quot;data&quot;if multimodal_config.get_limit_per_prompt(    &quot;image&quot;) or multimodal_config.get_limit_per_prompt(&quot;video&quot;):    attn_backend_override = (        multimodal_config.mm_encoder_attn_backend        if multimodal_config is not None        else None    )    self.visual = Qwen2_5_VisionTr...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%EF%BC%9ARoPE%EF%BC%88%E6%97%8B%E8%BD%AC%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1. 基础：RoPE（旋转位置编码）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E6%A8%A1%E6%80%81%E7%9A%84%E6%8C%91%E6%88%98%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E2%80%9CM%E2%80%9D%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">2. 多模态的挑战：为什么需要“M”？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-MRoPE%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A-modality-aware%EF%BC%88%E6%A8%A1%E6%80%81%E6%84%9F%E7%9F%A5%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">3. MRoPE的作用： modality-aware（模态感知）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9AMRoPE%E7%9A%84%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">总结：MRoPE的主要作用</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

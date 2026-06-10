@@ -1,0 +1,466 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>routines | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="使用例程自动化工作 让 Claude Code 自动运行。定义在计划上运行、通过 API 调用触发或对来自 Anthropic 管理的云基础设施的 GitHub 事件做出反应的例程。     Routines 处于研究预览阶段。行为、限制和 API 表面可能会改变。   例程是一个保存的 Claude Code 配置：一个提示、一个或多个存储库和一组 connectors，打包一次并自动运行。例程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="routines">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/03/11/routines/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="使用例程自动化工作 让 Claude Code 自动运行。定义在计划上运行、通过 API 调用触发或对来自 Anthropic 管理的云基础设施的 GitHub 事件做出反应的例程。     Routines 处于研究预览阶段。行为、限制和 API 表面可能会改变。   例程是一个保存的 Claude Code 配置：一个提示、一个或多个存储库和一组 connectors，打包一次并自动运行。例程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-03-11T10:08:57.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.576Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "routines",
+  "url": "https://hzhzxfs.github.io/2026/03/11/routines/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-03-11T10:08:57.000Z",
+  "dateModified": "2026-06-10T02:14:46.576Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/03/11/routines/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'routines',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">routines</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">routines</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-11T10:08:57.000Z" title="发表于 2026-03-11 18:08:57">2026-03-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.576Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="使用例程自动化工作"><a href="#使用例程自动化工作" class="headerlink" title="使用例程自动化工作"></a>使用例程自动化工作</h1><blockquote>
+<p>让 Claude Code 自动运行。定义在计划上运行、通过 API 调用触发或对来自 Anthropic 管理的云基础设施的 GitHub 事件做出反应的例程。</p>
+</blockquote>
+<Note>
+  Routines 处于研究预览阶段。行为、限制和 API 表面可能会改变。
+</Note>
+
+<p>例程是一个保存的 Claude Code 配置：一个提示、一个或多个存储库和一组 <a href="/zh-CN/mcp">connectors</a>，打包一次并自动运行。例程在 Anthropic 管理的云基础设施上执行，因此当您的笔记本电脑关闭时它们仍然可以工作。</p>
+<p>每个例程可以附加一个或多个触发器：</p>
+<ul>
+<li><strong>Scheduled</strong>：按照每小时、每晚或每周等定期节奏运行，或在特定的未来时间运行一次</li>
+<li><strong>API</strong>：通过向每个例程端点发送带有持有者令牌的 HTTP POST 来按需触发</li>
+<li><strong>GitHub</strong>：自动响应存储库事件（如拉取请求或发布）运行</li>
+</ul>
+<p>单个例程可以组合触发器。例如，PR 审查例程可以每晚运行、从部署脚本触发，也可以对每个新 PR 做出反应。</p>
+<p>Routines 在启用了 <a href="/zh-CN/claude-code-on-the-web">Claude Code on the web</a> 的 Pro、Max、Team 和 Enterprise 计划上可用。在 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">claude.ai&#x2F;code&#x2F;routines</a> 创建和管理它们，或从 CLI 使用 <code>/schedule</code>。</p>
+<p>Team 和 Enterprise 管理员可以在 <a target="_blank" rel="noopener" href="https://claude.ai/admin-settings/claude-code">claude.ai&#x2F;admin-settings&#x2F;claude-code</a> 处使用 Routines 切换为所有成员禁用例程。禁用后，现有例程停止运行，成员无法创建新例程。</p>
+<p>本页涵盖创建例程、配置每种触发器类型、管理运行以及使用限制如何应用。</p>
+<h2 id="示例用例"><a href="#示例用例" class="headerlink" title="示例用例"></a>示例用例</h2><p>每个示例将触发器类型与例程适合的工作类型配对：无人值守、可重复且与明确的结果相关。</p>
+<p><strong>积压维护。</strong> 计划触发器每个工作日晚上针对您的问题跟踪器通过 connector 运行。例程读取自上次运行以来打开的问题，应用标签，根据引用的代码区域分配所有者，并将摘要发布到 Slack，以便团队以整理好的队列开始新的一天。</p>
+<p><strong>警报分类。</strong> 您的监控工具在错误阈值被超过时调用例程的 API 端点，将警报正文作为 <code>text</code> 传递。例程提取堆栈跟踪，将其与存储库中的最近提交相关联，并打开一个包含建议修复和返回警报链接的草稿拉取请求。值班人员审查 PR 而不是从空白终端开始。</p>
+<p><strong>定制代码审查。</strong> GitHub 触发器在 <code>pull_request.opened</code> 上运行。例程应用您团队自己的审查清单，为安全性、性能和风格问题留下内联注释，并添加摘要注释，以便人工审查者可以专注于设计而不是机械检查。</p>
+<p><strong>部署验证。</strong> 您的 CD 管道在每次生产部署后调用例程的 API 端点。例程针对新构建运行烟雾测试，扫描错误日志以查找回归，并在部署窗口关闭之前向发布频道发布 go 或 no-go。</p>
+<p><strong>文档漂移。</strong> 计划触发器每周运行。例程扫描自上次运行以来合并的 PR，标记引用已更改 API 的文档，并针对文档存储库打开更新 PR 供编辑审查。</p>
+<p><strong>库移植。</strong> GitHub 触发器在 <code>pull_request.closed</code> 上运行，筛选为一个 SDK 存储库中的合并 PR。例程将更改移植到另一种语言的并行 SDK，并打开匹配的 PR，使两个库保持同步，而无需人工重新实现每个更改。</p>
+<p>下面的部分将介绍创建例程和配置每种触发器类型。</p>
+<h2 id="创建例程"><a href="#创建例程" class="headerlink" title="创建例程"></a>创建例程</h2><p>从 Web 在 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">claude.ai&#x2F;code&#x2F;routines</a>、从 Desktop 应用或从 CLI 创建例程。所有三个界面都写入同一个云账户，因此您在其中一个创建的例程会立即显示在其他界面中。在 Desktop 应用中，单击侧边栏中的 <strong>Routines</strong>，然后单击 <strong>New routine</strong>，并选择 <strong>Remote</strong>；选择 <strong>Local</strong> 会创建一个 <a href="/zh-CN/desktop-scheduled-tasks">Desktop scheduled task</a>，它在您的机器上运行，而不是在云中运行。</p>
+<p>创建表单设置例程的提示、存储库、环境、connectors 和触发器。</p>
+<p>Routines 作为完整的 Claude Code 云会话自主运行：没有权限模式选择器，运行期间也没有批准提示。会话可以运行 shell 命令、使用 <a href="/zh-CN/skills">skills</a> 提交到克隆的存储库，并调用您包含的任何 connectors。例程可以到达的内容由您选择的存储库及其分支推送设置、<a href="/zh-CN/claude-code-on-the-web#the-cloud-environment">environment</a> 的网络访问和变量以及您包含的 connectors 决定。将每个范围限制在例程实际需要的范围内。</p>
+<p>Routines 属于您的个人 claude.ai 账户。它们不与队友共享，并且计入您账户的每日运行配额。例程通过您连接的 GitHub 身份或 connectors 所做的任何事情都显示为您：提交和拉取请求携带您的 GitHub 用户，Slack 消息、Linear 票证或其他 connector 操作使用您为这些服务链接的账户。</p>
+<h3 id="从-Web-创建"><a href="#从-Web-创建" class="headerlink" title="从 Web 创建"></a>从 Web 创建</h3><Steps>
+  <Step title="打开创建表单">
+    访问 [claude.ai/code/routines](https://claude.ai/code/routines) 并单击 **New routine**。
+  </Step>
+
+  <Step title="命名例程并编写提示">
+    给例程一个描述性名称并编写 Claude 每次运行的提示。提示是最重要的部分：例程自主运行，因此提示必须是自包含的，并明确说明要做什么以及成功是什么样的。
+
+<pre><code>提示输入包括一个模型选择器。Claude 在每次运行时使用选定的模型。
+</code></pre>
+  </Step>
+
+  <Step title="选择存储库">
+    添加一个或多个 GitHub 存储库供 Claude 在其中工作。每个存储库在运行开始时从默认分支克隆。Claude 为其更改创建 `claude/` 前缀的分支。
+  </Step>
+
+  <Step title="选择环境">
+    为例程选择一个 [cloud environment](/zh-CN/claude-code-on-the-web#the-cloud-environment)。环境控制云会话可以访问的内容：
+
+<pre><code>* **Network access**：设置每次运行期间可用的互联网访问级别
+* **Environment variables**：提供 Claude 可以使用的 API 密钥、令牌或其他机密
+* **Setup script**：安装例程需要的依赖项和工具。结果是 [cached](/zh-CN/claude-code-on-the-web#environment-caching)，因此脚本不会在每个会话上重新运行
+
+提供了一个 **Default** 环境，具有 **Trusted** 网络访问，允许 [default set](/zh-CN/claude-code-on-the-web#default-allowed-domains) 的包注册表、云提供商 API、容器注册表和常见开发域，但阻止其他所有内容。如果您的例程需要到达您自己的服务或该列表之外的域，请在运行前编辑环境的 [network access](/zh-CN/claude-code-on-the-web#network-access)。要使用单独的环境，请先 [create one](/zh-CN/claude-code-on-the-web#configure-your-environment)。
+</code></pre>
+  </Step>
+
+  <Step title="选择触发器">
+    在 **Select a trigger** 下，选择例程如何启动。您可以选择一种触发器类型或组合多种。
+
+<pre><code>&lt;Tabs&gt;
+  &lt;Tab title=&quot;Schedule&quot;&gt;
+    为定期运行选择预设频率，或在特定时间戳安排单次一次性运行。有关时区处理、交错、自定义 cron 间隔和一次性运行，请参阅 [Add a schedule trigger](#add-a-schedule-trigger)。
+  &lt;/Tab&gt;
+
+  &lt;Tab title=&quot;GitHub event&quot;&gt;
+    选择存储库、要响应的事件和可选过滤器。有关支持的事件和过滤器字段的完整列表，请参阅 [Add a GitHub trigger](#add-a-github-trigger)。
+  &lt;/Tab&gt;
+
+  &lt;Tab title=&quot;API&quot;&gt;
+    在此处选择 **API**，然后保存例程。URL 和令牌在保存例程后生成，因为它们取决于例程 ID。请参阅 [Add an API trigger](#add-an-api-trigger) 以复制 URL 并生成令牌。
+  &lt;/Tab&gt;
+&lt;/Tabs&gt;
+</code></pre>
+  </Step>
+
+  <Step title="审查 connectors 和权限">
+    表单底部的 **Connectors** 和 **Permissions** 选项卡控制例程可以到达的内容。
+
+<pre><code>在 Connectors 下，默认包括您所有连接的 [MCP connectors](/zh-CN/mcp)。删除例程不需要的任何内容。Claude 可以使用包含的 connector 中的每个工具，包括写入，无需在运行期间请求权限。
+
+在 Permissions 下，为任何 Claude 应该能够推送到现有分支而不仅仅是 `claude/` 前缀分支的存储库启用 **Allow unrestricted branch pushes**。
+</code></pre>
+  </Step>
+
+  <Step title="创建例程">
+    单击 **Create**。例程出现在列表中，并在下次其触发器之一匹配时运行。要立即启动运行，请在例程的详细信息页面上单击 **Run now**。
+
+<pre><code>每次运行都会在您的其他会话旁边创建一个新会话，您可以在其中查看 Claude 所做的工作、审查更改并创建拉取请求。
+</code></pre>
+  </Step>
+</Steps>
+
+<h3 id="从-CLI-创建"><a href="#从-CLI-创建" class="headerlink" title="从 CLI 创建"></a>从 CLI 创建</h3><p>在任何会话中运行 <code>/schedule</code> 以对话方式创建计划例程。您也可以直接传递描述，对于定期例程如 <code>/schedule daily PR review at 9am</code> 或一次性例程如 <code>/schedule clean up feature flag in one week</code>。Claude 会遍历 Web 表单收集的相同信息，然后将例程保存到您的账户。</p>
+<p>CLI 中的 <code>/schedule</code> 仅创建计划例程。要添加 API 或 GitHub 触发器，请在 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">claude.ai&#x2F;code&#x2F;routines</a> 的 Web 上编辑例程。</p>
+<p>CLI 还支持管理现有例程。运行 <code>/schedule list</code> 查看所有例程，<code>/schedule update</code> 更改一个，或 <code>/schedule run</code> 立即触发它。</p>
+<h2 id="配置触发器"><a href="#配置触发器" class="headerlink" title="配置触发器"></a>配置触发器</h2><p>当例程的触发器之一匹配时，例程启动。您可以将任何组合的计划、API 和 GitHub 触发器附加到同一例程，并随时从例程编辑表单的 <strong>Select a trigger</strong> 部分添加或删除它们。</p>
+<h3 id="添加计划触发器"><a href="#添加计划触发器" class="headerlink" title="添加计划触发器"></a>添加计划触发器</h3><p>计划触发器按定期节奏运行例程，或在特定的未来时间运行一次。在 <strong>Select a trigger</strong> 部分中选择预设频率：每小时、每天、工作日或每周。时间以您的本地时区输入并自动转换，因此例程在该挂钟时间运行，无论云基础设施位于何处。</p>
+<p>运行可能在计划时间后几分钟开始，原因是交错。每个例程的偏移是一致的。</p>
+<p>对于自定义间隔（如每两小时或每月的第一天），在表单中选择最接近的预设，然后在 CLI 中运行 <code>/schedule update</code> 以设置特定的 cron 表达式。最小间隔是一小时；运行频率更高的表达式被拒绝。</p>
+<h4 id="计划一次性运行"><a href="#计划一次性运行" class="headerlink" title="计划一次性运行"></a>计划一次性运行</h4><p>一次性计划在特定时间戳处触发例程一次。使用它来提醒自己本周晚些时候、在推出完成后打开清理 PR，或在上游更改到达时启动后续任务。例程触发后，它会自动禁用，Web UI 将其标记为 <strong>Ran</strong>。要再次运行它，请编辑例程并设置新的一次性时间。</p>
+<p>通过在 CLI 中自然语言描述时间来创建一次性运行。Claude 根据当前时间解析该短语并在保存前确认绝对时间戳。</p>
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/schedule tomorrow at 9am, summarize yesterday&#x27;s merged PRs</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight text"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/schedule in 2 weeks, open a cleanup PR that removes the feature flag</span><br></pre></td></tr></table></figure>
+
+<p>与定期计划相同的本地到 UTC 转换适用于一次性时间戳。</p>
+<p>一次性运行不计入每日例程运行上限。它们消耗您计划的常规订阅使用量，就像任何其他会话一样。有关详细信息，请参阅 <a href="#usage-and-limits">Usage and limits</a>。</p>
+<h3 id="添加-API-触发器"><a href="#添加-API-触发器" class="headerlink" title="添加 API 触发器"></a>添加 API 触发器</h3><p>API 触发器为例程提供专用的 HTTP 端点。使用例程的持有者令牌 POST 到端点会启动新会话并返回会话 URL。使用此功能将 Claude Code 连接到警报系统、部署管道、内部工具或任何可以进行身份验证 HTTP 请求的地方。</p>
+<p>API 触发器从 Web 添加到现有例程。CLI 目前无法创建或撤销令牌。</p>
+<Steps>
+  <Step title="打开例程进行编辑">
+    转到 [claude.ai/code/routines](https://claude.ai/code/routines)，单击您想通过 API 触发的例程，然后单击铅笔图标打开 **Edit routine**。
+  </Step>
+
+  <Step title="添加 API 触发器">
+    滚动到 **Instructions** 框下方的 **Select a trigger** 部分，单击 **Add another trigger**，然后选择 **API**。
+  </Step>
+
+  <Step title="复制 URL 并生成令牌">
+    模态显示此例程的 URL 以及示例 curl 命令。复制 URL，然后单击 **Generate token** 并立即复制令牌。令牌仅显示一次，之后无法检索，因此请将其存储在安全的地方，如您的警报工具的密钥存储。
+  </Step>
+
+  <Step title="调用端点">
+    POST 到 URL 时在 `Authorization: Bearer` 标头中发送令牌。下面的 [Trigger a routine](#trigger-a-routine) 部分显示了完整示例。
+  </Step>
+</Steps>
+
+<p>每个例程都有自己的令牌，仅限于触发该例程。要轮换或撤销它，请返回同一模态并单击 <strong>Regenerate</strong> 或 <strong>Revoke</strong>。</p>
+<h4 id="触发例程"><a href="#触发例程" class="headerlink" title="触发例程"></a>触发例程</h4><p>向 <code>/fire</code> 端点发送 POST 请求，在 <code>Authorization</code> 标头中包含持有者令牌。请求正文接受可选的 <code>text</code> 字段，用于运行特定的上下文，如警报正文或失败的日志，与其保存的提示一起传递给例程。该值是自由格式文本，不被解析：如果您发送 JSON 或其他结构化有效负载，例程会将其作为文字字符串接收。</p>
+<p>下面的示例从 shell 触发例程：</p>
+<figure class="highlight bash"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST https://api.anthropic.com/v1/claude_code/routines/trig_01ABCDEFGHJKLMNOPQRSTUVW/fire \</span><br><span class="line">  -H <span class="string">&quot;Authorization: Bearer sk-ant-oat01-xxxxx&quot;</span> \</span><br><span class="line">  -H <span class="string">&quot;anthropic-beta: experimental-cc-routine-2026-04-01&quot;</span> \</span><br><span class="line">  -H <span class="string">&quot;anthropic-version: 2023-06-01&quot;</span> \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;text&quot;: &quot;Sentry alert SEN-4521 fired in prod. Stack trace attached.&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>成功的请求返回包含新会话 ID 和 URL 的 JSON 正文：</p>
+<figure class="highlight json"><figcaption><span>theme</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;routine_fire&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;claude_code_session_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;session_01HJKLMNOPQRSTUVWXYZ&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;claude_code_session_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://claude.ai/code/session_01HJKLMNOPQRSTUVWXYZ&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在浏览器中打开会话 URL 以实时观看运行、审查更改或手动继续对话。</p>
+<Warning>
+  `/fire` 端点在 `experimental-cc-routine-2026-04-01` beta 标头下发布。请求和响应形状、速率限制和令牌语义可能在功能处于研究预览阶段时改变。破坏性更改在新的日期 beta 标头版本后发布，最近的两个先前标头版本继续工作，以便调用者有时间迁移。
+</Warning>
+
+<h4 id="API-参考"><a href="#API-参考" class="headerlink" title="API 参考"></a>API 参考</h4><p>有关完整的 API 参考，包括所有错误响应、验证规则和字段限制，请参阅 Claude Platform 文档中的 <a target="_blank" rel="noopener" href="https://platform.claude.com/docs/zh-CN/api/claude-code/routines-fire">Trigger a routine via API</a>。</p>
+<p><code>/fire</code> 端点仅对 claude.ai 用户可用，不是 Claude Platform API 表面的一部分。</p>
+<h3 id="添加-GitHub-触发器"><a href="#添加-GitHub-触发器" class="headerlink" title="添加 GitHub 触发器"></a>添加 GitHub 触发器</h3><p>GitHub 触发器在连接的存储库上发生匹配事件时自动启动新会话。每个匹配事件启动自己的会话。</p>
+<Note>
+  在研究预览期间，GitHub webhook 事件受每个例程和每个账户的每小时上限限制。超过限制的事件被丢弃，直到窗口重置。在 [claude.ai/code/routines](https://claude.ai/code/routines) 查看您当前的限制。
+</Note>
+
+<p>GitHub 触发器仅从 Web UI 配置。</p>
+<Steps>
+  <Step title="打开例程进行编辑">
+    转到 [claude.ai/code/routines](https://claude.ai/code/routines)，单击例程，然后单击铅笔图标打开 **Edit routine**。
+  </Step>
+
+  <Step title="添加 GitHub 事件触发器">
+    滚动到 **Select a trigger** 部分，单击 **Add another trigger**，然后选择 **GitHub event**。
+  </Step>
+
+  <Step title="安装 Claude GitHub App">
+    Claude GitHub App 必须安装在您想订阅的存储库上。如果尚未安装，触发器设置会提示您安装它。
+
+<pre><code>&lt;Note&gt;
+  在 CLI 中运行 `/web-setup` 授予存储库访问权限以进行克隆，但它不安装 Claude GitHub App，也不启用 webhook 传递。GitHub 触发器需要安装 Claude GitHub App，触发器设置会提示您这样做。
+&lt;/Note&gt;
+</code></pre>
+  </Step>
+
+  <Step title="配置触发器">
+    选择存储库，从 [supported events](#supported-events) 列表中选择事件，并可选地添加过滤器。保存触发器。
+  </Step>
+</Steps>
+
+<h4 id="支持的事件"><a href="#支持的事件" class="headerlink" title="支持的事件"></a>支持的事件</h4><p>GitHub 触发器可以订阅以下事件类别之一。在每个类别中，您可以选择特定操作（如 <code>pull_request.opened</code>）或对类别中的所有操作做出反应。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Event</th>
+<th align="left">Triggers when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Pull request</td>
+<td align="left">PR 被打开、关闭、分配、标记、同步或以其他方式更新</td>
+</tr>
+<tr>
+<td align="left">Release</td>
+<td align="left">发布被创建、发布、编辑或删除</td>
+</tr>
+</tbody></table>
+<h4 id="过滤拉取请求"><a href="#过滤拉取请求" class="headerlink" title="过滤拉取请求"></a>过滤拉取请求</h4><p>使用过滤器缩小哪些拉取请求启动新会话。所有过滤条件必须匹配才能触发例程。可用的过滤字段是：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Filter</th>
+<th align="left">Matches</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Author</td>
+<td align="left">PR 作者的 GitHub 用户名</td>
+</tr>
+<tr>
+<td align="left">Title</td>
+<td align="left">PR 标题文本</td>
+</tr>
+<tr>
+<td align="left">Body</td>
+<td align="left">PR 描述文本</td>
+</tr>
+<tr>
+<td align="left">Base branch</td>
+<td align="left">PR 目标的分支</td>
+</tr>
+<tr>
+<td align="left">Head branch</td>
+<td align="left">PR 来自的分支</td>
+</tr>
+<tr>
+<td align="left">Labels</td>
+<td align="left">应用于 PR 的标签</td>
+</tr>
+<tr>
+<td align="left">Is draft</td>
+<td align="left">PR 是否处于草稿状态</td>
+</tr>
+<tr>
+<td align="left">Is merged</td>
+<td align="left">PR 是否已合并</td>
+</tr>
+</tbody></table>
+<p>每个过滤器将字段与运算符配对：equals、contains、starts with、is one of、is not one of 或 matches regex。</p>
+<p><code>matches regex</code> 运算符测试整个字段值，而不是其中的子字符串。要匹配包含 <code>hotfix</code> 的任何标题，请写 <code>.*hotfix.*</code>。没有周围的 <code>.*</code>，过滤器仅匹配完全是 <code>hotfix</code> 的标题，前后没有任何内容。对于不使用 regex 语法的文字子字符串匹配，请改用 <code>contains</code> 运算符。</p>
+<p>一些示例过滤器组合：</p>
+<ul>
+<li><strong>Auth module review</strong>：base branch <code>main</code>，head branch contains <code>auth-provider</code>。将任何涉及身份验证的 PR 发送给专注的审查者。</li>
+<li><strong>Ready-for-review only</strong>：is draft is <code>false</code>。跳过草稿，以便例程仅在 PR 准备好审查时运行。</li>
+<li><strong>Label-gated backport</strong>：labels include <code>needs-backport</code>。仅当维护者标记 PR 时才触发移植到另一个分支的例程。</li>
+</ul>
+<h4 id="会话如何映射到事件"><a href="#会话如何映射到事件" class="headerlink" title="会话如何映射到事件"></a>会话如何映射到事件</h4><p>每个匹配的 GitHub 事件启动新会话。GitHub 触发的例程不支持跨事件重用会话，因此两个 PR 更新会产生两个独立会话。</p>
+<h2 id="管理例程"><a href="#管理例程" class="headerlink" title="管理例程"></a>管理例程</h2><p>单击列表中的例程以打开其详细信息页面。详细信息页面显示例程的存储库、connectors、提示、计划、API 令牌、GitHub 触发器和过去运行的列表。</p>
+<h3 id="查看和交互运行"><a href="#查看和交互运行" class="headerlink" title="查看和交互运行"></a>查看和交互运行</h3><p>单击任何运行以将其作为完整会话打开。从那里您可以看到 Claude 所做的工作、审查更改、创建拉取请求或继续对话。每个运行会话的工作方式与任何其他会话相同：使用会话标题旁边的下拉菜单来重命名、存档或删除它。</p>
+<Note>
+  运行列表中的绿色状态表示会话已启动并在没有基础设施错误的情况下退出。这并不意味着您提示中的任务成功。打开运行以读取记录并确认 Claude 实际做了什么。被阻止的网络请求、缺失的 connector 工具和任务级别的失败都会在那里显示，而不是在状态指示器中。
+</Note>
+
+<h3 id="编辑和控制例程"><a href="#编辑和控制例程" class="headerlink" title="编辑和控制例程"></a>编辑和控制例程</h3><p>从例程详细信息页面，您可以：</p>
+<ul>
+<li>单击 <strong>Run now</strong> 立即启动运行，而无需等待下一个计划时间。</li>
+<li>使用 <strong>Repeats</strong> 部分中的切换来暂停或恢复计划。暂停的例程保持其配置但不运行，直到您重新启用它们。</li>
+<li>单击铅笔图标打开 <strong>Edit routine</strong> 并更改名称、提示、存储库、环境、connectors 或例程的任何触发器。<strong>Select a trigger</strong> 部分是您添加或删除计划、API 令牌和 GitHub 事件触发器的地方。</li>
+<li>单击删除图标以删除例程。例程创建的过去会话保留在您的会话列表中。</li>
+</ul>
+<h3 id="存储库和分支权限"><a href="#存储库和分支权限" class="headerlink" title="存储库和分支权限"></a>存储库和分支权限</h3><p>Routines 需要 GitHub 访问权限来克隆存储库。当您使用 <code>/schedule</code> 从 CLI 创建例程时，Claude 检查您的账户是否连接了 GitHub，如果没有，会提示您运行 <code>/web-setup</code>。有关授予访问权限的两种方式，请参阅 <a href="/zh-CN/claude-code-on-the-web#github-authentication-options">GitHub authentication options</a>。</p>
+<p>您添加的每个存储库在每次运行时都会被克隆。Claude 从存储库的默认分支开始，除非您的提示另有指定。</p>
+<p>默认情况下，Claude 只能推送到以 <code>claude/</code> 为前缀的分支。这可以防止例程意外修改受保护或长期分支。要为特定存储库删除此限制，请在创建或编辑例程时为该存储库启用 <strong>Allow unrestricted branch pushes</strong>。</p>
+<h3 id="Connectors"><a href="#Connectors" class="headerlink" title="Connectors"></a>Connectors</h3><p>Routines 可以使用您连接的 MCP connectors 在每次运行期间读取和写入外部服务。例如，分类支持请求的例程可能从 Slack 频道读取并在 Linear 中创建问题。</p>
+<p>Connectors 是您账户上的 <a href="/zh-CN/mcp#use-mcp-servers-from-claude-ai">claude.ai integrations</a>。您在 CLI 中使用 <code>claude mcp add</code> 本地添加的 MCP 服务器存储在您的机器上而不是您的 claude.ai 账户上，因此它们不会出现在 connectors 列表中。要在例程中使用其中一个服务器，请在 <a target="_blank" rel="noopener" href="https://claude.ai/customize/connectors">claude.ai&#x2F;customize&#x2F;connectors</a> 处将其添加为 connector，或在提交的 <a href="/zh-CN/mcp#project-scope"><code>.mcp.json</code></a> 中声明它，以便它是克隆存储库的一部分。</p>
+<p>创建例程时，默认情况下包括您当前连接的所有 connectors。删除不需要的任何内容以限制 Claude 在运行期间可以访问的工具。您也可以直接从例程表单添加 connectors。</p>
+<p>要在例程表单外管理或添加 connectors，请访问 claude.ai 上的 <strong>Settings &gt; Connectors</strong> 或在 CLI 中使用 <code>/schedule update</code>。</p>
+<h3 id="环境和网络访问"><a href="#环境和网络访问" class="headerlink" title="环境和网络访问"></a>环境和网络访问</h3><p>每个例程在 <a href="/zh-CN/claude-code-on-the-web#the-cloud-environment">cloud environment</a> 中运行，该环境控制网络访问、环境变量和设置脚本。例程在每次运行时继承环境的网络策略。</p>
+<p><strong>Default</strong> 环境使用 <strong>Trusted</strong> 网络访问：<a href="/zh-CN/claude-code-on-the-web#default-allowed-domains">默认允许列表</a> 中的包注册表、云提供商 API、容器注册表和常见开发域是可访问的，但任意域不可访问。对其他主机的出站请求失败，返回 <code>403</code> 和 <code>x-deny-reason: host_not_allowed</code>。MCP connector 流量通过 Anthropic 的服务器路由，因此您添加到例程的 connectors 无需将其主机添加到 <strong>Allowed domains</strong> 即可工作。删除您在 <a href="#connectors">Connectors</a> 下不需要的任何 connectors。</p>
+<p>要允许其他域：</p>
+<Steps>
+  <Step title="打开例程进行编辑">
+    在例程的详细信息页面上，单击铅笔图标以打开 **Edit routine**。
+  </Step>
+
+  <Step title="打开环境选择器">
+    在 **Instructions** 框下方，选择显示您的环境名称（例如 **Default**）的云图标。
+  </Step>
+
+  <Step title="打开环境设置">
+    将鼠标悬停在列表中的环境上，然后单击右侧出现的设置图标。
+  </Step>
+
+  <Step title="更改网络访问级别">
+    在 **Update cloud environment** 对话框中，将 **Network access** 更改为 **Custom** 并在 **Allowed domains** 中输入您的域。检查 **Also include default list of common package managers** 以在您的自定义域旁边保留 [默认允许列表](/zh-CN/claude-code-on-the-web#default-allowed-domains)。选择 **Full** 以获得不受限制的访问。
+  </Step>
+
+  <Step title="保存">
+    单击 **Save changes**。新策略从下一次运行开始应用。
+  </Step>
+</Steps>
+
+<p>有关访问级别和默认允许列表的详细信息，请参阅 <a href="/zh-CN/claude-code-on-the-web#network-access">Network access</a>。</p>
+<h2 id="使用和限制"><a href="#使用和限制" class="headerlink" title="使用和限制"></a>使用和限制</h2><p>Routines 以与交互式会话相同的方式消耗订阅使用量。除了标准订阅限制外，routines 还对每个账户每天可以启动多少次运行有上限。在 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">claude.ai&#x2F;code&#x2F;routines</a> 或 <a target="_blank" rel="noopener" href="https://claude.ai/settings/usage">claude.ai&#x2F;settings&#x2F;usage</a> 查看您当前的消耗和剩余的每日 routine 运行次数。</p>
+<p>当 routine 达到每日上限或您的订阅使用限制时，启用了使用额度的组织可以继续在计量超额上运行 routines。没有使用额度，额外运行被拒绝，直到窗口重置。从 claude.ai 上的 <strong>Settings &gt; Billing</strong> 启用使用额度。</p>
+<p>一次性运行不计入每日 routine 运行上限。它们像任何其他会话一样消耗您的常规订阅使用量，但它们不受每个账户每日 routine 运行配额的限制。</p>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="schedule-返回”Unknown-command”"><a href="#schedule-返回”Unknown-command”" class="headerlink" title="/schedule 返回”Unknown command”"></a><code>/schedule</code> 返回”Unknown command”</h3><p>当不满足其中一个要求时，CLI 会隐藏 <code>/schedule</code>。原因通常是以下之一：</p>
+<ul>
+<li>您使用 Console API 密钥或云提供商（如 Bedrock、Vertex 或 Foundry）进行身份验证。<code>/schedule</code> 需要 claude.ai 订阅登录。如果在您的 shell 中设置了 <code>ANTHROPIC_API_KEY</code> 或 <code>ANTHROPIC_AUTH_TOKEN</code>，或在 <code>settings.json</code> 中设置了 <code>apiKeyHelper</code>，请先删除它，因为这些会优先于 claude.ai 登录</li>
+<li><code>DISABLE_TELEMETRY</code>、<code>DO_NOT_TRACK</code>、<code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> 或 <code>DISABLE_GROWTHBOOK</code> 在您的 shell 环境或 <a href="/zh-CN/settings#available-settings"><code>settings.json</code> 文件</a>的 <code>env</code> 块中设置。这些会禁用功能标志获取，而 <code>/schedule</code> 依赖于此</li>
+<li>您在 Claude Code 网页会话中。改为从 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">web UI</a> 管理例程</li>
+<li>{&#x2F;* min-version: 2.1.81 *&#x2F;}您的 CLI 版本早于 v2.1.81。运行 <code>claude update</code></li>
+</ul>
+<p>无论 CLI 如何配置，您始终可以在 <a target="_blank" rel="noopener" href="https://claude.ai/code/routines">claude.ai&#x2F;code&#x2F;routines</a> 处创建和管理例程。</p>
+<h3 id="“Routines-被您的组织的策略禁用”"><a href="#“Routines-被您的组织的策略禁用”" class="headerlink" title="“Routines 被您的组织的策略禁用”"></a>“Routines 被您的组织的策略禁用”</h3><p>您的 Team 或 Enterprise 管理员可能已在 <a target="_blank" rel="noopener" href="https://claude.ai/admin-settings/claude-code">claude.ai&#x2F;admin-settings&#x2F;claude-code</a> 处关闭了 <strong>Routines</strong> 切换。这是一个服务器端组织设置，因此无法从您的本地配置中覆盖。请联系您的管理员以请求为您的组织启用 routines。</p>
+<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><ul>
+<li><a href="/zh-CN/scheduled-tasks"><code>/loop</code> and in-session scheduling</a>：在打开的 CLI 会话中计划本地任务</li>
+<li><a href="/zh-CN/desktop-scheduled-tasks">Desktop scheduled tasks</a>：在您的机器上运行的本地计划任务，可以访问本地文件</li>
+<li><a href="/zh-CN/claude-code-on-the-web#the-cloud-environment">Cloud environment</a>：为云会话配置运行时环境</li>
+<li><a href="/zh-CN/mcp">MCP connectors</a>：连接外部服务，如 Slack、Linear 和 Google Drive</li>
+<li><a href="/zh-CN/github-actions">GitHub Actions</a>：在存储库事件的 CI 管道中运行 Claude</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/03/11/routines/">https://hzhzxfs.github.io/2026/03/11/routines/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/12/scheduled-tasks/" title="scheduled-tasks"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">scheduled-tasks</div></div><div class="info-2"><div class="info-item-1">按计划运行提示词 使用 &#x2F;loop 和 cron 调度工具在 Claude Code 会话中重复运行提示词、轮询状态或设置一次性提醒。     计划任务需要 Claude Code v2.1.72 或更高版本。使用 `claude --version` 检查您的版本。   计划任务让 Claude 按间隔自动重新运行提示词。使用它们来轮询部署、监督 PR、检查长时间运行的构建，或在会话中稍后提醒自己做某事。要对事件进行实时反应而不是轮询，请参阅 Channels：您的 CI 可以直接将失败推送到会话中。要保持会话工作转向转向直到满足条件而不是按间隔，请参阅 /goal。 任务是会话范围的：它们存在于当前对话中，当您启动新对话时就会停止。使用 --resume 或 --continue 恢复会带回任何尚未过期的任务：在过去 7 天内创建的重复任务，或计划时间尚未到达的一次性任务。对于独立于任何会话而存在的调度，请使用 Routines 在 Anthropic 管理的基础设施上创建例程、设置 Desktop 计划任务，或使用 GitHub Actions。 比较调度选项Cl...</div></div></div></a><a class="pagination-related" href="/2026/03/10/remote-control/" title="remote-control"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">remote-control</div></div><div class="info-2"><div class="info-item-1">使用 Remote Control 从任何设备继续本地会话 使用 Remote Control 从您的手机、平板电脑或任何浏览器继续本地 Claude Code 会话。适用于 claude.ai&#x2F;code 和 Claude 移动应用。     Remote Control 处于研究预览阶段，在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。   Remote Control 将 claude.ai&#x2F;code 或 Claude 应用（iOS 和 Android）连接到在您的机器上运行的 Claude Code 会话。在您的办公桌上启动一个任务，然后从沙发上的手机或另一台计算机上的浏览器继续。 当您在机器上启动 Remote Control 会话时，Claude 始终在本地运行，因此没有任何内容移动到云端。使用 Remote Control，您...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/06/06-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/" title="06-上下文管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-06</div><div class="info-item-2">06-上下文管理</div></div><div class="info-2"><div class="info-item-1">第 6 篇：上下文管理 — 无限对话的秘密 本篇是《深入 Claude Code 源码》系列的第 6 篇。我们将深入分析 Claude Code 如何在有限的 context window 内支撑无限长度的对话——从 token 预算管理、多级压缩策略，到文件状态缓存与 compact 后恢复的设计。 范围说明：上下文的”构建”（System Prompt 组装、CLAUDE.md 注入、git status 获取）已在第 4 篇中覆盖，缓存策略的横切视角将在第 7 篇中展开。本篇聚焦于上下文构建完成后的压缩、清理与恢复——即当 context window 不够用时，Claude Code 如何在不中断对话的情况下释放空间并重建必要的工作上下文。  为什么上下文管理如此重要？LLM 的 context window 是有限的。Claude 的模型通常有 200K token 的窗口（部分模型支持 1M），看起来很大，但在实际使用中消耗极快：  一次 System Prompt 可能占 5K-15K token 用户附带的 CLAUDE.md 文件可能占 3K-10K token...</div></div></div></a><a class="pagination-related" href="/2026/03/09/quickstart/" title="quickstart"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-09</div><div class="info-item-2">quickstart</div></div><div class="info-2"><div class="info-item-1">快速开始 欢迎使用 Claude Code！  本快速开始指南将在几分钟内让您使用 AI 驱动的编码辅助。完成本指南后，您将了解如何使用 Claude Code 完成常见的开发任务。 开始前确保您拥有：  打开的终端或命令提示符 如果您之前从未使用过终端，请查看终端指南   一个可以使用的代码项目 一个 Claude 订阅（Pro、Max、Team 或 Enterprise）、Claude Console 账户，或通过支持的云提供商的访问权限     本指南涵盖终端 CLI。Claude Code 也可在[网页](https://claude.ai/code)、[桌面应用](/zh-CN/desktop)、[VS Code](/zh-CN/vs-code) 和 [JetBrains IDE](/zh-CN/jetbrains)、[Slack](/zh-CN/slack) 中使用，以及通过 [GitHub Actions](/zh-CN/github-actions) 和 [GitLab](/zh-CN/gitlab-ci-cd) 进行 CI/CD。查看[所有界面](/zh-CN/...</div></div></div></a><a class="pagination-related" href="/2026/05/03/03-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/" title="03-状态管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-03</div><div class="info-item-2">03-状态管理</div></div><div class="info-2"><div class="info-item-1">第 3 篇：状态管理 — React 与非 React 世界的状态桥接 本篇是《深入 Claude Code 源码》系列的第 3 篇。我们将深入分析 Claude Code 如何用一个 35 行的极简 Store 实现，桥接 React UI 与非 React 业务逻辑之间的状态管理，并理解三层状态架构的设计哲学。  为什么状态管理值得单独一篇？Claude Code 面临一个独特的状态管理难题：它既是一个 React 应用，又不完全是。 终端 UI 用 Ink（React for CLI）渲染，组件需要响应式的状态更新。但核心业务逻辑 —— API 调用、工具执行、Agent 编排 —— 运行在 React 树之外。一次工具调用的结果需要同时：  更新 React 组件（显示在终端 UI 上） 被非 React 的 query.ts 对话循环读取 被 Agent 子系统使用（可能运行在隔离的上下文中）  如果用 Redux&#x2F;Zustand 这类库？太重了。React 内置的 useState&#x2F;useReducer？无法从 React 树外部访问。模块级全局变...</div></div></div></a><a class="pagination-related" href="/2026/03/14/settings/" title="settings"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-14</div><div class="info-item-2">settings</div></div><div class="info-2"><div class="info-item-1">Claude Code 设置 使用全局和项目级设置以及环境变量配置 Claude Code。  Claude Code 提供多种设置来配置其行为以满足您的需求。您可以在使用交互式 REPL 时运行 /config 命令来配置 Claude Code，这会打开一个选项卡式设置界面，您可以在其中查看状态信息并修改配置选项。 配置作用域Claude Code 使用作用域系统来确定配置应用的位置以及与谁共享。了解作用域可以帮助您决定如何为个人使用、团队协作或企业部署配置 Claude Code。 可用作用域   作用域 位置 影响范围 与团队共享？    Managed 服务器管理的设置、plist &#x2F; 注册表或系统级 managed-settings.json 机器上的所有用户 是（由 IT 部署）   User ~/.claude/ 目录 您，跨所有项目 否   Project 存储库中的 .claude/ 此存储库上的所有协作者 是（提交到 git）   Local .claude/settings.local.json 您，仅在此存储库中 否（gitignored）  ...</div></div></div></a><a class="pagination-related" href="/2026/03/06/platforms/" title="platforms"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-06</div><div class="info-item-2">platforms</div></div><div class="info-2"><div class="info-item-1">平台和集成 选择在哪里运行 Claude Code 以及连接什么工具。比较 CLI、Desktop、VS Code、JetBrains、Web 以及 Chrome、Slack 和 CI&#x2F;CD 等集成。  Claude Code 在任何地方运行相同的底层引擎，但每个界面都针对不同的工作方式进行了优化。本页面帮助您为工作流选择合适的平台，并连接您已经使用的工具。 在哪里运行 Claude Code根据您喜欢的工作方式和项目所在位置选择平台。    平台 最适合 您获得的功能    CLI 终端工作流、脚本编写、远程服务器 完整功能集、Agent SDK、计算机使用在 macOS 上（Pro 和 Max）、第三方提供商   Desktop 视觉审查、并行会话、托管设置 Diff 查看器、应用预览、Pro 和 Max 上的计算机使用和 Dispatch   VS Code 在 VS Code 内工作而无需切换到终端 内联 diff、集成终端、文件上下文   JetBrains 在 IntelliJ、PyCharm、WebStorm 或其他 JetBrains IDE 内工作 D...</div></div></div></a><a class="pagination-related" href="/2026/03/18/sub-agents/" title="sub-agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-18</div><div class="info-item-2">sub-agents</div></div><div class="info-2"><div class="info-item-1">创建自定义 subagents 在 Claude Code 中创建和使用专门的 AI subagents，用于特定任务的工作流和改进的上下文管理。  Subagents 是处理特定类型任务的专门 AI 助手。当一个辅助任务会用搜索结果、日志或文件内容充斥您的主对话，而您不会再次引用这些内容时，请使用一个 subagent：该 subagent 在自己的上下文中完成这项工作，仅返回摘要。当您不断生成相同类型的工作者并使用相同的指令时，定义一个自定义 subagent。 每个 subagent 在自己的 context window 中运行，具有自定义系统提示、特定的工具访问权限和独立的权限。当 Claude 遇到与 subagent 描述相匹配的任务时，它会委托给该 subagent，该 subagent 独立工作并返回结果。要在实践中看到上下文节省，context window 可视化 演示了一个 subagent 在自己的独立窗口中处理研究的会话。    Subagents 在单个会话中工作。要在并行运行许多独立会话并从一个地方监控它们，请参阅 [background agen...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%BE%8B%E7%A8%8B%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">使用例程自动化工作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E7%94%A8%E4%BE%8B"><span class="toc-number">1.1.</span> <span class="toc-text">示例用例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">创建例程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E-Web-%E5%88%9B%E5%BB%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">从 Web 创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E-CLI-%E5%88%9B%E5%BB%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text">从 CLI 创建</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">配置触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%AE%A1%E5%88%92%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">添加计划触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E5%88%92%E4%B8%80%E6%AC%A1%E6%80%A7%E8%BF%90%E8%A1%8C"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">计划一次性运行</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-API-%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">添加 API 触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A6%E5%8F%91%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">触发例程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#API-%E5%8F%82%E8%80%83"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">API 参考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-GitHub-%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">添加 GitHub 触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">支持的事件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E6%8B%89%E5%8F%96%E8%AF%B7%E6%B1%82"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">过滤拉取请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%9A%E8%AF%9D%E5%A6%82%E4%BD%95%E6%98%A0%E5%B0%84%E5%88%B0%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">会话如何映射到事件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">管理例程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%92%8C%E4%BA%A4%E4%BA%92%E8%BF%90%E8%A1%8C"><span class="toc-number">1.4.1.</span> <span class="toc-text">查看和交互运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%92%8C%E6%8E%A7%E5%88%B6%E4%BE%8B%E7%A8%8B"><span class="toc-number">1.4.2.</span> <span class="toc-text">编辑和控制例程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%BA%93%E5%92%8C%E5%88%86%E6%94%AF%E6%9D%83%E9%99%90"><span class="toc-number">1.4.3.</span> <span class="toc-text">存储库和分支权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Connectors"><span class="toc-number">1.4.4.</span> <span class="toc-text">Connectors</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%92%8C%E7%BD%91%E7%BB%9C%E8%AE%BF%E9%97%AE"><span class="toc-number">1.4.5.</span> <span class="toc-text">环境和网络访问</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%92%8C%E9%99%90%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">使用和限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="toc-number">1.6.</span> <span class="toc-text">故障排除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#schedule-%E8%BF%94%E5%9B%9E%E2%80%9DUnknown-command%E2%80%9D"><span class="toc-number">1.6.1.</span> <span class="toc-text">&#x2F;schedule 返回”Unknown command”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9CRoutines-%E8%A2%AB%E6%82%A8%E7%9A%84%E7%BB%84%E7%BB%87%E7%9A%84%E7%AD%96%E7%95%A5%E7%A6%81%E7%94%A8%E2%80%9D"><span class="toc-number">1.6.2.</span> <span class="toc-text">“Routines 被您的组织的策略禁用”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90"><span class="toc-number">1.7.</span> <span class="toc-text">相关资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

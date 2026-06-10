@@ -1,0 +1,344 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>vim-learning | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="VIM 笔记TODO  整理笔记结构  补充笔记内容  重构图片目录  VIM 基础操作VIM 模式Normal ModeVIM 打开后默认的模式，用于光标的移动和文本的操作。 Normal Mode 下的光标行内快速移动  w &#x2F; Wword &#x2F; WORD(以空格为分割符)移动至下一个单词开头 e &#x2F; Eend of word &#x2F; 以空格为分隔符移动至下一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vim-learning">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/02/23/vim-learning/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="VIM 笔记TODO  整理笔记结构  补充笔记内容  重构图片目录  VIM 基础操作VIM 模式Normal ModeVIM 打开后默认的模式，用于光标的移动和文本的操作。 Normal Mode 下的光标行内快速移动  w &#x2F; Wword &#x2F; WORD(以空格为分割符)移动至下一个单词开头 e &#x2F; Eend of word &#x2F; 以空格为分隔符移动至下一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-02-23T09:20:54.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.423Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Backend Dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "vim-learning",
+  "url": "https://hzhzxfs.github.io/2025/02/23/vim-learning/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-02-23T09:20:54.000Z",
+  "dateModified": "2026-06-10T02:14:46.423Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/02/23/vim-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vim-learning',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">vim-learning</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">vim-learning</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-23T09:20:54.000Z" title="发表于 2025-02-23 17:20:54">2025-02-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.423Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Backend-Dev/">Backend Dev</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="VIM-笔记"><a href="#VIM-笔记" class="headerlink" title="VIM 笔记"></a>VIM 笔记</h1><h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul>
+<li><input disabled="" type="checkbox"> 整理笔记结构</li>
+<li><input disabled="" type="checkbox"> 补充笔记内容</li>
+<li><input disabled="" type="checkbox"> 重构图片目录</li>
+</ul>
+<h2 id="VIM-基础操作"><a href="#VIM-基础操作" class="headerlink" title="VIM 基础操作"></a>VIM 基础操作</h2><h3 id="VIM-模式"><a href="#VIM-模式" class="headerlink" title="VIM 模式"></a>VIM 模式</h3><h4 id="Normal-Mode"><a href="#Normal-Mode" class="headerlink" title="Normal Mode"></a>Normal Mode</h4><p>VIM 打开后默认的模式，用于光标的移动和文本的操作。</p>
+<p><strong>Normal Mode</strong> 下的光标行内快速移动</p>
+<ul>
+<li><strong>w &#x2F; W</strong><br>word &#x2F; WORD(以空格为分割符)<br>移动至下一个单词开头</li>
+<li><strong>e &#x2F; E</strong><br>end of word &#x2F; 以空格为分隔符<br>移动至下一个单词尾部</li>
+<li><strong>b &#x2F; B</strong><br>backword &#x2F; 以空格为分隔符<br>移动至上一个单词开头</li>
+<li><strong>t &#x2F; T</strong><br>till &#x2F; 向前搜索<br>光标后移直到找到指定的字母</li>
+<li><strong>f &#x2F; F</strong><br>find &#x2F; 向前搜索<br>查找指定的字母并将光标移至其上</li>
+</ul>
+<h4 id="Insert-Mode"><a href="#Insert-Mode" class="headerlink" title="Insert Mode"></a>Insert Mode</h4><p>VIM 中写入文本的模式。</p>
+<p>从 <strong>Normal Mode</strong> 进入 <strong>Insert Mode</strong></p>
+<ul>
+<li><strong>a</strong><br>append<br>在光标后进入 Insert Mode</li>
+<li><strong>i</strong><br>insert<br>在光标前进入 Insert Mode</li>
+<li><strong>o</strong><br>open a line below<br>在光标下新增一行并进入插入模式</li>
+<li><strong>A</strong><br>append after line<br>在行末进入 Insert Mode</li>
+<li><strong>I</strong><br>insert before line<br>在行首进入 Insert Mode</li>
+<li><strong>O</strong><br>append a line above<br>在光标上新增一行并进入插入模式</li>
+</ul>
+<h4 id="Command-Mode"><a href="#Command-Mode" class="headerlink" title="Command Mode"></a>Command Mode</h4><p>末行模式</p>
+<ul>
+<li><code>sp</code>、<code>vs</code><br>分屏编辑</li>
+<li><code>% s/str1/str2/[g]</code><br>文本[全局]替换;</li>
+</ul>
+<h4 id="visual-Mode"><a href="#visual-Mode" class="headerlink" title="visual Mode"></a>visual Mode</h4><p>Normal Mode 下<br><code>v</code> &#x2F; <code>V</code> &#x2F; <code>^v</code> 进行可视化    (光标&#x2F;整行选中&#x2F;块)操作</p>
+<h4 id="Replace-Mode"><a href="#Replace-Mode" class="headerlink" title="Replace Mode"></a>Replace Mode</h4><p><code>R</code> 进入替换模式</p>
+<h2 id="VIM-使用技巧"><a href="#VIM-使用技巧" class="headerlink" title="VIM 使用技巧"></a>VIM 使用技巧</h2><h3 id="VIM-快捷键-Insert-Mode"><a href="#VIM-快捷键-Insert-Mode" class="headerlink" title="VIM 快捷键 (Insert Mode)"></a>VIM 快捷键 (Insert Mode)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ctrl + j                # 换行</span><br><span class="line">ctrl + h                # 删除字符</span><br><span class="line">ctrl + w                # 删除单词</span><br><span class="line">ctrl + u                # 删除一行</span><br><span class="line">ctrl + c / [            # 功能同Esc 切换insert和normal模式</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>shell shortcut:</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ctrl+a ahead of command line</span><br><span class="line">ctrl+e end of command line</span><br></pre></td></tr></table></figure>
+
+<h3 id="行间搜索"><a href="#行间搜索" class="headerlink" title="行间搜索"></a>行间搜索</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">f           find   # 移动到字符上        ;/,     搜索下一个/上一个</span><br><span class="line">t           till   # 移动到前一个字符</span><br><span class="line">F                  # 向前搜索</span><br><span class="line">^                  # 移动第一个非空白字符</span><br><span class="line">0                  # 移动至行首</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">                 <span class="comment"># 移动至行尾</span></span></span><br><span class="line"></span><br><span class="line">^u                 # up(half page)</span><br><span class="line">^d                 # down(half page)</span><br><span class="line"></span><br><span class="line">^f                 # front</span><br><span class="line">^b                 # back</span><br><span class="line"></span><br><span class="line">^e                 # down scroll onw row</span><br><span class="line">^y                 # up scroll one row</span><br><span class="line"></span><br><span class="line">^o                 # 快速返回</span><br><span class="line"></span><br><span class="line">gg                 # 文件头</span><br><span class="line">G                  # 文件尾</span><br><span class="line"></span><br><span class="line">H/M/L              # Head/Middle/Lower</span><br><span class="line"></span><br><span class="line">zz                 # 中置当前行</span><br><span class="line">zt                 # 将当前行至于屏幕顶部</span><br><span class="line">zb                 # 将当前行至于屏幕底部</span><br></pre></td></tr></table></figure>
+
+<h3 id="快速增删改查-normal-mode"><a href="#快速增删改查-normal-mode" class="headerlink" title="快速增删改查(normal mode)"></a>快速增删改查(normal mode)</h3><h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">x                   # 快速删除一个字符</span><br><span class="line">d                   # 配合文本对象快速删除</span><br><span class="line">dw                  # delete word</span><br><span class="line">daw                 # delete around word</span><br><span class="line">diw                 # delete in word</span><br><span class="line">dt&quot;                 # delete to &quot;</span><br><span class="line"><span class="meta prompt_">d$ </span><span class="language-bash">                 <span class="comment"># delete to end of line</span></span></span><br><span class="line">d0                  # delete to head of line</span><br><span class="line">2dd                 # delete 2 line</span><br><span class="line">4x                  # delete 4 char</span><br><span class="line"></span><br><span class="line">visual mode:</span><br><span class="line">d                   # delete select string</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">r                   # replace           替换一个字符</span><br><span class="line">s                   # substitute        删除并进入插入模式</span><br><span class="line">4s                  #                   删除4个字符并进入insert模式</span><br><span class="line">R                   # Replace mode      进入insert模式并替换后续所有字符</span><br><span class="line">S                   # Sunstitute        删除整行并进入插入模式</span><br><span class="line">c                   # change            配合文本对象进行快速替换</span><br><span class="line">caw                 #                   删除一个单词并进入插入模式</span><br><span class="line">C                   #                   删除整行，并进入插入模式</span><br><span class="line">ct&quot;                 # change to &quot;</span><br><span class="line">ctw                 # change to word</span><br></pre></td></tr></table></figure>
+
+<h4 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/                   # 向前(front)搜索</span><br><span class="line">?                   # 向后(back)搜索</span><br><span class="line">n                   # 跳转到下一个匹配</span><br><span class="line">N                   # 跳转到上一个匹配</span><br><span class="line">*/#                 # 对当前单词进行向前/向后的匹配</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="vim搜索替换"><a href="#vim搜索替换" class="headerlink" title="vim搜索替换"></a>vim搜索替换</h3><p>substitude 命令允许我们查找并且替换掉文本，并且支持正则表达式</p>
+<p><code>:[range]s[ubstitude]/{pattern}/{string}/{flag}</code></p>
+<ul>
+<li>range 表示范围 比如 :10,20 表示 10-20 行，% 表示全部文本</li>
+<li>pattern 是要替换的模式，string 是替换后的文本</li>
+<li>flag 替换标志位<ul>
+<li>g(global) 全局范围内执行</li>
+<li>c(confirm) 替换前确认</li>
+<li>n(number) 仅报告匹配到的次数而不替换，可以用来查询匹配的次数</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="vim多文件操作"><a href="#vim多文件操作" class="headerlink" title="vim多文件操作"></a>vim多文件操作</h3><ul>
+<li>buffer 是指打开的一个文件的内存缓冲区</li>
+<li>window 是 buffer 可视化的分割区域</li>
+<li>tab 可以组织 window 为一个工作区</li>
+</ul>
+<p><img src="/pic/multifiles/vim-buffer-window-tab-2.png" alt="vim-buffer-window-tab-2"></p>
+<h4 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h4><ul>
+<li>VIM 打开一个文件后会加载文件内容到缓冲区</li>
+<li>之后的修改都是针对内存中的缓冲群，并不会直接保存到文件</li>
+<li>直到我们执行 <code>:w</code> 的时候才会把修改内容写入到文件里</li>
+<li>buffer 切换<ul>
+<li>使用 <code>:ls</code>会列举当前缓冲区，使用 <code>:b n</code> 跳转到第 n 个缓冲区</li>
+<li><code>:bpre</code> <code>:bnext</code> <code>:bfirst</code> <code>:blast</code></li>
+<li><code>:b buffer_name</code> 加上 tab 补全来跳转</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="Window"><a href="#Window" class="headerlink" title="Window"></a>Window</h4><p>窗口是可视化的分割区域</p>
+<ul>
+<li>一个缓冲区可以分割为多个窗口，每个窗口也可以打开不同的缓冲区</li>
+<li><code>&lt;C-w&gt; + s</code> 水平分割，<code>&lt;C-w&gt; + v</code> 垂直分割。或者 <code>:sp</code> 和 <code>:vs</code></li>
+<li>每个窗口可以继续无限分割</li>
+<li><code>&lt;C-w&gt; + p</code>跳转到上一个窗口</li>
+</ul>
+<p><img src="/pic/multifiles/vim-how-to-switch-window.png" alt="how_to_switch_window"><br><img src="/pic/multifiles/vim-how-to-resize-window.png" alt="how_to_resize_window"></p>
+<hr>
+<h4 id="Tab"><a href="#Tab" class="headerlink" title="Tab"></a>Tab</h4><p>Tab 是可以容纳一系列窗口的容器(:h tabpage)</p>
+<p><img src="/pic/multifiles/vim-how-to-create-tab.png" alt="how_to_use_tab"><br><img src="/pic/multifiles/vim-how-to-switch-tab.png" alt="how_to_switch_tab"></p>
+<hr>
+<h3 id="vim的Text-Object"><a href="#vim的Text-Object" class="headerlink" title="vim的Text Object"></a>vim的Text Object</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[number]&lt;command&gt;[text object]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>number 表示次数，command 是命令，d(delete)，c(change)，y(yank)</li>
+<li>text object 是要操作的文本对象，比如单词 w，句子 s，段落 p</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iw              # inner word</span><br><span class="line">aw              # around word</span><br><span class="line">i&quot;              # inner &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="vim下的复制粘贴和寄存器"><a href="#vim下的复制粘贴和寄存器" class="headerlink" title="vim下的复制粘贴和寄存器"></a>vim下的复制粘贴和寄存器</h3><p><strong>normal mode:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">y               # yank</span><br><span class="line">d               # delete</span><br><span class="line">p               # put</span><br><span class="line">yiw             # yank inner a word</span><br></pre></td></tr></table></figure>
+
+<p><strong>register:</strong></p>
+<p>VIM 不使用单一剪贴板进行剪贴、复制与粘贴，而是多组寄存器</p>
+<ul>
+<li>通过 <code>&quot;{register}</code> 前缀可以指定寄存器，不指定则默认使用无名寄存器</li>
+<li><code>&quot;ayiw</code> 复制一个单词到寄存器 a 中，<code>&quot;bdd</code> 剪贴当前行到寄存器 b 中</li>
+<li>VIM 中 <code>&quot;&quot;</code> 表示无名寄存器，缺省使用。<code>&quot;&quot;p</code> &lt;&#x3D;&#x3D;&gt; <code>p</code></li>
+</ul>
+<p>除了有名寄存器 a-z，VIM 中还有一些常见寄存器</p>
+<ul>
+<li>复制专用寄存器 <code>&quot;0</code> 使用 y 复制文本同时会被拷贝到复制寄存器0中</li>
+<li>系统剪贴板 <code>&quot;+</code></li>
+<li><code>&quot;%</code> 当前文件名，<code>&quot;.</code> 上次插入的文本</li>
+</ul>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:e! 重新加载文件 ,且不保存</span><br><span class="line"><span class="keyword">set</span> clipboard=unnamed       # 使系统剪贴板与无名寄存器共用</span><br><span class="line"><span class="keyword">set</span> autoindent              # 自动缩进</span><br><span class="line"><span class="keyword">set</span> paste</span><br><span class="line"><span class="keyword">set</span> unpaste</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="宏的录制和使用"><a href="#宏的录制和使用" class="headerlink" title="宏的录制和使用"></a>宏的录制和使用</h3><p>Vim使用q键来录制，q键结束录制<br>使用 q{register} 选择要保存的寄存器，把录制的命令保存其中<br>使用 @{register} 回放寄存器中的保存的所有命令</p>
+<hr>
+<h3 id="代码补全"><a href="#代码补全" class="headerlink" title="代码补全"></a>代码补全</h3><p><img src="/pic/code_completion/vim-code-completion.png" alt="vim-code-completion"></p>
+<hr>
+<h3 id="修改vim配色"><a href="#修改vim配色" class="headerlink" title="修改vim配色"></a>修改vim配色</h3><p><img src="/pic/colorscheme/color_scheme.jpg" alt="vim-colorscheme"></p>
+<hr>
+<h3 id="vim常用命令"><a href="#vim常用命令" class="headerlink" title="vim常用命令"></a>vim常用命令</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:h option-<span class="keyword">list</span> 命令查询</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="vim映射"><a href="#vim映射" class="headerlink" title="vim映射"></a>vim映射</h3><p>vim映射就是把 一个操作 映射到 另一个操作</p>
+<h4 id="基本映射"><a href="#基本映射" class="headerlink" title="基本映射"></a>基本映射</h4><p>所有模式下都生效</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span> key default_key         # 在所有模式下生效</span><br><span class="line"><span class="keyword">unmap</span> key                   # 取消映射</span><br><span class="line"></span><br><span class="line"><span class="keyword">imap</span> key default_key        # 只在<span class="keyword">insert</span>下生效</span><br><span class="line"><span class="keyword">imap</span>/<span class="keyword">nmap</span>/<span class="keyword">vmap</span>              # 定义的映射只在<span class="keyword">insert</span>/<span class="keyword">normal</span>/<span class="keyword">visual</span>下有效</span><br></pre></td></tr></table></figure>
+
+<h5 id="非递归映射"><a href="#非递归映射" class="headerlink" title="非递归映射"></a>非递归映射</h5><p>映射不会递归解释映射的按键</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let mapleader = &quot;,&quot;         # set Leader Key</span><br><span class="line">nnoremap                    # normal Non-recursive map</span><br><span class="line">inoremap                    # insert</span><br><span class="line">vnoremap                    # visual</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Plugins"><a href="#Plugins" class="headerlink" title="Plugins"></a>Plugins</h2><h3 id="NERDtree"><a href="#NERDtree" class="headerlink" title="NERDtree"></a>NERDtree</h3><p>install vim plug and add this in ~&#x2F;.vimrc</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Plug &#x27;scrooloose/nerdtree&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">映射的快捷键</span></span><br><span class="line">nnoremap &lt;leader&gt;f :NERDTreeFind&lt;cr&gt;        # 快速将光标回到NERDtree的位置</span><br><span class="line">nnoremap &lt;leader&gt;t :NERDTreeToggle&lt;cr&gt;      # toggle NERDtree</span><br><span class="line">let NERDTreeShowHidden=1                    # 显示隐藏文件</span><br><span class="line">let NERDTreeIgnore=[&#x27;\.swp&#x27;, &#x27;\.pyc&#x27;]       # NERDTree中不显示的文件</span><br></pre></td></tr></table></figure>
+
+<p>NERDtree基本操作</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">?: 快速帮助文档</span><br><span class="line"><span class="keyword">o</span>: 打开一个目录或者打开文件，创建的是<span class="keyword">buffer</span>，也可以用来打开书签</span><br><span class="line"><span class="keyword">go</span>: 打开一个文件，但是光标仍然留在NERDTree，创建的是<span class="keyword">buffer</span></span><br><span class="line">t: 打开一个文件，创建的是Tab，对书签同样生效</span><br><span class="line">T: 打开一个文件，但是光标仍然留在NERDTree，创建的是Tab，对书签同样生效</span><br><span class="line">i: 水平分割创建文件的窗口，创建的是<span class="keyword">buffer</span></span><br><span class="line">gi: 水平分割创建文件的窗口，但是光标仍然留在NERDTree</span><br><span class="line">s: 垂直分割创建文件的窗口，创建的是<span class="keyword">buffer</span></span><br><span class="line">gs: 和gi，<span class="keyword">go</span>类似</span><br><span class="line"><span class="keyword">x</span>: 收起当前打开的目录</span><br><span class="line"><span class="keyword">X</span>: 收起所有打开的目录</span><br><span class="line"><span class="keyword">e</span>: 以文件管理的方式打开选中的目录</span><br><span class="line">D: 删除书签</span><br><span class="line"><span class="keyword">P</span>: 大写，跳转到当前根路径</span><br><span class="line"><span class="keyword">p</span>: 小写，跳转到光标所在的上一级路径</span><br><span class="line">K: 跳转到第一个子路径</span><br><span class="line">J: 跳转到最后一个子路径</span><br><span class="line"><span class="symbol">&lt;C-j&gt;</span>和<span class="symbol">&lt;C-k&gt;</span>: 在同级目录和文件间移动，忽略子目录和子文件</span><br><span class="line">C: 将根路径设置为光标所在的目录</span><br><span class="line"><span class="keyword">u</span>: 设置上级目录为根路径</span><br><span class="line">U: 设置上级目录为跟路径，但是维持原来目录打开的状态</span><br><span class="line">r: 刷新光标所在的目录</span><br><span class="line">R: 刷新当前根路径</span><br><span class="line">I: 显示或者不显示隐藏文件</span><br><span class="line"><span class="keyword">f</span>: 打开和关闭文件过滤器</span><br><span class="line">q: 关闭NERDTree</span><br><span class="line">A: 全屏显示NERDTree，或者关闭全屏</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="ctrlp"><a href="#ctrlp" class="headerlink" title="ctrlp"></a>ctrlp</h3><p>模糊搜索当前目录下的文件</p>
+<hr>
+<h3 id="vim-easymotion"><a href="#vim-easymotion" class="headerlink" title="vim-easymotion"></a>vim-easymotion</h3><p>vim-easymotion<br>快速移动光标位置</p>
+<p><strong>~&#x2F;.vimrc</strong>中加入如下递归映射</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap &lt;Leader&gt;s &lt;Plug&gt;(easymotion-s2)</span><br></pre></td></tr></table></figure>
+
+<p>&lt;Leader&gt;s 后，输入要查找的两个字符，然后选择文本中出现的高亮字符来跳转到相应的位置</p>
+<hr>
+<h3 id="vim-surround"><a href="#vim-surround" class="headerlink" title="vim-surround"></a>vim-surround</h3><p>normal mode 下的增加、删除、修改成对的内容<br><code>ds</code> delete a surrounding<br><code>cs</code> change a surrounding<br><code>ys</code> you add a surrounding<br><strong>usage:</strong><br><code>ds&quot;</code><br><code>ds(</code><br><code>cs&quot;(</code><br><code>cs[(</code>      change surrounding ‘[‘ to ‘(‘<br><code>ysiw&quot;</code><br><code>ystg]</code>     you add a surrounding to ‘char’ ‘]’</p>
+<p>also can use in vscode</p>
+<h3 id="commentary-vim"><a href="#commentary-vim" class="headerlink" title="commentary.vim"></a>commentary.vim</h3><p>install:<br>Plug ‘tpope&#x2F;vim-commentary’</p>
+<p>usage:<br><code>gcc</code>    comment&#x2F;uncomment</p>
+<h3 id="vim-gitgutter"><a href="#vim-gitgutter" class="headerlink" title="vim-gitgutter"></a>vim-gitgutter</h3><p>Plug ‘airblade&#x2F;vim-gitgutter’<br>add <code>set updatetime=100</code> in ~&#x2F;.vimrc</p>
+<h2 id="Tumx"><a href="#Tumx" class="headerlink" title="Tumx"></a>Tumx</h2><p><strong>install Tmux:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install tmux</span><br></pre></td></tr></table></figure>
+
+<h2 id="uppercase-or-lowercase"><a href="#uppercase-or-lowercase" class="headerlink" title="uppercase or lowercase"></a>uppercase or lowercase</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gu&#123;motion&#125;  lowercase</span><br><span class="line">gU&#123;motion&#125;  uppercase</span><br></pre></td></tr></table></figure>
+
+<h2 id="vim-的配置"><a href="#vim-的配置" class="headerlink" title="vim 的配置"></a>vim 的配置</h2><h3 id="多会话撤销历史"><a href="#多会话撤销历史" class="headerlink" title="多会话撤销历史"></a>多会话撤销历史</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启用 undofile，开启撤销文件</span></span><br><span class="line">set undofile</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定撤销文件位置</span></span><br><span class="line">set undodir=~/.vim/undodir</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>undodir</code> 不存在时，创建该目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if !isdirectory(&amp;undodir)</span><br><span class="line">    call mkdir(&amp;undodir, &#x27;p&#x27;, 0700)</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+
+<h3 id="鼠标的支持"><a href="#鼠标的支持" class="headerlink" title="鼠标的支持"></a>鼠标的支持</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if has(&#x27;mouse&#x27;)</span><br><span class="line">  if has(&#x27;gui_running&#x27;) || (&amp;term =~ &#x27;xterm&#x27; &amp;&amp; !has(&#x27;mac&#x27;))</span><br><span class="line">    set mouse=a</span><br><span class="line">  else</span><br><span class="line">    set mouse=nvi</span><br><span class="line">  endif</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>当 VIM 以图形界面运行或终端兼容 xterm 且不是 Mac 时，启用完全的鼠标支持。鼠标在 VIM 中拖拽时，VIM 将使用可视模式选中对应的内容。当按下 Shift 键时，操作系统或终端接管鼠标事件，用户可以使用鼠标复制 VIM 窗口里的内容供其他应用程序使用。</li>
+<li>否则（非图形界面的的终端，且终端类型不是 xterm），就只在正常模式（n）、可视模式（v）、插入模式（i）中使用鼠标。这意味着，当用户按下 <code>:</code> 键进入命令行模式时，VIM 将不对鼠标进行响应，这时，用户就可以使用鼠标复制 VIM 窗口里的内容到其他应用程序里去了。</li>
+</ul>
+<h3 id="中文支持"><a href="#中文支持" class="headerlink" title="中文支持"></a>中文支持</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set fileencodings=ucs-bom,utf-8,gb18030,latin1</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>首先，检查文件是不是有 Unicode 的 BOM（字节顺序标记）字符，有的话按照 BOM 字符来转换文件内容。</li>
+<li>其次，检查文件能不能当作 UTF-8 来解码；如果可以，就当作 UTF-8 来解释。</li>
+<li>否则，尝试用 GB18030 来解码；如果能成功，就当作 GB18030 来转换文件内容。</li>
+<li>最后，如果上面的解码都不成功，就按 Latin1 字符集来解码；由于这是单字节的编码，转换必定成功。</li>
+</ol>
+<h2 id="vim-command"><a href="#vim-command" class="headerlink" title="vim command"></a>vim command</h2><h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><ul>
+<li>set ft?<br>查询当前文件类型</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/02/23/vim-learning/">https://hzhzxfs.github.io/2025/02/23/vim-learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backend-Dev/">Backend Dev</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/24/vue-learning/" title="vue-learning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">vue-learning</div></div><div class="info-2"><div class="info-item-1">vue笔记1.声明式渲染html: 123&lt;div id=&quot;app&quot;&gt;  &#123;&#123; message &#125;&#125;&lt;/div&gt;  js: 123456var app = new Vue(&#123;  el: &#x27;#app&#x27;,  data: &#123;    message: &#x27;Hello Vue!&#x27;  &#125;&#125;)  2.常用vue指令v-bind:attribute html属性绑定v-bind:attribute&#x3D;”data中的变量”对html标签的属性进行绑定 12345&lt;div id=&quot;app-2&quot;&gt;  &lt;span v-bind:title=&quot;message&quot;&gt;    鼠标悬停几秒钟查看此处动态绑定的提示信息！  &lt;/span&gt;&lt;/div&gt;  123456var app2 = new Vue(&#123;  el: &#x27;#app-2&#x27;...</div></div></div></a><a class="pagination-related" href="/2025/02/22/subversion-learning/" title="subversion-learning"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">subversion-learning</div></div><div class="info-2"><div class="info-item-1">subversion笔记1. 安装1sudo apt install subversion  1sudo yum install subversion  创建版本库1svnadmin create repoPath  启动svn服务器123svnserve -d -r repoRootPath         -d 表示后台执行 daemon         -r 表示版本库的根目录 root  查看服务是否启动成功1netstat -an | grep 3690  权限控制1.修改仓库下的conf&#x2F;svnserve.conf1234# 启用auth-access = writepassword-db = passwdauthz-db = authz  2.配置passwd文件12wuyue = testpasstest = test  3.配置authz文件1234567891011[groups]# 指定用户组dev = wuyue,kaifa[/]# 开发用户组拥有读写权限@dev = rw# test用户拥有读权限test = r# 其余用户没有任何权限* = ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/15/pr-38061-optimization-analysis/" title="pr-38061-optimization-analysis"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-15</div><div class="info-item-2">pr-38061-optimization-analysis</div></div><div class="info-2"><div class="info-item-1">PR #38061 优化分析与 CUDA Graph Token Budget 设置指南 PR: vllm-project&#x2F;vllm#38061 — [MM][Perf][CG] Support ViT full CUDA graph for Qwen3-VL video inference日期: 2026-03-27   目录 1. PR 总结报告 2. 可优化的地方 3. CUDA Graph 固定开销分析 4. 视频推理 CUDA Graph 性能优化建议 5. Token Budget 设置指南   1. PR 总结报告1.1 总结 (Summary)本 PR 在 PR #35963（仅支持图像推理）的基础上，将 ViT 编码器 CUDA Graph 支持扩展至 Qwen3-VL 的视频推理场景。核心思路是复用图像 CUDA Graph 捕获的计算图来回放视频输入，通过引入 max_frames_per_batch 参数控制 cu_seqlens 缓冲区大小，同时增加模态感知的输入键路由机制（modality_input_keys），使同一个 CUDA Grap...</div></div></div></a><a class="pagination-related" href="/2025/01/14/SerializationAndDeserialization/" title="SerializationAndDeserialization"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-14</div><div class="info-item-2">SerializationAndDeserialization</div></div><div class="info-2"><div class="info-item-1">🔍 这是什么？序列化将内存中对象（如 Java 类或 JS 对象）转换为传输格式（如字符串或字节流）的过程。 反序列化将传输格式转回程序可以使用的本机对象的过程。  💡为什么我们需要它？想象一下 JavaScript 前端 将“User”对象发送到 Rust 后端：  JavaScript 将数据视为动态对象。 Rust 将数据视为严格的结构。 他们不能共享内存。他们需要一个通用标准（如 JSON）来充当桥梁。  现实生活中的类比： 想想宜家的家具。   序列化： 工厂将成品办公桌拆成扁平包装箱（紧凑型运输）。 传输： 盒子被运送到您家。 反序列化： 您将部件从盒子中取出并重建桌子，以便您可以使用它。   🛠 流行标准   类型 示例 最适合    基于文本 JSON、XML、YAML Web API、配置、人类可读性   基于二进制 Protobuf、Avro 高性能微服务，内部通信    🏗 JSON 深入探究JSON（JavaScript 对象表示法）是最流行的 Web 通信标准。 规则： 大括号： 必须括在 {} 中。 键： 必须位于 &quot;double q...</div></div></div></a><a class="pagination-related" href="/2025/02/19/server-software/" title="server-software"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-19</div><div class="info-item-2">server-software</div></div><div class="info-2"><div class="info-item-1">服务器软件的分类 静态服务：主要提供静态资源，不同用户访问到的资源相同动态服务：提供动态服务，不同用户访问到的资源不同服务器的几个叫法：web服务器：广义上来说，就是响应用户的需求，提供服务，当下所有的服务器软件都可以称之为web服务器软件HTTP服务器(静态服务)：使用HTTP协议传输资源，提供服务应用服务器(动态服务)：一个特定应用的承载容器常见的轻量级服务器软件：1、Nginx：典型的静态服务器，可做反向代理、负载均衡，一般放在最前面直面用户，和后端Tomcat打配合；纯C写的，性能贼高、内存消耗极少、稳定性也相当好，互联网公司重度使用2、Tengine：阿里出品，基于Nginx服务器做的改造(加强和封装)，对大流量场景做了很多高级功能，性能、稳定性优秀3、Apache http server：也是静态服务器，但是不如Nginx3、IIS：微软开发，只能用在Windows下，具有应用服务器能力的http服务器4、Tomcat：Apache出品，典型的应用服务器软件，符合Servlet标准的应用容器，也可以提供http服务，但一般不会作为http服务器；是Spring Boo...</div></div></div></a><a class="pagination-related" href="/2025/01/05/Databases/" title="Databases"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-05</div><div class="info-item-2">Databases</div></div><div class="info-2"><div class="info-item-1">使用 PostgreSQL 掌握数据库核心概念为什么选择数据库？从本质上讲，数据库是一个旨在跨不同会话保留信息的系统。持久性确保数据即使在创建数据的程序或进程终止后也能继续存在。 存储层次结构：RAM 与磁盘现代后端系统通过利用不同的存储介质来平衡速度和成本：    特色 内存中 (RAM) 磁盘（SSD&#x2F;HDD）    速度 极快 比 RAM 慢   成本 贵 相对便宜   坚持 易失性（断电后丢失） 非易失性（持久）   示例 Redis、Memcached PostgreSQL、MongoDB、MySQL    数据库管理系统 (DBMS)DBMS 是一个软件层，其唯一职责是高效地向客户端提供 CRUD 操作：  Create：插入新数据。 Read：查询现有数据。 Update：修改当前记录。 Delete：删除数据。  DBMS 的职责：1）数据的组织——DBMS 定义了数据的结构方式（通常为表、行和列），以确保数据以逻辑方式存储并可以有效地检索。它管理磁盘上的物理存储，因此开发人员不必担心原始文件管理。 2）访问——CRUD操作该系统提供标准化接口（如 SQ...</div></div></div></a><a class="pagination-related" href="/2025/06/11/disaggregated_encoder_epd/" title="disaggregated_encoder_epd"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-11</div><div class="info-item-2">disaggregated_encoder_epd</div></div><div class="info-2"><div class="info-item-1">vLLM Disaggregated Encoder (EPD) 特性代码走读技术文档 文档版本: 1.0分析代码版本: vLLM main 分支（截至 2026-04）最后更新: 2026-04-02   文档概述本文档深入分析 vLLM 的 Disaggregated Encoder（EPD 分离） 特性。EPD 将多模态大模型推理拆分为 Encoder (E)、Prefill (P)、Decode (D) 三个独立阶段，分别运行在不同的 GPU 实例上，从而实现细粒度的资源调度与弹性扩展。 目标读者: 对 vLLM 推理引擎有一定了解，希望深入理解多模态模型服务化部署优化的工程师。 阅读指南:    部分 内容 建议读者    第一部分 EPD 原理与架构总览 所有读者   第二部分 核心接口与基类分析 开发者、定制化需求者   第三部分 核心实现深度分析 引擎开发者   第四部分 部署拓扑与连接器对比 运维工程师、架构师   第五部分 配置与使用指南 所有用户    第一部分: EPD 基础与架构总览1.1 EPD 原理1.1.1 基本思想多模态大模型（如 Qwen2.5...</div></div></div></a><a class="pagination-related" href="/2025/02/14/mysql-notes/" title="mysql-notes"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-14</div><div class="info-item-2">mysql-notes</div></div><div class="info-2"><div class="info-item-1">MySQL笔记MySQL-Server的安装1sudo yum install mysql-server  服务的停启Linux12sudo service mysql startsudo service mysql stop  12345sudo systemctl start mysql.servicesudo systemctl stop mysql.servicesudo systemctl restart mysql.servicesudo systemctl enable mysql.servicesudo systemctl status mysql.service  Windows12net start mysqlnet stop mysql  数据库的备份备份1mysqldump -u用户名 -p密码 数据库名称 &gt; 保存的路径  还原 登录数据库 创建数据库 使用数据库 执行文件。source 文件路径  MySQL服务器的登录方式123mysql -u user -pmysql -hhost -uuser -ppasswordmysql --host=...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#VIM-%E7%AC%94%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">VIM 笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO"><span class="toc-number">1.1.</span> <span class="toc-text">TODO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VIM-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text">VIM 基础操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VIM-%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text">VIM 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Normal-Mode"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">Normal Mode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Insert-Mode"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">Insert Mode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Command-Mode"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">Command Mode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#visual-Mode"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">visual Mode</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Replace-Mode"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">Replace Mode</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VIM-%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="toc-number">1.3.</span> <span class="toc-text">VIM 使用技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VIM-%E5%BF%AB%E6%8D%B7%E9%94%AE-Insert-Mode"><span class="toc-number">1.3.1.</span> <span class="toc-text">VIM 快捷键 (Insert Mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E9%97%B4%E6%90%9C%E7%B4%A2"><span class="toc-number">1.3.2.</span> <span class="toc-text">行间搜索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5-normal-mode"><span class="toc-number">1.3.3.</span> <span class="toc-text">快速增删改查(normal mode)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">修改</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">搜索</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E6%90%9C%E7%B4%A2%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.3.4.</span> <span class="toc-text">vim搜索替换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E5%A4%9A%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.5.</span> <span class="toc-text">vim多文件操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Buffer"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">Buffer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Window"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">Window</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tab"><span class="toc-number">1.3.5.3.</span> <span class="toc-text">Tab</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E7%9A%84Text-Object"><span class="toc-number">1.3.6.</span> <span class="toc-text">vim的Text Object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E4%B8%8B%E7%9A%84%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E5%92%8C%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.3.7.</span> <span class="toc-text">vim下的复制粘贴和寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8F%E7%9A%84%E5%BD%95%E5%88%B6%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.8.</span> <span class="toc-text">宏的录制和使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%A1%A5%E5%85%A8"><span class="toc-number">1.3.9.</span> <span class="toc-text">代码补全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9vim%E9%85%8D%E8%89%B2"><span class="toc-number">1.3.10.</span> <span class="toc-text">修改vim配色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.11.</span> <span class="toc-text">vim常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E6%98%A0%E5%B0%84"><span class="toc-number">1.3.12.</span> <span class="toc-text">vim映射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%98%A0%E5%B0%84"><span class="toc-number">1.3.12.1.</span> <span class="toc-text">基本映射</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9D%9E%E9%80%92%E5%BD%92%E6%98%A0%E5%B0%84"><span class="toc-number">1.3.12.1.1.</span> <span class="toc-text">非递归映射</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugins"><span class="toc-number">1.4.</span> <span class="toc-text">Plugins</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NERDtree"><span class="toc-number">1.4.1.</span> <span class="toc-text">NERDtree</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ctrlp"><span class="toc-number">1.4.2.</span> <span class="toc-text">ctrlp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim-easymotion"><span class="toc-number">1.4.3.</span> <span class="toc-text">vim-easymotion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim-surround"><span class="toc-number">1.4.4.</span> <span class="toc-text">vim-surround</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commentary-vim"><span class="toc-number">1.4.5.</span> <span class="toc-text">commentary.vim</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim-gitgutter"><span class="toc-number">1.4.6.</span> <span class="toc-text">vim-gitgutter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tumx"><span class="toc-number">1.5.</span> <span class="toc-text">Tumx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uppercase-or-lowercase"><span class="toc-number">1.6.</span> <span class="toc-text">uppercase or lowercase</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vim-%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">1.7.</span> <span class="toc-text">vim 的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%BC%9A%E8%AF%9D%E6%92%A4%E9%94%80%E5%8E%86%E5%8F%B2"><span class="toc-number">1.7.1.</span> <span class="toc-text">多会话撤销历史</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BC%A0%E6%A0%87%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-number">1.7.2.</span> <span class="toc-text">鼠标的支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E6%96%87%E6%94%AF%E6%8C%81"><span class="toc-number">1.7.3.</span> <span class="toc-text">中文支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vim-command"><span class="toc-number">1.8.</span> <span class="toc-text">vim command</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#set"><span class="toc-number">1.8.1.</span> <span class="toc-text">set</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

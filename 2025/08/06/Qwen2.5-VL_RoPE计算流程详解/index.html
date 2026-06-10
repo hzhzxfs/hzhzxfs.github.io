@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Qwen2.5-VL_RoPE计算流程详解 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程整个流程从 forward(x, grid_thw) 开始，分为以下几个阶段：  第一步：初始化时预计算 cos&#x2F;sin 缓存qwen2_5_vl.py:608-612 123456self.rotary_pos_emb &#x3D; get_rope(    head_size&#x3D;head_dim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qwen2.5-VL_RoPE计算流程详解">
+<meta property="og:url" content="https://hzhzxfs.github.io/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程整个流程从 forward(x, grid_thw) 开始，分为以下几个阶段：  第一步：初始化时预计算 cos&#x2F;sin 缓存qwen2_5_vl.py:608-612 123456self.rotary_pos_emb &#x3D; get_rope(    head_size&#x3D;head_dim">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2025-08-06T06:38:17.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.498Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="LLM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Qwen2.5-VL_RoPE计算流程详解",
+  "url": "https://hzhzxfs.github.io/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2025-08-06T06:38:17.000Z",
+  "dateModified": "2026-06-10T02:14:46.498Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Qwen2.5-VL_RoPE计算流程详解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Qwen2.5-VL_RoPE计算流程详解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Qwen2.5-VL_RoPE计算流程详解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-06T06:38:17.000Z" title="发表于 2025-08-06 14:38:17">2025-08-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.498Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/LLM/">LLM</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Qwen2-5-VisionTransformer-中-RoPE-cos-sin-的计算流程"><a href="#Qwen2-5-VisionTransformer-中-RoPE-cos-sin-的计算流程" class="headerlink" title="Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程"></a>Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程</h1><p>整个流程从 <code>forward(x, grid_thw)</code> 开始，分为以下几个阶段：</p>
+<hr>
+<h2 id="第一步：初始化时预计算-cos-sin-缓存"><a href="#第一步：初始化时预计算-cos-sin-缓存" class="headerlink" title="第一步：初始化时预计算 cos&#x2F;sin 缓存"></a>第一步：初始化时预计算 cos&#x2F;sin 缓存</h2><p><a href="vllm/model_executor/models/qwen2_5_vl.py#L608-L612">qwen2_5_vl.py:608-612</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">self</span>.rotary_pos_emb = get_rope(</span><br><span class="line">    head_size=head_dim,</span><br><span class="line">    max_position=<span class="number">8192</span>,</span><br><span class="line">    is_neox_style=<span class="literal">True</span>,</span><br><span class="line">    rope_parameters=&#123;<span class="string">&quot;partial_rotary_factor&quot;</span>: <span class="number">0.5</span>&#125;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>get_rope</code> 最终创建一个 <code>RotaryEmbedding</code> 对象，关键参数：</p>
+<ul>
+<li><code>rotary_dim = head_dim * 0.5</code> → 只使用一半的 head 维度做旋转</li>
+<li>在 <code>_compute_cos_sin_cache</code> 中(<a href="vllm/model_executor/layers/rotary_embedding/base.py#L83-L92">base.py:83-92</a>)：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># inv_freq 形状: [rotary_dim // 2]</span></span><br><span class="line">inv_freq = <span class="number">1.0</span> / (base ** (arange(<span class="number">0</span>, rotary_dim, <span class="number">2</span>) / rotary_dim))</span><br><span class="line"><span class="comment"># t = [0, 1, 2, ..., 8191]</span></span><br><span class="line">freqs = einsum(<span class="string">&quot;i,j -&gt; ij&quot;</span>, t, inv_freq)   <span class="comment"># [8192, rotary_dim//2]</span></span><br><span class="line">cache = cat(freqs.cos(), freqs.sin(), dim=-<span class="number">1</span>)  <span class="comment"># [8192, rotary_dim]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>原理</strong>：标准 RoPE 公式 θ_i &#x3D; base^(-2i&#x2F;d)，每个 head 维度对应一个旋转频率。</p>
+<hr>
+<h2 id="第二步：为每张图像-视频计算-2D-空间位置-ID"><a href="#第二步：为每张图像-视频计算-2D-空间位置-ID" class="headerlink" title="第二步：为每张图像&#x2F;视频计算 2D 空间位置 ID"></a>第二步：为每张图像&#x2F;视频计算 2D 空间位置 ID</h2><p><a href="vllm/model_executor/models/qwen2_5_vl.py#L654-L697">qwen2_5_vl.py:654-697</a> <code>rotary_pos_emb_thw(t, h, w)</code></p>
+<p><strong>输入</strong>：patch grid 的时空尺寸 <code>(t, h, w)</code>，单位是 patch 数量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每个 patch 的行号 (H轴位置): shape [h, w]</span></span><br><span class="line">hpos_ids = torch.arange(h).unsqueeze(<span class="number">1</span>).expand(-<span class="number">1</span>, w)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每个 patch 的列号 (W轴位置): shape [h, w]</span></span><br><span class="line">wpos_ids = torch.arange(w).unsqueeze(<span class="number">0</span>).expand(h, -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后做 <strong>spatial merge 分组重排</strong>（为了使相邻的 merge unit 在序列中连续）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">hpos_ids = hpos_ids.reshape(</span><br><span class="line">    h // spatial_merge_size,</span><br><span class="line">    spatial_merge_size,</span><br><span class="line">    w // spatial_merge_size,</span><br><span class="line">    spatial_merge_size,</span><br><span class="line">).permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>).flatten()</span><br><span class="line"><span class="comment"># 原理: 将 [h,w] 的 patch 按 merge unit(s×s) 分组，</span></span><br><span class="line"><span class="comment">#       使同一个 merge unit 内的 patch 在展平后连续</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>原理</strong>：<code>spatial_merge_size=2</code> 意味着相邻的 2×2&#x3D;4 个 patch 最终会被合并为一个 LLM token。将它们在序列中排列连续，便于后续 PatchMerger 操作。</p>
+<p>接着将 t 帧的位置全部拼接：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pos_ids = torch.stack([hpos_ids, wpos_ids], dim=-<span class="number">1</span>).repeat(t, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># shape: [t * h * w, 2]</span></span><br><span class="line"><span class="comment"># 每行是 (H位置, W位置)</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第三步：从-cos-sin-缓存中查表，分别编码-H-和-W"><a href="#第三步：从-cos-sin-缓存中查表，分别编码-H-和-W" class="headerlink" title="第三步：从 cos&#x2F;sin 缓存中查表，分别编码 H 和 W"></a>第三步：从 cos&#x2F;sin 缓存中查表，分别编码 H 和 W</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cos, sin = <span class="variable language_">self</span>.rotary_pos_emb.get_cos_sin(max_size)</span><br><span class="line"><span class="comment"># max_size = max(h, w)</span></span><br><span class="line"><span class="comment"># cos/sin 各: [max_size, rotary_dim//2]</span></span><br><span class="line"><span class="comment"># get_cos_sin 就是把 cos_sin_cache 切成两半返回</span></span><br><span class="line"></span><br><span class="line">cos_combined = cos[pos_ids].flatten(<span class="number">1</span>)</span><br><span class="line"><span class="comment"># cos[pos_ids] 高级索引:</span></span><br><span class="line"><span class="comment">#   pos_ids: [t*h*w, 2]  → 为每个 patch 同时查 H 和 W 的 cos 值</span></span><br><span class="line"><span class="comment">#   结果:    [t*h*w, 2, rotary_dim//2]</span></span><br><span class="line"><span class="comment">#   flatten: [t*h*w, rotary_dim]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>这是 2D-RoPE 的核心</strong>：</p>
+<ul>
+<li><code>cos_combined</code> 的前 <code>rotary_dim//2</code> 维 &#x3D; H 位置的旋转角余弦</li>
+<li><code>cos_combined</code> 的后 <code>rotary_dim//2</code> 维 &#x3D; W 位置的旋转角余弦</li>
+</ul>
+<p>即用 H 和 W 各自独立的位置频率拼接成完整的旋转嵌入。</p>
+<hr>
+<h2 id="第四步：按-spatial-merge-unit-分组重塑"><a href="#第四步：按-spatial-merge-unit-分组重塑" class="headerlink" title="第四步：按 spatial merge unit 分组重塑"></a>第四步：按 spatial merge unit 分组重塑</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cos_combined = cos_combined.reshape(</span><br><span class="line">    cos_combined.shape[<span class="number">0</span>] // spatial_merge_unit,   <span class="comment"># t*(h/s)*(w/s) 个 merge group</span></span><br><span class="line">    spatial_merge_unit,                             <span class="comment"># 每组 s^2 个 patch</span></span><br><span class="line">    rotary_dim                                      <span class="comment"># 每个 patch 的旋转维度</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># shape: [t*(h//s)*(w//s), s^2, rotary_dim]</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第五步：按窗口注意力顺序重排（get-rope-by-thw）"><a href="#第五步：按窗口注意力顺序重排（get-rope-by-thw）" class="headerlink" title="第五步：按窗口注意力顺序重排（get_rope_by_thw）"></a>第五步：按窗口注意力顺序重排（<code>get_rope_by_thw</code>）</h2><p><a href="vllm/model_executor/models/qwen2_5_vl.py#L736-L755">qwen2_5_vl.py:736-755</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">window_index_thw, cu_seqlens_window_thw = <span class="variable language_">self</span>.get_window_index_thw(t, h, w)</span><br><span class="line">cos_thw, sin_thw = <span class="variable language_">self</span>.rotary_pos_emb_thw(t, h, w)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按窗口注意力索引重排 merge group</span></span><br><span class="line">cos_thw = cos_thw[window_index_thw, :, :]  <span class="comment"># [N_groups_reordered, s^2, rotary_dim]</span></span><br><span class="line">cos_thw = cos_thw.flatten(start_dim=<span class="number">0</span>, end_dim=<span class="number">1</span>)  <span class="comment"># [t*h*w, rotary_dim]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>原理</strong>：Vision Transformer 对大多数 block 使用局部窗口注意力（仅少数 fullatt_block 使用全局注意力），<code>get_window_index_thw</code> 将属于同一个窗口的 patch group 排列到连续的序列位置，使窗口注意力只需要连续的 <code>cu_seqlens</code> 划分即可。</p>
+<hr>
+<h2 id="第六步：多图-多视频拼接，搬到-GPU"><a href="#第六步：多图-多视频拼接，搬到-GPU" class="headerlink" title="第六步：多图&#x2F;多视频拼接，搬到 GPU"></a>第六步：多图&#x2F;多视频拼接，搬到 GPU</h2><p><a href="vllm/model_executor/models/qwen2_5_vl.py#L784-L843">qwen2_5_vl.py:784-843</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> t, h, w <span class="keyword">in</span> grid_thw:</span><br><span class="line">    cos_thw, sin_thw, ... = <span class="variable language_">self</span>.get_rope_by_thw(t, h, w)</span><br><span class="line">    rotary_pos_emb_cos.append(cos_thw)  <span class="comment"># 每张图的 [t*h*w, rotary_dim]</span></span><br><span class="line"></span><br><span class="line">rotary_pos_emb_cos = torch.cat(rotary_pos_emb_cos)  <span class="comment"># [total_patches_all, rotary_dim]</span></span><br><span class="line">rotary_pos_emb_cos = rotary_pos_emb_cos.to(device=<span class="variable language_">self</span>.device)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第七步：在每个-VisionBlock-中将-RoPE-应用到-Q-K"><a href="#第七步：在每个-VisionBlock-中将-RoPE-应用到-Q-K" class="headerlink" title="第七步：在每个 VisionBlock 中将 RoPE 应用到 Q&#x2F;K"></a>第七步：在每个 VisionBlock 中将 RoPE 应用到 Q&#x2F;K</h2><p><a href="vllm/model_executor/models/qwen2_5_vl.py#L380-L399">qwen2_5_vl.py:380-399</a>，<a href="vllm/model_executor/layers/rotary_embedding/common.py#L166-L178">common.py:166-178</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># is_neox_style=True: 把 head_dim 拆成前后两半</span></span><br><span class="line">x1, x2 = torch.chunk(qk, <span class="number">2</span>, dim=-<span class="number">1</span>)</span><br><span class="line"><span class="comment"># x1, x2: [..., head_dim//2]</span></span><br><span class="line"></span><br><span class="line">o1 = x1 * cos - x2 * sin   <span class="comment"># 旋转变换</span></span><br><span class="line">o2 = x2 * cos + x1 * sin</span><br><span class="line"></span><br><span class="line">output = torch.cat([o1, o2], dim=-<span class="number">1</span>)  <span class="comment"># [..., head_dim]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>这就是 2D 旋转矩阵</strong>：对特征对 <code>(x[i], x[i + head_dim//2])</code> 施加角度为 <code>θ_i(pos)</code> 的平面旋转：</p>
+<ul>
+<li>前 <code>rotary_dim//4</code> 个特征对 → 按 H 轴位置旋转</li>
+<li>后 <code>rotary_dim//4</code> 个特征对 → 按 W 轴位置旋转</li>
+<li>剩余 <code>head_dim - rotary_dim</code> 个特征对 → 旋转角为 0（恒等变换）</li>
+</ul>
+<hr>
+<h2 id="整体流程图"><a href="#整体流程图" class="headerlink" title="整体流程图"></a>整体流程图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">输入: pixel_values + grid_thw[(t,h,w), ...]</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">[初始化] 预计算 cos/sin 缓存</span><br><span class="line">  inv_freq[i] = base^(-2i/rotary_dim)</span><br><span class="line">  cache[pos, i] = cos(pos * inv_freq[i])  ── [8192, rotary_dim]</span><br><span class="line">        │</span><br><span class="line">        ▼ 对每张图像/视频</span><br><span class="line">[rotary_pos_emb_thw]</span><br><span class="line">  为每个 patch 生成 (H位置, W位置)</span><br><span class="line">  从缓存中查: cos[H位置] + cos[W位置]</span><br><span class="line">  → cos_combined: [t*h*w, rotary_dim]</span><br><span class="line">    前半 = H方向旋转角余弦</span><br><span class="line">    后半 = W方向旋转角余弦</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">[get_rope_by_thw]</span><br><span class="line">  按窗口注意力顺序重排 patch</span><br><span class="line">  → cos_thw: [t*h*w, rotary_dim]</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">[forward] 多图拼接</span><br><span class="line">  → rotary_pos_emb_cos: [total_patches, rotary_dim]</span><br><span class="line">  → rotary_pos_emb_sin: [total_patches, rotary_dim]</span><br><span class="line">        │</span><br><span class="line">        ▼ 每个 VisionBlock</span><br><span class="line">[ApplyRotaryEmb]</span><br><span class="line">  Q/K 每对特征 (x_i, x_&#123;i+d/2&#125;) 按对应位置的角度旋转</span><br><span class="line">  → 位置信息编码到注意力相似度中</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="设计精髓"><a href="#设计精髓" class="headerlink" title="设计精髓"></a>设计精髓</h2><p>Qwen2.5-VL 使用 <strong>2D-RoPE</strong>（而非 1D 序列位置），将 H 和 W 两个空间轴的位置信息分别编码到 head 维度的不同频率组中，让 attention 的点积相似度自然地感知二维空间相对位置关系，同时通过 <code>partial_rotary_factor=0.5</code> 将 rotary 维度限制在 head_dim 的一半，节省了频率资源，使 H 和 W 各分配到 <code>rotary_dim//4</code> 个独立的旋转频率。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/">https://hzhzxfs.github.io/2025/08/06/Qwen2.5-VL_RoPE%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B%E8%AF%A6%E8%A7%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/08/07/Qwen3-Omni%E6%B2%A1%E6%9C%89vllm_config%E5%B1%9E%E6%80%A7/" title="Qwen3-Omni没有vllm_config属性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Qwen3-Omni没有vllm_config属性</div></div><div class="info-2"><div class="info-item-1">1234class Qwen3OmniMoeThinkerForConditionalGeneration:    def __init__(...):        self.vllm_config = vllm_config </div></div></div></a><a class="pagination-related" href="/2025/08/05/Qwen2.5-VL_1/" title="Qwen2.5-VL_1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Qwen2.5-VL_1</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VL 差异对比Qwen2_5_VLForConditionalGeneration__init__()123456789101112131415161718192021222324252627282930# vllmself.use_data_parallel = multimodal_config.mm_encoder_tp_mode == &quot;data&quot;if multimodal_config.get_limit_per_prompt(    &quot;image&quot;) or multimodal_config.get_limit_per_prompt(&quot;video&quot;):    attn_backend_override = (        multimodal_config.mm_encoder_attn_backend        if multimodal_config is not None        else None    )    self.visual = Qwen2_5_VisionTr...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/11/Ray%E6%A1%86%E6%9E%B6%E4%B8%ADPlacement%20Group%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BD%9C%E7%94%A8/" title="Ray框架中Placement Group概念及作用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-11</div><div class="info-item-2">Ray框架中Placement Group概念及作用</div></div><div class="info-2"><div class="info-item-1">好的，我们来详细解释一下 Ray 框架中的 Placement Group 概念及其作用。 核心概念：什么是 Placement Group？Placement Group 是 Ray 中用于精细化控制任务或角色资源布局的抽象概念。它允许你提前声明一“组”资源，并指定这组资源在集群中的“摆放策略”，然后你可以将任务或演员调度到这组资源的“插槽”中。 你可以把它想象成：  传统调度：就像你去餐厅，告诉服务员“我需要两个座位”，服务员会随机找两个空位给你。 使用 Placement Group：就像你提前预定了一个包含特定座位（比如一个沙发座和两个普通座）的卡座，并指定这个卡座要靠窗。之后你的朋友们会直接到这个预定好的卡座就坐。   为什么需要 Placement Group？它的作用是什么？在没有 Placement Group 的情况下，Ray 的默认调度器虽然能高效地分配资源，但它主要关注的是“资源量”（例如，需要 2 个 CPU），而不太关心“资源的位置”。这在很多高级场景下会成为一个瓶颈。 Placement Group 的主要作用体现在以下几个方面： 1. 实现任务间的紧...</div></div></div></a><a class="pagination-related" href="/2025/08/08/Qwen3-VL-8B%E5%9C%A8910B4%E6%8E%A8%E7%90%86%E8%B0%83%E7%94%A8%E8%B6%85%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E9%95%BF%E5%BA%A6%E7%9A%84%E5%9B%BE%E7%89%87%E6%8A%A5%E9%94%99/" title="Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-08</div><div class="info-item-2">Qwen3-VL-8B在910B4推理调用超过上下文长度的图片报错</div></div><div class="info-2"><div class="info-item-1">12345678# localscp -P 8333 images.zip root@139.9.155.20:/media/# remotesudo apt updatesudo apt install -y unzipcd /mediaunzip images.zip  准备图片： 12345678910111213141516#!/usr/bin/env bashimage_base64=$(base64 -w 0 /media/b0.jpg)cat &gt; /media/image_request.json &lt;&lt;EOF&#123;    &quot;model&quot;: &quot;/root/.cache/modelscope/hub/models/Qwen/Qwen3-VL-8B-Instruct&quot;,    &quot;messages&quot;: [        &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpfu...</div></div></div></a><a class="pagination-related" href="/2025/11/13/vLLM5.md/" title="vLLM5.md"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">vLLM5.md</div></div><div class="info-2"><div class="info-item-1">一、引言目前，在大模型推理领域中，Guided Decoding 技术广泛用于生成一些特定格式的输出，如：SQL、JSON 等。本文将基于 vLLM 以及 Outlines 后端，深入解析 Guided Decoding 背后的技术原理。 二、什么是 Guided Decoding？一般来说，LLM 的输出通常是一段符合人类表达习惯的文本序列，这让我们可以利用 LLM 来回答问题或是创作内容。然而，当我们需要 LLM 的输出符合特定的格式（如：JSON、SQL、正则表达式等）时——例如希望 LLM 根据我们的需求生成查询数据库的 SQL 语句，通过微调的方法通常很难达到我们预期的效果。这时，就需要用到 Guided Decoding 技术，它可以通过影响模型输出层的 Logits 分布（施加 Mask 过滤不满足要求的 Token）来达到规范模型输出格式的效果。 🌰 举个例子： 我们可以向 LLM 输入一个 Prompt 以及对应的格式数据： 12345678910111213141516171819# Guided decoding by JSON using Pydanti...</div></div></div></a><a class="pagination-related" href="/2025/10/02/Ascend%20NPU%20%E7%A1%AC%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%85%A5%E9%97%A8/" title="Ascend NPU 硬件架构入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-02</div><div class="info-item-2">Ascend NPU 硬件架构入门</div></div><div class="info-2"><div class="info-item-1">Ascend NPU 硬件架构入门一、概述昇腾 NPU 是专门用于 AI 训练&#x2F;推理计算的 AI 专用处理器，其中的 AI Core 能够在很大程度上提高 AI 计算的效率。 本文将主要介绍 ASCEND NPU 的硬件架构 &amp; 工作原理、AI Core 的计算模式以及异构计算平台 CANN 等内容。 二、NPU 硬件架构2.1 NPU SOC 架构2.1.1 Ascend 310 架构 AI Core：计算核心，负责执行矩阵、向量、标量计算密集的算子任务，采用达芬奇架构； AI CPU：承担非矩阵类复杂计算，即负责执行不适合跑在 AI Core 上的算子； TS Core：作为任务调度器（Task Scheduler，TS），以实现计算任务在 AI Core 上的高效分配和调度（专门服务于 AI Core 和 AI CPU，不承担任何其它的工作）； ARM CPU：控制芯片整体运行； DVPP：数字视觉预处理子系统，完成图像视频编解码； Cache &amp; Buffer。   2.1.2 Ascend 910 架构 AI Core：32 个，上下各 16 ...</div></div></div></a><a class="pagination-related" href="/2025/12/09/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" title="性能测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-09</div><div class="info-item-2">性能测试</div></div><div class="info-2"><div class="info-item-1">Qwen2.5-VL 性能测试环境设置1234567# vllmcd /workspace/vllmgit reset --hard 2918c1b49c88c29783c86f78d2c4221cb9622379# vllm-ascend: maincd /workspace/vllm-ascendpip install -r benchmarks/requirements-bench.txt  Run: 1bash benchmarks/scripts/run-performance-benchmarks.sh  Benchmark 结果Before (未移除任何 layer 之前): 12345678910111213141516171819202122232425============ Serving Benchmark Result ============Successful requests:                     200       Failed requests:                         0         Reque...</div></div></div></a><a class="pagination-related" href="/2025/12/08/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E4%B8%80%E4%B8%AA%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" title="如何快速上手一个开源项目"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-08</div><div class="info-item-2">如何快速上手一个开源项目</div></div><div class="info-2"><div class="info-item-1">如何快速上手一个开源项目项目洞察社区治理 运作方式（独裁、共建）； 核心人物（commiter）； 参与方； release 节奏（feature、bugfix 版本周期）； 社区交流方式（PR&#x2F;ISSUE、邮件列表、SLACK&#x2F;IRC&#x2F;微信）； 当前&#x2F;未来发展； ……  源码托管 托管平台（GitHub、gitee、私仓）； 贡献方式； License； CLA&#x2F;CCLA；  CI&#x2F;CD CI 系统（GitHub action、Jenkins、circle CI、trivia CI）； 架构（x86&#x2F;arm、CPU&#x2F;GPU、……）； CI job 内容（unit test、集成测试、端到端测试、……）。  学习方法 官方网站、文档、源码（重点）【非翻译版】； 主流媒体（官方 blog、知乎专栏、知乎订阅号、领域 KOL）； 搜索引擎（Google）； 其它（教学视频、自行发现等）。   注意：  刚开始尽量看英文原版的文档（信息最完整、准确），有了整体的认识之后，可以再针对某些部分去看一些中文的网站...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qwen2-5-VisionTransformer-%E4%B8%AD-RoPE-cos-sin-%E7%9A%84%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">Qwen2.5-VisionTransformer 中 RoPE cos&#x2F;sin 的计算流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E9%A2%84%E8%AE%A1%E7%AE%97-cos-sin-%E7%BC%93%E5%AD%98"><span class="toc-number">1.1.</span> <span class="toc-text">第一步：初始化时预计算 cos&#x2F;sin 缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E4%B8%BA%E6%AF%8F%E5%BC%A0%E5%9B%BE%E5%83%8F-%E8%A7%86%E9%A2%91%E8%AE%A1%E7%AE%97-2D-%E7%A9%BA%E9%97%B4%E4%BD%8D%E7%BD%AE-ID"><span class="toc-number">1.2.</span> <span class="toc-text">第二步：为每张图像&#x2F;视频计算 2D 空间位置 ID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E4%BB%8E-cos-sin-%E7%BC%93%E5%AD%98%E4%B8%AD%E6%9F%A5%E8%A1%A8%EF%BC%8C%E5%88%86%E5%88%AB%E7%BC%96%E7%A0%81-H-%E5%92%8C-W"><span class="toc-number">1.3.</span> <span class="toc-text">第三步：从 cos&#x2F;sin 缓存中查表，分别编码 H 和 W</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E6%8C%89-spatial-merge-unit-%E5%88%86%E7%BB%84%E9%87%8D%E5%A1%91"><span class="toc-number">1.4.</span> <span class="toc-text">第四步：按 spatial merge unit 分组重塑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E6%8C%89%E7%AA%97%E5%8F%A3%E6%B3%A8%E6%84%8F%E5%8A%9B%E9%A1%BA%E5%BA%8F%E9%87%8D%E6%8E%92%EF%BC%88get-rope-by-thw%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">第五步：按窗口注意力顺序重排（get_rope_by_thw）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E6%AD%A5%EF%BC%9A%E5%A4%9A%E5%9B%BE-%E5%A4%9A%E8%A7%86%E9%A2%91%E6%8B%BC%E6%8E%A5%EF%BC%8C%E6%90%AC%E5%88%B0-GPU"><span class="toc-number">1.6.</span> <span class="toc-text">第六步：多图&#x2F;多视频拼接，搬到 GPU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E6%AD%A5%EF%BC%9A%E5%9C%A8%E6%AF%8F%E4%B8%AA-VisionBlock-%E4%B8%AD%E5%B0%86-RoPE-%E5%BA%94%E7%94%A8%E5%88%B0-Q-K"><span class="toc-number">1.7.</span> <span class="toc-text">第七步：在每个 VisionBlock 中将 RoPE 应用到 Q&#x2F;K</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">1.8.</span> <span class="toc-text">整体流程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E7%B2%BE%E9%AB%93"><span class="toc-number">1.9.</span> <span class="toc-text">设计精髓</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

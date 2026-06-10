@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Python版本MVP范围 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="15. Python 版本 MVP 范围1. 目标避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。 2. MVP 必须包含2.1 主循环 多轮 query loop tool call -&gt; tool result -&gt; next turn  2.2 基础工具 read file write file edit file grep&#x2F;search">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python版本MVP范围">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="15. Python 版本 MVP 范围1. 目标避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。 2. MVP 必须包含2.1 主循环 多轮 query loop tool call -&gt; tool result -&gt; next turn  2.2 基础工具 read file write file edit file grep&#x2F;search">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-01-05T14:16:42.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.552Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="AI Agent">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Python版本MVP范围",
+  "url": "https://hzhzxfs.github.io/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-01-05T14:16:42.000Z",
+  "dateModified": "2026-06-10T02:14:46.552Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Python版本MVP范围',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Python版本MVP范围</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Python版本MVP范围</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-05T14:16:42.000Z" title="发表于 2026-01-05 22:16:42">2026-01-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.552Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="15-Python-版本-MVP-范围"><a href="#15-Python-版本-MVP-范围" class="headerlink" title="15. Python 版本 MVP 范围"></a>15. Python 版本 MVP 范围</h1><h2 id="1-目标"><a href="#1-目标" class="headerlink" title="1. 目标"></a>1. 目标</h2><p>避免 Python 版本一开始就无限扩张。MVP 只做能跑通核心闭环的最小系统。</p>
+<h2 id="2-MVP-必须包含"><a href="#2-MVP-必须包含" class="headerlink" title="2. MVP 必须包含"></a>2. MVP 必须包含</h2><h3 id="2-1-主循环"><a href="#2-1-主循环" class="headerlink" title="2.1 主循环"></a>2.1 主循环</h3><ul>
+<li>多轮 query loop</li>
+<li>tool call -&gt; tool result -&gt; next turn</li>
+</ul>
+<h3 id="2-2-基础工具"><a href="#2-2-基础工具" class="headerlink" title="2.2 基础工具"></a>2.2 基础工具</h3><ul>
+<li>read file</li>
+<li>write file</li>
+<li>edit file</li>
+<li>grep&#x2F;search</li>
+<li>bash</li>
+</ul>
+<h3 id="2-3-基础权限系统"><a href="#2-3-基础权限系统" class="headerlink" title="2.3 基础权限系统"></a>2.3 基础权限系统</h3><ul>
+<li>allow &#x2F; ask &#x2F; deny</li>
+<li>被拒后不原样重试</li>
+</ul>
+<h3 id="2-4-基础-transcript-session"><a href="#2-4-基础-transcript-session" class="headerlink" title="2.4 基础 transcript &#x2F; session"></a>2.4 基础 transcript &#x2F; session</h3><ul>
+<li>消息持久化</li>
+<li>resume 会话</li>
+</ul>
+<h3 id="2-5-基础-memory"><a href="#2-5-基础-memory" class="headerlink" title="2.5 基础 memory"></a>2.5 基础 memory</h3><ul>
+<li>用户 &#x2F; 项目记忆注入</li>
+<li>简单记忆文件结构</li>
+</ul>
+<h3 id="2-6-基础-agent-orchestration"><a href="#2-6-基础-agent-orchestration" class="headerlink" title="2.6 基础 agent orchestration"></a>2.6 基础 agent orchestration</h3><ul>
+<li>main agent</li>
+<li>至少一个 verification agent</li>
+<li>可选一个 explore &#x2F; plan agent</li>
+</ul>
+<h3 id="2-7-基础-compact"><a href="#2-7-基础-compact" class="headerlink" title="2.7 基础 compact"></a>2.7 基础 compact</h3><ul>
+<li>超长消息时压缩历史</li>
+<li>工具结果 budget 裁剪</li>
+</ul>
+<h2 id="3-MVP-可以后置的能力"><a href="#3-MVP-可以后置的能力" class="headerlink" title="3. MVP 可以后置的能力"></a>3. MVP 可以后置的能力</h2><ul>
+<li>完整 TUI</li>
+<li>remote execution</li>
+<li>多人 teammate &#x2F; swarm</li>
+<li>高级 telemetry</li>
+<li>高级 tracing</li>
+<li>复杂 MCP delta 更新</li>
+<li>高级 proactive &#x2F; coordinator 模式</li>
+<li>完整插件生态</li>
+</ul>
+<h2 id="4-推荐实现顺序"><a href="#4-推荐实现顺序" class="headerlink" title="4. 推荐实现顺序"></a>4. 推荐实现顺序</h2><ol>
+<li>消息模型</li>
+<li>主循环</li>
+<li>工具执行链</li>
+<li>transcript &#x2F; resume</li>
+<li>memory</li>
+<li>verification agent</li>
+<li>skills &#x2F; plugin &#x2F; MCP 里的最小一项</li>
+</ol>
+<h2 id="5-成功标准"><a href="#5-成功标准" class="headerlink" title="5. 成功标准"></a>5. 成功标准</h2><p>MVP 成功不等于“功能很多”，而是下面闭环能跑通：</p>
+<blockquote>
+<p>用户给任务 -&gt; 系统多轮推进 -&gt; 调用工具 -&gt; 保留上下文 -&gt; 必要时压缩 -&gt; 完成后给结果 -&gt; 可恢复会话 -&gt; 可做基本验证</p>
+</blockquote>
+<h2 id="6-不建议在-MVP-阶段做的错误方向"><a href="#6-不建议在-MVP-阶段做的错误方向" class="headerlink" title="6. 不建议在 MVP 阶段做的错误方向"></a>6. 不建议在 MVP 阶段做的错误方向</h2><ul>
+<li>先做复杂 UI</li>
+<li>先做很多 agent 类型</li>
+<li>先做大而全插件系统</li>
+<li>没有 transcript &#x2F; resume 就上 background task</li>
+<li>没有权限系统就直接开放 bash</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/">https://hzhzxfs.github.io/2026/01/05/Python%E7%89%88%E6%9C%ACMVP%E8%8C%83%E5%9B%B4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/" title="RAG是什么"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">RAG是什么</div></div><div class="info-2"><div class="info-item-1">什么是 RAG？AI 大模型有一些硬伤，比如：  知识有截止日期 会一本正经地胡说八道，也就是我们常说的幻觉 缺乏私有知识，了解不到内部的文档写了什么  比如问 DeepSeek：程序员鱼皮的最新项目是什么？ 结果它给我扯了个两年半以前的项目出来，技术栈也完全不对！ 解决这个问题就可以用 RAG。RAG 的核心思想是 先搜再答 ，让大模型在回答之前先去搜一遍相关资料，再基于搜到的知识来组织答案。 就跟考试的时候偷偷翻书一样，遇到不会的先翻一翻书，再根据书里的知识答题。 还是问 AI 同样的问题，我们主动给 AI 一些参考资料，他的回答就会准确一些： 这个思路听起来简单，但在实际工程上 RAG 已经演化出了很多种不同的实现方法，从最初的「切块 → 搜索 → 生成」，到让 AI Agent 自主决策检索策略的 Agentic RAG，复杂度和能力天差地别。 有朋友可能会问：现在的大模型不是已经支持百万 token 的上下文窗口了，还需要 RAG 吗？ 答案是：需要，而且用得比以前更多了！ 因为把所有文档塞进上下文窗口，既贵又不靠谱。上下文越长 token 费用越高，而且大模型普遍存在...</div></div></div></a><a class="pagination-related" href="/2026/01/04/Python%E5%AE%9E%E7%8E%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" title="Python实现注意事项"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Python实现注意事项</div></div><div class="info-2"><div class="info-item-1">16. Python 实现注意事项1. 实现原则目标不是逐字复刻原实现，而是用 Python 重建同样的产品能力结构。 2. 模块建议建议 Python 项目按以下模块拆：  runtime/：query loop, orchestration messages/：message schemas tools/：tool registry and execution permissions/：permission engine memory/：memory loading and retrieval tasks/：background task model storage/：transcript and session persistence agents/：agent definitions extensions/：skills&#x2F;plugins&#x2F;mcp verification/：verification runner  3. 推荐先用的数据模型优先用：  pydantic &#x2F; dataclasses 定义消息与状态 sqlite 或 JSONL 先...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/01/06/RAG%E6%98%AF%E4%BB%80%E4%B9%88/" title="RAG是什么"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-06</div><div class="info-item-2">RAG是什么</div></div><div class="info-2"><div class="info-item-1">什么是 RAG？AI 大模型有一些硬伤，比如：  知识有截止日期 会一本正经地胡说八道，也就是我们常说的幻觉 缺乏私有知识，了解不到内部的文档写了什么  比如问 DeepSeek：程序员鱼皮的最新项目是什么？ 结果它给我扯了个两年半以前的项目出来，技术栈也完全不对！ 解决这个问题就可以用 RAG。RAG 的核心思想是 先搜再答 ，让大模型在回答之前先去搜一遍相关资料，再基于搜到的知识来组织答案。 就跟考试的时候偷偷翻书一样，遇到不会的先翻一翻书，再根据书里的知识答题。 还是问 AI 同样的问题，我们主动给 AI 一些参考资料，他的回答就会准确一些： 这个思路听起来简单，但在实际工程上 RAG 已经演化出了很多种不同的实现方法，从最初的「切块 → 搜索 → 生成」，到让 AI Agent 自主决策检索策略的 Agentic RAG，复杂度和能力天差地别。 有朋友可能会问：现在的大模型不是已经支持百万 token 的上下文窗口了，还需要 RAG 吗？ 答案是：需要，而且用得比以前更多了！ 因为把所有文档塞进上下文窗口，既贵又不靠谱。上下文越长 token 费用越高，而且大模型普遍存在...</div></div></div></a><a class="pagination-related" href="/2026/01/17/%E6%9E%B6%E6%9E%84%E8%83%BD%E5%8A%9B%E5%9C%B0%E5%9B%BE/" title="架构能力地图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-17</div><div class="info-item-2">架构能力地图</div></div><div class="info-2"><div class="info-item-1">07. 架构能力地图1. 顶层能力区A. 入口层对应需求：  提供 CLI 入口 提供初始化流程 提供 SDK 接入方式 提供 MCP 入口  B. Prompt 编排层对应需求：  动态生成系统提示词 注入环境信息 注入语言与输出风格 注入记忆、MCP 说明、会话局部规则  C. 工具执行层对应需求：  工具发现 工具输入校验 权限判断 Hook 拦截 执行记录 输出回流  D. Agent 调度层对应需求：  启动子 agent 支持 fork &#x2F; background &#x2F; remote &#x2F; teammate 模式 管理 agent 生命周期 管理 agent 上下文边界  E. 扩展生态层对应需求：  Skills Plugins MCP 命令扩展 插件变量替换与配置注入  F. Memory &#x2F; Session 层对应需求：  项目记忆 用户记忆 会话摘要 transcript resume  G. 任务与后台层对应需求：  本地任务 后台 agent 任务 远程 agent 任务 shell 任务 进度追踪与通知  H. 质量保证...</div></div></div></a><a class="pagination-related" href="/2026/01/11/%E4%BA%A7%E5%93%81%E6%80%BB%E8%A7%88%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3/" title="产品总览需求文档"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-11</div><div class="info-item-2">产品总览需求文档</div></div><div class="info-2"><div class="info-item-1">00. 产品总览需求文档1. 产品定义这是一款面向软件工程任务的交互式 AI 执行系统。它不是单纯的聊天机器人，也不是只会调用几个工具的脚本外壳，而是一套把推理、工具、权限、任务拆解、记忆、扩展机制与用户交互统一起来的产品系统。 2. 产品目标产品需要满足以下目标：  帮助用户完成真实的软件工程任务，而不只是提供建议 在执行过程中保持安全、可控、可恢复 让复杂任务可以分解、委派、验证、追踪 让系统可以扩展新的技能、插件与外部工具能力 让长期使用形成可积累的记忆和工作习惯  3. 核心用户3.1 主要用户 独立开发者 工程师 技术产品经理 有代码任务但希望借助 AI 提升效率的操作者  3.2 用户的核心诉求 我不只想问问题，我想让系统帮我做事 我不只想生成代码，我想让它真正改动项目并验证结果 我不只想要一次回答，我想让它持续推进任务 我不只想在一个固定产品里工作，我希望它能接入我自己的工具和工作流  4. 产品要解决的核心问题4.1 普通聊天模型的问题普通聊天模型的核心局限是：  只做一次性回答 没有稳定执行能力 没有工具治理 没有任务状态 没有长期上下文管理 无法形成可扩展工作...</div></div></div></a><a class="pagination-related" href="/2026/01/12/%E4%BB%BB%E5%8A%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E8%A7%84%E6%A0%BC/" title="任务模型与后台执行规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-12</div><div class="info-item-2">任务模型与后台执行规格</div></div><div class="info-2"><div class="info-item-1">11. 任务模型与后台执行规格1. 目标任务系统负责把“一个 agent 在做什么”变成可追踪对象，而不是只存在于对话文本里。 2. 任务类型Python 版建议至少支持：  main_session_task local_agent_task background_agent_task shell_task verification_task remote_task（可后置）  3. 核心任务字段123456789101112131415class TaskRecord:    task_id: str    type: str    session_id: str    parent_task_id: str | None    agent_id: str | None    description: str    status: str    created_at: float    started_at: float | None    finished_at: float | None    output_path: str | None    error: str |...</div></div></div></a><a class="pagination-related" href="/2026/01/18/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%8A%B6%E6%80%81%E8%A7%84%E6%A0%BC/" title="消息模型与状态规格"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">消息模型与状态规格</div></div><div class="info-2"><div class="info-item-1">09. 消息模型与状态规格1. 为什么消息模型必须先定义这类 Agent 系统的核心不是“函数调用”，而是“结构化消息驱动状态变化”。如果消息模型不稳定，后面的 memory、resume、工具执行、agent 任务都会混乱。 2. 顶层消息类型Python 版本建议至少定义以下消息类型：  system user assistant tool_use tool_result progress attachment summary compact_boundary notification tombstone（可选，用于删除&#x2F;隐藏历史消息后的链修复）  3. 核心消息字段所有消息建议共享： 123456class BaseMessage:    id: str    type: str    created_at: float    parent_id: str | None    session_id: str  assistant 消息1234class AssistantMessage(BaseMessage):    content_blocks: list  ...</div></div></div></a><a class="pagination-related" href="/2026/06/03/Multi-Agent/" title="Multi-Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-03</div><div class="info-item-2">Multi-Agent</div></div><div class="info-2"><div class="info-item-1">最近，小J在尝试用 AI Agent 为一个中等规模的代码库完整添加国际化（i18n）支持。 理论上，这是一类非常适合 AI 处理的任务：规则明确，需要识别所有硬编码字符串并替换为t(‘KEY’)的形式，同时在语言文件中补充对应键值；任务重复性高，几乎不需要创造性。 一开始进展顺利。Agent 像一台推土机一样，一个文件接一个文件地处理代码。但几个小时后，情况开始失控。对话历史、数百行代码搜索结果、工具调用日志、Linter 报错、人工补充指令……所有信息都被不断塞进同一个上下文窗口。Agent 的响应速度从秒级下降到分钟级，随后开始“胡言乱语”。它会突然忘记之前已经处理过的文件，在一个无关的函数里问我“这个变量是什么意思”，甚至开始修改一些完全不相关的业务逻辑。 最终，当一个简单的 JSON 配置文件也被改得面目全非时，小宁只能选择终止任务。原本寄予厚望的 AI 助手，变成了一个堆满草稿、废弃代码和错误日志的“垃圾场”。  单一 Agent 模式中，上下文不断堆积，噪声与历史信息会持续侵蚀主流程 这次失败揭示了一个关键问题：当任务复杂度超过一定阈值时，单一 Agent 模式极易...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#15-Python-%E7%89%88%E6%9C%AC-MVP-%E8%8C%83%E5%9B%B4"><span class="toc-number">1.</span> <span class="toc-text">15. Python 版本 MVP 范围</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">1. 目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-MVP-%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB"><span class="toc-number">1.2.</span> <span class="toc-text">2. MVP 必须包含</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%BB%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 主循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 基础工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%9F%BA%E7%A1%80%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 基础权限系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%9F%BA%E7%A1%80-transcript-session"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 基础 transcript &#x2F; session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E5%9F%BA%E7%A1%80-memory"><span class="toc-number">1.2.5.</span> <span class="toc-text">2.5 基础 memory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-%E5%9F%BA%E7%A1%80-agent-orchestration"><span class="toc-number">1.2.6.</span> <span class="toc-text">2.6 基础 agent orchestration</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-%E5%9F%BA%E7%A1%80-compact"><span class="toc-number">1.2.7.</span> <span class="toc-text">2.7 基础 compact</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-MVP-%E5%8F%AF%E4%BB%A5%E5%90%8E%E7%BD%AE%E7%9A%84%E8%83%BD%E5%8A%9B"><span class="toc-number">1.3.</span> <span class="toc-text">3. MVP 可以后置的能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%8E%A8%E8%8D%90%E5%AE%9E%E7%8E%B0%E9%A1%BA%E5%BA%8F"><span class="toc-number">1.4.</span> <span class="toc-text">4. 推荐实现顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%88%90%E5%8A%9F%E6%A0%87%E5%87%86"><span class="toc-number">1.5.</span> <span class="toc-text">5. 成功标准</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%B8%8D%E5%BB%BA%E8%AE%AE%E5%9C%A8-MVP-%E9%98%B6%E6%AE%B5%E5%81%9A%E7%9A%84%E9%94%99%E8%AF%AF%E6%96%B9%E5%90%91"><span class="toc-number">1.6.</span> <span class="toc-text">6. 不建议在 MVP 阶段做的错误方向</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,826 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>24-Skill-Plugin开发实战 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点为什么需要理解扩展点？Claude Code 的核心是一个 AI Agent 运行时。但不同团队、不同项目的需求千差万别 —— 有人需要自动化代码审查流程，有人需要集成内部工具链，有人需要约束 Agent 只做特定任务。 Claude Code 提供了四个层级的扩展机制，从轻量到重量依次为： 1Hook 脚本 → S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="24-Skill-Plugin开发实战">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点为什么需要理解扩展点？Claude Code 的核心是一个 AI Agent 运行时。但不同团队、不同项目的需求千差万别 —— 有人需要自动化代码审查流程，有人需要集成内部工具链，有人需要约束 Agent 只做特定任务。 Claude Code 提供了四个层级的扩展机制，从轻量到重量依次为： 1Hook 脚本 → S">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-05-24T08:02:19.000Z">
+<meta property="article:modified_time" content="2026-06-10T02:14:46.619Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "24-Skill-Plugin开发实战",
+  "url": "https://hzhzxfs.github.io/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-05-24T08:02:19.000Z",
+  "dateModified": "2026-06-10T02:14:46.619Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '24-Skill-Plugin开发实战',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">24-Skill-Plugin开发实战</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">24-Skill-Plugin开发实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-10T02:14:46.619Z" title="更新于 2026-06-10 10:14:46">2026-06-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="第-24-篇：Skill-Plugin-开发实战-—-基于源码理解扩展点"><a href="#第-24-篇：Skill-Plugin-开发实战-—-基于源码理解扩展点" class="headerlink" title="第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点"></a>第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点</h1><h2 id="为什么需要理解扩展点？"><a href="#为什么需要理解扩展点？" class="headerlink" title="为什么需要理解扩展点？"></a>为什么需要理解扩展点？</h2><p>Claude Code 的核心是一个 AI Agent 运行时。但不同团队、不同项目的需求千差万别 —— 有人需要自动化代码审查流程，有人需要集成内部工具链，有人需要约束 Agent 只做特定任务。</p>
+<p>Claude Code 提供了四个层级的扩展机制，从轻量到重量依次为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hook 脚本 → Skill 文件 → Agent 定义 → Plugin 包</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Hook</strong>：在特定事件（工具调用前后、会话开始结束）触发 Shell 命令</li>
+<li><strong>Skill</strong>：一个 Markdown 文件，定义一段 prompt + 行为约束，模型可以自主调用</li>
+<li><strong>Agent</strong>：一个 Markdown 文件，定义一个独立的 AI 角色（有自己的 prompt、工具集、模型）</li>
+<li><strong>Plugin</strong>：一个完整的目录包，可以同时提供 Skill、Agent、Hook、MCP 服务器</li>
+</ul>
+<p>本篇将逐一解析这四个扩展点的编写方式，并指出它们在源码中是如何被发现、解析和执行的。</p>
+<hr>
+<h2 id="一、自定义-Skill-编写"><a href="#一、自定义-Skill-编写" class="headerlink" title="一、自定义 Skill 编写"></a>一、自定义 Skill 编写</h2><h3 id="1-1-目录结构与发现机制"><a href="#1-1-目录结构与发现机制" class="headerlink" title="1.1 目录结构与发现机制"></a>1.1 目录结构与发现机制</h3><p>Skill 的标准格式是一个目录，内含 <code>SKILL.md</code> 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.claude/skills/</span><br><span class="line">└── my-review/</span><br><span class="line">    └── SKILL.md</span><br></pre></td></tr></table></figure>
+
+<p>源码中，Skill 的发现从 <code>loadSkillsFromSkillsDir()</code> 开始（<code>skills/loadSkillsDir.ts:407-480</code>）。它扫描指定目录下的所有子目录，读取每个子目录中的 <code>SKILL.md</code> 文件：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// skills/loadSkillsDir.ts:424-445</span></span><br><span class="line"><span class="keyword">const</span> results = <span class="keyword">await</span> <span class="title class_">Promise</span>.<span class="title function_">all</span>(</span><br><span class="line">  entries.<span class="title function_">map</span>(<span class="title function_">async</span> (entry): <span class="title class_">Promise</span>&lt;<span class="title class_">SkillWithPath</span> | <span class="literal">null</span>&gt; =&gt; &#123;</span><br><span class="line">    <span class="comment">// Only support directory format: skill-name/SKILL.md</span></span><br><span class="line">    <span class="keyword">if</span> (!entry.<span class="title function_">isDirectory</span>() &amp;&amp; !entry.<span class="title function_">isSymbolicLink</span>()) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> skillDirPath = <span class="title function_">join</span>(basePath, entry.<span class="property">name</span>)</span><br><span class="line">    <span class="keyword">const</span> skillFilePath = <span class="title function_">join</span>(skillDirPath, <span class="string">&#x27;SKILL.md&#x27;</span>)</span><br><span class="line">    <span class="keyword">let</span> <span class="attr">content</span>: <span class="built_in">string</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      content = <span class="keyword">await</span> fs.<span class="title function_">readFile</span>(skillFilePath, &#123; <span class="attr">encoding</span>: <span class="string">&#x27;utf-8&#x27;</span> &#125;)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="attr">e</span>: <span class="built_in">unknown</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="title function_">isENOENT</span>(e)) &#123;</span><br><span class="line">        <span class="title function_">logForDebugging</span>(<span class="string">`[skills] failed to read <span class="subst">$&#123;skillFilePath&#125;</span>: <span class="subst">$&#123;e&#125;</span>`</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...parse frontmatter and create command</span></span><br><span class="line">  &#125;),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>关键发现规则：</p>
+<ul>
+<li><strong>只支持目录格式</strong>，单独的 <code>.md</code> 文件在 <code>/skills/</code> 目录下不会被加载</li>
+<li>目录名即为 Skill 名（<code>entry.name</code>）</li>
+<li>支持符号链接（<code>entry.isSymbolicLink()</code>）</li>
+</ul>
+<p>Skill 文件的搜索范围通过 <code>getSkillDirCommands()</code> 定义（<code>loadSkillsDir.ts:638-804</code>），按优先级从高到低并行加载 5 个来源：</p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>路径</th>
+<th>SettingSource</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>企业管理策略</td>
+<td><code>&lt;managedPath&gt;/.claude/skills/</code></td>
+<td><code>policySettings</code></td>
+</tr>
+<tr>
+<td>用户级</td>
+<td><code>~/.claude/skills/</code></td>
+<td><code>userSettings</code></td>
+</tr>
+<tr>
+<td>项目级（向上遍历）</td>
+<td><code>.claude/skills/</code>（CWD 到 HOME）</td>
+<td><code>projectSettings</code></td>
+</tr>
+<tr>
+<td>附加目录</td>
+<td><code>--add-dir</code> 指定的目录</td>
+<td><code>projectSettings</code></td>
+</tr>
+<tr>
+<td>遗留命令目录</td>
+<td><code>.claude/commands/</code>（同时支持单文件格式）</td>
+<td>各来源</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-Frontmatter-主要配置字段"><a href="#1-2-Frontmatter-主要配置字段" class="headerlink" title="1.2 Frontmatter 主要配置字段"></a>1.2 Frontmatter 主要配置字段</h3><p><code>SKILL.md</code> 的核心是 YAML frontmatter。所有字段的解析逻辑集中在 <code>parseSkillFrontmatterFields()</code> 中（<code>loadSkillsDir.ts:185-265</code>）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: &quot;Security Review&quot;</span><br><span class="line">description: &quot;Review code changes for security issues&quot;</span><br><span class="line">allowed-tools: Bash(git diff:<span class="emphasis">*), Bash(git log:*</span>), FileRead</span><br><span class="line">argument-hint: &quot;<span class="language-xml"><span class="tag">&lt;<span class="name">branch-name</span>&gt;</span></span>&quot;</span><br><span class="line">arguments: branch</span><br><span class="line">when<span class="emphasis">_to_</span>use: &quot;When the user asks for a security review of code changes&quot;</span><br><span class="line">version: &quot;1.0&quot;</span><br><span class="line">model: sonnet</span><br><span class="line">effort: high</span><br><span class="line">context: fork</span><br><span class="line">agent: general-purpose</span><br><span class="line">user-invocable: true</span><br><span class="line">paths: &quot;src/<span class="strong">**/<span class="emphasis">*.ts, lib/*</span><span class="emphasis">*/*</span>.js&quot;</span></span><br><span class="line"><span class="strong">shell: bash</span></span><br><span class="line"><span class="strong">hooks:</span></span><br><span class="line"><span class="strong">  PostToolUse:</span></span><br><span class="line"><span class="strong">    - matcher: Bash</span></span><br><span class="line"><span class="strong">      hooks:</span></span><br><span class="line"><span class="strong">        - type: command</span></span><br><span class="line"><span class="strong">          command: &quot;echo &#x27;Tool used&#x27;&quot;</span></span><br><span class="line"><span class="strong">---</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong"># Security Review Skill</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">Review the code changes on the given branch...</span></span><br></pre></td></tr></table></figure>
+
+<p>每个字段的源码映射：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>默认值</th>
+<th>源码位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>undefined（显示名，不影响 Skill 标识）</td>
+<td><code>loadSkillsDir.ts:238-240</code> — <code>displayName</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>从 Markdown 正文首行提取</td>
+<td><code>loadSkillsDir.ts:208-214</code></td>
+</tr>
+<tr>
+<td><code>allowed-tools</code></td>
+<td>string&#x2F;string[]</td>
+<td><code>[]</code></td>
+<td><code>loadSkillsDir.ts:242-245</code></td>
+</tr>
+<tr>
+<td><code>argument-hint</code></td>
+<td>string</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:246-249</code></td>
+</tr>
+<tr>
+<td><code>arguments</code></td>
+<td>string&#x2F;string[]</td>
+<td><code>[]</code></td>
+<td><code>loadSkillsDir.ts:249-251</code></td>
+</tr>
+<tr>
+<td><code>when_to_use</code></td>
+<td>string</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:252</code></td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>string</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:253</code></td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>string</td>
+<td>继承父级</td>
+<td><code>loadSkillsDir.ts:221-226</code>，<code>&#39;inherit&#39;</code> 映射为 undefined</td>
+</tr>
+<tr>
+<td><code>effort</code></td>
+<td>string&#x2F;int</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:228-235</code></td>
+</tr>
+<tr>
+<td><code>context</code></td>
+<td><code>&#39;fork&#39;</code></td>
+<td><code>undefined</code>（即 inline）</td>
+<td><code>loadSkillsDir.ts:260</code></td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td>string</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:261</code></td>
+</tr>
+<tr>
+<td><code>user-invocable</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td><code>loadSkillsDir.ts:216-219</code></td>
+</tr>
+<tr>
+<td><code>paths</code></td>
+<td>string&#x2F;string[]</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:159-178</code></td>
+</tr>
+<tr>
+<td><code>shell</code></td>
+<td><code>&#39;bash&#39;</code>&#x2F;<code>&#39;powershell&#39;</code></td>
+<td>bash</td>
+<td><code>loadSkillsDir.ts:263</code></td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>HooksSettings</td>
+<td>undefined</td>
+<td><code>loadSkillsDir.ts:136-153</code></td>
+</tr>
+<tr>
+<td><code>disable-model-invocation</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td><code>loadSkillsDir.ts:255-257</code></td>
+</tr>
+</tbody></table>
+<h3 id="1-3-两种执行模式：Inline-vs-Fork"><a href="#1-3-两种执行模式：Inline-vs-Fork" class="headerlink" title="1.3 两种执行模式：Inline vs Fork"></a>1.3 两种执行模式：Inline vs Fork</h3><p>Skill 的 <code>context</code> 字段决定了执行模式，这是一个重要的架构选择：</p>
+<p><strong>Inline 模式</strong>（默认）：Skill 的 Markdown 内容被展开为一条 user message，注入到当前对话上下文中。模型在同一个 token 预算内处理 Skill 指令。这在 <code>SkillTool.call()</code> 中实现（<code>tools/SkillTool/SkillTool.ts:634-643</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/SkillTool/SkillTool.ts:634-643</span></span><br><span class="line"><span class="keyword">const</span> processedCommand = <span class="keyword">await</span> <span class="title function_">processPromptSlashCommand</span>(</span><br><span class="line">  commandName, args || <span class="string">&#x27;&#x27;</span>, commands, context,</span><br><span class="line">)</span><br><span class="line"><span class="comment">// ...返回 newMessages 注入当前对话</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Fork 模式</strong>（<code>context: fork</code>）：Skill 在一个独立的 Sub-Agent 中执行，拥有独立的 token 预算和对话上下文。通过 <code>executeForkedSkill()</code> 实现（<code>SkillTool.ts:122-289</code>），内部调用 <code>runAgent()</code> 启动子 Agent：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/SkillTool/SkillTool.ts:222-237</span></span><br><span class="line"><span class="keyword">for</span> <span class="title function_">await</span> (<span class="keyword">const</span> message <span class="keyword">of</span> <span class="title function_">runAgent</span>(&#123;</span><br><span class="line">  agentDefinition,</span><br><span class="line">  promptMessages,</span><br><span class="line">  <span class="attr">toolUseContext</span>: &#123; ...context, <span class="attr">getAppState</span>: modifiedGetAppState &#125;,</span><br><span class="line">  canUseTool,</span><br><span class="line">  <span class="attr">isAsync</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">querySource</span>: <span class="string">&#x27;agent:custom&#x27;</span>,</span><br><span class="line">  <span class="attr">model</span>: command.<span class="property">model</span> <span class="keyword">as</span> <span class="title class_">ModelAlias</span> | <span class="literal">undefined</span>,</span><br><span class="line">  <span class="attr">availableTools</span>: context.<span class="property">options</span>.<span class="property">tools</span>,</span><br><span class="line">  <span class="attr">override</span>: &#123; agentId &#125;,</span><br><span class="line">&#125;)) &#123;</span><br><span class="line">  agentMessages.<span class="title function_">push</span>(message)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>选择建议</strong>：</p>
+<ul>
+<li>简单的 prompt 增强 → Inline（轻量、共享上下文）</li>
+<li>需要大量工具调用的复杂任务 → Fork（独立 token 预算、不污染主对话）</li>
+</ul>
+<h3 id="1-4-变量替换与-Shell-命令嵌入"><a href="#1-4-变量替换与-Shell-命令嵌入" class="headerlink" title="1.4 变量替换与 Shell 命令嵌入"></a>1.4 变量替换与 Shell 命令嵌入</h3><p>Skill 内容在执行时会经过变量替换。这在 <code>createSkillCommand().getPromptForCommand()</code> 中实现（<code>loadSkillsDir.ts:344-398</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// loadSkillsDir.ts:349-369</span></span><br><span class="line">finalContent = <span class="title function_">substituteArguments</span>(finalContent, args, <span class="literal">true</span>, argumentNames)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replace $&#123;CLAUDE_SKILL_DIR&#125; with the skill&#x27;s own directory</span></span><br><span class="line"><span class="keyword">if</span> (baseDir) &#123;</span><br><span class="line">  finalContent = finalContent.<span class="title function_">replace</span>(<span class="regexp">/\$\&#123;CLAUDE_SKILL_DIR\&#125;/g</span>, skillDir)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replace $&#123;CLAUDE_SESSION_ID&#125; with the current session ID</span></span><br><span class="line">finalContent = finalContent.<span class="title function_">replace</span>(</span><br><span class="line">  <span class="regexp">/\$\&#123;CLAUDE_SESSION_ID\&#125;/g</span>, <span class="title function_">getSessionId</span>(),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>可用的变量：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>含义</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$1</code>, <code>$2</code>, …</td>
+<td>位置参数</td>
+<td>用户调用时传入的参数</td>
+</tr>
+<tr>
+<td><code>${CLAUDE_SKILL_DIR}</code></td>
+<td>Skill 所在目录的绝对路径</td>
+<td>引用 Skill 附带的脚本或数据文件</td>
+</tr>
+<tr>
+<td><code>${CLAUDE_SESSION_ID}</code></td>
+<td>当前 Session ID</td>
+<td>日志关联、临时文件命名</td>
+</tr>
+<tr>
+<td><code>${named_arg}</code></td>
+<td>命名参数</td>
+<td>通过 <code>arguments:</code> 声明的命名参数</td>
+</tr>
+</tbody></table>
+<p>此外，Skill 支持 Shell 命令嵌入 —— 通过 <code>!`command`</code> 或 <code>```!</code> 代码块，在 Skill 加载时执行 Shell 命令并将输出嵌入 prompt。但有一个重要的安全限制：**MCP 来源的 Skill 不执行 Shell 命令**（<code>loadSkillsDir.ts:374-396</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// loadSkillsDir.ts:374</span></span><br><span class="line"><span class="keyword">if</span> (loadedFrom !== <span class="string">&#x27;mcp&#x27;</span>) &#123;</span><br><span class="line">  finalContent = <span class="keyword">await</span> <span class="title function_">executeShellCommandsInPrompt</span>(</span><br><span class="line">    finalContent, &#123; ...toolUseContext &#125;, <span class="string">`/<span class="subst">$&#123;skillName&#125;</span>`</span>, shell,</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-条件-Skill（paths-过滤）"><a href="#1-5-条件-Skill（paths-过滤）" class="headerlink" title="1.5 条件 Skill（paths 过滤）"></a>1.5 条件 Skill（paths 过滤）</h3><p>通过 <code>paths</code> frontmatter 可以创建”只在操作特定文件时才激活”的 Skill。这在 <code>activateConditionalSkillsForPaths()</code> 中实现（<code>loadSkillsDir.ts:997-1058</code>），使用 <code>ignore</code> 库（gitignore 风格匹配）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// loadSkillsDir.ts:1012-1038</span></span><br><span class="line"><span class="keyword">const</span> skillIgnore = <span class="title function_">ignore</span>().<span class="title function_">add</span>(skill.<span class="property">paths</span>)</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> filePath <span class="keyword">of</span> filePaths) &#123;</span><br><span class="line">  <span class="keyword">const</span> relativePath = <span class="title function_">isAbsolute</span>(filePath)</span><br><span class="line">    ? <span class="title function_">relative</span>(cwd, filePath)</span><br><span class="line">    : filePath</span><br><span class="line">  <span class="keyword">if</span> (skillIgnore.<span class="title function_">ignores</span>(relativePath)) &#123;</span><br><span class="line">    <span class="comment">// Activate this skill</span></span><br><span class="line">    dynamicSkills.<span class="title function_">set</span>(name, skill)</span><br><span class="line">    conditionalSkills.<span class="title function_">delete</span>(name)</span><br><span class="line">    activatedConditionalSkillNames.<span class="title function_">add</span>(name)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如，一个只在操作 <code>.proto</code> 文件时激活的 Skill：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">description: &quot;Validate protobuf changes&quot;</span><br><span class="line"><span class="section">paths: &quot;<span class="strong">**/<span class="emphasis">*.proto&quot;</span></span></span></span><br><span class="line"><span class="emphasis"><span class="strong"><span class="section">---</span></span></span></span><br><span class="line"><span class="emphasis"><span class="strong"><span class="section">Check that the protobuf changes follow our style guide...</span></span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-动态-Skill-发现"><a href="#1-6-动态-Skill-发现" class="headerlink" title="1.6 动态 Skill 发现"></a>1.6 动态 Skill 发现</h3><p>除了启动时加载，Claude Code 还会在文件操作过程中动态发现嵌套目录中的 Skill。<code>discoverSkillDirsForPaths()</code> 从文件路径向上遍历，查找 <code>.claude/skills/</code> 目录（<code>loadSkillsDir.ts:861-915</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// loadSkillsDir.ts:876-908</span></span><br><span class="line"><span class="keyword">while</span> (currentDir.<span class="title function_">startsWith</span>(resolvedCwd + pathSep)) &#123;</span><br><span class="line">  <span class="keyword">const</span> skillDir = <span class="title function_">join</span>(currentDir, <span class="string">&#x27;.claude&#x27;</span>, <span class="string">&#x27;skills&#x27;</span>)</span><br><span class="line">  <span class="keyword">if</span> (!dynamicSkillDirs.<span class="title function_">has</span>(skillDir)) &#123;</span><br><span class="line">    dynamicSkillDirs.<span class="title function_">add</span>(skillDir)</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">await</span> fs.<span class="title function_">stat</span>(skillDir)</span><br><span class="line">      <span class="comment">// Check if gitignored...</span></span><br><span class="line">      newDirs.<span class="title function_">push</span>(skillDir)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123; <span class="comment">/* Directory doesn&#x27;t exist */</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> parent = <span class="title function_">dirname</span>(currentDir)</span><br><span class="line">  <span class="keyword">if</span> (parent === currentDir) <span class="keyword">break</span></span><br><span class="line">  currentDir = parent</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这意味着 monorepo 中的子包可以拥有自己的 Skill，当模型操作该子包中的文件时，相关 Skill 会自动被发现并注册。</p>
+<hr>
+<h2 id="二、自定义-Agent-编写"><a href="#二、自定义-Agent-编写" class="headerlink" title="二、自定义 Agent 编写"></a>二、自定义 Agent 编写</h2><h3 id="2-1-目录结构与发现"><a href="#2-1-目录结构与发现" class="headerlink" title="2.1 目录结构与发现"></a>2.1 目录结构与发现</h3><p>Agent 定义放在 <code>.claude/agents/</code> 目录中，每个 <code>.md</code> 文件定义一个 Agent：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.claude/agents/</span><br><span class="line">├── test-runner.md</span><br><span class="line">└── db-migration.md</span><br></pre></td></tr></table></figure>
+
+<p>Agent 的发现流程在 <code>getAgentDefinitionsWithOverrides()</code> 中（<code>tools/AgentTool/loadAgentsDir.ts:296-393</code>）。它调用 <code>loadMarkdownFilesForSubdir(&#39;agents&#39;, cwd)</code> 扫描多个层级的 <code>agents/</code> 目录，然后调用 <code>parseAgentFromMarkdown()</code> 解析每个文件。</p>
+<h3 id="2-2-Frontmatter-配置字段全解"><a href="#2-2-Frontmatter-配置字段全解" class="headerlink" title="2.2 Frontmatter 配置字段全解"></a>2.2 Frontmatter 配置字段全解</h3><p>Agent 的 frontmatter 比 Skill 更丰富，解析逻辑在 <code>parseAgentFromMarkdown()</code> 中（<code>loadAgentsDir.ts:541-755</code>）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: test-runner</span><br><span class="line">description: &quot;Run tests and fix failures. Iterates until all tests pass.&quot;</span><br><span class="line">tools: Bash, FileRead, FileEdit, FileWrite</span><br><span class="line">disallowedTools: AgentTool</span><br><span class="line">model: sonnet</span><br><span class="line">effort: high</span><br><span class="line">permissionMode: default</span><br><span class="line">maxTurns: 30</span><br><span class="line">color: green</span><br><span class="line">background: false</span><br><span class="line">memory: project</span><br><span class="line">isolation: worktree</span><br><span class="line">mcpServers:</span><br><span class="line"><span class="bullet">  -</span> slack</span><br><span class="line"><span class="bullet">  -</span> custom-server:</span><br><span class="line"><span class="code">      type: stdio</span></span><br><span class="line"><span class="code">      command: node</span></span><br><span class="line"><span class="code">      args: [&quot;./server.js&quot;]</span></span><br><span class="line"><span class="code">skills: commit, review</span></span><br><span class="line"><span class="code">initialPrompt: &quot;Read the test configuration first&quot;</span></span><br><span class="line"><span class="code">hooks:</span></span><br><span class="line"><span class="code">  Stop:</span></span><br><span class="line"><span class="code">    - matcher: &quot;&quot;</span></span><br><span class="line"><span class="code">      hooks:</span></span><br><span class="line"><span class="code">        - type: command</span></span><br><span class="line"><span class="code">          command: &quot;echo &#x27;Agent stopped&#x27;&quot;</span></span><br><span class="line"><span class="code">---</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">You are a test runner agent. Your job is to...</span><br></pre></td></tr></table></figure>
+
+<p>每个字段的源码映射：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>必填</th>
+<th>源码位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>✅</td>
+<td><code>loadAgentsDir.ts:549</code> — <code>agentType</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>✅</td>
+<td><code>loadAgentsDir.ts:550</code> — <code>whenToUse</code>，支持 <code>\n</code> 转义</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td>string&#x2F;string[]</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:660</code> — 白名单</td>
+</tr>
+<tr>
+<td><code>disallowedTools</code></td>
+<td>string&#x2F;string[]</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:677-680</code> — 黑名单</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>string</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:569-573</code>，<code>&#39;inherit&#39;</code> 使用父级模型</td>
+</tr>
+<tr>
+<td><code>effort</code></td>
+<td>string&#x2F;int</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:624-632</code></td>
+</tr>
+<tr>
+<td><code>permissionMode</code></td>
+<td>string</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:635-644</code></td>
+</tr>
+<tr>
+<td><code>maxTurns</code></td>
+<td>int</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:648-654</code></td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>string</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:567</code> — 终端显示颜色</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>boolean</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:576-591</code></td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td><code>&#39;user&#39;</code>&#x2F;<code>&#39;project&#39;</code>&#x2F;<code>&#39;local&#39;</code></td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:594-605</code></td>
+</tr>
+<tr>
+<td><code>isolation</code></td>
+<td><code>&#39;worktree&#39;</code></td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:608-621</code> — 在独立 git worktree 中运行</td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td>array</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:693-708</code> — 按名称引用或内联定义</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td>string</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:684</code> — 逗号分隔的 Skill 名称列表</td>
+</tr>
+<tr>
+<td><code>initialPrompt</code></td>
+<td>string</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:686-689</code> — 首轮 user turn 前缀</td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>HooksSettings</td>
+<td>❌</td>
+<td><code>loadAgentsDir.ts:711</code></td>
+</tr>
+</tbody></table>
+<h3 id="2-3-工具约束三策略"><a href="#2-3-工具约束三策略" class="headerlink" title="2.3 工具约束三策略"></a>2.3 工具约束三策略</h3><p>Agent 的工具控制有三种策略，在 <code>runAgent()</code> 中实现了三层过滤（详见第 12 篇）：</p>
+<p><strong>白名单</strong>（<code>tools</code>）：只允许使用列出的工具。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tools:</span> <span class="string">Bash,</span> <span class="string">FileRead,</span> <span class="string">FileEdit</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>黑名单</strong>（<code>disallowedTools</code>）：禁止使用列出的工具，其余全部可用。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">disallowedTools:</span> <span class="string">AgentTool,</span> <span class="string">TaskTool</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>通配符</strong>（<code>tools: [&#39;*&#39;]</code>）：允许所有工具（内置 general-purpose Agent 使用此模式）。</p>
+<p>在源码中，<code>tools</code> 字段的解析使用 <code>parseAgentToolsFromFrontmatter()</code>，它处理逗号分隔的字符串或数组格式。</p>
+<h3 id="2-4-Agent-记忆系统"><a href="#2-4-Agent-记忆系统" class="headerlink" title="2.4 Agent 记忆系统"></a>2.4 Agent 记忆系统</h3><p>当设置了 <code>memory</code> 字段，Agent 会拥有持久化记忆。记忆目录由 <code>getAgentMemoryDir()</code> 决定（<code>tools/AgentTool/agentMemory.ts:52-65</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>目录</th>
+<th>共享范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>user</code></td>
+<td><code>~/.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>跨所有项目</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>团队共享（VCS）</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>.claude/agent-memory-local/&lt;name&gt;/</code></td>
+<td>本机专用</td>
+</tr>
+</tbody></table>
+<p>记忆内容通过 <code>loadAgentMemoryPrompt()</code> 注入到 Agent 的 System Prompt 尾部（<code>agentMemory.ts:138-177</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// agentMemory.ts:726-732</span></span><br><span class="line"><span class="attr">getSystemPrompt</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">isAutoMemoryEnabled</span>() &amp;&amp; memory) &#123;</span><br><span class="line">    <span class="keyword">const</span> memoryPrompt = <span class="title function_">loadAgentMemoryPrompt</span>(agentType, memory)</span><br><span class="line">    <span class="keyword">return</span> systemPrompt + <span class="string">&#x27;\n\n&#x27;</span> + memoryPrompt</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> systemPrompt</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>memory</code> 启用时，<code>FileWrite</code>、<code>FileEdit</code>、<code>FileRead</code> 三个工具会被自动注入（即使 <code>tools</code> 白名单中没有列出），以便 Agent 读写记忆文件（<code>loadAgentsDir.ts:663-674</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="title function_">isAutoMemoryEnabled</span>() &amp;&amp; memory &amp;&amp; tools !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> toolSet = <span class="keyword">new</span> <span class="title class_">Set</span>(tools)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> tool <span class="keyword">of</span> [<span class="variable constant_">FILE_WRITE_TOOL_NAME</span>, <span class="variable constant_">FILE_EDIT_TOOL_NAME</span>, <span class="variable constant_">FILE_READ_TOOL_NAME</span>]) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!toolSet.<span class="title function_">has</span>(tool)) &#123;</span><br><span class="line">      tools = [...tools, tool]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-六级覆盖优先级"><a href="#2-5-六级覆盖优先级" class="headerlink" title="2.5 六级覆盖优先级"></a>2.5 六级覆盖优先级</h3><p>当多个来源定义了同名 Agent 时，<code>getActiveAgentsFromList()</code> 按以下顺序去重（后者覆盖前者）（<code>loadAgentsDir.ts:193-221</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// loadAgentsDir.ts:203-210</span></span><br><span class="line"><span class="keyword">const</span> agentGroups = [</span><br><span class="line">  builtInAgents,    <span class="comment">// 1. 内置 Agent（最低优先级）</span></span><br><span class="line">  pluginAgents,     <span class="comment">// 2. Plugin Agent</span></span><br><span class="line">  userAgents,       <span class="comment">// 3. 用户级 (~/.claude/agents/)</span></span><br><span class="line">  projectAgents,    <span class="comment">// 4. 项目级 (.claude/agents/)</span></span><br><span class="line">  flagAgents,       <span class="comment">// 5. Feature Flag</span></span><br><span class="line">  managedAgents,    <span class="comment">// 6. 企业管理策略（最高优先级）</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>这意味着项目级 Agent 会覆盖同名的内置 Agent，而企业策略可以强制覆盖一切。</p>
+<h3 id="2-6-MCP-服务器集成"><a href="#2-6-MCP-服务器集成" class="headerlink" title="2.6 MCP 服务器集成"></a>2.6 MCP 服务器集成</h3><p>Agent 可以通过 <code>mcpServers</code> 字段声明依赖的 MCP 服务器。支持两种格式：</p>
+<p><strong>按名称引用</strong>（引用已在配置中定义的 MCP 服务器）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mcpServers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">slack</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">github</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>内联定义</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mcpServers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">my-server:</span></span><br><span class="line">      <span class="attr">type:</span> <span class="string">stdio</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">node</span></span><br><span class="line">      <span class="attr">args:</span> [<span class="string">&quot;./my-mcp-server.js&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>解析使用 Zod 的 union schema（<code>loadAgentsDir.ts:63-68</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">AgentMcpServerSpecSchema</span> = <span class="title function_">lazySchema</span>(<span class="function">() =&gt;</span></span><br><span class="line">  z.<span class="title function_">union</span>([</span><br><span class="line">    z.<span class="title function_">string</span>(), <span class="comment">// Reference by name</span></span><br><span class="line">    z.<span class="title function_">record</span>(z.<span class="title function_">string</span>(), <span class="title class_">McpServerConfigSchema</span>()), <span class="comment">// Inline as &#123; name: config &#125;</span></span><br><span class="line">  ]),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、Plugin-系统架构"><a href="#三、Plugin-系统架构" class="headerlink" title="三、Plugin 系统架构"></a>三、Plugin 系统架构</h2><h3 id="3-1-Plugin-目录结构"><a href="#3-1-Plugin-目录结构" class="headerlink" title="3.1 Plugin 目录结构"></a>3.1 Plugin 目录结构</h3><p>Plugin 是最完整的扩展形式。源码中，<code>pluginLoader.ts:14-25</code> 的注释记录了基本结构（<code>commands/</code>、<code>agents/</code>、<code>hooks/</code>），而 <code>skills/</code> 和 <code>output-styles/</code> 的支持定义在 manifest schema 中（<code>utils/plugins/schemas.ts:484-523</code>）以及 <code>LoadedPlugin</code> 类型的 <code>skillsPath</code>&#x2F;<code>outputStylesPath</code> 字段中（<code>types/plugin.ts:57-69</code>）。完整结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">my-plugin/</span><br><span class="line">├── plugin.json          # 可选的 manifest 文件</span><br><span class="line">├── commands/            # 斜杠命令</span><br><span class="line">│   ├── build.md</span><br><span class="line">│   └── deploy.md</span><br><span class="line">├── skills/              # Skill 目录</span><br><span class="line">│   └── review/</span><br><span class="line">│       └── SKILL.md</span><br><span class="line">├── agents/              # Agent 定义</span><br><span class="line">│   └── test-runner.md</span><br><span class="line">├── hooks/               # Hook 配置</span><br><span class="line">│   └── hooks.json</span><br><span class="line">└── output-styles/       # 自定义输出样式</span><br><span class="line">    └── concise.md</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-Plugin-Manifest（plugin-json）"><a href="#3-2-Plugin-Manifest（plugin-json）" class="headerlink" title="3.2 Plugin Manifest（plugin.json）"></a>3.2 Plugin Manifest（plugin.json）</h3><p>Plugin manifest 使用 <code>PluginManifestSchema</code> 验证（<code>utils/plugins/schemas.ts</code>）。<code>userConfig</code> 的每个字段必须包含 <code>type</code>、<code>title</code>、<code>description</code> 三个必填属性，由 <code>PluginUserConfigOptionSchema</code> 严格校验（<code>schemas.ts:587-621</code>）。以下是一个完整示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;my-plugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A useful plugin for my team&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Your Name&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./commands&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skills&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./skills&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;agents&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./agents&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./hooks/hooks.json&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;my-server&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stdio&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;node&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;./mcp-server/index.js&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;userConfig&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;apiKey&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;API Key&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;API key for the external service&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;required&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sensitive&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;maxRetries&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;number&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Max Retries&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Maximum number of retry attempts&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;min&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;max&quot;</span><span class="punctuation">:</span> <span class="number">10</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Plugin-命令命名规范"><a href="#3-3-Plugin-命令命名规范" class="headerlink" title="3.3 Plugin 命令命名规范"></a>3.3 Plugin 命令命名规范</h3><p>Plugin 中的命令自动带有 Plugin 名称前缀。命名逻辑在 <code>getCommandNameFromFile()</code> 中（<code>utils/plugins/loadPluginCommands.ts:60-97</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通文件：pluginName:commandBaseName</span></span><br><span class="line"><span class="comment">// 例：my-plugin:build</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Skill 格式：pluginName:skillDirName</span></span><br><span class="line"><span class="comment">// 例：my-plugin:review</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 嵌套目录：pluginName:namespace:commandBaseName</span></span><br><span class="line"><span class="comment">// 例：my-plugin:sub:deploy</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-Plugin-变量替换"><a href="#3-4-Plugin-变量替换" class="headerlink" title="3.4 Plugin 变量替换"></a>3.4 Plugin 变量替换</h3><p>Plugin 命令支持特有的变量替换（<code>utils/plugins/loadPluginCommands.ts:340-377</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>${CLAUDE_PLUGIN_ROOT}</code></td>
+<td>Plugin 根目录路径</td>
+</tr>
+<tr>
+<td><code>${CLAUDE_PLUGIN_DATA}</code></td>
+<td>Plugin 数据存储目录</td>
+</tr>
+<tr>
+<td><code>${CLAUDE_SKILL_DIR}</code></td>
+<td>当前 Skill 的目录（区别于 Plugin 根目录）</td>
+</tr>
+<tr>
+<td><code>${CLAUDE_SESSION_ID}</code></td>
+<td>当前 Session ID</td>
+</tr>
+<tr>
+<td><code>${user_config.X}</code></td>
+<td>用户配置值（敏感字段自动脱敏）</td>
+</tr>
+</tbody></table>
+<p>其中 <code>${user_config.X}</code> 有安全保护 —— 标记为 <code>sensitive: true</code> 的配置项会被替换为描述性占位符而非实际值，因为 Skill 内容会进入模型 prompt（<code>loadPluginCommands.ts:348-353</code>）。</p>
+<h3 id="3-5-Plugin-发现与加载"><a href="#3-5-Plugin-发现与加载" class="headerlink" title="3.5 Plugin 发现与加载"></a>3.5 Plugin 发现与加载</h3><p>Plugin 的加载由 <code>pluginLoader.ts</code> 中的 <code>loadAllPlugins()</code> 驱动。来源有两个：</p>
+<ol>
+<li><strong>Marketplace 安装的 Plugin</strong>：通过 <code>plugin@marketplace</code> 格式在 settings 中配置</li>
+<li><strong>Session 级 Plugin</strong>：通过 <code>--plugin-dir</code> CLI 参数或 SDK 的 <code>plugins</code> 选项指定</li>
+</ol>
+<p>加载结果是一个 <code>PluginLoadResult</code>，包含三个数组（<code>types/plugin.ts:285-289</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">PluginLoadResult</span> = &#123;</span><br><span class="line">  <span class="attr">enabled</span>: <span class="title class_">LoadedPlugin</span>[]   <span class="comment">// 已启用的 Plugin</span></span><br><span class="line">  <span class="attr">disabled</span>: <span class="title class_">LoadedPlugin</span>[]  <span class="comment">// 已禁用的 Plugin</span></span><br><span class="line">  <span class="attr">errors</span>: <span class="title class_">PluginError</span>[]     <span class="comment">// 加载失败的 Plugin 错误</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-6-LoadedPlugin-数据结构"><a href="#3-6-LoadedPlugin-数据结构" class="headerlink" title="3.6 LoadedPlugin 数据结构"></a>3.6 LoadedPlugin 数据结构</h3><p>每个成功加载的 Plugin 被表示为 <code>LoadedPlugin</code>（<code>types/plugin.ts:48-70</code>），它携带了所有路径和配置信息：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">LoadedPlugin</span> = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span></span><br><span class="line">  <span class="attr">manifest</span>: <span class="title class_">PluginManifest</span></span><br><span class="line">  <span class="attr">path</span>: <span class="built_in">string</span>               <span class="comment">// Plugin 根目录</span></span><br><span class="line">  <span class="attr">source</span>: <span class="built_in">string</span>             <span class="comment">// 来源标识（如 &quot;my-plugin@my-marketplace&quot;）</span></span><br><span class="line">  <span class="attr">enabled</span>?: <span class="built_in">boolean</span></span><br><span class="line">  <span class="attr">commandsPath</span>?: <span class="built_in">string</span>      <span class="comment">// 默认 commands 目录</span></span><br><span class="line">  <span class="attr">commandsPaths</span>?: <span class="built_in">string</span>[]   <span class="comment">// 额外命令路径</span></span><br><span class="line">  <span class="attr">commandsMetadata</span>?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">CommandMetadata</span>&gt;</span><br><span class="line">  <span class="attr">agentsPath</span>?: <span class="built_in">string</span>        <span class="comment">// 默认 agents 目录</span></span><br><span class="line">  <span class="attr">skillsPath</span>?: <span class="built_in">string</span>        <span class="comment">// 默认 skills 目录</span></span><br><span class="line">  <span class="attr">hooksConfig</span>?: <span class="title class_">HooksSettings</span></span><br><span class="line">  <span class="attr">mcpServers</span>?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">McpServerConfig</span>&gt;</span><br><span class="line">  <span class="attr">settings</span>?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="built_in">unknown</span>&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、Hook-脚本编写"><a href="#四、Hook-脚本编写" class="headerlink" title="四、Hook 脚本编写"></a>四、Hook 脚本编写</h2><h3 id="4-1-Hook-配置格式"><a href="#4-1-Hook-配置格式" class="headerlink" title="4.1 Hook 配置格式"></a>4.1 Hook 配置格式</h3><p>Hook 可以在三个地方配置：settings.json、Agent frontmatter、Skill frontmatter。格式统一为三层嵌套结构（详见第 18 篇）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;PreToolUse&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;matcher&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bash&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./scripts/pre-bash-check.sh&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PostToolUse&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;matcher&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FileWrite|FileEdit&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./scripts/lint-check.sh&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-四种-Hook-类型"><a href="#4-2-四种-Hook-类型" class="headerlink" title="4.2 四种 Hook 类型"></a>4.2 四种 Hook 类型</h3><p>源码中定义了四种可持久化的 Hook 类型（<code>types/hooks.ts</code> 的 <code>HookCommand</code> discriminated union）：</p>
+<p><strong>Shell 命令 Hook</strong>（最常用）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./scripts/check.sh&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;timeout&quot;</span><span class="punctuation">:</span> <span class="number">30000</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;async&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Prompt Hook</strong>（LLM 评估）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;prompt&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;prompt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Review this code change for security issues&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;model&quot;</span><span class="punctuation">:</span> <span class="string">&quot;haiku&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Agent Hook</strong>（多轮验证）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;agent&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;prompt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Verify all tests pass&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Bash&quot;</span><span class="punctuation">,</span> <span class="string">&quot;FileRead&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>HTTP Hook</strong>（Web 回调）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://my-api.com/webhook&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;POST&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;headers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;Authorization&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Bearer $&#123;API_TOKEN&#125;&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-Hook-的输入机制：stdin-JSON-环境变量"><a href="#4-3-Hook-的输入机制：stdin-JSON-环境变量" class="headerlink" title="4.3 Hook 的输入机制：stdin JSON + 环境变量"></a>4.3 Hook 的输入机制：stdin JSON + 环境变量</h3><p>Shell Hook 的输入数据通过 <strong>stdin 以 JSON 格式传入</strong>，而非环境变量。这一点在源码的 <code>hooksConfigManager.ts</code> 中有明确说明 —— 例如 <code>PreToolUse</code> 的描述是 <code>&quot;Input to command is JSON of tool call arguments&quot;</code>（<code>hooksConfigManager.ts:32</code>），<code>PostToolUse</code> 是 <code>&quot;Input to command is JSON with fields &#39;inputs&#39; (tool call arguments) and &#39;response&#39; (tool call response)&quot;</code>（<code>hooksConfigManager.ts:41</code>）。</p>
+<p>在 <code>execCommandHook()</code> 中，JSON 数据通过 <code>child.stdin.write(jsonInput + &#39;\n&#39;, &#39;utf8&#39;)</code> 写入子进程的 stdin（<code>utils/hooks.ts:1006</code>）。</p>
+<p><strong>不同事件的 stdin JSON 内容</strong>（以 <code>BaseHookInput</code> 为基础，各事件追加特定字段，定义在 <code>entrypoints/sdk/coreSchemas.ts:414-420</code> 等）：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>stdin JSON 包含的字段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PreToolUse</code></td>
+<td><code>tool_name</code>, <code>tool_input</code>, <code>tool_use_id</code></td>
+</tr>
+<tr>
+<td><code>PostToolUse</code></td>
+<td><code>inputs</code>（工具输入）, <code>response</code>（工具输出）</td>
+</tr>
+<tr>
+<td><code>PostToolUseFailure</code></td>
+<td><code>tool_name</code>, <code>tool_input</code>, <code>tool_use_id</code>, <code>error</code>, <code>error_type</code></td>
+</tr>
+<tr>
+<td><code>Stop</code> &#x2F; <code>SubagentStop</code></td>
+<td><code>agent_id</code>, <code>agent_type</code>, <code>agent_transcript_path</code>（SubagentStop）</td>
+</tr>
+<tr>
+<td><code>SessionStart</code></td>
+<td><code>source</code>（startup&#x2F;resume&#x2F;clear&#x2F;compact）</td>
+</tr>
+<tr>
+<td><code>UserPromptSubmit</code></td>
+<td>原始 user prompt 文本</td>
+</tr>
+</tbody></table>
+<p>所有事件的 <code>BaseHookInput</code> 都包含 <code>session_id</code>、<code>transcript_path</code>、<code>cwd</code>、<code>hook_event_name</code> 等公共字段。</p>
+<p><strong>在 Hook 脚本中读取 stdin JSON 的示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 从 stdin 读取 JSON 输入</span></span><br><span class="line">INPUT=$(<span class="built_in">cat</span>)</span><br><span class="line">TOOL_NAME=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$INPUT</span>&quot;</span> | jq -r <span class="string">&#x27;.tool_name&#x27;</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Tool being called: <span class="variable">$TOOL_NAME</span>&quot;</span> &gt;&amp;2</span><br></pre></td></tr></table></figure>
+
+<p><strong>环境变量方面</strong>，Hook 只会收到少量上下文变量（<code>utils/hooks.ts:881-926</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>环境变量</th>
+<th>含义</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CLAUDE_PROJECT_DIR</code></td>
+<td>项目根目录</td>
+<td>始终设置</td>
+</tr>
+<tr>
+<td><code>CLAUDE_PLUGIN_ROOT</code></td>
+<td>Plugin&#x2F;Skill 根目录</td>
+<td>仅 Plugin&#x2F;Skill Hook</td>
+</tr>
+<tr>
+<td><code>CLAUDE_PLUGIN_DATA</code></td>
+<td>Plugin 数据存储目录</td>
+<td>仅 Plugin Hook</td>
+</tr>
+<tr>
+<td><code>CLAUDE_PLUGIN_OPTION_&lt;KEY&gt;</code></td>
+<td>用户配置值（含敏感值）</td>
+<td>仅 Plugin Hook</td>
+</tr>
+<tr>
+<td><code>CLAUDE_ENV_FILE</code></td>
+<td>环境注入文件路径</td>
+<td>仅 SessionStart&#x2F;Setup&#x2F;CwdChanged&#x2F;FileChanged</td>
+</tr>
+</tbody></table>
+<p>注意 <code>CLAUDE_ENV_FILE</code> 只在特定事件中设置（而非所有事件），且 Hook 可以向该文件写入 <code>KEY=VALUE</code> 对，这些值会被注入到后续的 BashTool 命令环境中。</p>
+<h3 id="4-4-退出码语义（按事件类型区分）"><a href="#4-4-退出码语义（按事件类型区分）" class="headerlink" title="4.4 退出码语义（按事件类型区分）"></a>4.4 退出码语义（按事件类型区分）</h3><p>Shell Hook 的退出码决定了 Claude Code 的后续行为，但<strong>退出码 <code>2</code> 的含义因事件类型而异</strong>（<code>utils/hooks/hooksConfigManager.ts:29-263</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>退出码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0</code></td>
+<td>成功，继续正常流程（部分事件会将 stdout 传给模型或显示在 transcript）</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><strong>因事件而异</strong>（见下表）</td>
+</tr>
+<tr>
+<td>其他非零</td>
+<td>非阻塞错误 —— 将 stderr 显示给用户，但继续执行</td>
+</tr>
+</tbody></table>
+<p><strong>退出码 <code>2</code> 的分事件语义</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>退出码 2 的行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PreToolUse</code></td>
+<td>将 stderr 展示给模型，<strong>阻止工具调用</strong></td>
+</tr>
+<tr>
+<td><code>PostToolUse</code></td>
+<td>将 stderr <strong>立即展示给模型</strong>（而非仅在 transcript 模式显示）</td>
+</tr>
+<tr>
+<td><code>Stop</code></td>
+<td>将 stderr 展示给模型，<strong>继续对话</strong>（模型不会停止）</td>
+</tr>
+<tr>
+<td><code>SubagentStop</code></td>
+<td>将 stderr 展示给 Sub-Agent，<strong>继续运行 Sub-Agent</strong></td>
+</tr>
+<tr>
+<td><code>UserPromptSubmit</code></td>
+<td><strong>阻止 prompt 处理</strong>，擦除原始 prompt，将 stderr 展示给用户</td>
+</tr>
+<tr>
+<td><code>PreCompact</code></td>
+<td><strong>阻止 compaction</strong></td>
+</tr>
+<tr>
+<td><code>TeammateIdle</code></td>
+<td>将 stderr 展示给 teammate，<strong>阻止 idle</strong>（teammate 继续工作）</td>
+</tr>
+<tr>
+<td><code>TaskCreated</code></td>
+<td>将 stderr 展示给模型，<strong>阻止任务创建</strong></td>
+</tr>
+<tr>
+<td><code>TaskCompleted</code></td>
+<td>将 stderr 展示给模型，<strong>阻止任务标记完成</strong></td>
+</tr>
+</tbody></table>
+<p>这个差异非常重要 —— 同样是退出码 <code>2</code>，在 <code>PreToolUse</code> 中意味着”阻止工具执行”，在 <code>Stop</code> 中意味着”让模型继续对话”，两者的语义完全不同。</p>
+<h3 id="4-5-Frontmatter-Hook-的特殊处理"><a href="#4-5-Frontmatter-Hook-的特殊处理" class="headerlink" title="4.5 Frontmatter Hook 的特殊处理"></a>4.5 Frontmatter Hook 的特殊处理</h3><p>当 Hook 定义在 Agent 或 Skill 的 frontmatter 中时，<code>registerFrontmatterHooks()</code> 会进行特殊转换（<code>utils/hooks/registerFrontmatterHooks.ts:18-67</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// registerFrontmatterHooks.ts:39-45</span></span><br><span class="line"><span class="comment">// For agents, convert Stop hooks to SubagentStop</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">targetEvent</span>: <span class="title class_">HookEvent</span> = event</span><br><span class="line"><span class="keyword">if</span> (isAgent &amp;&amp; event === <span class="string">&#x27;Stop&#x27;</span>) &#123;</span><br><span class="line">  targetEvent = <span class="string">&#x27;SubagentStop&#x27;</span></span><br><span class="line">  <span class="title function_">logForDebugging</span>(</span><br><span class="line">    <span class="string">`Converting Stop hook to SubagentStop for <span class="subst">$&#123;sourceName&#125;</span>`</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个转换至关重要 —— Agent 结束时触发的是 <code>SubagentStop</code> 而非 <code>Stop</code> 事件。如果你在 Agent frontmatter 中写 <code>Stop</code> Hook，源码会自动帮你转换为 <code>SubagentStop</code>，避免 Hook 永远不触发的问题。</p>
+<p>这些 frontmatter Hook 被注册为 Session Hook（通过 <code>addSessionHook()</code>），仅在该 Agent&#x2F;Skill 的生命周期内有效。</p>
+<h3 id="4-6-异步-Hook"><a href="#4-6-异步-Hook" class="headerlink" title="4.6 异步 Hook"></a>4.6 异步 Hook</h3><p>Hook 可以通过两种方式声明异步执行：</p>
+<p><strong>配置级</strong>：在 Hook 定义中设置 <code>&quot;async&quot;: true</code> 或 <code>&quot;asyncRewake&quot;: true</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./scripts/long-running-check.sh&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;async&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>协议级</strong>：Hook 脚本的 stdout 首行输出 <code>{&quot;async&quot;:true}</code> 或 <code>{&quot;asyncRewake&quot;:true}</code></p>
+<p><code>asyncRewake</code> 模式更有趣 —— 异步 Hook 完成后，如果退出码为 <code>2</code>，会唤醒模型并将 Hook 的输出注入对话。这适用于需要长时间运行的验证任务（如 CI&#x2F;CD 流水线）。</p>
+<hr>
+<h2 id="五、MCP-Skill-桥接"><a href="#五、MCP-Skill-桥接" class="headerlink" title="五、MCP Skill 桥接"></a>五、MCP Skill 桥接</h2><p>MCP 服务器可以通过 <code>skill://</code> 资源协议发布 Skill。这些 Skill 被 Claude Code 通过 <code>mcpSkillBuilders.ts</code> 桥接到内部的 Skill 系统中。</p>
+<p>桥接模块采用了一个精巧的依赖注入模式来打破循环依赖（<code>skills/mcpSkillBuilders.ts</code>）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// skills/mcpSkillBuilders.ts:31-44</span></span><br><span class="line"><span class="keyword">let</span> <span class="attr">builders</span>: <span class="title class_">MCPSkillBuilders</span> | <span class="literal">null</span> = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">registerMCPSkillBuilders</span>(<span class="params"><span class="attr">b</span>: <span class="title class_">MCPSkillBuilders</span></span>): <span class="built_in">void</span> &#123;</span><br><span class="line">  builders = b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getMCPSkillBuilders</span>(<span class="params"></span>): <span class="title class_">MCPSkillBuilders</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (!builders) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(</span><br><span class="line">      <span class="string">&#x27;MCP skill builders not registered — loadSkillsDir.ts has not been evaluated yet&#x27;</span>,</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> builders</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>loadSkillsDir.ts</code> 在模块初始化时注册构建器（<code>loadSkillsDir.ts:1083-1086</code>），这样 MCP 模块就可以使用相同的 <code>createSkillCommand()</code> 和 <code>parseSkillFrontmatterFields()</code> 函数来创建标准的 Skill 对象，实现统一的加载和执行路径。</p>
+<p>MCP Skill 有一个关键安全限制：<strong>不执行 Shell 命令嵌入</strong>（<code>loadSkillsDir.ts:374</code>），因为 MCP 来源的内容是远程不可信的。</p>
+<hr>
+<h2 id="六、实战示例"><a href="#六、实战示例" class="headerlink" title="六、实战示例"></a>六、实战示例</h2><h3 id="示例-1：代码审查-Skill"><a href="#示例-1：代码审查-Skill" class="headerlink" title="示例 1：代码审查 Skill"></a>示例 1：代码审查 Skill</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.claude/skills/review-pr/SKILL.md</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">description: &quot;Review current branch changes against main&quot;</span><br><span class="line">allowed-tools: Bash(git diff:<span class="emphasis">*), Bash(git log:*</span>), FileRead, Grep</span><br><span class="line">when<span class="emphasis">_to_</span>use: &quot;When the user wants a code review&quot;</span><br><span class="line">context: fork</span><br><span class="line"><span class="section">effort: high</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line">You are a code reviewer. Review all changes on the current branch</span><br><span class="line">compared to main.</span><br><span class="line"></span><br><span class="line">Steps:</span><br><span class="line"><span class="bullet">1.</span> Run <span class="code">`git diff main...HEAD --stat`</span> to see changed files</span><br><span class="line"><span class="bullet">2.</span> For each changed file, read the diff and analyze:</span><br><span class="line"><span class="bullet">   -</span> Logic errors</span><br><span class="line"><span class="bullet">   -</span> Security issues</span><br><span class="line"><span class="bullet">   -</span> Performance concerns</span><br><span class="line"><span class="bullet">   -</span> Missing error handling</span><br><span class="line"><span class="bullet">3.</span> Provide a structured review with severity levels</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例-2：带记忆的-Test-Agent"><a href="#示例-2：带记忆的-Test-Agent" class="headerlink" title="示例 2：带记忆的 Test Agent"></a>示例 2：带记忆的 Test Agent</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.claude/agents/test-fixer.md</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: test-fixer</span><br><span class="line">description: &quot;Run tests, diagnose failures, and fix them. Remembers past patterns.&quot;</span><br><span class="line">tools: Bash, FileRead, FileEdit, FileWrite</span><br><span class="line">maxTurns: 50</span><br><span class="line">memory: project</span><br><span class="line">color: red</span><br><span class="line">hooks:</span><br><span class="line">  Stop:</span><br><span class="line"><span class="bullet">    -</span> matcher: &quot;&quot;</span><br><span class="line"><span class="code">      hooks:</span></span><br><span class="line"><span class="code">        - type: command</span></span><br><span class="line"><span class="code">          command: &quot;echo &#x27;Test fixer completed&#x27; &gt;&gt; .claude/agent-logs/test-fixer.log&quot;</span></span><br><span class="line"><span class="code">---</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">You are a test fixing agent. Your workflow:</span><br><span class="line"><span class="bullet">1.</span> Run the test suite to identify failures</span><br><span class="line"><span class="bullet">2.</span> For each failure, diagnose the root cause</span><br><span class="line"><span class="bullet">3.</span> Apply the minimal fix</span><br><span class="line"><span class="bullet">4.</span> Re-run to verify the fix</span><br><span class="line"><span class="bullet">5.</span> Repeat until all tests pass</span><br><span class="line"></span><br><span class="line">Important:</span><br><span class="line"><span class="bullet">-</span> Save patterns you learn to your memory for future reference</span><br><span class="line"><span class="bullet">-</span> Never modify test assertions to make tests pass</span><br><span class="line"><span class="bullet">-</span> If a fix requires API changes, document them clearly</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例-3：带-CI-验证的-Hook"><a href="#示例-3：带-CI-验证的-Hook" class="headerlink" title="示例 3：带 CI 验证的 Hook"></a>示例 3：带 CI 验证的 Hook</h3><p><code>.claude/settings.json</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;PostToolUse&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;matcher&quot;</span><span class="punctuation">:</span> <span class="string">&quot;FileEdit|FileWrite&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cat | jq -r &#x27;.inputs.file_path // empty&#x27; | xargs -I&#123;&#125; npx eslint --fix &#123;&#125; 2&gt;/dev/null || true&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Stop&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;matcher&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;hooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;command&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm test -- --bail 2&gt;&amp;1 | tail -20&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;asyncRewake&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个配置做了两件事：</p>
+<ol>
+<li>每次文件被编辑&#x2F;写入后，从 stdin JSON 中提取 <code>file_path</code> 字段，自动运行 ESLint 修复</li>
+<li>当 Agent 即将停止时，异步运行测试套件；如果测试失败（退出码 2），唤醒模型继续修复（注意 <code>Stop</code> 事件的退出码 2 含义是”继续对话”）</li>
+</ol>
+<hr>
+<h2 id="七、可迁移的设计模式"><a href="#七、可迁移的设计模式" class="headerlink" title="七、可迁移的设计模式"></a>七、可迁移的设计模式</h2><h3 id="模式-1：Markdown-as-Config-Frontmatter-约定"><a href="#模式-1：Markdown-as-Config-Frontmatter-约定" class="headerlink" title="模式 1：Markdown-as-Config + Frontmatter 约定"></a>模式 1：Markdown-as-Config + Frontmatter 约定</h3><p>Claude Code 用 Markdown frontmatter 作为 Agent 和 Skill 的配置格式，正文作为 prompt 内容。这个模式的优势在于：</p>
+<ul>
+<li><strong>人类可读</strong>：Markdown 文件可以直接在编辑器中预览</li>
+<li><strong>版本控制友好</strong>：纯文本，diff 清晰</li>
+<li><strong>渐进式复杂度</strong>：最简单的 Skill 只需要正文，复杂配置通过 frontmatter 逐步添加</li>
+</ul>
+<p><strong>适用场景</strong>：任何需要”配置 + 内容”混合体的系统（CMS 模板、文档生成规则、AI prompt 管理）。</p>
+<h3 id="模式-2：Write-Once-Registry-打破循环依赖"><a href="#模式-2：Write-Once-Registry-打破循环依赖" class="headerlink" title="模式 2：Write-Once Registry 打破循环依赖"></a>模式 2：Write-Once Registry 打破循环依赖</h3><p><code>mcpSkillBuilders.ts</code> 的模式 —— 一个无依赖的叶子模块作为注册中心，生产者在模块初始化时写入，消费者在运行时读取。这避免了 A→B→C→A 的循环依赖，同时保持了类型安全。</p>
+<p><strong>适用场景</strong>：任何模块图中存在循环依赖的场景，特别是当 “bundler 无法解析动态 import 路径” 时（如 Bun 的 bunfs 环境）。</p>
+<h3 id="模式-3：多来源聚合-优先级去重"><a href="#模式-3：多来源聚合-优先级去重" class="headerlink" title="模式 3：多来源聚合 + 优先级去重"></a>模式 3：多来源聚合 + 优先级去重</h3><p>Claude Code 的扩展系统（Agent、Skill、Plugin）都遵循同一模式：</p>
+<ol>
+<li>并行从多个来源加载</li>
+<li>按优先级排序（内置 &lt; Plugin &lt; 用户 &lt; 项目 &lt; 企业策略）</li>
+<li>按名称去重，高优先级覆盖低优先级</li>
+<li>通过 realpath 去重处理符号链接和重复路径</li>
+</ol>
+<p><strong>适用场景</strong>：任何需要多层配置合并的系统（VS Code 的 settings 层级、npm 的 config 链、Kubernetes 的 overlay 模式）。</p>
+<hr>
+<h2 id="下一篇预告"><a href="#下一篇预告" class="headerlink" title="下一篇预告"></a>下一篇预告</h2><p><a href="./25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93.md">第 25 篇：架构模式总结 — 可迁移到你自己项目的设计模式</a></p>
+<p>作为系列的收官篇，我们将跨越全部 24 篇的分析，提炼出 7 个核心设计模式：编译期 DCE、极简 Store、工具注册表、Prompt 分段缓存、多层配置合并、Agent 隔离、安全防线。每个模式都附带可直接复用的代码骨架。</p>
+<hr>
+<p><em>全部内容请关注 <a target="_blank" rel="noopener" href="https://github.com/luyao618/Claude-Code-Source-Study">https://github.com/luyao618/Claude-Code-Source-Study</a> (求一颗免费的小星星)</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">https://hzhzxfs.github.io/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">25-架构模式总结</div></div><div class="info-2"><div class="info-item-1">第 25 篇：架构模式总结 — 可迁移到你自己项目的设计模式在过去 24 篇文章中，我们逐一拆解了 Claude Code 的每个子系统——从启动链路到对话循环，从工具系统到权限防线，从 Prompt Cache 到 MCP 协议。每篇都聚焦于”这个模块是怎么设计的“。 但工程师阅读源码的终极目的不是理解别人的代码，而是把好的设计用到自己的项目里。 本篇将切换视角：不再关注 Claude Code 特有的业务逻辑，而是提取那些跨项目可复用的架构模式。这 7 个模式覆盖了从编译期优化到运行时状态管理、从工具注册到安全防线的全栈设计决策。  模式 1：编译期 DCE — 同一份代码构建多版本问题你的产品需要从同一份代码库构建出多个版本——内部版&#x2F;外部版、免费版&#x2F;付费版、或者面向不同客户的定制版。传统做法是维护多个分支或在运行时用 if/else 判断，前者导致合并噩梦，后者让所有版本都包含所有代码。 Claude Code 的解法利用 Bun bundler 的 feature() 函数实现编译期 Dead Code Elimination（DCE）。关键技巧是将...</div></div></div></a><a class="pagination-related" href="/2026/05/23/23-Memory%E7%B3%BB%E7%BB%9F/" title="23-Memory系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">23-Memory系统</div></div><div class="info-2"><div class="info-item-1">第 23 篇：Memory 系统 — AI 记忆的多层架构为什么 AI Agent 需要记忆？LLM 天生是”金鱼记忆” —— 每次对话都是从零开始。用户上次告诉 Claude “我喜欢用 bun 而不是 npm”，下次对话它就忘了。用户在项目里纠正了 Claude 三次”不要 mock 数据库”，第四次它可能又 mock 了。 这不仅仅是用户体验问题 —— 它直接影响 AI Agent 的工作效率。没有记忆的 Agent 永远是新手：每次都要重新了解用户偏好、重新踩同样的坑、重新探索同样的代码库。 Claude Code 的解决方案是一个五层记忆架构：    层级 名称 生命周期 存储位置 核心职责    1 CLAUDE.md 指令文件 永久 项目目录 &#x2F; 用户目录 静态指令与规则   2 Auto Memory（memdir） 跨会话 ~/.claude/projects/&lt;slug&gt;/memory/ 自动提取的持久化知识   3 Session Memory 单次会话 ~/.claude/projects/&lt;slug&gt;/&lt;sessi...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/16/skills/" title="skills"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">skills</div></div><div class="info-2"><div class="info-item-1">使用 skills 扩展 Claude 创建、管理和共享 skills 以在 Claude Code 中扩展 Claude 的功能。包括自定义命令和捆绑 skills。  Skills 扩展了 Claude 能做的事情。创建一个 SKILL.md 文件，其中包含说明，Claude 会将其添加到其工具包中。Claude 在相关时使用 skills，或者你可以使用 /skill-name 直接调用一个。 当你不断将相同的说明、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。    对于内置命令（如 `/help` 和 `/compact`）以及捆绑 skills（如 `/debug` 和 `/code-review`），请参阅[命令参考](/zh-CN/commands)。    自定义命令已合并到 skills 中。 .claude/commands/deploy.md 中的文件和 .claud...</div></div></div></a><a class="pagination-related" href="/2026/03/10/remote-control/" title="remote-control"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-10</div><div class="info-item-2">remote-control</div></div><div class="info-2"><div class="info-item-1">使用 Remote Control 从任何设备继续本地会话 使用 Remote Control 从您的手机、平板电脑或任何浏览器继续本地 Claude Code 会话。适用于 claude.ai&#x2F;code 和 Claude 移动应用。     Remote Control 处于研究预览阶段，在所有计划中都可用。在 Team 和 Enterprise 上，在管理员在 [Claude Code 管理员设置](https://claude.ai/admin-settings/claude-code)中启用 Remote Control 切换之前，它默认处于关闭状态。   Remote Control 将 claude.ai&#x2F;code 或 Claude 应用（iOS 和 Android）连接到在您的机器上运行的 Claude Code 会话。在您的办公桌上启动一个任务，然后从沙发上的手机或另一台计算机上的浏览器继续。 当您在机器上启动 Remote Control 会话时，Claude 始终在本地运行，因此没有任何内容移动到云端。使用 Remote Control，您...</div></div></div></a><a class="pagination-related" href="/2026/03/04/overview/" title="overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-04</div><div class="info-item-2">overview</div></div><div class="info-2"><div class="info-item-1">概述 Claude Code 是一个代理编码工具，可以读取你的代码库、编辑文件、运行命令，并与你的开发工具集成。可在终端、IDE、桌面应用和浏览器中使用。  Claude Code 是一个由 AI 驱动的编码助手，可帮助你构建功能、修复错误和自动化开发任务。它理解你的整个代码库，可以跨多个文件和工具工作以完成任务。 开始使用选择你的环境来开始使用。大多数界面需要 Claude 订阅 或 Anthropic 控制台 账户。终端 CLI 和 VS Code 也支持第三方提供商。         功能完整的 CLI，用于直接在终端中使用 Claude Code。编辑文件、运行命令，并从命令行管理整个项目。  To install Claude Code, use one of the following methods:  &lt;Tabs&gt;   &lt;Tab title=&quot;Native Install (Recommended)&quot;&gt;     **macOS, Linux, WSL:**      theme1curl -fsSL https://cl...</div></div></div></a><a class="pagination-related" href="/2026/05/18/18-Hooks%E7%B3%BB%E7%BB%9F/" title="18-Hooks系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-18</div><div class="info-item-2">18-Hooks系统</div></div><div class="info-2"><div class="info-item-1">第 18 篇：Hooks 系统 — 用 Shell 命令扩展 AI 行为 本篇是《深入 Claude Code 源码》系列第 18 篇。我们将深入 Hooks 系统的完整实现，揭示 Claude Code 如何让用户在 AI 生命周期的关键节点注入自定义逻辑，以及这套系统在安全性、可扩展性和性能上的精巧设计。  为什么需要 Hooks？想象一个场景：你希望 Claude Code 在每次执行 Write 工具后自动运行 prettier 格式化代码，或者在 Session 启动时自动加载项目特定的环境变量，又或者在模型即将结束回答时用一个验证脚本检查代码质量。 这些需求有一个共同特征：它们不是 AI 本身的能力，而是用户希望在 AI 工作流的特定节点注入的自定义行为。 Hooks 系统正是为此而生。它是 Claude Code 的”生命周期钩子”框架 —— 类似于 Git Hooks、Webpack Plugins 或 React 的 useEffect，但面向的是 AI Agent 的执行周期。用户通过 settings.json 声明：在哪个事件（event）、匹配什么条件（...</div></div></div></a><a class="pagination-related" href="/2026/04/16/gitlab-ci-cd/" title="gitlab-ci-cd"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">gitlab-ci-cd</div></div><div class="info-2"><div class="info-item-1">Claude Code GitLab CI&#x2F;CD 了解如何将 Claude Code 集成到您的 GitLab CI&#x2F;CD 开发工作流中     Claude Code for GitLab CI/CD 目前处于测试阶段。随着我们完善体验，功能和特性可能会发生变化。    此集成由 GitLab 维护。如需支持，请参阅以下 GitLab issue。    此集成基于 [Claude Code CLI and Agent SDK](/zh-CN/agent-sdk/overview) 构建，可在您的 CI/CD 作业和自定义自动化工作流中以编程方式使用 Claude。   为什么在 GitLab 中使用 Claude Code？ 即时 MR 创建：描述您的需求，Claude 会提议一个完整的 MR，包含更改和说明 自动化实现：使用单个命令或提及将问题转化为可工作的代码 项目感知：Claude 遵循您的 CLAUDE.md 指南和现有代码模式 简单设置：向 .gitlab-ci.yml 添加一个作业和一个掩码 CI&#x2F;CD 变量 企业就绪：选择 Clau...</div></div></div></a><a class="pagination-related" href="/2026/02/10/9.Skills%20with%20the%20Claude%20Agent%20SDK%EF%BC%88Claude%20Agent%20SDK%20%E4%B8%AD%E7%9A%84%E6%8A%80%E8%83%BD%EF%BC%89/" title="9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">9.Skills with the Claude Agent SDK（Claude Agent SDK 中的技能）</div></div><div class="info-2"><div class="info-item-1">第九课：使用 Claude Agent SDK 构建实战级研究智能体本节课我们将脱离网页版 Claude 和命令行界面 (CLI)，深入讲解如何使用 Claude Agent SDK 以编程方式构建复杂的智能体应用。 我们将从零开始构建一个 通用研究智能体 (Research Agent)。该智能体模拟了一个高效的工程团队：由一个“指挥官”利用标准流程 (Skills) 制定计划，并行调度三个“专家” (Sub-agents) 进行分工协作，最终通过 MCP 将成果交付到外部系统 (Notion)。  1. 核心架构：指挥官与专家团队 (The Architecture)我们使用 SDK 构建的系统架构可以映射为传统的企业组织结构：    架构层级 概念隐喻 (Metaphor) 代码组件 (SDK Component) 本案具体实现 (Implementation)    The Brain 指挥官 &#x2F; 编排者 Main Agent + TaskTool 负责理解需求，加载技能制定计划，分派任务，最后合成报告。   The Arms 专家 &#x2F; 执行者 Age...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">491</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-24-%E7%AF%87%EF%BC%9ASkill-Plugin-%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-%E2%80%94-%E5%9F%BA%E4%BA%8E%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3%E6%89%A9%E5%B1%95%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">第 24 篇：Skill&#x2F;Plugin 开发实战 — 基于源码理解扩展点</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E6%89%A9%E5%B1%95%E7%82%B9%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要理解扩展点？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89-Skill-%E7%BC%96%E5%86%99"><span class="toc-number">1.2.</span> <span class="toc-text">一、自定义 Skill 编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E4%B8%8E%E5%8F%91%E7%8E%B0%E6%9C%BA%E5%88%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 目录结构与发现机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Frontmatter-%E4%B8%BB%E8%A6%81%E9%85%8D%E7%BD%AE%E5%AD%97%E6%AE%B5"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 Frontmatter 主要配置字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E4%B8%A4%E7%A7%8D%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%BC%8F%EF%BC%9AInline-vs-Fork"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 两种执行模式：Inline vs Fork</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E5%8F%98%E9%87%8F%E6%9B%BF%E6%8D%A2%E4%B8%8E-Shell-%E5%91%BD%E4%BB%A4%E5%B5%8C%E5%85%A5"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 变量替换与 Shell 命令嵌入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E6%9D%A1%E4%BB%B6-Skill%EF%BC%88paths-%E8%BF%87%E6%BB%A4%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">1.5 条件 Skill（paths 过滤）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E5%8A%A8%E6%80%81-Skill-%E5%8F%91%E7%8E%B0"><span class="toc-number">1.2.6.</span> <span class="toc-text">1.6 动态 Skill 发现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89-Agent-%E7%BC%96%E5%86%99"><span class="toc-number">1.3.</span> <span class="toc-text">二、自定义 Agent 编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 目录结构与发现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Frontmatter-%E9%85%8D%E7%BD%AE%E5%AD%97%E6%AE%B5%E5%85%A8%E8%A7%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 Frontmatter 配置字段全解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%B7%A5%E5%85%B7%E7%BA%A6%E6%9D%9F%E4%B8%89%E7%AD%96%E7%95%A5"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 工具约束三策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Agent-%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 Agent 记忆系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E5%85%AD%E7%BA%A7%E8%A6%86%E7%9B%96%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">1.3.5.</span> <span class="toc-text">2.5 六级覆盖优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-MCP-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9B%86%E6%88%90"><span class="toc-number">1.3.6.</span> <span class="toc-text">2.6 MCP 服务器集成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Plugin-%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.4.</span> <span class="toc-text">三、Plugin 系统架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Plugin-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 Plugin 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Plugin-Manifest%EF%BC%88plugin-json%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 Plugin Manifest（plugin.json）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Plugin-%E5%91%BD%E4%BB%A4%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 Plugin 命令命名规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Plugin-%E5%8F%98%E9%87%8F%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 Plugin 变量替换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Plugin-%E5%8F%91%E7%8E%B0%E4%B8%8E%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 Plugin 发现与加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-LoadedPlugin-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.6.</span> <span class="toc-text">3.6 LoadedPlugin 数据结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Hook-%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.5.</span> <span class="toc-text">四、Hook 脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Hook-%E9%85%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 Hook 配置格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9B%9B%E7%A7%8D-Hook-%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 四种 Hook 类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Hook-%E7%9A%84%E8%BE%93%E5%85%A5%E6%9C%BA%E5%88%B6%EF%BC%9Astdin-JSON-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 Hook 的输入机制：stdin JSON + 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E9%80%80%E5%87%BA%E7%A0%81%E8%AF%AD%E4%B9%89%EF%BC%88%E6%8C%89%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B%E5%8C%BA%E5%88%86%EF%BC%89"><span class="toc-number">1.5.4.</span> <span class="toc-text">4.4 退出码语义（按事件类型区分）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-Frontmatter-Hook-%E7%9A%84%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86"><span class="toc-number">1.5.5.</span> <span class="toc-text">4.5 Frontmatter Hook 的特殊处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E5%BC%82%E6%AD%A5-Hook"><span class="toc-number">1.5.6.</span> <span class="toc-text">4.6 异步 Hook</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81MCP-Skill-%E6%A1%A5%E6%8E%A5"><span class="toc-number">1.6.</span> <span class="toc-text">五、MCP Skill 桥接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E6%88%98%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.7.</span> <span class="toc-text">六、实战示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5-Skill"><span class="toc-number">1.7.1.</span> <span class="toc-text">示例 1：代码审查 Skill</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9A%E5%B8%A6%E8%AE%B0%E5%BF%86%E7%9A%84-Test-Agent"><span class="toc-number">1.7.2.</span> <span class="toc-text">示例 2：带记忆的 Test Agent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-3%EF%BC%9A%E5%B8%A6-CI-%E9%AA%8C%E8%AF%81%E7%9A%84-Hook"><span class="toc-number">1.7.3.</span> <span class="toc-text">示例 3：带 CI 验证的 Hook</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%8F%AF%E8%BF%81%E7%A7%BB%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.</span> <span class="toc-text">七、可迁移的设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-1%EF%BC%9AMarkdown-as-Config-Frontmatter-%E7%BA%A6%E5%AE%9A"><span class="toc-number">1.8.1.</span> <span class="toc-text">模式 1：Markdown-as-Config + Frontmatter 约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-2%EF%BC%9AWrite-Once-Registry-%E6%89%93%E7%A0%B4%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="toc-number">1.8.2.</span> <span class="toc-text">模式 2：Write-Once Registry 打破循环依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F-3%EF%BC%9A%E5%A4%9A%E6%9D%A5%E6%BA%90%E8%81%9A%E5%90%88-%E4%BC%98%E5%85%88%E7%BA%A7%E5%8E%BB%E9%87%8D"><span class="toc-number">1.8.3.</span> <span class="toc-text">模式 3：多来源聚合 + 优先级去重</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E7%AF%87%E9%A2%84%E5%91%8A"><span class="toc-number">1.9.</span> <span class="toc-text">下一篇预告</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/Multi-Agent/" title="Multi-Agent">Multi-Agent</a><time datetime="2026-06-03T02:57:05.000Z" title="发表于 2026-06-03 10:57:05">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/02/Multi-Agent%20vs%20Single-Agent/" title="Multi-Agent vs Single-Agent">Multi-Agent vs Single-Agent</a><time datetime="2026-06-02T14:20:10.000Z" title="发表于 2026-06-02 22:20:10">2026-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/Harness%20Engineering/" title="Harness Engineering">Harness Engineering</a><time datetime="2026-06-01T10:54:37.000Z" title="发表于 2026-06-01 18:54:37">2026-06-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结">25-架构模式总结</a><time datetime="2026-05-25T00:50:50.000Z" title="发表于 2026-05-25 08:50:50">2026-05-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/24/24-Skill-Plugin%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" title="24-Skill-Plugin开发实战">24-Skill-Plugin开发实战</a><time datetime="2026-05-24T08:02:19.000Z" title="发表于 2026-05-24 16:02:19">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
