@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AskUserQuestionTool：向用户提问 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="AskUserQuestionTool：向用户提问这个工具为什么比“直接问一句话”更高级很多人第一次看到 AskUserQuestionTool，会觉得它不就是“向用户提问”吗？但在 Claude Code 里，它其实解决的是一个更深的问题：  当模型执行到一半需要补信息时，如何把“提问”做成正式、结构化、可交互的系统能力，而不是随手打一句自然语言。  这对于 Agent 产品特别重要，因为它关系">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AskUserQuestionTool：向用户提问">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/07/02/25__AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="AskUserQuestionTool：向用户提问这个工具为什么比“直接问一句话”更高级很多人第一次看到 AskUserQuestionTool，会觉得它不就是“向用户提问”吗？但在 Claude Code 里，它其实解决的是一个更深的问题：  当模型执行到一半需要补信息时，如何把“提问”做成正式、结构化、可交互的系统能力，而不是随手打一句自然语言。  这对于 Agent 产品特别重要，因为它关系">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-07-02T05:16:49.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.209Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AskUserQuestionTool：向用户提问",
+  "url": "https://hzhzxfs.github.io/2026/07/02/25__AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-07-02T05:16:49.000Z",
+  "dateModified": "2026-06-23T05:18:13.209Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/07/02/25__AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AskUserQuestionTool：向用户提问',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">AskUserQuestionTool：向用户提问</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AskUserQuestionTool：向用户提问</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-02T05:16:49.000Z" title="发表于 2026-07-02 13:16:49">2026-07-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.209Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="AskUserQuestionTool：向用户提问"><a href="#AskUserQuestionTool：向用户提问" class="headerlink" title="AskUserQuestionTool：向用户提问"></a>AskUserQuestionTool：向用户提问</h1><h2 id="这个工具为什么比“直接问一句话”更高级"><a href="#这个工具为什么比“直接问一句话”更高级" class="headerlink" title="这个工具为什么比“直接问一句话”更高级"></a>这个工具为什么比“直接问一句话”更高级</h2><p>很多人第一次看到 <code>AskUserQuestionTool</code>，会觉得它不就是“向用户提问”吗？<br>但在 Claude Code 里，它其实解决的是一个更深的问题：</p>
+<blockquote>
+<p>当模型执行到一半需要补信息时，如何把“提问”做成正式、结构化、可交互的系统能力，而不是随手打一句自然语言。</p>
+</blockquote>
+<p>这对于 Agent 产品特别重要，因为它关系到：</p>
+<ul>
+<li>需求澄清</li>
+<li>多选决策</li>
+<li>方案比较</li>
+<li>Plan Mode 中的信息补全</li>
+</ul>
+<h2 id="源码先看-schema"><a href="#源码先看-schema" class="headerlink" title="源码先看 schema"></a>源码先看 schema</h2><p><code>tools/AskUserQuestionTool/AskUserQuestionTool.tsx</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const inputSchema = z.strictObject(&#123;</span><br><span class="line">  questions: z.array(questionSchema()).min(1).max(4),</span><br><span class="line">  answers: z.record(z.string(), z.string()).optional(),</span><br><span class="line">  annotations: annotationsSchema(),</span><br><span class="line">  metadata: z.object(&#123; source: z.string().optional() &#125;).optional(),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>而单个问题本身也有非常完整的结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const questionSchema = z.object(&#123;</span><br><span class="line">  question: z.string(),</span><br><span class="line">  header: z.string(),</span><br><span class="line">  options: z.array(questionOptionSchema()).min(2).max(4),</span><br><span class="line">  multiSelect: z.boolean().default(false),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这说明它不是普通聊天，而是一个正式的<strong>表单式交互工具</strong> 。</p>
+<h2 id="它甚至支持选项预览"><a href="#它甚至支持选项预览" class="headerlink" title="它甚至支持选项预览"></a>它甚至支持选项预览</h2><p><code>tools/AskUserQuestionTool/prompt.ts</code> 里专门定义了 preview 机制：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Use the optional `preview` field on options when presenting concrete artifacts that users need to visually compare:</span><br><span class="line">- ASCII mockups of UI layouts or components</span><br><span class="line">- Code snippets showing different implementations</span><br><span class="line">- Diagram variations</span><br></pre></td></tr></table></figure>
+
+<p>这很有意思，因为它意味着这个工具并不只是问选择题，而是已经能支持：</p>
+<ul>
+<li>方案 A &#x2F; 方案 B 对比</li>
+<li>UI 草图对比</li>
+<li>配置示例对比</li>
+<li>代码实现对比</li>
+</ul>
+<p>也就是说，Anthropic 把“互动式澄清”做成了一个产品层能力。</p>
+<h2 id="一张图看它在执行流程里的位置"><a href="#一张图看它在执行流程里的位置" class="headerlink" title="一张图看它在执行流程里的位置"></a>一张图看它在执行流程里的位置</h2><h2 id="它和-Plan-Mode-的关系尤其重要"><a href="#它和-Plan-Mode-的关系尤其重要" class="headerlink" title="它和 Plan Mode 的关系尤其重要"></a>它和 Plan Mode 的关系尤其重要</h2><p>prompt 文件里有一段非常关键：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Plan mode note: In plan mode, use this tool to clarify requirements or choose between approaches BEFORE finalizing your plan.</span><br><span class="line">Do NOT use this tool to ask &quot;Is my plan ready?&quot; or &quot;Should I proceed?&quot; - use ExitPlanMode for plan approval.</span><br></pre></td></tr></table></figure>
+
+<h3 id="中文含义"><a href="#中文含义" class="headerlink" title="中文含义"></a>中文含义</h3><ul>
+<li>在 Plan Mode 里，如果你还缺需求信息，先用这个工具补齐</li>
+<li>但如果你已经写完计划，想问“计划行不行”，那不该再用它</li>
+<li>这时应该交给 <code>ExitPlanModeTool</code></li>
+</ul>
+<p>这段 prompt 很有代表性，因为它说明：</p>
+<blockquote>
+<p><code>AskUserQuestionTool</code> 不只是问问题，它还承担工具职责边界的一部分</p>
+</blockquote>
+<h2 id="它会严格约束问题结构"><a href="#它会严格约束问题结构" class="headerlink" title="它会严格约束问题结构"></a>它会严格约束问题结构</h2><p>源码里还有一个很重要的唯一性校验：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const UNIQUENESS_REFINE = &#123;</span><br><span class="line">  message: &#x27;Question texts must be unique, option labels must be unique within each question&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，Claude Code 不允许它胡乱生成重复问题、重复选项。<br>这和随便输出一段聊天文本完全不同。</p>
+<p>Anthropic 很明显是把这类提问当成“正式用户交互”，而不是附属对话。</p>
+<h2 id="一次典型使用路径"><a href="#一次典型使用路径" class="headerlink" title="一次典型使用路径"></a>一次典型使用路径</h2><p>比如 Claude 在实现功能时发现有两个方案都成立：</p>
+<ol>
+<li>它不应该自己拍脑袋决定</li>
+<li>它会用 <code>AskUserQuestionTool</code> 把选项列出来</li>
+<li>用户选完后，答案会回流到主线程</li>
+<li>Claude 再按选中的方向继续执行</li>
+</ol>
+<p>这条路径和普通聊天最大的不同是：</p>
+<ul>
+<li>结果可结构化</li>
+<li>选项可解释</li>
+<li>还能附带 preview</li>
+</ul>
+<h2 id="一张图看它和相邻工具的边界"><a href="#一张图看它和相邻工具的边界" class="headerlink" title="一张图看它和相邻工具的边界"></a>一张图看它和相邻工具的边界</h2><p>也就是说：</p>
+<ul>
+<li><code>AskUserQuestionTool</code>：我还缺信息，继续问</li>
+<li><code>ExitPlanModeTool</code>：计划已经完成，请你审批</li>
+</ul>
+<p>这两个工具不能混用。</p>
+<h2 id="它为什么对-Agent-产品特别重要"><a href="#它为什么对-Agent-产品特别重要" class="headerlink" title="它为什么对 Agent 产品特别重要"></a>它为什么对 Agent 产品特别重要</h2><p>如果没有这个工具，模型在遇到歧义时只有两个糟糕选择：</p>
+<ol>
+<li>自己瞎猜</li>
+<li>在自然语言里随便问一句</li>
+</ol>
+<p>而 Claude Code 的做法是第三种：</p>
+<blockquote>
+<p>把提问做成正式交互协议</p>
+</blockquote>
+<p>这会让系统在几个方面明显更稳定：</p>
+<ul>
+<li>提问更简洁</li>
+<li>用户选择更清晰</li>
+<li>后续执行更可控</li>
+<li>统计与产品迭代更容易</li>
+</ul>
+<h2 id="最容易误解它的地方"><a href="#最容易误解它的地方" class="headerlink" title="最容易误解它的地方"></a>最容易误解它的地方</h2><h3 id="误解一：这只是个-UI-小工具"><a href="#误解一：这只是个-UI-小工具" class="headerlink" title="误解一：这只是个 UI 小工具"></a>误解一：这只是个 UI 小工具</h3><p>不是。<br>它实际上是 Claude Code 的“用户协同接口”。</p>
+<h3 id="误解二：所有需要问用户的事都该用它"><a href="#误解二：所有需要问用户的事都该用它" class="headerlink" title="误解二：所有需要问用户的事都该用它"></a>误解二：所有需要问用户的事都该用它</h3><p>也不对。<br>计划审批、权限申请、某些系统确认有其他专门机制。</p>
+<h3 id="误解三：它只是单选题"><a href="#误解三：它只是单选题" class="headerlink" title="误解三：它只是单选题"></a>误解三：它只是单选题</h3><p>并不是。<br>它支持多问题、多选、注释、preview。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果你想抓住它的本质，可以记这句话：</p>
+<blockquote>
+<p><code>AskUserQuestionTool</code> 把“执行中的需求澄清”做成了结构化的产品交互能力，它不是普通聊天问句，而是 Claude Code 主循环中的正式协作接口。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/07/02/25__AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE/">https://hzhzxfs.github.io/2026/07/02/25__AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/03/26__SkillTool%EF%BC%9A%E6%89%A7%E8%A1%8C_Skills/" title="SkillTool：执行 Skills"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">SkillTool：执行 Skills</div></div><div class="info-2"><div class="info-item-1">SkillTool：执行 Skills它不是命令别名，而是技能运行时很多人第一次看到 /commit、/verify、/update-config 这类 skill，会以为它们只是更长 prompt 的快捷方式。但从源码看，SkillTool 明显比“文本别名”复杂得多。 它负责的是：  找到 skill 对应的 command 解析参数 处理本地 skill 和 MCP skill 必要时 fork 一个子 Agent 去跑  所以更准确的说法是：  SkillTool 是 Claude Code 的技能执行器。  关键源码tools/SkillTool/SkillTool.ts： 123456import &#123;  builtInCommandNames,  findCommand,  getCommands,&#125; from &#x27;src/commands.js&#x27;import &#123; runAgent &#125; from &#x27;../AgentTool/runAgent.js&#x27;  文件里还有一段很关键： 123456as...</div></div></div></a><a class="pagination-related" href="/2026/07/01/24__TodoWriteTool%EF%BC%9A%E5%BE%85%E5%8A%9E%E6%B8%85%E5%8D%95/" title="TodoWriteTool：待办清单"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">TodoWriteTool：待办清单</div></div><div class="info-2"><div class="info-item-1">TodoWriteTool：待办清单它不是普通 checklist，而是会话内任务外显TodoWriteTool 是 Claude Code 经典的轻量任务管理工具。它的作用不是替代正式任务系统，而是让模型在当前会话里把工作拆成一串可见的 todo。 你可以把它理解成：  TodoWriteTool：轻量、会话内、快速追踪 TaskCreateTool 系列：结构化、正式任务系统  关键源码tools/TodoWriteTool/TodoWriteTool.ts： 123const inputSchema = z.strictObject(&#123;  todos: TodoListSchema().describe(&#x27;The updated todo list&#x27;),&#125;)  而真正的状态写回是： 1234567context.setAppState(prev =&gt; (&#123;  ...prev,  todos: &#123;    ...prev.todos,    [todoKey]: newTodos,  &#125;,&#125;)...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/03/03-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/" title="03-状态管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-03</div><div class="info-item-2">03-状态管理</div></div><div class="info-2"><div class="info-item-1">第 3 篇：状态管理 — React 与非 React 世界的状态桥接 本篇是《深入 Claude Code 源码》系列的第 3 篇。我们将深入分析 Claude Code 如何用一个 35 行的极简 Store 实现，桥接 React UI 与非 React 业务逻辑之间的状态管理，并理解三层状态架构的设计哲学。  为什么状态管理值得单独一篇？Claude Code 面临一个独特的状态管理难题：它既是一个 React 应用，又不完全是。 终端 UI 用 Ink（React for CLI）渲染，组件需要响应式的状态更新。但核心业务逻辑 —— API 调用、工具执行、Agent 编排 —— 运行在 React 树之外。一次工具调用的结果需要同时：  更新 React 组件（显示在终端 UI 上） 被非 React 的 query.ts 对话循环读取 被 Agent 子系统使用（可能运行在隔离的上下文中）  如果用 Redux&#x2F;Zustand 这类库？太重了。React 内置的 useState&#x2F;useReducer？无法从 React 树外部访问。模块级全局变...</div></div></div></a><a class="pagination-related" href="/2026/06/15/12__Claude_Code_%E7%9A%84%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E4%B8%8E%E7%BC%96%E8%BE%91%E9%93%BE%E8%B7%AF/" title="Claude Code 的文件读写与编辑链路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-15</div><div class="info-item-2">Claude Code 的文件读写与编辑链路</div></div><div class="info-2"><div class="info-item-1">Claude Code 的文件读写与编辑链路为什么文件链路是 Claude Code 的基本盘再强的 AI 编程工具，如果不能稳定地：  读取文件 理解文件 编辑文件 写回文件  那它就只能停留在“建议型助手”的层面。Claude Code 之所以真正进入工程工作流，文件链路是最底层的原因之一。 从工具注册表看，文件能力是一级公民在 tools.ts 里，文件工具是基础工具集的一部分： 1234567891011121314export function getAllBaseTools(): Tools &#123;  return [    AgentTool,    TaskOutputTool,    BashTool,    ...(hasEmbeddedSearchTools() ? [] : [GlobTool, GrepTool]),    ExitPlanModeV2Tool,    FileReadTool,    FileEditTool,    FileWriteTool,    NotebookEditTool,    WebFetchTool,  ]&#...</div></div></div></a><a class="pagination-related" href="/2026/07/11/34__TaskOutputTool%EF%BC%9A%E8%AF%BB%E5%8F%96%E4%BB%BB%E5%8A%A1%E8%BE%93%E5%87%BA/" title="TaskOutputTool：读取任务输出"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">TaskOutputTool：读取任务输出</div></div><div class="info-2"><div class="info-item-1">TaskOutputTool：读取任务输出它把后台任务输出统一成同一种可读结果TaskOutputTool 用来读取后台任务的输出。它最重要的价值是统一：  shell 任务输出 本地 agent 输出 远程 agent 输出  所以主线程不需要关心底层任务类型差异，只要关心统一返回结构。 关键源码输入定义： 12345const inputSchema = z.strictObject(&#123;  task_id: z.string(),  block: z.boolean().default(true),  timeout: z.number().min(0).max(600000).default(30000),&#125;)  统一输出对象： 1234567type TaskOutput = &#123;  task_id: string;  task_type: TaskType;  status: string;  description: string;  output: string;&#125;  它还有一个很有意思的现状源码 prompt 明写了：  DE...</div></div></div></a><a class="pagination-related" href="/2026/05/09/09-%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" title="09-工具系统设计"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-09</div><div class="info-item-2">09-工具系统设计</div></div><div class="info-2"><div class="info-item-1">第 9 篇：工具系统设计 — buildTool() 的抽象之美 本篇是《深入 Claude Code 源码》系列的第 9 篇。我们将深入工具系统的核心设计：从 Tool 接口的核心方法，到 buildTool() 的 builder 模式，到 tools.ts 的注册表架构，再到 ToolSearch 的延迟加载机制，揭示一个生产级 AI Agent 如何管理 40+ 个内置工具和无限数量的 MCP 工具。  为什么工具系统是 Agent 的灵魂？一个 AI Agent 与普通 chatbot 的本质区别在于：Agent 能执行动作。当模型决定读取一个文件、运行一条 Shell 命令、或搜索代码时，它依赖的就是工具系统。 Claude Code 拥有 40+ 个内置工具（BashTool、FileReadTool、GlobTool……）和通过 MCP 协议接入的无限数量外部工具。管理这样规模的工具集面临几个核心挑战：  接口一致性：每个工具需要统一的调用、验证、权限检查、UI 渲染协议 安全默认：工具涉及文件系统和 Shell 操作，默认行为必须 fail-closed 条件注...</div></div></div></a><a class="pagination-related" href="/2026/03/20/troubleshoot-install/" title="troubleshoot-install"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-20</div><div class="info-item-2">troubleshoot-install</div></div><div class="info-2"><div class="info-item-1">排查安装和登录问题 修复安装或登录 Claude Code 时出现的命令未找到、PATH、权限、网络和身份验证错误。  如果安装失败或无法登录，请在下面找到您的错误。有关 Claude Code 正常工作后的运行时问题，请参阅 Troubleshooting。有关配置问题（例如设置未应用或 hooks 未触发），请参阅 Debug your configuration。 查找您的错误将您看到的错误消息或症状与解决方案相匹配：    您看到的内容 解决方案    command not found: claude 或 &#39;claude&#39; is not recognized 修复您的 PATH   syntax error near unexpected token &#39;&lt;&#39; 安装脚本返回 HTML   curl: (22) The requested URL returned error: 403 安装脚本返回 403   curl: (23) 或 curl: (56) Failure writing output to destination 检...</div></div></div></a><a class="pagination-related" href="/2026/03/17/slack/" title="slack"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">slack</div></div><div class="info-2"><div class="info-item-1">Slack 中的 Claude Code 直接从 Slack 工作区委派编码任务  Slack 中的 Claude Code 将 Claude Code 的强大功能直接引入您的 Slack 工作区。当您使用编码任务提及 @Claude 时，Claude 会自动检测意图并在网络上创建 Claude Code 会话，允许您在不离开团队对话的情况下委派开发工作。 此集成基于现有的 Claude for Slack 应用程序构建，但为与编码相关的请求添加了到网络上 Claude Code 的智能路由。 用例 Bug 调查和修复：要求 Claude 在 Slack 频道中报告 Bug 时立即调查和修复。 快速代码审查和修改：让 Claude 根据团队反馈实现小功能或重构代码。 协作调试：当团队讨论提供关键背景信息（例如错误重现或用户报告）时，Claude 可以使用该信息来指导其调试方法。 并行任务执行：在 Slack 中启动编码任务，同时继续其他工作，完成时收到通知。  前置条件在使用 Slack 中的 Claude Code 之前，请确保您具有以下条件：    要求 详情    Clau...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AskUserQuestionTool%EF%BC%9A%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E9%97%AE"><span class="toc-number">1.</span> <span class="toc-text">AskUserQuestionTool：向用户提问</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%B8%AA%E5%B7%A5%E5%85%B7%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E2%80%9C%E7%9B%B4%E6%8E%A5%E9%97%AE%E4%B8%80%E5%8F%A5%E8%AF%9D%E2%80%9D%E6%9B%B4%E9%AB%98%E7%BA%A7"><span class="toc-number">1.1.</span> <span class="toc-text">这个工具为什么比“直接问一句话”更高级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%85%88%E7%9C%8B-schema"><span class="toc-number">1.2.</span> <span class="toc-text">源码先看 schema</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E7%94%9A%E8%87%B3%E6%94%AF%E6%8C%81%E9%80%89%E9%A1%B9%E9%A2%84%E8%A7%88"><span class="toc-number">1.3.</span> <span class="toc-text">它甚至支持选项预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E5%AE%83%E5%9C%A8%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">一张图看它在执行流程里的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C-Plan-Mode-%E7%9A%84%E5%85%B3%E7%B3%BB%E5%B0%A4%E5%85%B6%E9%87%8D%E8%A6%81"><span class="toc-number">1.5.</span> <span class="toc-text">它和 Plan Mode 的关系尤其重要</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E6%96%87%E5%90%AB%E4%B9%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">中文含义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%BC%9A%E4%B8%A5%E6%A0%BC%E7%BA%A6%E6%9D%9F%E9%97%AE%E9%A2%98%E7%BB%93%E6%9E%84"><span class="toc-number">1.6.</span> <span class="toc-text">它会严格约束问题结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="toc-number">1.7.</span> <span class="toc-text">一次典型使用路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E5%AE%83%E5%92%8C%E7%9B%B8%E9%82%BB%E5%B7%A5%E5%85%B7%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-number">1.8.</span> <span class="toc-text">一张图看它和相邻工具的边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AF%B9-Agent-%E4%BA%A7%E5%93%81%E7%89%B9%E5%88%AB%E9%87%8D%E8%A6%81"><span class="toc-number">1.9.</span> <span class="toc-text">它为什么对 Agent 产品特别重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E8%AF%AF%E8%A7%A3%E5%AE%83%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.10.</span> <span class="toc-text">最容易误解它的地方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9A%E8%BF%99%E5%8F%AA%E6%98%AF%E4%B8%AA-UI-%E5%B0%8F%E5%B7%A5%E5%85%B7"><span class="toc-number">1.10.1.</span> <span class="toc-text">误解一：这只是个 UI 小工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9A%E6%89%80%E6%9C%89%E9%9C%80%E8%A6%81%E9%97%AE%E7%94%A8%E6%88%B7%E7%9A%84%E4%BA%8B%E9%83%BD%E8%AF%A5%E7%94%A8%E5%AE%83"><span class="toc-number">1.10.2.</span> <span class="toc-text">误解二：所有需要问用户的事都该用它</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%89%EF%BC%9A%E5%AE%83%E5%8F%AA%E6%98%AF%E5%8D%95%E9%80%89%E9%A2%98"><span class="toc-number">1.10.3.</span> <span class="toc-text">误解三：它只是单选题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.11.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

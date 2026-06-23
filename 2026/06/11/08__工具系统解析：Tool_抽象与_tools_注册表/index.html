@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>工具系统解析：Tool 抽象与 tools 注册表 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="工具系统解析：Tool 抽象与 tools 注册表Claude Code 的执行力来自工具，不只来自模型很多人讨论 AI 编程工具时，容易把注意力全部放在模型上。但从 Claude Code 源码来看，真正让它“能干活”的，是模型外面的工具系统。 如果没有工具，Claude Code 再强也只是会分析代码。有了工具，它才能真正读文件、改文件、跑命令、接 MCP、问用户、开子任务。 Tool.ts">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具系统解析：Tool 抽象与 tools 注册表">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="工具系统解析：Tool 抽象与 tools 注册表Claude Code 的执行力来自工具，不只来自模型很多人讨论 AI 编程工具时，容易把注意力全部放在模型上。但从 Claude Code 源码来看，真正让它“能干活”的，是模型外面的工具系统。 如果没有工具，Claude Code 再强也只是会分析代码。有了工具，它才能真正读文件、改文件、跑命令、接 MCP、问用户、开子任务。 Tool.ts">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-11T05:17:12.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.021Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "工具系统解析：Tool 抽象与 tools 注册表",
+  "url": "https://hzhzxfs.github.io/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-11T05:17:12.000Z",
+  "dateModified": "2026-06-23T05:18:13.021Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '工具系统解析：Tool 抽象与 tools 注册表',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">工具系统解析：Tool 抽象与 tools 注册表</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">工具系统解析：Tool 抽象与 tools 注册表</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-11T05:17:12.000Z" title="发表于 2026-06-11 13:17:12">2026-06-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.021Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="工具系统解析：Tool-抽象与-tools-注册表"><a href="#工具系统解析：Tool-抽象与-tools-注册表" class="headerlink" title="工具系统解析：Tool 抽象与 tools 注册表"></a>工具系统解析：Tool 抽象与 tools 注册表</h1><h2 id="Claude-Code-的执行力来自工具，不只来自模型"><a href="#Claude-Code-的执行力来自工具，不只来自模型" class="headerlink" title="Claude Code 的执行力来自工具，不只来自模型"></a>Claude Code 的执行力来自工具，不只来自模型</h2><p>很多人讨论 AI 编程工具时，容易把注意力全部放在模型上。<br>但从 Claude Code 源码来看，真正让它“能干活”的，是模型外面的工具系统。</p>
+<p>如果没有工具，Claude Code 再强也只是会分析代码。<br>有了工具，它才能真正读文件、改文件、跑命令、接 MCP、问用户、开子任务。</p>
+<h2 id="Tool-ts-负责定义统一协议"><a href="#Tool-ts-负责定义统一协议" class="headerlink" title="Tool.ts 负责定义统一协议"></a><code>Tool.ts</code> 负责定义统一协议</h2><p><code>Tool.ts</code> 不是某个具体工具实现，而是全系统的工具抽象层。</p>
+<p>这里最重要的价值有两个：</p>
+<ul>
+<li>统一工具的输入、输出、上下文和权限语义</li>
+<li>给所有工具提供相同的运行契约</li>
+</ul>
+<p>文件里能看到很多关键类型：</p>
+<ul>
+<li><code>ToolInputJSONSchema</code></li>
+<li><code>ToolUseContext</code></li>
+<li><code>ToolPermissionContext</code></li>
+<li>各类进度与状态类型</li>
+</ul>
+<p>这些类型说明 Claude Code 设计工具时，不是把工具当命令快捷方式，而是把它们当系统级能力对象。</p>
+<h3 id="对应源码片段"><a href="#对应源码片段" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">ToolInputJSONSchema</span> = &#123;</span><br><span class="line">  [<span class="attr">x</span>: <span class="built_in">string</span>]: <span class="built_in">unknown</span></span><br><span class="line">  <span class="attr">type</span>: <span class="string">&#x27;object&#x27;</span></span><br><span class="line">  <span class="attr">properties</span>?: &#123;</span><br><span class="line">    [<span class="attr">x</span>: <span class="built_in">string</span>]: <span class="built_in">unknown</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段定义虽然短，但非常关键。<br>它说明 Claude Code 的工具不是随便塞一段文本描述，而是要求：</p>
+<ul>
+<li>输入结构明确</li>
+<li>参数可枚举</li>
+<li>工具契约可被系统理解</li>
+</ul>
+<p>这正是工具化系统和随意 prompt 技巧的区别。</p>
+<h2 id="Tool-ts-真正定义的是一套执行契约"><a href="#Tool-ts-真正定义的是一套执行契约" class="headerlink" title="Tool.ts 真正定义的是一套执行契约"></a><code>Tool.ts</code> 真正定义的是一套执行契约</h2><p>从这些类型可以反推出，Claude Code 对工具的预期非常清晰：</p>
+<ul>
+<li>工具要有明确输入 schema</li>
+<li>工具要能拿到统一上下文</li>
+<li>工具要能被权限系统约束</li>
+<li>工具执行过程要能反馈进度</li>
+<li>工具结果要能回到消息流里</li>
+</ul>
+<p>这套契约是后面所有能力扩展的基础。</p>
+<h2 id="ToolUseContext-很能说明问题"><a href="#ToolUseContext-很能说明问题" class="headerlink" title="ToolUseContext 很能说明问题"></a><code>ToolUseContext</code> 很能说明问题</h2><p><code>ToolUseContext</code> 里挂了大量运行时资源，例如：</p>
+<ul>
+<li>当前工具集合</li>
+<li>命令集合</li>
+<li>MCP client 与 resource</li>
+<li>AppState 读写方法</li>
+<li>通知能力</li>
+<li>中断控制</li>
+<li>消息历史</li>
+<li>文件读取限制</li>
+<li>attribution &#x2F; fileHistory 更新器</li>
+</ul>
+<p>这意味着一个工具并不是孤立执行的，它是运行在完整会话上下文里的。</p>
+<h3 id="对应源码片段-1"><a href="#对应源码片段-1" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">ToolUseContext</span> = &#123;</span><br><span class="line">  <span class="attr">options</span>: &#123;</span><br><span class="line">    <span class="attr">commands</span>: <span class="title class_">Command</span>[]</span><br><span class="line">    <span class="attr">debug</span>: <span class="built_in">boolean</span></span><br><span class="line">    <span class="attr">mainLoopModel</span>: <span class="built_in">string</span></span><br><span class="line">    <span class="attr">tools</span>: <span class="title class_">Tools</span></span><br><span class="line">    <span class="attr">verbose</span>: <span class="built_in">boolean</span></span><br><span class="line">    <span class="attr">thinkingConfig</span>: <span class="title class_">ThinkingConfig</span></span><br><span class="line">    <span class="attr">mcpClients</span>: <span class="title class_">MCPServerConnection</span>[]</span><br><span class="line">    <span class="attr">mcpResources</span>: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">ServerResource</span>[]&gt;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="attr">abortController</span>: <span class="title class_">AbortController</span></span><br><span class="line">  <span class="attr">readFileState</span>: <span class="title class_">FileStateCache</span></span><br><span class="line">  <span class="title function_">getAppState</span>(): <span class="title class_">AppState</span></span><br><span class="line">  <span class="title function_">setAppState</span>(<span class="attr">f</span>: <span class="function">(<span class="params"><span class="attr">prev</span>: <span class="title class_">AppState</span></span>) =&gt;</span> <span class="title class_">AppState</span>): <span class="built_in">void</span></span><br><span class="line">  <span class="attr">messages</span>: <span class="title class_">Message</span>[]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段类型直接说明：<br>一个工具执行时，实际上是被放进完整运行时里的，而不是孤立调用一个小函数。</p>
+<h2 id="tools-ts-是系统的工具目录"><a href="#tools-ts-是系统的工具目录" class="headerlink" title="tools.ts 是系统的工具目录"></a><code>tools.ts</code> 是系统的工具目录</h2><p>如果说 <code>Tool.ts</code> 定义的是协议，那 <code>tools.ts</code> 定义的就是“这次系统到底有哪些工具”。</p>
+<p>从注册表里能看到 Claude Code 的能力面相当宽：</p>
+<ul>
+<li>文件工具：读、写、编辑、Notebook</li>
+<li>终端工具：Bash、PowerShell</li>
+<li>搜索工具：Glob、Grep</li>
+<li>网络工具：WebFetch、WebSearch、WebBrowser</li>
+<li>交互工具：AskUserQuestion</li>
+<li>管理工具：Todo、Task、Plan、Worktree</li>
+<li>集成工具：MCP、LSP、ToolSearch</li>
+<li>智能体工具：Agent、Team、SendMessage</li>
+</ul>
+<p>这已经明显不是“几个简单 function calling 工具”的规模了。</p>
+<h3 id="对应源码片段-2"><a href="#对应源码片段-2" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getAllBaseTools</span>(<span class="params"></span>): <span class="title class_">Tools</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> [</span><br><span class="line">    <span class="title class_">AgentTool</span>,</span><br><span class="line">    <span class="title class_">TaskOutputTool</span>,</span><br><span class="line">    <span class="title class_">BashTool</span>,</span><br><span class="line">    ...(<span class="title function_">hasEmbeddedSearchTools</span>() ? [] : [<span class="title class_">GlobTool</span>, <span class="title class_">GrepTool</span>]),</span><br><span class="line">    <span class="title class_">ExitPlanModeV2Tool</span>,</span><br><span class="line">    <span class="title class_">FileReadTool</span>,</span><br><span class="line">    <span class="title class_">FileEditTool</span>,</span><br><span class="line">    <span class="title class_">FileWriteTool</span>,</span><br><span class="line">    <span class="title class_">WebFetchTool</span>,</span><br><span class="line">    <span class="title class_">TodoWriteTool</span>,</span><br><span class="line">    <span class="title class_">WebSearchTool</span>,</span><br><span class="line">    <span class="title class_">AskUserQuestionTool</span>,</span><br><span class="line">    <span class="title class_">SkillTool</span>,</span><br><span class="line">    <span class="title class_">EnterPlanModeTool</span>,</span><br><span class="line">    ...(<span class="title function_">isEnvTruthy</span>(process.<span class="property">env</span>.<span class="property">ENABLE_LSP_TOOL</span>) ? [<span class="title class_">LSPTool</span>] : []),</span><br><span class="line">    <span class="title class_">ListMcpResourcesTool</span>,</span><br><span class="line">    <span class="title class_">ReadMcpResourceTool</span>,</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里最值得注意的是两点：</p>
+<ul>
+<li>Claude Code 的能力面非常宽，不止读写文件和 Bash</li>
+<li>工具集不是死的，会受环境变量和 feature 条件影响</li>
+</ul>
+<h2 id="这些工具大致可以分成-4-组"><a href="#这些工具大致可以分成-4-组" class="headerlink" title="这些工具大致可以分成 4 组"></a>这些工具大致可以分成 4 组</h2><h3 id="1-基础执行工具"><a href="#1-基础执行工具" class="headerlink" title="1. 基础执行工具"></a>1. 基础执行工具</h3><ul>
+<li>FileRead</li>
+<li>FileEdit</li>
+<li>FileWrite</li>
+<li>Bash</li>
+<li>Glob</li>
+<li>Grep</li>
+</ul>
+<h3 id="2-会话控制工具"><a href="#2-会话控制工具" class="headerlink" title="2. 会话控制工具"></a>2. 会话控制工具</h3><ul>
+<li>AskUserQuestion</li>
+<li>TodoWrite</li>
+<li>EnterPlanMode</li>
+<li>ExitPlanMode</li>
+</ul>
+<h3 id="3-扩展接入工具"><a href="#3-扩展接入工具" class="headerlink" title="3. 扩展接入工具"></a>3. 扩展接入工具</h3><ul>
+<li>ListMcpResources</li>
+<li>ReadMcpResource</li>
+<li>LSPTool</li>
+<li>ToolSearchTool</li>
+</ul>
+<h3 id="4-协作与任务工具"><a href="#4-协作与任务工具" class="headerlink" title="4. 协作与任务工具"></a>4. 协作与任务工具</h3><ul>
+<li>AgentTool</li>
+<li>SendMessageTool</li>
+<li>TaskCreate &#x2F; Get &#x2F; Update &#x2F; List</li>
+<li>TeamCreate &#x2F; TeamDelete</li>
+</ul>
+<h2 id="工具不是全量暴露，而是动态筛选"><a href="#工具不是全量暴露，而是动态筛选" class="headerlink" title="工具不是全量暴露，而是动态筛选"></a>工具不是全量暴露，而是动态筛选</h2><p><code>tools.ts</code> 里能看到很多 feature gate、环境判断和权限过滤逻辑。</p>
+<p>这说明工具系统有两个重要特征：</p>
+<ol>
+<li>工具集是可配置、可裁剪的</li>
+<li>模型看到的工具集不一定等于代码里存在的工具集</li>
+</ol>
+<p>也就是说，Claude Code 在“给模型什么能力”这件事上非常克制。</p>
+<h3 id="对应源码片段-3"><a href="#对应源码片段-3" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> filterToolsByDenyRules&lt;</span><br><span class="line">  T <span class="keyword">extends</span> &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span></span><br><span class="line">    <span class="attr">mcpInfo</span>?: &#123; <span class="attr">serverName</span>: <span class="built_in">string</span>; <span class="attr">toolName</span>: <span class="built_in">string</span> &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&gt;(<span class="attr">tools</span>: <span class="keyword">readonly</span> T[], <span class="attr">permissionContext</span>: <span class="title class_">ToolPermissionContext</span>): T[] &#123;</span><br><span class="line">  <span class="keyword">return</span> tools.<span class="title function_">filter</span>(<span class="function"><span class="params">tool</span> =&gt;</span> !<span class="title function_">getDenyRuleForTool</span>(permissionContext, tool))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码很重要，因为它说明安全不是只在执行时介入。<br>有些工具会在模型看到它们之前，就先被权限规则过滤掉。</p>
+<h2 id="这里体现了-Claude-Code-的工程哲学"><a href="#这里体现了-Claude-Code-的工程哲学" class="headerlink" title="这里体现了 Claude Code 的工程哲学"></a>这里体现了 Claude Code 的工程哲学</h2><p>从工具系统设计上，你能读出几个非常明显的工程取向：</p>
+<ul>
+<li><strong>能力统一封装</strong> ：先抽象协议，再接入具体能力</li>
+<li><strong>权限前置</strong> ：不是执行时再补安全，而是能力暴露阶段就开始约束</li>
+<li><strong>按环境启用</strong> ：不同构建、不同平台、不同 feature 下工具集不同</li>
+<li><strong>扩展优先</strong> ：MCP、LSP、Team、Workflow 都能接进这套协议</li>
+</ul>
+<p>这也是它后面能不断长出新能力的前提。</p>
+<h2 id="为什么统一工具协议特别重要"><a href="#为什么统一工具协议特别重要" class="headerlink" title="为什么统一工具协议特别重要"></a>为什么统一工具协议特别重要</h2><p>因为一旦协议稳定，新增能力的方式就会变得非常可预测：</p>
+<ol>
+<li>新能力实现自己的 Tool</li>
+<li>接入统一上下文和权限体系</li>
+<li>注册到工具目录</li>
+<li>在合适条件下暴露给模型</li>
+</ol>
+<p>这比给模型单独塞一堆特例能力，要稳定得多。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Claude Code 的工具系统可以概括成一句话：</p>
+<blockquote>
+<p>用统一的 Tool 协议，把文件系统、终端、搜索、外部集成和智能体能力包装成模型可调用、可控、可扩展的执行层。</p>
+</blockquote>
+<p>理解了这层，你就能明白它为什么不是“聊天 + 插件”的简单组合，而是一个真正可操作的工程代理。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/">https://hzhzxfs.github.io/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/12/09__%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ASlash_Commands_%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84/" title="命令系统解析：Slash Commands 是怎么工作的"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">命令系统解析：Slash Commands 是怎么工作的</div></div><div class="info-2"><div class="info-item-1">命令系统解析：Slash Commands 是怎么工作的命令系统和工具系统不是一回事Claude Code 里有两套很容易混淆的机制：  工具系统 ：给模型调用 命令系统 ：给用户显式输入  比如 /config、/mcp、/review、/plugin 这类东西，不是让模型在主循环里随便调用的，而是用户主动触发的控制入口。 commands.ts 是聚合中心commands.ts 的体量很大，原因很简单：它把系统内的各类命令都汇总起来了。 从导入列表就能看出 Claude Code 的命令能力非常丰富，覆盖：  配置和环境 登录和会话 审查和 diff MCP 和插件 model、usage、status、cost plan、permissions、hooks、files 远程模式、mobile、chrome、branch、skills  这说明命令系统不是边角料，而是 Claude Code 的控制面。 对应源码片段1234567891011import config from &#x27;./commands/config/index.js&#x27;import &#12...</div></div></div></a><a class="pagination-related" href="/2026/06/10/07__Claude_Code_%E7%9A%84%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/" title="Claude Code 的提示词工程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code 的提示词工程</div></div><div class="info-2"><div class="info-item-1">Claude Code 的提示词工程不要把 Claude Code 的 prompt 理解成“一大段总提示词”很多人第一次研究 Claude Code，都会先找那段“终极 system prompt”。但源码里真正存在的，不是一条 prompt，而是一整套分层装配的提示词系统 。 Claude Code 至少同时存在这几类 prompt：  会话级 system prompt 运行时动态追加的 prompt section 工具级 prompt 专项子系统 prompt 多 Agent &#x2F; teammate 模式下的附加 prompt  也就是说，Claude Code 的 prompt 工程不是“写一段厉害的话”，而是“把不同职责的提示词放到不同层，再按运行时状态拼起来”。 一张图看懂 Claude Code 的提示词体系第一层：主会话的 System PromptClaude Code 最核心的 prompt 入口在 constants/prompts.ts。 源码里最醒目的一段是： 12345678910function getSimpleIntroSection...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/02/04/3.Why%20Use%20Skills%202%20-%20Agent%20and%20Skills%EF%BC%88%E4%BB%8EAgent%E8%A7%92%E5%BA%A6%E6%80%9D%E8%80%83Skills%EF%BC%89/" title="3.Why Use Skills 2 - Agent and Skills（从Agent角度思考Skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-04</div><div class="info-item-2">3.Why Use Skills 2 - Agent and Skills（从Agent角度思考Skills）</div></div><div class="info-2"><div class="info-item-1">第三节：Why Use Skills 2 - Agent and Skills（从 Agent 角度思考 Skills）Agent and Skills - 从 Agent 角度思考 Skills1 Why Agent + Skills?  结合过去对 Agents 的理解 | How we used to think about agents 编码 Agent | Coding Agent 研究 Agent | Research Agent 营销 Agent | Marketing Agent 金融 Agent | Finance Agent 通用型 Agent：代码是通用接口 | General-Purpose Agent: Code is the universal interface    2 Skills 作为 Agent 的武器我们可以把 Skills 作为 Agent 的武器，从 Agent 的功能思考 Skill 的方向 2.1 简单脚手架 bash：命令行执行能力 filesystem：文件系统操作能力  2.2 稳定可靠所需要稳定可靠地完成工作，还需要：  上...</div></div></div></a><a class="pagination-related" href="/2026/03/16/skills/" title="skills"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">skills</div></div><div class="info-2"><div class="info-item-1">使用 skills 扩展 Claude 创建、管理和共享 skills 以在 Claude Code 中扩展 Claude 的功能。包括自定义命令和捆绑 skills。  Skills 扩展了 Claude 能做的事情。创建一个 SKILL.md 文件，其中包含说明，Claude 会将其添加到其工具包中。Claude 在相关时使用 skills，或者你可以使用 /skill-name 直接调用一个。 当你不断将相同的说明、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。    对于内置命令（如 `/help` 和 `/compact`）以及捆绑 skills（如 `/debug` 和 `/code-review`），请参阅[命令参考](/zh-CN/commands)。    自定义命令已合并到 skills 中。 .claude/commands/deploy.md 中的文件和 .claud...</div></div></div></a><a class="pagination-related" href="/2026/05/04/04-System-Prompt-%E5%B7%A5%E7%A8%8B/" title="04-System-Prompt-工程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-04</div><div class="info-item-2">04-System-Prompt-工程</div></div><div class="info-2"><div class="info-item-1">第 4 篇：System Prompt 工程 — 精密控制模型行为的提示词体系 本篇是《深入 Claude Code 源码》系列的第 4 篇。我们将深入 constants/prompts.ts（约 915 行）这个核心文件，揭示 Claude Code 如何通过精心设计的 System Prompt 架构，在「精确控制模型行为」和「最大化 Prompt Cache 命中率」之间取得平衡。  为什么 System Prompt 值得单独一篇？在大多数 AI 应用中，System Prompt 就是一段硬编码的字符串。但在 Claude Code 这样的生产级 AI Agent 中，System Prompt 是一个工程系统：  它不是一段话，而是十几个独立模块的组装结果 — 每个模块有独立的生命周期和缓存策略 它直接影响 API 成本 — Anthropic 的 Prompt Cache 机制可以大幅降低重复 token 的费用，但前提是 prompt 前缀保持稳定 它是模型行为的根基 — 代码风格约束、安全指令、工具使用优先级、输出格式，全部编码在这里 它有内外版差异 — 通过...</div></div></div></a><a class="pagination-related" href="/2026/05/16/16-%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F/" title="16-权限系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-16</div><div class="info-item-2">16-权限系统</div></div><div class="info-2"><div class="info-item-1">第 16 篇：权限系统 — AI 安全的最后一道防线 本篇是《深入 Claude Code 源码》系列第 16 篇。我们将深入权限系统的完整架构：从权限模式、规则体系、决策管线到 AI Classifier 辅助判断，揭示一个生产级 AI Agent 如何在”自动化”与”安全”之间找到平衡。  为什么权限系统是 AI 产品中最关键的模块？传统 CLI 工具的权限模型很简单——用户敲什么命令就执行什么命令，责任完全在用户。但 AI Agent 改变了这个范式：模型自主决定执行什么操作。用户说”帮我重构这个项目”，模型可能决定删除文件、执行 shell 命令、修改配置——这些操作的风险程度天差地别。 这意味着，AI 产品的权限系统面临独特的挑战：  操作不可预测：用户无法提前知道模型会调用哪些工具、传入什么参数 风险谱系宽广：从读取文件（无害）到 rm -rf /（灾难性），所有操作都通过同一个工具接口 效率与安全的矛盾：每次都弹确认对话框会让用户抓狂，但完全自动化又有安全风险  Claude Code 的权限系统用 多层防线 + 渐进式信任 的方式解决了这个矛盾。本篇将从三个层面解...</div></div></div></a><a class="pagination-related" href="/2026/06/12/09__%E5%91%BD%E4%BB%A4%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ASlash_Commands_%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84/" title="命令系统解析：Slash Commands 是怎么工作的"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-12</div><div class="info-item-2">命令系统解析：Slash Commands 是怎么工作的</div></div><div class="info-2"><div class="info-item-1">命令系统解析：Slash Commands 是怎么工作的命令系统和工具系统不是一回事Claude Code 里有两套很容易混淆的机制：  工具系统 ：给模型调用 命令系统 ：给用户显式输入  比如 /config、/mcp、/review、/plugin 这类东西，不是让模型在主循环里随便调用的，而是用户主动触发的控制入口。 commands.ts 是聚合中心commands.ts 的体量很大，原因很简单：它把系统内的各类命令都汇总起来了。 从导入列表就能看出 Claude Code 的命令能力非常丰富，覆盖：  配置和环境 登录和会话 审查和 diff MCP 和插件 model、usage、status、cost plan、permissions、hooks、files 远程模式、mobile、chrome、branch、skills  这说明命令系统不是边角料，而是 Claude Code 的控制面。 对应源码片段1234567891011import config from &#x27;./commands/config/index.js&#x27;import &#12...</div></div></div></a><a class="pagination-related" href="/2026/03/06/platforms/" title="platforms"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-06</div><div class="info-item-2">platforms</div></div><div class="info-2"><div class="info-item-1">平台和集成 选择在哪里运行 Claude Code 以及连接什么工具。比较 CLI、Desktop、VS Code、JetBrains、Web 以及 Chrome、Slack 和 CI&#x2F;CD 等集成。  Claude Code 在任何地方运行相同的底层引擎，但每个界面都针对不同的工作方式进行了优化。本页面帮助您为工作流选择合适的平台，并连接您已经使用的工具。 在哪里运行 Claude Code根据您喜欢的工作方式和项目所在位置选择平台。    平台 最适合 您获得的功能    CLI 终端工作流、脚本编写、远程服务器 完整功能集、Agent SDK、计算机使用在 macOS 上（Pro 和 Max）、第三方提供商   Desktop 视觉审查、并行会话、托管设置 Diff 查看器、应用预览、Pro 和 Max 上的计算机使用和 Dispatch   VS Code 在 VS Code 内工作而无需切换到终端 内联 diff、集成终端、文件上下文   JetBrains 在 IntelliJ、PyCharm、WebStorm 或其他 JetBrains IDE 内工作 D...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool-%E6%8A%BD%E8%B1%A1%E4%B8%8E-tools-%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="toc-number">1.</span> <span class="toc-text">工具系统解析：Tool 抽象与 tools 注册表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code-%E7%9A%84%E6%89%A7%E8%A1%8C%E5%8A%9B%E6%9D%A5%E8%87%AA%E5%B7%A5%E5%85%B7%EF%BC%8C%E4%B8%8D%E5%8F%AA%E6%9D%A5%E8%87%AA%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">Claude Code 的执行力来自工具，不只来自模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tool-ts-%E8%B4%9F%E8%B4%A3%E5%AE%9A%E4%B9%89%E7%BB%9F%E4%B8%80%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.2.</span> <span class="toc-text">Tool.ts 负责定义统一协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5"><span class="toc-number">1.2.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tool-ts-%E7%9C%9F%E6%AD%A3%E5%AE%9A%E4%B9%89%E7%9A%84%E6%98%AF%E4%B8%80%E5%A5%97%E6%89%A7%E8%A1%8C%E5%A5%91%E7%BA%A6"><span class="toc-number">1.3.</span> <span class="toc-text">Tool.ts 真正定义的是一套执行契约</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ToolUseContext-%E5%BE%88%E8%83%BD%E8%AF%B4%E6%98%8E%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">ToolUseContext 很能说明问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tools-ts-%E6%98%AF%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B7%A5%E5%85%B7%E7%9B%AE%E5%BD%95"><span class="toc-number">1.5.</span> <span class="toc-text">tools.ts 是系统的工具目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-2"><span class="toc-number">1.5.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%BA%9B%E5%B7%A5%E5%85%B7%E5%A4%A7%E8%87%B4%E5%8F%AF%E4%BB%A5%E5%88%86%E6%88%90-4-%E7%BB%84"><span class="toc-number">1.6.</span> <span class="toc-text">这些工具大致可以分成 4 组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E6%89%A7%E8%A1%8C%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. 基础执行工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BC%9A%E8%AF%9D%E6%8E%A7%E5%88%B6%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. 会话控制工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%89%A9%E5%B1%95%E6%8E%A5%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.3.</span> <span class="toc-text">3. 扩展接入工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8D%8F%E4%BD%9C%E4%B8%8E%E4%BB%BB%E5%8A%A1%E5%B7%A5%E5%85%B7"><span class="toc-number">1.6.4.</span> <span class="toc-text">4. 协作与任务工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E4%B8%8D%E6%98%AF%E5%85%A8%E9%87%8F%E6%9A%B4%E9%9C%B2%EF%BC%8C%E8%80%8C%E6%98%AF%E5%8A%A8%E6%80%81%E7%AD%9B%E9%80%89"><span class="toc-number">1.7.</span> <span class="toc-text">工具不是全量暴露，而是动态筛选</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-3"><span class="toc-number">1.7.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E4%BD%93%E7%8E%B0%E4%BA%86-Claude-Code-%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%93%B2%E5%AD%A6"><span class="toc-number">1.8.</span> <span class="toc-text">这里体现了 Claude Code 的工程哲学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BB%9F%E4%B8%80%E5%B7%A5%E5%85%B7%E5%8D%8F%E8%AE%AE%E7%89%B9%E5%88%AB%E9%87%8D%E8%A6%81"><span class="toc-number">1.9.</span> <span class="toc-text">为什么统一工具协议特别重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

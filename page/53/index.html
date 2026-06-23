@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>xhj的博客 - 记录技术、学习与成长</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="相关学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="xhj的博客">
+<meta property="og:url" content="https://hzhzxfs.github.io/page/53/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="相关学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:author" content="xhj">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json"></script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/page/53/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'xhj的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">xhj的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/06/23/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%8A%82%E7%82%B9%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0/" title="图神经网络——基于图神经网络的节点表征学习">图神经网络——基于图神经网络的节点表征学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-06-22T16:00:00.000Z" title="发表于 2021-06-23 00:00:00">2021-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">Graph的特征表示非常复杂：  1.复杂的拓扑结构，较难从图像中的感受野提取有效信息；2.无特定的节点顺序；3.通常graph会是动态变化的， 且使用多模态特征。  高质量的节点表征能够用于衡量节点的相似性，同时高质量的节点表征也是准确分类节点的前提。 本文以Cora论文引用网络数据集为例，对MLP、GCN、GAT三种神经网络的分类性能进行对比。首先载入数据集并定义可视化函数：         1 2 3 4 5 #载入数据集 from torch_geometric.datasets import Planetoid from torch_geometric.transforms import NormalizeFeatures  dataset = Planetoid(root=&#39;dataset&#39;, name=&#39;Cora&#39;, transform=NormalizeFeatures())           1 2 3 4 5 6 7 8 9 10 11 12 13 14 #定义可视化函数，并观察整体数据分布 from sklearn.mani...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/06/19/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92%E7%BD%91%E7%BB%9C/" title="图神经网络——消息传递网络">图神经网络——消息传递网络</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-06-18T16:00:00.000Z" title="发表于 2021-06-19 00:00:00">2021-06-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">消息传递(Message Passing) 指的是目标节点$S1$的邻居$\mathcal{N(S1)}$——B1、B2、B3，这些邻居节点根据一定的规则将信息(特征)，汇总到目标节点上。信息汇总中最简单的规则就是逐个元素相加。在pytorch-geometric的官方文档中，消息传递图神经网络被描述为:$$\mathbf{x}_i^{(k)} &#x3D; \gamma^{(k)} \left( \mathbf{x}i^{(k-1)}, \square{j \in \mathcal{N}(i)} , \phi^{(k)}\left(\mathbf{x}i^{(k-1)}, \mathbf{x}j^{(k-1)},\mathbf{e}{j,i}\right) \right),$$其中，$\mathbf{e}{j,i} \in \mathbb{R}^D$ 表示从节点$j$到节点$i$的边的属性，$\mathbf{x}^{(k-1)}_i\in\mathbb{R}^F$表示$(k-1)$层中节点$i$的节点表征，$\square$表示聚合策略，$\gamma$和$\phi$表示一些神...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/06/15/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E5%9B%BE%E8%AE%BA%E4%B8%8EPyG%E5%BA%93/" title="图神经网络——基本图论与PyG库">图神经网络——基本图论与PyG库</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-06-14T16:00:00.000Z" title="发表于 2021-06-15 00:00:00">2021-06-15</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">在以往的深度学习中，主要的数据形式包括矩阵、张量、序列(sequence)和时间序列(time series)，然而还有许多数据是图的结构，如社交网络、知识图谱等。图结构数据具有以下特点：  任意的大小和复杂的拓扑结构；没有固定的节点排序或参考点；通常是动态的，并具有多模态的特征；图的信息包括节点信息、边信息和拓扑结构信息。  1. 图结构数据1.1 图(Graphs)· 一个图记作$\mathcal{G}&#x3D;{\mathcal{V}, \mathcal{E}}$，其中 $\mathcal{V}&#x3D;\left{v_{1}, \ldots, v_{N}\right}$是数量为$N&#x3D;|\mathcal{V}|$ 的节点的集合， $\mathcal{E}&#x3D;\left{e_{1}, \ldots, e_{M}\right}$ 是数量为 $M$ 的边的集合。· 节点表示实体(entities)，边表示实体间的关系(relations)；节点和边的信息可以是类别型或数值型的。· 只有一种类型的节点和一种类型的边的图称为同质图(Homogeneous Gra...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/05/23/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E6%96%B9%E6%B3%95/" title="异常检测——集成方法">异常检测——集成方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-05-22T16:00:00.000Z" title="发表于 2021-05-23 00:00:00">2021-05-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content"> 一般情况下，可以把异常检测看成是数据不平衡下的分类问题，如果数据条件允许，优先使用有监督异常检测如XGBOOST；仅有少量标签时，可以用无监督学习作为一种特征抽取方式，最后喂给有监督的分类模型。之前介绍的统计与概率模型、线性模型、基于相似度的模型，和今天要介绍的集成学习都是无监督模型。  为什么要使用集成学习？——①适合高维度数据(空间稀疏)，②提高模型鲁棒性。值得注意的时，异常检测没有标签，所以feature bagging、bagging比boosting多。而使用boosting进行异常检测，需要生成伪标签。 1. Feature BaggingFeature Bagging，基本思想与bagging相似，只是对象是feature。基本检测器可以彼此完全不同，或不同的参数设置，或使用不同采样的子数据集。Feature bagging常用lof算法为基算法。 1.1 算法原理 1.2 不同检测器的分数标准化不同检测器可能会在不同的尺度上产生分数。例如，平均k近邻检测器会输出原始距离分数，而LOF算法会输出归一化值。另外，检测器输出的异常值分数大小不一，因此需要归一化，常见方...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/05/20/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E7%9B%B8%E4%BC%BC%E5%BA%A6%E7%9A%84%E6%96%B9%E6%B3%95/" title="异常检测——基于相似度的方法">异常检测——基于相似度的方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-05-19T16:00:00.000Z" title="发表于 2021-05-20 00:00:00">2021-05-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">异常值通常具有更高的离群程度分数值，同时也更具有可解释性。在基于相似度的异常检测方法中，主要思想是异常点的表示与正常点不同。 1. 基于距离的度量基于距离的异常检测有这样一个前提假设，即异常点的k近邻距离要远大于正常点。常见的方法是嵌套循环，第一层循环遍历每个数据，第二层循环进行异常判断计算当前点与其他点的距离，一旦发现多于k个数据点与当前点的距离在D之内，则将该点标记为非异常值。 此法计算的时间复杂度为O(N2)，当数据量比较大时需要修剪方法以加快距离计算。 1.1 基于单元的方法在基于单元格的技术中，数据空间被划分为单元格，单元格的宽度是阈值D和数据维数d的函数。L1邻居表示通过最多1个单元间的边界可从该单元到达的单元格的集合，L2邻居表示通过跨越2个或3个边界而获得的那些单元格。以二维数据为例，网格间的距离为D&#x2F;2√d，其具有以下性质：①单元格中两点之间的距离最多为D&#x2F;2 。②一个点与L1邻接点之间的距离最大为D。③一个点与它的Lr邻居(其中r&gt;2)中的一个点之间的距离至少为D。 但是L2中并不能直接得出结论，需要另外定义规则，如：①如果一个单元格...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/05/17/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E7%BA%BF%E6%80%A7%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95/" title="异常检测——线性相关方法">异常检测——线性相关方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-05-16T16:00:00.000Z" title="发表于 2021-05-17 00:00:00">2021-05-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">真实数据集中不同维度的特征可能具有高度相关性，这是因为不同的特征往往是由相同的基础过程以密切相关的方式产生的。这被称为——回归建模，是一种参数化的相关性分析。一类相关性分析通过其他变量预测单独的属性值，另一类方法用一些潜在变量来代表整个数据。前者的代表是线性回归，后者一个典型的例子是主成分分析。线性相关分析基于的假设是：①近似线性相关假设；②子空间假设。为了确定线性模型是否适合数据集，需要进行探索性和可视化分析。 0. 探索性和可视化分析        1 2 train_data.describe() train_data.info()           1 2 3 4 5 6 7 8 9 #相关性分析 numeric_features = [&#39;f&#39;+str(i) for i in range(20)] numeric = train_data[numeric_features] correlation.numeric.corr()  f,ax = plt.subplots(figsize=(15,15)) sns.heatmap(correlation,sq...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/05/14/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E7%BB%9F%E8%AE%A1%E5%AD%A6%E7%9A%84%E6%96%B9%E6%B3%95/" title="异常检测——基于统计学的方法">异常检测——基于统计学的方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-05-13T16:00:00.000Z" title="发表于 2021-05-14 00:00:00">2021-05-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">异常检测的统计方法包含两种主要类型：参数方法和非参数方法。**参数方法：**假定数据服从以θ为参数的参数分布，该参数分布的概率密度函数f(x,θ)给出x属于该分布的概率，该值越小，x越可能是异常点。(仅对数据做的统计假定满足实际约束时可行)非参数方法：不假定先验统计模型，假定参数的个数较为灵活，并非完全无参。 1. 参数方法1.1 基于正态分布的一元异常点检测仅涉及单变量的数据称为一元数据，假定数据由正态分布产生，由输入数据学习正态分布的参数，并把低概率的点识别为异常点。输入数据集 ，根据公式可以求出参数均值μ和方差σ，和概率密度函数p(x)。$$\mu &#x3D;\frac{1}{n}\sum_{i&#x3D;1}^n{x_i}$$$$\sigma ^2&#x3D;\frac{1}{n}\sum_{i&#x3D;1}^n{\left( x_i-\mu \right)}^2$$$$p\left( x \right) &#x3D;\frac{1}{\sqrt{2\pi}\sigma}\exp \left( -\frac{\left( x-\mu \right) ^2}{2\sig...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/05/12/%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B%E7%AE%80%E4%BB%8B/" title="异常检测(Anomaly Detection)简介">异常检测(Anomaly Detection)简介</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-05-11T16:00:00.000Z" title="发表于 2021-05-12 00:00:00">2021-05-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">异常检测顾名思义就是检测出与正常数据不同的数据，检测给定的新数据是否属于这组数据集。 1. 异常检测的任务类型无监督：训练集无标签有监督：训练集的正例和反例均有标签半监督：在训练集中只有正例，异常实例不参与训练 2. 异常检测的难点数据量少：异常检测任务通常情况下负样本（abnormal）较少，0、1两类样本严重不均衡，有时候依赖于人工标签。噪音：异常和噪音有时容易混淆，如两幅图中的A点识别难度就不一样。 3. 异常检测方法简介3.1 基于统计学的方法通常做法是假设样本服从高斯分布，计算p(x)&#x3D;ϵ作为判定正常和异常的阈值。 3.2 线性模型在线性模型中，有2个假设：①不同维度的变量近似线性相关，可以通过一个相关系数矩阵进行衡量。②数据是镶嵌在低维子空间中的，线性建模是为了找到某个低维子空间使异常点区别于正常点。常用模型的包括：最小二乘法——最小化目标函数得到直线方程,计算每个变量与回归方程之间的残差,可通过3σ 法则判断异常值.PCA——将样本的协方差矩阵特征值分解后，特征值是样本投影到轴上对应的方差，特征值越小，投影后样本点分布越集中，异常点容易偏离，以此作为判定异...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/04/21/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B_1/" title="特征工程_1">特征工程_1</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-04-20T16:00:00.000Z" title="发表于 2021-04-21 00:00:00">2021-04-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Machine-Learning/">Machine Learning</a></span></div><div class="content">特征工程就是将原始数据空间变换到新的特征空间，在新的特征空间中，模型能够更好地学习数据中的规律。特征的选择和构造，就是人为地帮助模型学习到原本很难学好的东西，从而使模型达到更好的效果。 1. 根据现实情况构造特征1.1 各点与特定点的距离        1 2 3 4 5 df[&#39;x_dis&#39;] = (df[&#39;x&#39;] - 6165599).abs() df[&#39;y_dis&#39;] = (df[&#39;y&#39;] - 5202660).abs() df[&#39;base_dis] = (df[&#39;y_dis&#39;]**2))**0.5 + ((df[&#39;x_dis&#39;]**2) del df[&#39;x_dis&#39;],df[&#39;y_dis&#39;]  df[&#39;base_dis_diff&#39;].head()   1.2 将时间划分为白天与黑夜        1 2 3 df[&#39;day_night&#39;] = 0 df.loc[(df[&#39;hour&#39;] &gt...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2021/04/17/EDA%E6%95%B0%E6%8D%AE%E6%8E%A2%E7%B4%A2%E6%80%A7%E5%88%86%E6%9E%90/" title="地理空间数据EDA数据探索性分析">地理空间数据EDA数据探索性分析</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-04-16T16:00:00.000Z" title="发表于 2021-04-17 00:00:00">2021-04-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Python/">Python</a></span></div><div class="content">EDA——数据探索性分析，是通过了解数据集的基本情况、变量间的相互关系以及变量与预测值之间的关系，为后期特征工程和建立模型做铺垫。本文以智慧海洋建设竞赛为例进行演示。 1. 总体了解数据1.1 查看样本个数和原始特征维度        1 data_train.shape           1 data_test.shape           1 data_train.columns	#查看列名           1 2 3 pd.set_option(&#39;display.max_info_rows&#39;,2699639)	#提高非缺失值检查的行数上线 #pd.options.display.max_info_rows = 2699639 data_train.info()           1 2 #查看count 非空值数、std 标准差、（25%、50%、75%）分位数等基本情况 data_train.describe([0.01,0.025,0.05,0.5,0.75,0.9,0.99])	   1.2 查看缺失值和唯一值等        1 data_...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/52/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/52/#content-inner">52</a><span class="page-number current">53</span><a class="page-number" href="/page/54/#content-inner">54</a><a class="extend next" rel="next" href="/page/54/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-Agent/"><span class="card-category-list-name">AI Agent</span><span class="card-category-list-count">40</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Algorithm/"><span class="card-category-list-name">Algorithm</span><span class="card-category-list-count">20</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Backend-Dev/"><span class="card-category-list-name">Backend Dev</span><span class="card-category-list-count">74</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Big-Data/"><span class="card-category-list-name">Big Data</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C/C++</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">118</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Basics/"><span class="card-category-list-name">Computer Basics</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Computer-Network/"><span class="card-category-list-name">Computer Network</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/JVM/" style="font-size: 1.37em; color: #99a4b2">JVM</a> <a href="/tags/Graph/" style="font-size: 1.23em; color: #999ea6">Graph</a> <a href="/tags/MLP/" style="font-size: 1.1em; color: #999">MLP</a> <a href="/tags/voting/" style="font-size: 1.1em; color: #999">voting</a> <a href="/tags/NMF/" style="font-size: 1.1em; color: #999">NMF</a> <a href="/tags/RabbitMQ/" style="font-size: 1.1em; color: #999">RabbitMQ</a> <a href="/tags/Linear-Regression/" style="font-size: 1.1em; color: #999">Linear Regression</a> <a href="/tags/BFS/" style="font-size: 1.19em; color: #999da1">BFS</a> <a href="/tags/Tornado/" style="font-size: 1.28em; color: #99a0aa">Tornado</a> <a href="/tags/DBSCAN/" style="font-size: 1.1em; color: #999">DBSCAN</a> <a href="/tags/Dynamic-Programming/" style="font-size: 1.1em; color: #999">Dynamic Programming</a> <a href="/tags/Git/" style="font-size: 1.1em; color: #999">Git</a> <a href="/tags/Message-Queue/" style="font-size: 1.1em; color: #999">Message Queue</a> <a href="/tags/Java/" style="font-size: 1.41em; color: #99a5b7">Java</a> <a href="/tags/PCV/" style="font-size: 1.1em; color: #999">PCV</a> <a href="/tags/dijkstra/" style="font-size: 1.1em; color: #999">dijkstra</a> <a href="/tags/Maven/" style="font-size: 1.1em; color: #999">Maven</a> <a href="/tags/Bayesian-optimization/" style="font-size: 1.1em; color: #999">Bayesian optimization</a> <a href="/tags/Sort/" style="font-size: 1.1em; color: #999">Sort</a> <a href="/tags/Claude-Code/" style="font-size: 1.5em; color: #99a9bf">Claude Code</a> <a href="/tags/PCA/" style="font-size: 1.1em; color: #999">PCA</a> <a href="/tags/HBOS/" style="font-size: 1.1em; color: #999">HBOS</a> <a href="/tags/DataFrame/" style="font-size: 1.1em; color: #999">DataFrame</a> <a href="/tags/JVM-Performance-Monitoring/" style="font-size: 1.1em; color: #999">JVM Performance Monitoring</a> <a href="/tags/Embedding/" style="font-size: 1.14em; color: #999b9d">Embedding</a> <a href="/tags/Garbage-Collection-Overview/" style="font-size: 1.1em; color: #999">Garbage Collection Overview</a> <a href="/tags/BinarySearch/" style="font-size: 1.1em; color: #999">BinarySearch</a> <a href="/tags/Golang/" style="font-size: 1.32em; color: #99a2ae">Golang</a> <a href="/tags/Backend-Dev/" style="font-size: 1.46em; color: #99a7bb">Backend Dev</a> <a href="/tags/HTTP/" style="font-size: 1.14em; color: #999b9d">HTTP</a> <a href="/tags/SQL/" style="font-size: 1.1em; color: #999">SQL</a> <a href="/tags/UnionFind/" style="font-size: 1.1em; color: #999">UnionFind</a> <a href="/tags/JDBC/" style="font-size: 1.1em; color: #999">JDBC</a> <a href="/tags/Kafka/" style="font-size: 1.1em; color: #999">Kafka</a> <a href="/tags/Neural-Networks/" style="font-size: 1.1em; color: #999">Neural Networks</a> <a href="/tags/TwoPointer/" style="font-size: 1.1em; color: #999">TwoPointer</a> <a href="/tags/OLSE/" style="font-size: 1.14em; color: #999b9d">OLSE</a> <a href="/tags/Gradient-descent/" style="font-size: 1.1em; color: #999">Gradient descent</a> <a href="/tags/GIN/" style="font-size: 1.1em; color: #999">GIN</a> <a href="/tags/Zookeeper/" style="font-size: 1.1em; color: #999">Zookeeper</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">24</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">26</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">25</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">16</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">20</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">22</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">538</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-06-23T05:19:28.043Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

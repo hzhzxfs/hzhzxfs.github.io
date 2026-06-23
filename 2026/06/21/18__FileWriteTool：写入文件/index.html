@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>FileWriteTool：写入文件 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="FileWriteTool：写入文件它解决的是“整文件写入”问题FileWriteTool 适合两种典型场景：  新建一个文件 用一整块新内容覆盖一个现有文件  如果说 FileEditTool 更像外科手术，那 FileWriteTool 更像“整块材料重新铺设”。 Claude Code 明确把这两件事拆成了不同工具，而不是统统交给 shell。这就是它工程设计上的一个细节点。 源码里最关键的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FileWriteTool：写入文件">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/21/18__FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="FileWriteTool：写入文件它解决的是“整文件写入”问题FileWriteTool 适合两种典型场景：  新建一个文件 用一整块新内容覆盖一个现有文件  如果说 FileEditTool 更像外科手术，那 FileWriteTool 更像“整块材料重新铺设”。 Claude Code 明确把这两件事拆成了不同工具，而不是统统交给 shell。这就是它工程设计上的一个细节点。 源码里最关键的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-21T12:16:01.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.125Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "FileWriteTool：写入文件",
+  "url": "https://hzhzxfs.github.io/2026/06/21/18__FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-21T12:16:01.000Z",
+  "dateModified": "2026-06-23T05:18:13.125Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/21/18__FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'FileWriteTool：写入文件',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">FileWriteTool：写入文件</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">FileWriteTool：写入文件</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-21T12:16:01.000Z" title="发表于 2026-06-21 20:16:01">2026-06-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.125Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="FileWriteTool：写入文件"><a href="#FileWriteTool：写入文件" class="headerlink" title="FileWriteTool：写入文件"></a>FileWriteTool：写入文件</h1><h2 id="它解决的是“整文件写入”问题"><a href="#它解决的是“整文件写入”问题" class="headerlink" title="它解决的是“整文件写入”问题"></a>它解决的是“整文件写入”问题</h2><p><code>FileWriteTool</code> 适合两种典型场景：</p>
+<ul>
+<li>新建一个文件</li>
+<li>用一整块新内容覆盖一个现有文件</li>
+</ul>
+<p>如果说 <code>FileEditTool</code> 更像外科手术，<br>那 <code>FileWriteTool</code> 更像“整块材料重新铺设”。</p>
+<p>Claude Code 明确把这两件事拆成了不同工具，而不是统统交给 shell。<br>这就是它工程设计上的一个细节点。</p>
+<h2 id="源码里最关键的输入定义"><a href="#源码里最关键的输入定义" class="headerlink" title="源码里最关键的输入定义"></a>源码里最关键的输入定义</h2><p><code>tools/FileWriteTool/FileWriteTool.ts</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">const inputSchema = z.strictObject(&#123;</span><br><span class="line">  file_path: z.string().describe(&#x27;The absolute path to the file to write&#x27;),</span><br><span class="line">  content: z.string().describe(&#x27;The content to write to the file&#x27;),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>它的输入非常干净：</p>
+<ul>
+<li>写到哪里</li>
+<li>写什么内容</li>
+</ul>
+<p>这说明 <code>Write</code> 的职责就是<strong>完整写入</strong> ，而不是做复杂的局部替换逻辑。</p>
+<h2 id="它的输出比你想的更丰富"><a href="#它的输出比你想的更丰富" class="headerlink" title="它的输出比你想的更丰富"></a>它的输出比你想的更丰富</h2><p><code>outputSchema</code> 里不仅返回最终内容，还返回：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type: z.enum([&#x27;create&#x27;, &#x27;update&#x27;])</span><br><span class="line">structuredPatch: z.array(hunkSchema())</span><br><span class="line">originalFile: z.string().nullable()</span><br><span class="line">gitDiff: gitDiffSchema().optional()</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，<code>Write</code> 并不是“静默覆盖然后就没了”。<br>它依然会保留：</p>
+<ul>
+<li>这是创建还是更新</li>
+<li>原文件是什么</li>
+<li>差异补丁是什么</li>
+<li>Git diff 视角下变化如何</li>
+</ul>
+<p>这很关键，因为它让整文件写入依然处于 Claude Code 的可审计链路里。</p>
+<h2 id="一张图看写入链路"><a href="#一张图看写入链路" class="headerlink" title="一张图看写入链路"></a>一张图看写入链路</h2><h2 id="它也会检查文件是否过期"><a href="#它也会检查文件是否过期" class="headerlink" title="它也会检查文件是否过期"></a>它也会检查文件是否过期</h2><p>和 <code>Edit</code> 一样，<code>Write</code> 也不是无脑覆盖。<br>源码里有一段很重要的校验逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (!readTimestamp || readTimestamp.isPartialView) &#123;</span><br><span class="line">  return &#123;</span><br><span class="line">    result: false,</span><br><span class="line">    message: &#x27;File has not been read yet. Read it first before writing to it.&#x27;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这说明对于已存在文件，Claude Code 很强调：</p>
+<ul>
+<li>先读</li>
+<li>再写</li>
+</ul>
+<p>这能防止基于过期内容覆盖别人刚改过的文件。</p>
+<h2 id="它为什么还要接入-diff-和-Git"><a href="#它为什么还要接入-diff-和-Git" class="headerlink" title="它为什么还要接入 diff 和 Git"></a>它为什么还要接入 diff 和 Git</h2><p>源码里可以看到：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; countLinesChanged, getPatchForDisplay &#125; <span class="keyword">from</span> <span class="string">&#x27;../../utils/diff.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; fetchSingleFileGitDiff &#125; <span class="keyword">from</span> <span class="string">&#x27;../../utils/gitDiff.js&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这说明即使是整文件写入，Claude Code 也不把它当作“黑盒操作”，而是会继续：</p>
+<ul>
+<li>统计改动行数</li>
+<li>生成可展示 patch</li>
+<li>关联 Git 视角的变化</li>
+</ul>
+<p>这样前端和后续模型都能更清楚地理解这次写入发生了什么。</p>
+<h2 id="它和-FileEditTool-的分工"><a href="#它和-FileEditTool-的分工" class="headerlink" title="它和 FileEditTool 的分工"></a>它和 <code>FileEditTool</code> 的分工</h2><p>这个区别值得反复强调：</p>
+<ul>
+<li><code>Edit</code>：局部修改已有内容</li>
+<li><code>Write</code>：创建文件或整文件重写</li>
+</ul>
+<p>如果模型只是想改一个函数，<code>Write</code> 往往会显得过重；<br>但如果是生成新配置文件、新组件骨架、新文档，<code>Write</code> 就非常合适。</p>
+<h2 id="一次典型使用路径"><a href="#一次典型使用路径" class="headerlink" title="一次典型使用路径"></a>一次典型使用路径</h2><h2 id="最容易误解它的地方"><a href="#最容易误解它的地方" class="headerlink" title="最容易误解它的地方"></a>最容易误解它的地方</h2><h3 id="误解一：Write-只是“更方便的-echo-file”"><a href="#误解一：Write-只是“更方便的-echo-file”" class="headerlink" title="误解一：Write 只是“更方便的 echo &gt; file”"></a>误解一：Write 只是“更方便的 echo &gt; file”</h3><p>不是。<br>它接入了权限、文件时序、diff 和 Git 视图。</p>
+<h3 id="误解二：Write-比-Edit-更强，所以更应该优先用"><a href="#误解二：Write-比-Edit-更强，所以更应该优先用" class="headerlink" title="误解二：Write 比 Edit 更强，所以更应该优先用"></a>误解二：Write 比 Edit 更强，所以更应该优先用</h3><p>也不对。<br>Claude Code 更强调职责清晰，而不是“越万能越好”。</p>
+<h3 id="误解三：Write-只适合新文件"><a href="#误解三：Write-只适合新文件" class="headerlink" title="误解三：Write 只适合新文件"></a>误解三：Write 只适合新文件</h3><p>不完全对。<br>它也能更新已有文件，但更适合整块重写，而不是局部小修。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>FileWriteTool</code> 真正值得学的地方是：</p>
+<blockquote>
+<p>Claude Code 连“整文件写入”都没有降级成简单 shell 重定向，而是仍然纳入了受控、可审计、可 diff 的工具系统。</p>
+</blockquote>
+<p>这也是 Claude Code 整体设计非常“工程化”的地方。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/21/18__FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/">https://hzhzxfs.github.io/2026/06/21/18__FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/22/19__GlobTool%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6/" title="GlobTool：查找文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">GlobTool：查找文件</div></div><div class="info-2"><div class="info-item-1">GlobTool：查找文件这个工具看起来简单，但位置非常关键GlobTool 做的事很直接：按文件名或通配模式找文件。但在 Claude Code 的主循环里，它其实承担的是：  把“我大概知道要找什么文件”变成“我已经定位到候选路径”。  很多复杂任务的第一步，都不是直接读文件，而是先缩小范围。GlobTool 就是这一步的标准入口。 先看它的输入定义tools/GlobTool/GlobTool.ts： 1234const inputSchema = z.strictObject(&#123;  pattern: z.string().describe(&#x27;The glob pattern to match files against&#x27;),  path: z.string().optional().describe(&#x27;The directory to search in&#x27;),&#125;)  这个 schema 很简单，但设计上很清楚：  pattern：用来表达“想找什么” path：用来限制搜索范围  也就是说，Claude Code...</div></div></div></a><a class="pagination-related" href="/2026/06/20/17__FileEditTool%EF%BC%9A%E7%BC%96%E8%BE%91%E6%96%87%E4%BB%B6/" title="FileEditTool：编辑文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">FileEditTool：编辑文件</div></div><div class="info-2"><div class="info-item-1">FileEditTool：编辑文件这个工具解决的不是“能改文件”，而是“怎么安全地改”FileEditTool 负责对已有文件做定点修改。在 Claude Code 里，它的价值从来不只是“替换一段字符串”，而是：  先确认文件读过 再确认文件没被别人改过 再确认当前编辑权限允许 最后才生成 patch 并写回  也就是说，FileEditTool 体现的是 Claude Code 的受控编辑模型 。 看源码，它的依赖明显比想象中重tools/FileEditTool/FileEditTool.ts： 12345import &#123; countLinesChanged &#125; from &#x27;../../utils/diff.js&#x27;import &#123; fetchSingleFileGitDiff &#125; from &#x27;../../utils/gitDiff.js&#x27;import &#123; checkWritePermissionForTool &#125; from &#x27;../../utils/permissi...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/10/code-review/" title="code-review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-10</div><div class="info-item-2">code-review</div></div><div class="info-2"><div class="info-item-1">Code Review 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题     Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。   Code Review 分析您的 GitHub pull request，并在发现问题的代码行上发布内联评论。一支由专业代理组成的团队在完整代码库的上下文中检查代码更改，寻找逻辑错误、安全漏洞、破损的边界情况和微妙的回归问题。 发现结果按严重程度标记，不会批准或阻止您的 PR，因此现有的审查工作流保持不变。您可以通过向存储库添加 CLAUDE.md 或 REVIEW.md 文件来调整 Claude 标记的内容。 要在您自己的 CI 基础设施中运行 Claude 而不是使用此托管服务，请参阅 GitHub Actions 或 GitLab ...</div></div></div></a><a class="pagination-related" href="/2026/04/03/agents/" title="agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-03</div><div class="info-item-2">agents</div></div><div class="info-2"><div class="info-item-1">并行运行代理 比较 Claude Code 同时处理多个任务的方式：子代理、代理视图、代理团队和动态工作流。  子代理、代理视图、代理团队 和 动态工作流 各自以不同的方式并行化工作。正确的选择取决于您是否想在每个对话中保持参与、交付任务并稍后检查，或让 Claude 为您协调一组工作人员。    方法 它提供什么 何时使用    子代理 在一个会话内的委派工作人员，在自己的上下文中执行辅助任务并返回摘要 辅助任务会用搜索结果、日志或文件内容淹没您的主对话，而您不会再次引用这些内容   代理视图 一个屏幕来分派和监控在后台运行的会话，使用 claude agents 打开。研究预览 您有多个独立任务，想要交付它们，一目了然地检查状态，并仅在需要时介入   代理团队 多个协调的会话，具有共享任务列表和代理间消息传递，由主导者管理。实验性功能，默认禁用 您希望 Claude 将项目分成多个部分、分配它们，并保持工作人员同步   动态工作流 一个脚本，运行许多子代理并交叉检查其结果，用于一个太大而无法一次协调的工作或需要多次处理的工作。研究预览 一个任务对于少数几个子代理来说太大了，或...</div></div></div></a><a class="pagination-related" href="/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/" title="工具系统解析：Tool 抽象与 tools 注册表"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-11</div><div class="info-item-2">工具系统解析：Tool 抽象与 tools 注册表</div></div><div class="info-2"><div class="info-item-1">工具系统解析：Tool 抽象与 tools 注册表Claude Code 的执行力来自工具，不只来自模型很多人讨论 AI 编程工具时，容易把注意力全部放在模型上。但从 Claude Code 源码来看，真正让它“能干活”的，是模型外面的工具系统。 如果没有工具，Claude Code 再强也只是会分析代码。有了工具，它才能真正读文件、改文件、跑命令、接 MCP、问用户、开子任务。 Tool.ts 负责定义统一协议Tool.ts 不是某个具体工具实现，而是全系统的工具抽象层。 这里最重要的价值有两个：  统一工具的输入、输出、上下文和权限语义 给所有工具提供相同的运行契约  文件里能看到很多关键类型：  ToolInputJSONSchema ToolUseContext ToolPermissionContext 各类进度与状态类型  这些类型说明 Claude Code 设计工具时，不是把工具当命令快捷方式，而是把它们当系统级能力对象。 对应源码片段1234567export type ToolInputJSONSchema = &#123;  [x: string]: unk...</div></div></div></a><a class="pagination-related" href="/2026/06/13/10__%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9AGit%E3%80%81CLAUDE.md_%E4%B8%8E%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/" title="上下文系统解析：Git、CLAUDE.md 与系统提示词注入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-13</div><div class="info-item-2">上下文系统解析：Git、CLAUDE.md 与系统提示词注入</div></div><div class="info-2"><div class="info-item-1">上下文系统解析：Git、CLAUDE.md 与系统提示词注入Claude Code 为什么看起来“懂项目”Claude Code 给人的一个强烈印象是：它不像在面对一段孤立代码，而像是在理解整个项目。 这背后最关键的原因之一，就是上下文系统。 context.ts 让系统在对话开始前，就准备好一些高价值项目信息，再注入到后续主循环里。 getSystemContext()：补充系统级背景从源码看，getSystemContext() 至少会处理一类非常重要的信息：Git 状态 。 它会尝试收集：  当前分支 主分支 工作区状态 最近提交 Git 用户信息  这带来的好处非常直接：  模型知道当前仓库是不是脏的 模型知道你现在在哪条分支上 模型知道近期代码变化的大致方向  这对工程任务判断非常重要。 对应源码片段1234567891011121314151617const [branch, mainBranch, status, log, userName] = await Promise.all([  getBranch(),  getDefaultBranch(),  exec...</div></div></div></a><a class="pagination-related" href="/2026/04/18/jetbrains/" title="jetbrains"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">jetbrains</div></div><div class="info-2"><div class="info-item-1">JetBrains IDEs 在 JetBrains IDE（包括 IntelliJ、PyCharm、WebStorm 等）中使用 Claude Code  Claude Code 通过专用插件与 JetBrains IDE 集成，提供交互式差异查看、选择上下文共享等功能。 支持的 IDEClaude Code 插件适用于大多数 JetBrains IDE，包括：  IntelliJ IDEA PyCharm Android Studio WebStorm PhpStorm GoLand  功能 快速启动：使用 Cmd+Esc（Mac）或 Ctrl+Esc（Windows&#x2F;Linux）直接从编辑器打开 Claude Code，或点击 UI 中的 Claude Code 按钮 差异查看：代码更改可以直接在 IDE 差异查看器中显示，而不是在终端中显示 选择上下文：IDE 中的当前选择或标签页会自动与 Claude Code 共享。Read 拒绝规则会阻止对匹配文件的此共享 文件引用快捷方式：使用 Cmd+Option+K（Mac）或 Alt+Ctrl+K（Linux&#x...</div></div></div></a><a class="pagination-related" href="/2026/05/23/23-Memory%E7%B3%BB%E7%BB%9F/" title="23-Memory系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-23</div><div class="info-item-2">23-Memory系统</div></div><div class="info-2"><div class="info-item-1">第 23 篇：Memory 系统 — AI 记忆的多层架构为什么 AI Agent 需要记忆？LLM 天生是”金鱼记忆” —— 每次对话都是从零开始。用户上次告诉 Claude “我喜欢用 bun 而不是 npm”，下次对话它就忘了。用户在项目里纠正了 Claude 三次”不要 mock 数据库”，第四次它可能又 mock 了。 这不仅仅是用户体验问题 —— 它直接影响 AI Agent 的工作效率。没有记忆的 Agent 永远是新手：每次都要重新了解用户偏好、重新踩同样的坑、重新探索同样的代码库。 Claude Code 的解决方案是一个五层记忆架构：    层级 名称 生命周期 存储位置 核心职责    1 CLAUDE.md 指令文件 永久 项目目录 &#x2F; 用户目录 静态指令与规则   2 Auto Memory（memdir） 跨会话 ~/.claude/projects/&lt;slug&gt;/memory/ 自动提取的持久化知识   3 Session Memory 单次会话 ~/.claude/projects/&lt;slug&gt;/&lt;sessi...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FileWriteTool%EF%BC%9A%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">FileWriteTool：写入文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E8%A7%A3%E5%86%B3%E7%9A%84%E6%98%AF%E2%80%9C%E6%95%B4%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%E2%80%9D%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.</span> <span class="toc-text">它解决的是“整文件写入”问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E9%87%8C%E6%9C%80%E5%85%B3%E9%94%AE%E7%9A%84%E8%BE%93%E5%85%A5%E5%AE%9A%E4%B9%89"><span class="toc-number">1.2.</span> <span class="toc-text">源码里最关键的输入定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E7%9A%84%E8%BE%93%E5%87%BA%E6%AF%94%E4%BD%A0%E6%83%B3%E7%9A%84%E6%9B%B4%E4%B8%B0%E5%AF%8C"><span class="toc-number">1.3.</span> <span class="toc-text">它的输出比你想的更丰富</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E5%86%99%E5%85%A5%E9%93%BE%E8%B7%AF"><span class="toc-number">1.4.</span> <span class="toc-text">一张图看写入链路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B9%9F%E4%BC%9A%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E8%BF%87%E6%9C%9F"><span class="toc-number">1.5.</span> <span class="toc-text">它也会检查文件是否过期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E6%8E%A5%E5%85%A5-diff-%E5%92%8C-Git"><span class="toc-number">1.6.</span> <span class="toc-text">它为什么还要接入 diff 和 Git</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C-FileEditTool-%E7%9A%84%E5%88%86%E5%B7%A5"><span class="toc-number">1.7.</span> <span class="toc-text">它和 FileEditTool 的分工</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="toc-number">1.8.</span> <span class="toc-text">一次典型使用路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E8%AF%AF%E8%A7%A3%E5%AE%83%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.9.</span> <span class="toc-text">最容易误解它的地方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9AWrite-%E5%8F%AA%E6%98%AF%E2%80%9C%E6%9B%B4%E6%96%B9%E4%BE%BF%E7%9A%84-echo-file%E2%80%9D"><span class="toc-number">1.9.1.</span> <span class="toc-text">误解一：Write 只是“更方便的 echo &gt; file”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9AWrite-%E6%AF%94-Edit-%E6%9B%B4%E5%BC%BA%EF%BC%8C%E6%89%80%E4%BB%A5%E6%9B%B4%E5%BA%94%E8%AF%A5%E4%BC%98%E5%85%88%E7%94%A8"><span class="toc-number">1.9.2.</span> <span class="toc-text">误解二：Write 比 Edit 更强，所以更应该优先用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%89%EF%BC%9AWrite-%E5%8F%AA%E9%80%82%E5%90%88%E6%96%B0%E6%96%87%E4%BB%B6"><span class="toc-number">1.9.3.</span> <span class="toc-text">误解三：Write 只适合新文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

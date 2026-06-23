@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>启动流程解析：main.tsx 到 REPL 是怎么串起来的 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="启动流程解析：main.tsx 到 REPL 是怎么串起来的为什么 main.tsx 值得重点看很多项目的入口文件只是薄薄一层，但 Claude Code 的 main.tsx 明显不是。从导入规模和初始化动作就能看出来，它承担的是“系统装配器”的角色。 它做的事情至少包括：  启动早期性能预热 解析命令行参数 加载设置、策略和环境变量 初始化认证与实验开关 收集命令与工具 启动交互式 REPL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="启动流程解析：main.tsx 到 REPL 是怎么串起来的">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="启动流程解析：main.tsx 到 REPL 是怎么串起来的为什么 main.tsx 值得重点看很多项目的入口文件只是薄薄一层，但 Claude Code 的 main.tsx 明显不是。从导入规模和初始化动作就能看出来，它承担的是“系统装配器”的角色。 它做的事情至少包括：  启动早期性能预热 解析命令行参数 加载设置、策略和环境变量 初始化认证与实验开关 收集命令与工具 启动交互式 REPL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-07T07:44:40.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:12.972Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "启动流程解析：main.tsx 到 REPL 是怎么串起来的",
+  "url": "https://hzhzxfs.github.io/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-07T07:44:40.000Z",
+  "dateModified": "2026-06-23T05:18:12.972Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '启动流程解析：main.tsx 到 REPL 是怎么串起来的',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">启动流程解析：main.tsx 到 REPL 是怎么串起来的</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">启动流程解析：main.tsx 到 REPL 是怎么串起来的</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-07T07:44:40.000Z" title="发表于 2026-06-07 15:44:40">2026-06-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:12.972Z" title="更新于 2026-06-23 13:18:12">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="启动流程解析：main-tsx-到-REPL-是怎么串起来的"><a href="#启动流程解析：main-tsx-到-REPL-是怎么串起来的" class="headerlink" title="启动流程解析：main.tsx 到 REPL 是怎么串起来的"></a>启动流程解析：main.tsx 到 REPL 是怎么串起来的</h1><h2 id="为什么-main-tsx-值得重点看"><a href="#为什么-main-tsx-值得重点看" class="headerlink" title="为什么 main.tsx 值得重点看"></a>为什么 <code>main.tsx</code> 值得重点看</h2><p>很多项目的入口文件只是薄薄一层，但 Claude Code 的 <code>main.tsx</code> 明显不是。<br>从导入规模和初始化动作就能看出来，它承担的是“系统装配器”的角色。</p>
+<p>它做的事情至少包括：</p>
+<ul>
+<li>启动早期性能预热</li>
+<li>解析命令行参数</li>
+<li>加载设置、策略和环境变量</li>
+<li>初始化认证与实验开关</li>
+<li>收集命令与工具</li>
+<li>启动交互式 REPL 或其他运行模式</li>
+</ul>
+<h2 id="一开头就在抢启动时间"><a href="#一开头就在抢启动时间" class="headerlink" title="一开头就在抢启动时间"></a>一开头就在抢启动时间</h2><p>文件最前面的几个 side effect 很有代表性：</p>
+<ul>
+<li><code>profileCheckpoint</code></li>
+<li><code>startMdmRawRead()</code></li>
+<li><code>startKeychainPrefetch()</code></li>
+</ul>
+<p>这说明 Claude Code 团队已经把启动性能当成正式问题来优化。<br>也就是说，入口文件不只是“能跑起来”，而是在尽量把一些 I&#x2F;O 提前并行化。</p>
+<h3 id="对应源码片段"><a href="#对应源码片段" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">profileCheckpoint</span>(<span class="string">&#x27;main_tsx_entry&#x27;</span>);</span><br><span class="line"><span class="keyword">import</span> &#123; startMdmRawRead &#125; <span class="keyword">from</span> <span class="string">&#x27;./utils/settings/mdm/rawRead.js&#x27;</span>;</span><br><span class="line"><span class="title function_">startMdmRawRead</span>();</span><br><span class="line"><span class="keyword">import</span> &#123; ensureKeychainPrefetchCompleted, startKeychainPrefetch &#125; <span class="keyword">from</span> <span class="string">&#x27;./utils/secureStorage/keychainPrefetch.js&#x27;</span>;</span><br><span class="line"><span class="title function_">startKeychainPrefetch</span>();</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的重点不是语法，而是时机：</p>
+<ul>
+<li><code>profileCheckpoint</code> 先打点</li>
+<li>MDM 读取尽早启动</li>
+<li>keychain 预取尽早启动</li>
+</ul>
+<p>这说明入口层是在主动缩短后续等待时间。</p>
+<h2 id="为什么入口层会有这么多-side-effect"><a href="#为什么入口层会有这么多-side-effect" class="headerlink" title="为什么入口层会有这么多 side effect"></a>为什么入口层会有这么多 side effect</h2><p>从一般编码习惯看，入口层副作用越少越好。<br>但 Claude Code 这里恰恰相反，因为它面对的是一个真实 CLI 产品：</p>
+<ul>
+<li>启动时间要快</li>
+<li>配置必须尽早生效</li>
+<li>某些系统状态要在后续导入前可用</li>
+</ul>
+<p>所以这里不是“写得随意”，而是明确在为运行时体验服务。</p>
+<h2 id="它先决定“这次启动是什么会话”"><a href="#它先决定“这次启动是什么会话”" class="headerlink" title="它先决定“这次启动是什么会话”"></a>它先决定“这次启动是什么会话”</h2><p>启动后要先弄清几个问题：</p>
+<ul>
+<li>当前是不是交互模式</li>
+<li>有没有远程会话或桥接模式</li>
+<li>要不要恢复旧会话</li>
+<li>模型、权限、提示风格、工作目录是什么</li>
+</ul>
+<p>这些信息会影响后续整个系统装配结果。<br>所以 <code>main.tsx</code> 的很多逻辑，实际上是在决定“这次 session 的运行形态”。</p>
+<h2 id="命令、工具、设置是在这里汇总的"><a href="#命令、工具、设置是在这里汇总的" class="headerlink" title="命令、工具、设置是在这里汇总的"></a>命令、工具、设置是在这里汇总的</h2><p>从导入关系能看出来，<code>main.tsx</code> 会把几类核心资源拉到一起：</p>
+<ul>
+<li><code>getCommands()</code> 获取命令系统</li>
+<li><code>getTools()</code> 获取工具集合</li>
+<li><code>getSystemContext()</code> &#x2F; <code>getUserContext()</code> 获取上下文</li>
+<li>各种设置与 feature gate 决定哪些能力启用</li>
+</ul>
+<p>也就是说，真正把 Claude Code 拼装成一个可运行系统的地方，不在某个单独 service，而就在入口层。</p>
+<h3 id="对应源码片段-1"><a href="#对应源码片段-1" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; getSystemContext, getUserContext &#125; <span class="keyword">from</span> <span class="string">&#x27;./context.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; filterCommandsForRemoteMode, getCommands &#125; <span class="keyword">from</span> <span class="string">&#x27;./commands.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; getTools &#125; <span class="keyword">from</span> <span class="string">&#x27;./tools.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; launchRepl &#125; <span class="keyword">from</span> <span class="string">&#x27;./replLauncher.js&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这几行代码几乎已经把入口层的主线交代清楚了：</p>
+<ul>
+<li>先拿上下文</li>
+<li>再拿命令</li>
+<li>再拿工具</li>
+<li>最后进入 REPL</li>
+</ul>
+<p>也就是说，REPL 看到的不是“裸模型”，而是已经装配好的运行时。</p>
+<h2 id="入口层最像什么"><a href="#入口层最像什么" class="headerlink" title="入口层最像什么"></a>入口层最像什么</h2><p>如果一定要类比，<code>main.tsx</code> 很像后端系统里的“应用装配根”：</p>
+<ul>
+<li>它不负责所有细节实现</li>
+<li>但负责决定细节如何被拼起来</li>
+<li>任何关键子系统最终都要在这里接上线</li>
+</ul>
+<h2 id="它不是只启动-REPL，还会先初始化外部能力"><a href="#它不是只启动-REPL，还会先初始化外部能力" class="headerlink" title="它不是只启动 REPL，还会先初始化外部能力"></a>它不是只启动 REPL，还会先初始化外部能力</h2><p>源码里还能看到很多外围系统在入口层就被拉起：</p>
+<ul>
+<li>MCP 相关初始化</li>
+<li>LSP Server Manager 初始化</li>
+<li>插件与技能初始化</li>
+<li>远程会话配置</li>
+<li>遥测与限制策略</li>
+</ul>
+<p>原因也很直接：<br>这些能力都可能影响当前 session 的工具清单、命令清单和界面状态，所以必须在进入主循环前先准备好。</p>
+<h3 id="对应源码片段-2"><a href="#对应源码片段-2" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; initializeLspServerManager &#125; <span class="keyword">from</span> <span class="string">&#x27;./services/lsp/manager.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; getMcpToolsCommandsAndResources, prefetchAllMcpResources &#125; <span class="keyword">from</span> <span class="string">&#x27;./services/mcp/client.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; initBuiltinPlugins &#125; <span class="keyword">from</span> <span class="string">&#x27;./plugins/bundled/index.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; initBundledSkills &#125; <span class="keyword">from</span> <span class="string">&#x27;./skills/bundled/index.js&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这组导入说明入口层天然就是能力汇流点。<br>LSP、MCP、插件、Skills 这些都不是后面临时发现，而是在会话建立阶段就已经纳入考虑。</p>
+<h2 id="REPL-只是表层，真正重要的是“运行态装配完成”"><a href="#REPL-只是表层，真正重要的是“运行态装配完成”" class="headerlink" title="REPL 只是表层，真正重要的是“运行态装配完成”"></a>REPL 只是表层，真正重要的是“运行态装配完成”</h2><p>很多人看到终端界面，直觉会把 Claude Code 当成一个 React Ink 程序。<br>这个理解只对一半。</p>
+<p>REPL 当然重要，但它更像是表现层。<br>真正关键的是：在 REPL 出现之前，系统已经把下面这些东西准备好了：</p>
+<ul>
+<li>会话设置</li>
+<li>模型选择</li>
+<li>工具集合</li>
+<li>命令集合</li>
+<li>上下文数据</li>
+<li>MCP &#x2F; LSP &#x2F; 插件状态</li>
+<li>AppState 初始值</li>
+</ul>
+<p>因此 REPL 并不是起点，而是“系统已经装配完成后的交互外壳”。</p>
+<h2 id="从用户视角看，它的启动链路是什么"><a href="#从用户视角看，它的启动链路是什么" class="headerlink" title="从用户视角看，它的启动链路是什么"></a>从用户视角看，它的启动链路是什么</h2><h2 id="启动流程可以粗略理解为-4-步"><a href="#启动流程可以粗略理解为-4-步" class="headerlink" title="启动流程可以粗略理解为 4 步"></a>启动流程可以粗略理解为 4 步</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">入口预热 -&gt; 配置与环境解析 -&gt; 能力装配 -&gt; 进入交互或执行模式</span><br></pre></td></tr></table></figure>
+
+<p>如果把它展开一点，就是：</p>
+<ol>
+<li>先做性能预热和必要的早期副作用</li>
+<li>解析 CLI 参数、加载 settings、策略和环境</li>
+<li>初始化命令、工具、上下文、MCP、LSP、插件、Skills</li>
+<li>根据模式决定启动 REPL、恢复会话、远程连接或非交互执行</li>
+</ol>
+<h2 id="从源码阅读角度，这篇之后该看什么"><a href="#从源码阅读角度，这篇之后该看什么" class="headerlink" title="从源码阅读角度，这篇之后该看什么"></a>从源码阅读角度，这篇之后该看什么</h2><p>理解了启动层后，最自然的下一篇就是 <code>QueryEngine.ts</code>。<br>因为入口层解决的是“怎么启动”，而 <code>QueryEngine</code> 解决的是“启动之后怎么持续推进任务”。</p>
+<h2 id="阅读这一层时要关注什么"><a href="#阅读这一层时要关注什么" class="headerlink" title="阅读这一层时要关注什么"></a>阅读这一层时要关注什么</h2><p>看 <code>main.tsx</code>，不建议陷入每一段细节。<br>更应该关注的是：</p>
+<ul>
+<li>哪些初始化属于“全局能力”</li>
+<li>哪些初始化会影响当前 session</li>
+<li>哪些能力是通过 feature flag 控制的</li>
+<li>哪些结果最终流向 REPL 或 QueryEngine</li>
+</ul>
+<p>只要抓住这四点，入口层就会变得很清楚。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>main.tsx</code> 的价值，不在于它实现了什么具体业务，而在于它回答了一个更重要的问题：</p>
+<blockquote>
+<p>Claude Code 在真正开始和你对话前，到底把哪些能力装进了这次会话里？</p>
+</blockquote>
+<p>理解了启动流程，后面看主循环和工具系统就会轻松很多。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/">https://hzhzxfs.github.io/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/08/05__%E5%A6%82%E6%9E%9C%E4%BD%A0%E6%83%B3%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%80%E4%B8%AA_Claude_Code%EF%BC%8C%E9%9C%80%E8%A6%81%E5%93%AA%E4%BA%9B%E6%A8%A1%E5%9D%97/" title="如果你想自己做一个 Claude Code，需要哪些模块"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">如果你想自己做一个 Claude Code，需要哪些模块</div></div><div class="info-2"><div class="info-item-1">如果你想自己做一个 Claude Code，需要哪些模块先说结论：别从“聊天 + 几个工具”开始想很多人研究 Claude Code 源码之后，第一反应是：“我是不是也能自己做一个类似的系统？” 可以，但前提是你要先放弃一个误区：  不要把它理解成“模型 + function calling + terminal UI”。  从源码看，一个像样的 Claude Code，至少需要一整套运行时模块。 先看最小完整架构图模块 1：入口与交互层你至少需要一个明确的运行宿主：  命令行 TUI IDE 插件 Web UI  Claude Code 选的是终端 + React Ink。这不是唯一选择，但你必须先有一个稳定的交互外壳。 模块 2：会话主循环这一层对应 Claude Code 的 QueryEngine.ts。没有它，你就只有零散 API 调用，无法形成真正任务闭环。 主循环至少要负责：  消息历史 模型调用 工具调用 结果回流 中断与预算 会话状态延续  模块 3：统一工具协议这层对应 Tool.ts。如果没有统一工具协议，系统很快会出现：  每个工具输入格式不一致 权限难统...</div></div></div></a><a class="pagination-related" href="/2026/06/06/03__Claude_Code_%E6%BA%90%E7%A0%81%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88/" title="Claude Code 源码架构总览"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code 源码架构总览</div></div><div class="info-2"><div class="info-item-1">Claude Code 源码架构总览先看整体图如果只从源码目录去看，很容易被大量文件吓住。但从主干关系看，Claude Code 的架构并不乱，它大致可以抽象成下面这张图： 再看一张更贴近源码目录的分层图第一层：启动与装配main.tsx 的职责非常重，它不像普通 CLI 那样只是简单解析参数后执行一个函数。它会在启动阶段做很多装配工作：  预热性能敏感模块 加载配置与托管设置 初始化认证、遥测、策略限制 初始化 MCP、LSP、插件、Skills 汇总命令和工具 根据模式启动 REPL、非交互流程或远程会话  所以 main.tsx 更像一个系统引导器。 对应源码片段1234567import &#123; getSystemContext, getUserContext &#125; from &#x27;./context.js&#x27;;import &#123; launchRepl &#125; from &#x27;./replLauncher.js&#x27;;import &#123; getTools &#125; from &#x27;./tools.js...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/04/overview/" title="overview"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-04</div><div class="info-item-2">overview</div></div><div class="info-2"><div class="info-item-1">概述 Claude Code 是一个代理编码工具，可以读取你的代码库、编辑文件、运行命令，并与你的开发工具集成。可在终端、IDE、桌面应用和浏览器中使用。  Claude Code 是一个由 AI 驱动的编码助手，可帮助你构建功能、修复错误和自动化开发任务。它理解你的整个代码库，可以跨多个文件和工具工作以完成任务。 开始使用选择你的环境来开始使用。大多数界面需要 Claude 订阅 或 Anthropic 控制台 账户。终端 CLI 和 VS Code 也支持第三方提供商。         功能完整的 CLI，用于直接在终端中使用 Claude Code。编辑文件、运行命令，并从命令行管理整个项目。  To install Claude Code, use one of the following methods:  &lt;Tabs&gt;   &lt;Tab title=&quot;Native Install (Recommended)&quot;&gt;     **macOS, Linux, WSL:**      theme1curl -fsSL https://cl...</div></div></div></a><a class="pagination-related" href="/2026/07/11/34__TaskOutputTool%EF%BC%9A%E8%AF%BB%E5%8F%96%E4%BB%BB%E5%8A%A1%E8%BE%93%E5%87%BA/" title="TaskOutputTool：读取任务输出"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-11</div><div class="info-item-2">TaskOutputTool：读取任务输出</div></div><div class="info-2"><div class="info-item-1">TaskOutputTool：读取任务输出它把后台任务输出统一成同一种可读结果TaskOutputTool 用来读取后台任务的输出。它最重要的价值是统一：  shell 任务输出 本地 agent 输出 远程 agent 输出  所以主线程不需要关心底层任务类型差异，只要关心统一返回结构。 关键源码输入定义： 12345const inputSchema = z.strictObject(&#123;  task_id: z.string(),  block: z.boolean().default(true),  timeout: z.number().min(0).max(600000).default(30000),&#125;)  统一输出对象： 1234567type TaskOutput = &#123;  task_id: string;  task_type: TaskType;  status: string;  description: string;  output: string;&#125;  它还有一个很有意思的现状源码 prompt 明写了：  DE...</div></div></div></a><a class="pagination-related" href="/2026/04/03/agents/" title="agents"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-03</div><div class="info-item-2">agents</div></div><div class="info-2"><div class="info-item-1">并行运行代理 比较 Claude Code 同时处理多个任务的方式：子代理、代理视图、代理团队和动态工作流。  子代理、代理视图、代理团队 和 动态工作流 各自以不同的方式并行化工作。正确的选择取决于您是否想在每个对话中保持参与、交付任务并稍后检查，或让 Claude 为您协调一组工作人员。    方法 它提供什么 何时使用    子代理 在一个会话内的委派工作人员，在自己的上下文中执行辅助任务并返回摘要 辅助任务会用搜索结果、日志或文件内容淹没您的主对话，而您不会再次引用这些内容   代理视图 一个屏幕来分派和监控在后台运行的会话，使用 claude agents 打开。研究预览 您有多个独立任务，想要交付它们，一目了然地检查状态，并仅在需要时介入   代理团队 多个协调的会话，具有共享任务列表和代理间消息传递，由主导者管理。实验性功能，默认禁用 您希望 Claude 将项目分成多个部分、分配它们，并保持工作人员同步   动态工作流 一个脚本，运行许多子代理并交叉检查其结果，用于一个太大而无法一次协调的工作或需要多次处理的工作。研究预览 一个任务对于少数几个子代理来说太大了，或...</div></div></div></a><a class="pagination-related" href="/2026/06/11/08__%E5%B7%A5%E5%85%B7%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9ATool_%E6%8A%BD%E8%B1%A1%E4%B8%8E_tools_%E6%B3%A8%E5%86%8C%E8%A1%A8/" title="工具系统解析：Tool 抽象与 tools 注册表"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-11</div><div class="info-item-2">工具系统解析：Tool 抽象与 tools 注册表</div></div><div class="info-2"><div class="info-item-1">工具系统解析：Tool 抽象与 tools 注册表Claude Code 的执行力来自工具，不只来自模型很多人讨论 AI 编程工具时，容易把注意力全部放在模型上。但从 Claude Code 源码来看，真正让它“能干活”的，是模型外面的工具系统。 如果没有工具，Claude Code 再强也只是会分析代码。有了工具，它才能真正读文件、改文件、跑命令、接 MCP、问用户、开子任务。 Tool.ts 负责定义统一协议Tool.ts 不是某个具体工具实现，而是全系统的工具抽象层。 这里最重要的价值有两个：  统一工具的输入、输出、上下文和权限语义 给所有工具提供相同的运行契约  文件里能看到很多关键类型：  ToolInputJSONSchema ToolUseContext ToolPermissionContext 各类进度与状态类型  这些类型说明 Claude Code 设计工具时，不是把工具当命令快捷方式，而是把它们当系统级能力对象。 对应源码片段1234567export type ToolInputJSONSchema = &#123;  [x: string]: unk...</div></div></div></a><a class="pagination-related" href="/2026/03/16/skills/" title="skills"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">skills</div></div><div class="info-2"><div class="info-item-1">使用 skills 扩展 Claude 创建、管理和共享 skills 以在 Claude Code 中扩展 Claude 的功能。包括自定义命令和捆绑 skills。  Skills 扩展了 Claude 能做的事情。创建一个 SKILL.md 文件，其中包含说明，Claude 会将其添加到其工具包中。Claude 在相关时使用 skills，或者你可以使用 /skill-name 直接调用一个。 当你不断将相同的说明、检查清单或多步骤程序粘贴到聊天中时，或者当 CLAUDE.md 的一部分已经演变成程序而不是事实时，创建一个 skill。与 CLAUDE.md 内容不同，skill 的正文仅在使用时加载，因此长参考资料在你需要它之前几乎不花费任何成本。    对于内置命令（如 `/help` 和 `/compact`）以及捆绑 skills（如 `/debug` 和 `/code-review`），请参阅[命令参考](/zh-CN/commands)。    自定义命令已合并到 skills 中。 .claude/commands/deploy.md 中的文件和 .claud...</div></div></div></a><a class="pagination-related" href="/2026/04/07/claude-code-on-the-web/" title="claude-code-on-the-web"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-07</div><div class="info-item-2">claude-code-on-the-web</div></div><div class="info-2"><div class="info-item-1">在网络上使用 Claude Code 配置云环境、设置脚本、网络访问和 Docker，在 Anthropic 的沙箱中运行。使用 --remote 和 --teleport 在网络和终端之间移动会话。     Claude Code on the web 处于研究预览阶段，适用于 Pro、Max 和 Team 用户，以及拥有高级席位或 Chat + Claude Code 席位的 Enterprise 用户。   Claude Code on the web 在 claude.ai&#x2F;code 的 Anthropic 管理的云基础设施上运行任务。会话即使在关闭浏览器后也会持续，你可以从 Claude 移动应用监控它们。    初次使用 Claude Code on the web？从[入门](/zh-CN/web-quickstart)开始，连接你的 GitHub 账户并提交你的第一个任务。   本页涵盖：  GitHub 身份验证选项：两种连接 GitHub 的方式 云环境：哪些配置会保留、安装了哪些工具以及如何配置环境 设置脚本和依赖管理 网络访问：级别、代理和默认允...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain-tsx-%E5%88%B0-REPL-%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">启动流程解析：main.tsx 到 REPL 是怎么串起来的</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-main-tsx-%E5%80%BC%E5%BE%97%E9%87%8D%E7%82%B9%E7%9C%8B"><span class="toc-number">1.1.</span> <span class="toc-text">为什么 main.tsx 值得重点看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%80%E5%A4%B4%E5%B0%B1%E5%9C%A8%E6%8A%A2%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4"><span class="toc-number">1.2.</span> <span class="toc-text">一开头就在抢启动时间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5"><span class="toc-number">1.2.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%85%A5%E5%8F%A3%E5%B1%82%E4%BC%9A%E6%9C%89%E8%BF%99%E4%B9%88%E5%A4%9A-side-effect"><span class="toc-number">1.3.</span> <span class="toc-text">为什么入口层会有这么多 side effect</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%85%88%E5%86%B3%E5%AE%9A%E2%80%9C%E8%BF%99%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%98%AF%E4%BB%80%E4%B9%88%E4%BC%9A%E8%AF%9D%E2%80%9D"><span class="toc-number">1.4.</span> <span class="toc-text">它先决定“这次启动是什么会话”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E3%80%81%E5%B7%A5%E5%85%B7%E3%80%81%E8%AE%BE%E7%BD%AE%E6%98%AF%E5%9C%A8%E8%BF%99%E9%87%8C%E6%B1%87%E6%80%BB%E7%9A%84"><span class="toc-number">1.5.</span> <span class="toc-text">命令、工具、设置是在这里汇总的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E5%8F%A3%E5%B1%82%E6%9C%80%E5%83%8F%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.</span> <span class="toc-text">入口层最像什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E6%98%AF%E5%8F%AA%E5%90%AF%E5%8A%A8-REPL%EF%BC%8C%E8%BF%98%E4%BC%9A%E5%85%88%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%96%E9%83%A8%E8%83%BD%E5%8A%9B"><span class="toc-number">1.7.</span> <span class="toc-text">它不是只启动 REPL，还会先初始化外部能力</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-2"><span class="toc-number">1.7.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#REPL-%E5%8F%AA%E6%98%AF%E8%A1%A8%E5%B1%82%EF%BC%8C%E7%9C%9F%E6%AD%A3%E9%87%8D%E8%A6%81%E7%9A%84%E6%98%AF%E2%80%9C%E8%BF%90%E8%A1%8C%E6%80%81%E8%A3%85%E9%85%8D%E5%AE%8C%E6%88%90%E2%80%9D"><span class="toc-number">1.8.</span> <span class="toc-text">REPL 只是表层，真正重要的是“运行态装配完成”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%94%A8%E6%88%B7%E8%A7%86%E8%A7%92%E7%9C%8B%EF%BC%8C%E5%AE%83%E7%9A%84%E5%90%AF%E5%8A%A8%E9%93%BE%E8%B7%AF%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.9.</span> <span class="toc-text">从用户视角看，它的启动链路是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%AF%E4%BB%A5%E7%B2%97%E7%95%A5%E7%90%86%E8%A7%A3%E4%B8%BA-4-%E6%AD%A5"><span class="toc-number">1.10.</span> <span class="toc-text">启动流程可以粗略理解为 4 步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%A7%92%E5%BA%A6%EF%BC%8C%E8%BF%99%E7%AF%87%E4%B9%8B%E5%90%8E%E8%AF%A5%E7%9C%8B%E4%BB%80%E4%B9%88"><span class="toc-number">1.11.</span> <span class="toc-text">从源码阅读角度，这篇之后该看什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%85%E8%AF%BB%E8%BF%99%E4%B8%80%E5%B1%82%E6%97%B6%E8%A6%81%E5%85%B3%E6%B3%A8%E4%BB%80%E4%B9%88"><span class="toc-number">1.12.</span> <span class="toc-text">阅读这一层时要关注什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.13.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

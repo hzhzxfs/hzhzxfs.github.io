@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code 的远程会话与桥接能力 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Claude Code 的远程会话与桥接能力终端在本地，不代表执行一定在本地从很多人的直觉看，Claude Code 是一个本地终端工具。但源码很清楚地表明，它已经内建了不少远程能力：  remote session direct connect bridge &#x2F; remote-control SSH 相关流程  这意味着它的 UI、执行位置和会话位置可以分离。 先看入口层就知道这不是边">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code 的远程会话与桥接能力">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="Claude Code 的远程会话与桥接能力终端在本地，不代表执行一定在本地从很多人的直觉看，Claude Code 是一个本地终端工具。但源码很清楚地表明，它已经内建了不少远程能力：  remote session direct connect bridge &#x2F; remote-control SSH 相关流程  这意味着它的 UI、执行位置和会话位置可以分离。 先看入口层就知道这不是边">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-07-24T08:57:37.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.480Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code 的远程会话与桥接能力",
+  "url": "https://hzhzxfs.github.io/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-07-24T08:57:37.000Z",
+  "dateModified": "2026-06-23T05:18:13.480Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code 的远程会话与桥接能力',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code 的远程会话与桥接能力</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code 的远程会话与桥接能力</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.480Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Claude-Code-的远程会话与桥接能力"><a href="#Claude-Code-的远程会话与桥接能力" class="headerlink" title="Claude Code 的远程会话与桥接能力"></a>Claude Code 的远程会话与桥接能力</h1><h2 id="终端在本地，不代表执行一定在本地"><a href="#终端在本地，不代表执行一定在本地" class="headerlink" title="终端在本地，不代表执行一定在本地"></a>终端在本地，不代表执行一定在本地</h2><p>从很多人的直觉看，Claude Code 是一个本地终端工具。<br>但源码很清楚地表明，它已经内建了不少远程能力：</p>
+<ul>
+<li>remote session</li>
+<li>direct connect</li>
+<li>bridge &#x2F; remote-control</li>
+<li>SSH 相关流程</li>
+</ul>
+<p>这意味着它的 UI、执行位置和会话位置可以分离。</p>
+<h2 id="先看入口层就知道这不是边缘功能"><a href="#先看入口层就知道这不是边缘功能" class="headerlink" title="先看入口层就知道这不是边缘功能"></a>先看入口层就知道这不是边缘功能</h2><p><code>main.tsx</code> 里直接有这些导入：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createRemoteSessionConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;./remote/RemoteSessionManager.js&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createDirectConnectSession, <span class="title class_">DirectConnectError</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./server/createDirectConnectSession.js&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这说明远程能力不是后面某个插件临时加的，而是入口层就正式考虑的运行形态。</p>
+<h2 id="先看远程能力关系图"><a href="#先看远程能力关系图" class="headerlink" title="先看远程能力关系图"></a>先看远程能力关系图</h2><h2 id="状态层已经明确建模了远程状态"><a href="#状态层已经明确建模了远程状态" class="headerlink" title="状态层已经明确建模了远程状态"></a>状态层已经明确建模了远程状态</h2><p>在初始化 AppState 的时候，可以看到一整组远程字段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">remoteSessionUrl: undefined,</span><br><span class="line">remoteConnectionStatus: &#x27;connecting&#x27;,</span><br><span class="line">remoteBackgroundTaskCount: 0,</span><br><span class="line">replBridgeEnabled: fullRemoteControl || ccrMirrorEnabled,</span><br><span class="line">replBridgeExplicit: remoteControl,</span><br><span class="line">replBridgeOutboundOnly: ccrMirrorEnabled,</span><br><span class="line">replBridgeConnected: false,</span><br><span class="line">replBridgeSessionActive: false,</span><br><span class="line">replBridgeReconnecting: false,</span><br><span class="line">replBridgeConnectUrl: undefined,</span><br><span class="line">replBridgeSessionUrl: undefined,</span><br><span class="line">replBridgeEnvironmentId: undefined,</span><br><span class="line">replBridgeSessionId: undefined,</span><br><span class="line">replBridgeError: undefined,</span><br></pre></td></tr></table></figure>
+
+<p>看到这一组字段，基本可以确定两件事：</p>
+<ol>
+<li>远程能力已经不是一次性请求，而是长期连接状态</li>
+<li>系统要处理连接、活跃、重连、桥接、环境 ID 等完整生命周期</li>
+</ol>
+<h2 id="为什么-Claude-Code-要做远程"><a href="#为什么-Claude-Code-要做远程" class="headerlink" title="为什么 Claude Code 要做远程"></a>为什么 Claude Code 要做远程</h2><p>因为现实工程环境经常不是“本地终端 + 本地仓库 + 本地执行”这么简单。</p>
+<p>常见需求包括：</p>
+<ul>
+<li>在远程容器里运行</li>
+<li>在服务器环境里执行工具</li>
+<li>用本地 UI 控制远程 Agent</li>
+<li>将任务交给远端继续跑</li>
+</ul>
+<p>这些需求一旦出现，本地 REPL 就不够了。</p>
+<h2 id="这会带来什么架构复杂度"><a href="#这会带来什么架构复杂度" class="headerlink" title="这会带来什么架构复杂度"></a>这会带来什么架构复杂度</h2><p>一旦引入远程能力，系统立刻要处理：</p>
+<ul>
+<li>本地状态和远程状态同步</li>
+<li>远程任务数统计</li>
+<li>连接掉线与重连</li>
+<li>权限判断在本地还是远端</li>
+<li>消息流如何适配回本地 UI</li>
+</ul>
+<p>这就是为什么远程相关代码会分散在：</p>
+<ul>
+<li><code>main.tsx</code></li>
+<li><code>remote/*</code></li>
+<li><code>hooks/useRemoteSession.ts</code></li>
+<li><code>BridgeDialog</code></li>
+<li>各类 session manager</li>
+</ul>
+<h2 id="远程会话和桥接不是一回事"><a href="#远程会话和桥接不是一回事" class="headerlink" title="远程会话和桥接不是一回事"></a>远程会话和桥接不是一回事</h2><p>一个直观理解是：</p>
+<ul>
+<li><strong>Remote Session</strong> ：会话运行在远端</li>
+<li><strong>Bridge &#x2F; Remote Control</strong> ：本地会话和外部控制通道桥接</li>
+</ul>
+<p>两者都属于“本地 UI 和执行位置分离”的范畴，但语义不完全相同。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Claude Code 的远程会话与桥接能力说明了一点：</p>
+<blockquote>
+<p>它正在从“本地终端工具”扩展成“本地 UI + 多执行环境”的混合系统。</p>
+</blockquote>
+<p>这一步非常关键，因为它决定了 Claude Code 不只是个人开发玩具，而可以进入更复杂的真实环境。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/">https://hzhzxfs.github.io/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code 的多 Agent 与子任务机制</div></div><div class="info-2"><div class="info-item-1">Claude Code 的多 Agent 与子任务机制它早就不只是单线程助手了如果只把 Claude Code 看成“一个主对话框里的模型”，你会错过它很重要的一条演化方向：它已经明显在支持多 Agent、子任务和协作型运行。 从源码能看到几个非常关键的信号：  AgentTool SendMessageTool TeamCreateTool TaskCreateTool agentNameRegistry viewingAgentTaskId  这已经不是单线程工具的思路了。 先看它在工具层的入口12345678910111213export function getAllBaseTools(): Tools &#123;  return [    AgentTool,    ...    ...(isTodoV2Enabled()      ? [TaskCreateTool, TaskGetTool, TaskUpdateTool, TaskListTool]      : []),    getSendMessageTool(),    ...(isAgentSwarms...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/01/mcp-quickstart/" title="mcp-quickstart"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-01</div><div class="info-item-2">mcp-quickstart</div></div><div class="info-2"><div class="info-item-1">连接到 MCP 服务器 将 MCP 服务器添加到 Claude Code，验证连接，并在磁盘上找到配置。  Model Context Protocol (MCP) 让 Claude Code 能够使用超出其内置工具集的工具，例如搜索问题跟踪器、查询数据库或控制网络浏览器。这些工具来自 MCP 服务器，这些服务器在您的机器上运行或作为托管服务运行。 本指南将引导您通过 Claude Code CLI 端到端地连接一个 MCP 服务器。完成后，您将拥有一个已连接且响应的服务器，了解其配置在磁盘上的位置，并知道如何修复最常见的连接错误。    您也可以从其他界面添加 MCP 服务器，包括桌面应用、VS Code 和网络版。请参阅[从其他界面连接](#connect-from-other-surfaces)。   有关在 Claude Code 中连接和配置 MCP 服务器的所有方式，请参阅 MCP 参考。 开始之前确保您拥有：  已安装并验证了 Claude Code 在项目目录中打开的终端。任何目录都可以，包括空目录。  添加并验证服务器下面的示例连接到 Claude Code 文...</div></div></div></a><a class="pagination-related" href="/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/" title="核心循环解析：QueryEngine 如何驱动一次任务完成"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-09</div><div class="info-item-2">核心循环解析：QueryEngine 如何驱动一次任务完成</div></div><div class="info-2"><div class="info-item-1">核心循环解析：QueryEngine 如何驱动一次任务完成QueryEngine 为什么是核心中的核心如果只能选一个文件代表 Claude Code 的灵魂，那大概率就是 QueryEngine.ts。 因为它负责的不是某个局部能力，而是整个任务生命周期：  接收用户输入 组装上下文 驱动模型调用 处理中间工具执行 维护会话状态 把任务一直推进到结束  这就是典型的 Agent 主循环。 它管理的是“会话”，不是“一次请求”源码中的注释已经把定位写得很明确：  One QueryEngine per conversation.  这句话很关键。说明 QueryEngine 不是一次性 request handler，而是一个围绕会话长期存在的对象。 因此它会保留很多跨轮次状态，例如：  mutableMessages permissionDenials readFileState totalUsage 发现过的 skill 名称 已加载的 memory 路径  这也是 Claude Code 能连续工作的基础。 对应源码片段123456789export class QueryE...</div></div></div></a><a class="pagination-related" href="/2026/03/13/sessions/" title="sessions"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-13</div><div class="info-item-2">sessions</div></div><div class="info-2"><div class="info-item-1">管理会话 命名、恢复、分支和在 Claude Code 对话之间切换。涵盖 --continue、--resume、--from-pr、/resume 选择器、会话命名和文本记录存储位置。  会话是与项目目录关联的已保存对话。Claude Code 在您工作时将其本地存储，因此您可以从中断处恢复、分支以尝试不同的方法，或在任务之间切换。 桌面应用、网页版 Claude Code 和 VS Code 扩展各自维护自己的会话历史记录。本页涵盖 CLI：  恢复之前的对话（通过标志、名称或 PR） 命名会话以便稍后查找 使用 /resume 选择器浏览会话 分支对话以尝试不同的方法 导出文本记录并在磁盘上找到它们  恢复会话会话在您工作时持续保存到本地文本记录文件，因此您可以在退出或运行 /clear 后返回到一个会话。使用这些入口点：    命令 功能    claude --continue 恢复当前目录中最近的会话   claude --resume 打开会话选择器   claude --resume &lt;name&gt; 直接恢复命名的会话   claude --from-...</div></div></div></a><a class="pagination-related" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-23</div><div class="info-item-2">Claude Code 的多 Agent 与子任务机制</div></div><div class="info-2"><div class="info-item-1">Claude Code 的多 Agent 与子任务机制它早就不只是单线程助手了如果只把 Claude Code 看成“一个主对话框里的模型”，你会错过它很重要的一条演化方向：它已经明显在支持多 Agent、子任务和协作型运行。 从源码能看到几个非常关键的信号：  AgentTool SendMessageTool TeamCreateTool TaskCreateTool agentNameRegistry viewingAgentTaskId  这已经不是单线程工具的思路了。 先看它在工具层的入口12345678910111213export function getAllBaseTools(): Tools &#123;  return [    AgentTool,    ...    ...(isTodoV2Enabled()      ? [TaskCreateTool, TaskGetTool, TaskUpdateTool, TaskListTool]      : []),    getSendMessageTool(),    ...(isAgentSwarms...</div></div></div></a><a class="pagination-related" href="/2026/03/20/troubleshoot-install/" title="troubleshoot-install"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-20</div><div class="info-item-2">troubleshoot-install</div></div><div class="info-2"><div class="info-item-1">排查安装和登录问题 修复安装或登录 Claude Code 时出现的命令未找到、PATH、权限、网络和身份验证错误。  如果安装失败或无法登录，请在下面找到您的错误。有关 Claude Code 正常工作后的运行时问题，请参阅 Troubleshooting。有关配置问题（例如设置未应用或 hooks 未触发），请参阅 Debug your configuration。 查找您的错误将您看到的错误消息或症状与解决方案相匹配：    您看到的内容 解决方案    command not found: claude 或 &#39;claude&#39; is not recognized 修复您的 PATH   syntax error near unexpected token &#39;&lt;&#39; 安装脚本返回 HTML   curl: (22) The requested URL returned error: 403 安装脚本返回 403   curl: (23) 或 curl: (56) Failure writing output to destination 检...</div></div></div></a><a class="pagination-related" href="/2026/05/12/12-Agent-%E7%B3%BB%E7%BB%9F/" title="12-Agent-系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-12</div><div class="info-item-2">12-Agent-系统</div></div><div class="info-2"><div class="info-item-1">第 12 篇：Agent 系统 — 从单体到多智能体协作 本篇是《深入 Claude Code 源码》系列的第 12 篇。我们将深入剖析 Agent 子系统的完整架构：从 Agent 定义的数据结构与加载机制，到 runAgent() 的完整生命周期，再到 createSubagentContext() 如何实现 context 隔离与选择性共享。  为什么需要多 Agent？当你让 Claude Code 帮你”重构整个模块的测试”时，一个单体 Agent 会怎么做？它会搜索文件、阅读代码、编写测试、运行验证——所有步骤串行执行，上下文窗口迅速膨胀。更糟糕的是，搜索过程中产生的大量中间输出（grep 结果、文件内容）会永久占据上下文，挤压真正有价值的信息空间。 Claude Code 的解决方案是多 Agent 协作：主 Agent 可以按需生成子 Agent，每个子 Agent 拥有独立的上下文窗口和对话循环，完成任务后只返回精炼的结果。这就像一个团队 lead 把任务分派给专人，每个人独立工作后汇报结论。 这个设计解决了三个核心问题：  上下文污染：搜索类任务的海量中间输出...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Claude-Code-%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B"><span class="toc-number">1.</span> <span class="toc-text">Claude Code 的远程会话与桥接能力</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%88%E7%AB%AF%E5%9C%A8%E6%9C%AC%E5%9C%B0%EF%BC%8C%E4%B8%8D%E4%BB%A3%E8%A1%A8%E6%89%A7%E8%A1%8C%E4%B8%80%E5%AE%9A%E5%9C%A8%E6%9C%AC%E5%9C%B0"><span class="toc-number">1.1.</span> <span class="toc-text">终端在本地，不代表执行一定在本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%9C%8B%E5%85%A5%E5%8F%A3%E5%B1%82%E5%B0%B1%E7%9F%A5%E9%81%93%E8%BF%99%E4%B8%8D%E6%98%AF%E8%BE%B9%E7%BC%98%E5%8A%9F%E8%83%BD"><span class="toc-number">1.2.</span> <span class="toc-text">先看入口层就知道这不是边缘功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%9C%8B%E8%BF%9C%E7%A8%8B%E8%83%BD%E5%8A%9B%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="toc-number">1.3.</span> <span class="toc-text">先看远程能力关系图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%B1%82%E5%B7%B2%E7%BB%8F%E6%98%8E%E7%A1%AE%E5%BB%BA%E6%A8%A1%E4%BA%86%E8%BF%9C%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="toc-number">1.4.</span> <span class="toc-text">状态层已经明确建模了远程状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Claude-Code-%E8%A6%81%E5%81%9A%E8%BF%9C%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">为什么 Claude Code 要做远程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%BC%9A%E5%B8%A6%E6%9D%A5%E4%BB%80%E4%B9%88%E6%9E%B6%E6%9E%84%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">1.6.</span> <span class="toc-text">这会带来什么架构复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E5%92%8C%E6%A1%A5%E6%8E%A5%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B"><span class="toc-number">1.7.</span> <span class="toc-text">远程会话和桥接不是一回事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

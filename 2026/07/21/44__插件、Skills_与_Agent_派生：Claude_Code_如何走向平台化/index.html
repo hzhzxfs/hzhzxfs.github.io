@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>插件、Skills 与 Agent 派生：Claude Code 如何走向平台化 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化一个成熟系统不会只靠内置功能成长如果 Claude Code 只依靠官方内置能力，那它最多是一个很强的产品。但从源码目录看，它已经在向另一个方向演化：平台化 。 最明显的信号有三类：  插件系统 Skills 系统 Agent &#x2F; Team &#x2F; 子任务能力  插件：把能力装配交给生态源码里能看到不少">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化一个成熟系统不会只靠内置功能成长如果 Claude Code 只依靠官方内置能力，那它最多是一个很强的产品。但从源码目录看，它已经在向另一个方向演化：平台化 。 最明显的信号有三类：  插件系统 Skills 系统 Agent &#x2F; Team &#x2F; 子任务能力  插件：把能力装配交给生态源码里能看到不少">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-07-21T01:57:38.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.447Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "插件、Skills 与 Agent 派生：Claude Code 如何走向平台化",
+  "url": "https://hzhzxfs.github.io/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-07-21T01:57:38.000Z",
+  "dateModified": "2026-06-23T05:18:13.447Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '插件、Skills 与 Agent 派生：Claude Code 如何走向平台化',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.447Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="插件、Skills-与-Agent-派生：Claude-Code-如何走向平台化"><a href="#插件、Skills-与-Agent-派生：Claude-Code-如何走向平台化" class="headerlink" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化"></a>插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</h1><h2 id="一个成熟系统不会只靠内置功能成长"><a href="#一个成熟系统不会只靠内置功能成长" class="headerlink" title="一个成熟系统不会只靠内置功能成长"></a>一个成熟系统不会只靠内置功能成长</h2><p>如果 Claude Code 只依靠官方内置能力，那它最多是一个很强的产品。<br>但从源码目录看，它已经在向另一个方向演化：<strong>平台化</strong> 。</p>
+<p>最明显的信号有三类：</p>
+<ul>
+<li>插件系统</li>
+<li>Skills 系统</li>
+<li>Agent &#x2F; Team &#x2F; 子任务能力</li>
+</ul>
+<h2 id="插件：把能力装配交给生态"><a href="#插件：把能力装配交给生态" class="headerlink" title="插件：把能力装配交给生态"></a>插件：把能力装配交给生态</h2><p>源码里能看到不少和插件有关的模块：</p>
+<ul>
+<li>插件加载</li>
+<li>命令注入</li>
+<li>插件技能</li>
+<li>市场与安装管理</li>
+<li>插件错误与刷新机制</li>
+</ul>
+<p>这说明插件不是“外挂脚本”，而是被正式纳入会话能力图谱里的。</p>
+<h2 id="插件、Skills、Agent-三者不是并列替代关系"><a href="#插件、Skills、Agent-三者不是并列替代关系" class="headerlink" title="插件、Skills、Agent 三者不是并列替代关系"></a>插件、Skills、Agent 三者不是并列替代关系</h2><p>它们解决的问题并不一样：</p>
+<ul>
+<li>插件解决“系统如何长出新能力”</li>
+<li>Skills 解决“经验如何被复用”</li>
+<li>Agent 派生解决“任务如何被分工”</li>
+</ul>
+<p>把这三条线放在一起看，平台化方向就非常明显。</p>
+<h2 id="Skills：把经验和流程显式化"><a href="#Skills：把经验和流程显式化" class="headerlink" title="Skills：把经验和流程显式化"></a>Skills：把经验和流程显式化</h2><p>Skills 的意义很容易被误解。<br>它不只是“额外说明文档”，更像是把一些专业经验、约束和工作流包装成可注入的能力单元。</p>
+<p>这样做的价值是：</p>
+<ul>
+<li>把某类任务经验固化下来</li>
+<li>减少每次临时写 prompt 的成本</li>
+<li>让系统在特定领域更稳定</li>
+</ul>
+<h2 id="Skills-为什么对-AI-编程很关键"><a href="#Skills-为什么对-AI-编程很关键" class="headerlink" title="Skills 为什么对 AI 编程很关键"></a>Skills 为什么对 AI 编程很关键</h2><p>因为很多开发场景的问题，不是模型“不会写代码”，而是模型：</p>
+<ul>
+<li>不知道团队习惯</li>
+<li>不知道该遵循什么流程</li>
+<li>不知道某类任务的最佳实践</li>
+</ul>
+<p>Skills 正好在补这部分。</p>
+<p>从产品角度看，这相当于把“提示词工程”进一步产品化了。</p>
+<h2 id="Agent-派生：把单线程助手变成协作系统"><a href="#Agent-派生：把单线程助手变成协作系统" class="headerlink" title="Agent 派生：把单线程助手变成协作系统"></a>Agent 派生：把单线程助手变成协作系统</h2><p>工具目录里能看到很多和 Agent、Team、SendMessage、Task 相关的模块。<br>这意味着 Claude Code 正在往多角色、多任务协作方向延伸。</p>
+<p>这类能力的本质，是把原本只能串行完成的任务拆成：</p>
+<ul>
+<li>领导线程</li>
+<li>子 Agent</li>
+<li>独立任务</li>
+<li>消息传递</li>
+</ul>
+<p>一旦走到这一步，系统的形态就不再只是“一个助手”，而更像“一个协作型 Agent 平台”。</p>
+<h2 id="为什么说这是平台化，而不是功能堆砌"><a href="#为什么说这是平台化，而不是功能堆砌" class="headerlink" title="为什么说这是平台化，而不是功能堆砌"></a>为什么说这是平台化，而不是功能堆砌</h2><p>判断一个系统是不是平台化，关键不在于功能多不多，而在于：</p>
+<ul>
+<li>能力能不能被扩展</li>
+<li>经验能不能被复用</li>
+<li>任务能不能被分派</li>
+<li>外部生态能不能接入</li>
+</ul>
+<p>Claude Code 在这几个方向上都已经有了明显结构，所以它的演化方向很清晰。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>插件、Skills 与 Agent 派生这三条线放在一起看，会得到一个非常明确的判断：</p>
+<blockquote>
+<p>Claude Code 正在从“强大的 AI 编程工具”逐步变成“可扩展的工程智能体平台”。</p>
+</blockquote>
+<p>这也是为什么它的源码研究价值远大于一个普通 CLI 工具。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/">https://hzhzxfs.github.io/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code 的 Skills 系统</div></div><div class="info-2"><div class="info-item-1">Claude Code 的 Skills 系统很多人把 Skill 想简单了第一次接触 Claude Code 的人，通常会把 Skill 理解成：  一段写好的 Prompt 一个 Slash Command 别名 或者一份放在仓库里的说明文档  这些理解都沾边，但都不完整。 从源码看，Claude Code 里的 Skill 更准确的定义是：  一套可以被系统加载、被模型发现、再由 SkillTool 正式执行的技能模块。  也就是说，Skill 不是普通文档。它在 Claude Code 里有自己的加载链路、发现链路和执行链路。 先从直觉上理解：Skill 到底解决什么问题Claude Code 已经有很多工具了，为什么还要单独做一套 Skills？ 因为很多复杂任务的问题，并不是“工具不够”，而是模型不知道：  这类任务应该按什么步骤做 这个团队平时遵循什么规则 某个场景下应该优先用哪些工具 哪些坑要提前避开  举个很典型的例子：  “帮我提交代码” 不是一个简单命令 “做一轮安全审计” 也不是一个单步动作 “去线上排查问题” 更不是一句 Prompt 就能稳定完成的事 ...</div></div></div></a><a class="pagination-related" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MCP 与 LSP 集成</div></div><div class="info-2"><div class="info-item-1">MCP 与 LSP 集成先记住一句话如果说 Claude Code 的内置工具解决的是“我自己会什么”，那 MCP 解决的就是“我还能接入谁”。 很多人第一次接触 MCP，会把它理解成“插件协议”。 这个理解不能算错，但太浅了。从 Claude Code 源码来看，MCP 更像一层 外部能力接入总线 ：  外部工具可以接进来 外部资源可以接进来 外部 prompts 可以接进来 外部 skills 也可以接进来  真正重要的不是“又多了几个工具”，而是 Claude Code 的能力边界可以在运行时被重新扩展 。 Claude Code 里的 MCP，不只是调一个 server从源码看，Claude Code 对 MCP 做的事情远比“连上一个 server”多。 services/mcp/client.ts 负责的是完整的 MCP 客户端层，里面至少覆盖了这些事：  不同传输方式的连接 OAuth 和认证刷新 tools&#x2F;list 拉取 resources&#x2F;list 拉取 prompts&#x2F;list 拉取 工具调用时的重试和交互 资源工具注入 MCP...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/02/02-%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/" title="02-启动优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-02</div><div class="info-item-2">02-启动优化</div></div><div class="info-2"><div class="info-item-1">第 2 篇：启动优化 – 毫秒级 CLI 启动的工程艺术 本篇是《深入 Claude Code 源码》系列的第 2 篇。我们将深入 cli.tsx 和 main.tsx 的启动路径，揭示 Claude Code 团队如何将 CLI 启动时间优化到毫秒级别。  为什么启动速度如此重要？CLI 工具的第一印象就是启动速度。用户在终端输入 claude 并回车的那一刻，心理预期是”即时响应”。如果启动需要 2 秒，用户会觉得卡顿；如果需要 5 秒，用户会开始怀疑是不是命令输错了。 对于 Claude Code 这样一个重量级应用——近 1900 个 TypeScript 文件、依赖 React&#x2F;Ink&#x2F;Yoga 渲染引擎、需要连接 MCP 服务器和 Anthropic API——要做到毫秒级启动，绝非易事。 本篇将揭示 Claude Code 采用的 6 大启动优化策略：  快速路径（Fast Path）：对简单命令实现零 import 返回 侧效果前置（Side-Effect Hoisting）：利用模块求值时间并行执行 I&#x2F;O API 预连接（Prec...</div></div></div></a><a class="pagination-related" href="/2026/05/19/19-Feature-Flag%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E4%BC%98%E5%8C%96/" title="19-Feature-Flag与编译期优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-19</div><div class="info-item-2">19-Feature-Flag与编译期优化</div></div><div class="info-2"><div class="info-item-1">第 19 篇：Feature Flag 与编译期优化 — 同一份代码构建两个产品 本篇揭示 Claude Code 如何用一套代码库同时维护内部版和外部版两个产品。你将看到 Bun 的 feature() 编译期常量折叠、process.env.USER_TYPE 构建时 --define 常量、MACRO.* 构建时值注入、以及 GrowthBook A&#x2F;B 测试平台如何在不同的时间维度上协同工作。  为什么需要多层 Feature Flag？假设你是一家 AI 公司的工程师，你的产品既有面向公众的开源版本，也有内部员工使用的增强版本。内部版有更多实验性功能（语音模式、多 Agent 协调器、后台任务引擎），但你不想维护两个独立的代码仓库。 Claude Code 面临的正是这个问题。它的解决方案是三层 Feature Flag 体系，每层解决不同的问题：    层级 机制 决策时机 目的    编译期 feature() from bun:bundle 构建时 从产物中物理删除内部代码分支   编译期 process.env.USER_TYPE (--define)...</div></div></div></a><a class="pagination-related" href="/2026/04/19/legal-and-compliance/" title="legal-and-compliance"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-19</div><div class="info-item-2">legal-and-compliance</div></div><div class="info-2"><div class="info-item-1">法律和合规 Claude Code 的法律协议、合规认证和安全信息。     Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.   法律协议许可证您对 Claude Code 的使用受以下条款约束：  商业条款 - 适用于 Team、Enterprise 和 Claude API 用户 消费者服务条款 - 适用于 Free、Pro 和 Max 用户  商业协议无论您是直接使用 ...</div></div></div></a><a class="pagination-related" href="/2026/05/25/25-%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="25-架构模式总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-25</div><div class="info-item-2">25-架构模式总结</div></div><div class="info-2"><div class="info-item-1">第 25 篇：架构模式总结 — 可迁移到你自己项目的设计模式在过去 24 篇文章中，我们逐一拆解了 Claude Code 的每个子系统——从启动链路到对话循环，从工具系统到权限防线，从 Prompt Cache 到 MCP 协议。每篇都聚焦于”这个模块是怎么设计的“。 但工程师阅读源码的终极目的不是理解别人的代码，而是把好的设计用到自己的项目里。 本篇将切换视角：不再关注 Claude Code 特有的业务逻辑，而是提取那些跨项目可复用的架构模式。这 7 个模式覆盖了从编译期优化到运行时状态管理、从工具注册到安全防线的全栈设计决策。  模式 1：编译期 DCE — 同一份代码构建多版本问题你的产品需要从同一份代码库构建出多个版本——内部版&#x2F;外部版、免费版&#x2F;付费版、或者面向不同客户的定制版。传统做法是维护多个分支或在运行时用 if/else 判断，前者导致合并噩梦，后者让所有版本都包含所有代码。 Claude Code 的解法利用 Bun bundler 的 feature() 函数实现编译期 Dead Code Elimination（DCE）。关键技巧是将...</div></div></div></a><a class="pagination-related" href="/2026/03/02/mcp/" title="mcp"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-02</div><div class="info-item-2">mcp</div></div><div class="info-2"><div class="info-item-1">通过 MCP 将 Claude Code 连接到工具 了解如何使用 Model Context Protocol 将 Claude Code 连接到您的工具。  Claude Code 可以通过 Model Context Protocol (MCP)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。 当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。 如果您是第一次连接服务器，请从 MCP 快速入门 开始，获取分步演练。本页面是完整参考。 使用 MCP 可以做什么连接 MCP 服务器后，您可以要求 Claude Code：  从问题跟踪器实现功能：”添加 JIRA 问题 ENG-4521 中描述的功能，并在 GitHub 上创建 PR。” 分析监控数据：”检查 Sentry 和 Statsig 以检查 ENG-4521 中描述的功能的使用情况。” 查询数据库：...</div></div></div></a><a class="pagination-related" href="/2026/07/13/36__ListMcpResourcesTool%EF%BC%9A%E5%88%97%E5%87%BA_MCP_%E8%B5%84%E6%BA%90/" title="ListMcpResourcesTool：列出 MCP 资源"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-13</div><div class="info-item-2">ListMcpResourcesTool：列出 MCP 资源</div></div><div class="info-2"><div class="info-item-1">ListMcpResourcesTool：列出 MCP 资源它让模型先获得“资源发现能力”ListMcpResourcesTool 的职责很像远程世界里的目录浏览。如果模型已经接上了 MCP server，但不知道那边具体暴露了哪些资源，第一步就应该用它先列出来。 关键源码tools/ListMcpResourcesTool/ListMcpResourcesTool.ts： 123const inputSchema = z.object(&#123;  server: z.string().optional().describe(&#x27;Optional server name to filter resources by&#x27;),&#125;)  核心逻辑是： 123456const results = await Promise.all(  clientsToProcess.map(async client =&gt; &#123;    const fresh = await ensureConnectedClient(client)    return awai...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E3%80%81Skills-%E4%B8%8E-Agent-%E6%B4%BE%E7%94%9F%EF%BC%9AClaude-Code-%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%88%90%E7%86%9F%E7%B3%BB%E7%BB%9F%E4%B8%8D%E4%BC%9A%E5%8F%AA%E9%9D%A0%E5%86%85%E7%BD%AE%E5%8A%9F%E8%83%BD%E6%88%90%E9%95%BF"><span class="toc-number">1.1.</span> <span class="toc-text">一个成熟系统不会只靠内置功能成长</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%EF%BC%9A%E6%8A%8A%E8%83%BD%E5%8A%9B%E8%A3%85%E9%85%8D%E4%BA%A4%E7%BB%99%E7%94%9F%E6%80%81"><span class="toc-number">1.2.</span> <span class="toc-text">插件：把能力装配交给生态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E3%80%81Skills%E3%80%81Agent-%E4%B8%89%E8%80%85%E4%B8%8D%E6%98%AF%E5%B9%B6%E5%88%97%E6%9B%BF%E4%BB%A3%E5%85%B3%E7%B3%BB"><span class="toc-number">1.3.</span> <span class="toc-text">插件、Skills、Agent 三者不是并列替代关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skills%EF%BC%9A%E6%8A%8A%E7%BB%8F%E9%AA%8C%E5%92%8C%E6%B5%81%E7%A8%8B%E6%98%BE%E5%BC%8F%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text">Skills：把经验和流程显式化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skills-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AF%B9-AI-%E7%BC%96%E7%A8%8B%E5%BE%88%E5%85%B3%E9%94%AE"><span class="toc-number">1.5.</span> <span class="toc-text">Skills 为什么对 AI 编程很关键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E6%B4%BE%E7%94%9F%EF%BC%9A%E6%8A%8A%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%8A%A9%E6%89%8B%E5%8F%98%E6%88%90%E5%8D%8F%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.6.</span> <span class="toc-text">Agent 派生：把单线程助手变成协作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4%E8%BF%99%E6%98%AF%E5%B9%B3%E5%8F%B0%E5%8C%96%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E5%8A%9F%E8%83%BD%E5%A0%86%E7%A0%8C"><span class="toc-number">1.7.</span> <span class="toc-text">为什么说这是平台化，而不是功能堆砌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

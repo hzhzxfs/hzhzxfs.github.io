@@ -1,0 +1,294 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>核心循环解析：QueryEngine 如何驱动一次任务完成 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="核心循环解析：QueryEngine 如何驱动一次任务完成QueryEngine 为什么是核心中的核心如果只能选一个文件代表 Claude Code 的灵魂，那大概率就是 QueryEngine.ts。 因为它负责的不是某个局部能力，而是整个任务生命周期：  接收用户输入 组装上下文 驱动模型调用 处理中间工具执行 维护会话状态 把任务一直推进到结束  这就是典型的 Agent 主循环。 它管理的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="核心循环解析：QueryEngine 如何驱动一次任务完成">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="核心循环解析：QueryEngine 如何驱动一次任务完成QueryEngine 为什么是核心中的核心如果只能选一个文件代表 Claude Code 的灵魂，那大概率就是 QueryEngine.ts。 因为它负责的不是某个局部能力，而是整个任务生命周期：  接收用户输入 组装上下文 驱动模型调用 处理中间工具执行 维护会话状态 把任务一直推进到结束  这就是典型的 Agent 主循环。 它管理的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-09T12:18:52.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:12.997Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "核心循环解析：QueryEngine 如何驱动一次任务完成",
+  "url": "https://hzhzxfs.github.io/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-09T12:18:52.000Z",
+  "dateModified": "2026-06-23T05:18:12.997Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '核心循环解析：QueryEngine 如何驱动一次任务完成',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">核心循环解析：QueryEngine 如何驱动一次任务完成</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">核心循环解析：QueryEngine 如何驱动一次任务完成</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-09T12:18:52.000Z" title="发表于 2026-06-09 20:18:52">2026-06-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:12.997Z" title="更新于 2026-06-23 13:18:12">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="核心循环解析：QueryEngine-如何驱动一次任务完成"><a href="#核心循环解析：QueryEngine-如何驱动一次任务完成" class="headerlink" title="核心循环解析：QueryEngine 如何驱动一次任务完成"></a>核心循环解析：QueryEngine 如何驱动一次任务完成</h1><h2 id="QueryEngine-为什么是核心中的核心"><a href="#QueryEngine-为什么是核心中的核心" class="headerlink" title="QueryEngine 为什么是核心中的核心"></a><code>QueryEngine</code> 为什么是核心中的核心</h2><p>如果只能选一个文件代表 Claude Code 的灵魂，那大概率就是 <code>QueryEngine.ts</code>。</p>
+<p>因为它负责的不是某个局部能力，而是整个任务生命周期：</p>
+<ul>
+<li>接收用户输入</li>
+<li>组装上下文</li>
+<li>驱动模型调用</li>
+<li>处理中间工具执行</li>
+<li>维护会话状态</li>
+<li>把任务一直推进到结束</li>
+</ul>
+<p>这就是典型的 Agent 主循环。</p>
+<h2 id="它管理的是“会话”，不是“一次请求”"><a href="#它管理的是“会话”，不是“一次请求”" class="headerlink" title="它管理的是“会话”，不是“一次请求”"></a>它管理的是“会话”，不是“一次请求”</h2><p>源码中的注释已经把定位写得很明确：</p>
+<blockquote>
+<p>One QueryEngine per conversation.</p>
+</blockquote>
+<p>这句话很关键。<br>说明 <code>QueryEngine</code> 不是一次性 request handler，而是一个围绕会话长期存在的对象。</p>
+<p>因此它会保留很多跨轮次状态，例如：</p>
+<ul>
+<li><code>mutableMessages</code></li>
+<li><code>permissionDenials</code></li>
+<li><code>readFileState</code></li>
+<li><code>totalUsage</code></li>
+<li>发现过的 skill 名称</li>
+<li>已加载的 memory 路径</li>
+</ul>
+<p>这也是 Claude Code 能连续工作的基础。</p>
+<h3 id="对应源码片段"><a href="#对应源码片段" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">QueryEngine</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">mutableMessages</span>: <span class="title class_">Message</span>[]</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">abortController</span>: <span class="title class_">AbortController</span></span><br><span class="line">  <span class="keyword">private</span> <span class="attr">permissionDenials</span>: <span class="title class_">SDKPermissionDenial</span>[]</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">totalUsage</span>: <span class="title class_">NonNullableUsage</span></span><br><span class="line">  <span class="keyword">private</span> <span class="attr">readFileState</span>: <span class="title class_">FileStateCache</span></span><br><span class="line">  <span class="keyword">private</span> discoveredSkillNames = <span class="keyword">new</span> <span class="title class_">Set</span>&lt;<span class="built_in">string</span>&gt;()</span><br><span class="line">  <span class="keyword">private</span> loadedNestedMemoryPaths = <span class="keyword">new</span> <span class="title class_">Set</span>&lt;<span class="built_in">string</span>&gt;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只看成员变量就能看出，它明显是“会话对象”：</p>
+<ul>
+<li>有消息历史</li>
+<li>有权限拒绝记忆</li>
+<li>有 usage 累计</li>
+<li>有文件缓存</li>
+<li>有 skill &#x2F; memory 发现状态</li>
+</ul>
+<p>这就决定了它天然跨轮次存在。</p>
+<h2 id="这里最容易被忽略的一点"><a href="#这里最容易被忽略的一点" class="headerlink" title="这里最容易被忽略的一点"></a>这里最容易被忽略的一点</h2><p>很多人会把主循环理解成“while 模型没结束就继续”。<br>但 Claude Code 里的主循环远不止如此，它还要同时处理：</p>
+<ul>
+<li>会话历史的追加与标准化</li>
+<li>工具调用前后的权限判断</li>
+<li>部分输出和最终输出的区分</li>
+<li>usage、成本和预算更新</li>
+<li>中断、恢复、压缩等运行时边界</li>
+</ul>
+<p>所以 <code>QueryEngine</code> 更像“编排层”，而不是简单循环。</p>
+<h2 id="submitMessage-是真正的任务入口"><a href="#submitMessage-是真正的任务入口" class="headerlink" title="submitMessage() 是真正的任务入口"></a><code>submitMessage()</code> 是真正的任务入口</h2><p>用户每提交一次消息，最终都会进入 <code>submitMessage()</code>。<br>这里可以把一次任务粗略拆成下面几段：</p>
+<ol>
+<li>读取当前配置和状态</li>
+<li>设置工作目录与 session 环境</li>
+<li>包装工具权限判断逻辑</li>
+<li>准备系统提示词与上下文</li>
+<li>调用底层 query 流程与模型交互</li>
+<li>在模型输出过程中处理工具调用和消息追加</li>
+<li>统计 usage、成本、边界状态</li>
+</ol>
+<p>所以 <code>submitMessage()</code> 本质上就是“启动一轮 agent run”。</p>
+<h3 id="对应源码片段-1"><a href="#对应源码片段-1" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> *<span class="title function_">submitMessage</span>(</span><br><span class="line">  <span class="attr">prompt</span>: <span class="built_in">string</span> | <span class="title class_">ContentBlockParam</span>[],</span><br><span class="line">  <span class="attr">options</span>?: &#123; <span class="attr">uuid</span>?: <span class="built_in">string</span>; <span class="attr">isMeta</span>?: <span class="built_in">boolean</span> &#125;,</span><br><span class="line">): <span class="title class_">AsyncGenerator</span>&lt;<span class="title class_">SDKMessage</span>, <span class="built_in">void</span>, <span class="built_in">unknown</span>&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123;</span><br><span class="line">    cwd,</span><br><span class="line">    commands,</span><br><span class="line">    tools,</span><br><span class="line">    mcpClients,</span><br><span class="line">    verbose = <span class="literal">false</span>,</span><br><span class="line">    thinkingConfig,</span><br><span class="line">    maxTurns,</span><br><span class="line">    maxBudgetUsd,</span><br><span class="line">  &#125; = <span class="variable language_">this</span>.<span class="property">config</span></span><br><span class="line"></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">discoveredSkillNames</span>.<span class="title function_">clear</span>()</span><br><span class="line">  <span class="title function_">setCwd</span>(cwd)</span><br><span class="line">  <span class="keyword">const</span> persistSession = !<span class="title function_">isSessionPersistenceDisabled</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码很能说明 <code>submitMessage()</code> 的定位：</p>
+<ul>
+<li>它不是只接收 <code>prompt</code></li>
+<li>它会同时读取 tools、commands、mcpClients、budget、thinking 等运行时资源</li>
+<li>它一开始就会处理 cwd 和 session 级状态</li>
+</ul>
+<p>所以它本质上是在开启一次完整任务，而不是发一个普通 API 请求。</p>
+<h2 id="它不是只管模型，还要管工具调用结果回流"><a href="#它不是只管模型，还要管工具调用结果回流" class="headerlink" title="它不是只管模型，还要管工具调用结果回流"></a>它不是只管模型，还要管工具调用结果回流</h2><p>这类系统最关键的一点，是模型和工具之间必须形成闭环。</p>
+<p>Claude Code 里这条闭环大致是：</p>
+<ol>
+<li>模型根据系统提示与历史消息作出决策</li>
+<li>决策可能包含工具调用</li>
+<li>工具调用前先经过权限判断</li>
+<li>工具执行后把结果转成消息</li>
+<li>这些消息再次进入会话历史</li>
+<li>模型根据新结果继续下一轮</li>
+</ol>
+<p>也就是说，<code>QueryEngine</code> 不是简单地“把工具借给模型”，而是在负责整个闭环编排。</p>
+<h2 id="这条闭环为什么重要"><a href="#这条闭环为什么重要" class="headerlink" title="这条闭环为什么重要"></a>这条闭环为什么重要</h2><p>因为只有形成闭环，系统才具备真正的纠错能力。</p>
+<p>举个最简单的例子：</p>
+<ol>
+<li>模型先猜某个 bug 在 <code>api.ts</code></li>
+<li>读取文件后发现判断不成立</li>
+<li>再搜索相关调用点</li>
+<li>最后才定位到真实问题</li>
+</ol>
+<p>如果没有“工具结果回流再决策”的循环，这种过程根本不可能发生。</p>
+<h2 id="为什么它要持有这么多上下文对象"><a href="#为什么它要持有这么多上下文对象" class="headerlink" title="为什么它要持有这么多上下文对象"></a>为什么它要持有这么多上下文对象</h2><p><code>QueryEngineConfig</code> 里能看到它依赖非常多资源：</p>
+<ul>
+<li>tools</li>
+<li>commands</li>
+<li>mcpClients</li>
+<li>agents</li>
+<li>getAppState &#x2F; setAppState</li>
+<li>readFileCache</li>
+<li>thinkingConfig</li>
+<li>budget 限制</li>
+<li>customSystemPrompt</li>
+</ul>
+<p>这说明它不是一个纯函数式的执行器，而是会话运行时的调度中心。</p>
+<p>换句话说，Claude Code 的大部分高级能力，最终都会在这里汇流。</p>
+<h3 id="对应源码片段-2"><a href="#对应源码片段-2" class="headerlink" title="对应源码片段"></a>对应源码片段</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">QueryEngineConfig</span> = &#123;</span><br><span class="line">  <span class="attr">cwd</span>: <span class="built_in">string</span></span><br><span class="line">  <span class="attr">tools</span>: <span class="title class_">Tools</span></span><br><span class="line">  <span class="attr">commands</span>: <span class="title class_">Command</span>[]</span><br><span class="line">  <span class="attr">mcpClients</span>: <span class="title class_">MCPServerConnection</span>[]</span><br><span class="line">  <span class="attr">agents</span>: <span class="title class_">AgentDefinition</span>[]</span><br><span class="line">  <span class="attr">canUseTool</span>: <span class="title class_">CanUseToolFn</span></span><br><span class="line">  <span class="attr">getAppState</span>: <span class="function">() =&gt;</span> <span class="title class_">AppState</span></span><br><span class="line">  <span class="attr">setAppState</span>: <span class="function">(<span class="params"><span class="attr">f</span>: (prev: AppState) =&gt; <span class="title class_">AppState</span></span>) =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  <span class="attr">readFileCache</span>: <span class="title class_">FileStateCache</span></span><br><span class="line">  <span class="attr">customSystemPrompt</span>?: <span class="built_in">string</span></span><br><span class="line">  <span class="attr">appendSystemPrompt</span>?: <span class="built_in">string</span></span><br><span class="line">  <span class="attr">thinkingConfig</span>?: <span class="title class_">ThinkingConfig</span></span><br><span class="line">  <span class="attr">maxTurns</span>?: <span class="built_in">number</span></span><br><span class="line">  <span class="attr">maxBudgetUsd</span>?: <span class="built_in">number</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>QueryEngineConfig</code> 几乎可以被看成 Claude Code 主循环的依赖总表。<br>它把模型循环真正依赖的外部世界，都显式列出来了。</p>
+<h2 id="从架构关系上看它处在什么位置"><a href="#从架构关系上看它处在什么位置" class="headerlink" title="从架构关系上看它处在什么位置"></a>从架构关系上看它处在什么位置</h2><h2 id="它处理的不只是成功路径"><a href="#它处理的不只是成功路径" class="headerlink" title="它处理的不只是成功路径"></a>它处理的不只是成功路径</h2><p>源码里还能看到很多防护性逻辑：</p>
+<ul>
+<li><code>abortController</code></li>
+<li><code>orphanedPermission</code></li>
+<li><code>snipReplay</code></li>
+<li>usage 统计</li>
+<li>API 错误分类</li>
+<li>permission denial 跟踪</li>
+</ul>
+<p>这说明 Claude Code 的主循环不是理想化 demo，而是一个必须应对长会话、中断、失败、压缩、恢复等现实问题的工程实现。</p>
+<h2 id="一次任务结束后，哪些状态还会留下来"><a href="#一次任务结束后，哪些状态还会留下来" class="headerlink" title="一次任务结束后，哪些状态还会留下来"></a>一次任务结束后，哪些状态还会留下来</h2><p>这是会话型 Agent 和一次性脚本最大的区别之一。<br>任务完成后，至少还有这些东西会保留在会话里：</p>
+<ul>
+<li>消息历史</li>
+<li>已知权限拒绝信息</li>
+<li>文件读取缓存</li>
+<li>usage 统计</li>
+<li>某些 memory &#x2F; skill 发现状态</li>
+</ul>
+<p>这也是为什么下一轮任务能“接着上轮继续聊”。</p>
+<h2 id="一个更准确的心智模型"><a href="#一个更准确的心智模型" class="headerlink" title="一个更准确的心智模型"></a>一个更准确的心智模型</h2><p>理解 <code>QueryEngine</code>，最好的方式不是把它看成“请求处理器”，而是把它看成：</p>
+<blockquote>
+<p>Claude Code 会话级运行时中的任务编排器。</p>
+</blockquote>
+<p>它向上连接用户输入和 REPL，向下连接模型、工具、权限、上下文与状态系统。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果说 <code>main.tsx</code> 决定“这次会话怎么启动”，那 <code>QueryEngine.ts</code> 决定的就是：</p>
+<blockquote>
+<p>这次任务接下来到底怎样一步一步做完。</p>
+</blockquote>
+<p>所以真正理解 Claude Code，绕不过 <code>QueryEngine</code>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/">https://hzhzxfs.github.io/2026/06/09/06__%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine_%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/10/07__Claude_Code_%E7%9A%84%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/" title="Claude Code 的提示词工程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code 的提示词工程</div></div><div class="info-2"><div class="info-item-1">Claude Code 的提示词工程不要把 Claude Code 的 prompt 理解成“一大段总提示词”很多人第一次研究 Claude Code，都会先找那段“终极 system prompt”。但源码里真正存在的，不是一条 prompt，而是一整套分层装配的提示词系统 。 Claude Code 至少同时存在这几类 prompt：  会话级 system prompt 运行时动态追加的 prompt section 工具级 prompt 专项子系统 prompt 多 Agent &#x2F; teammate 模式下的附加 prompt  也就是说，Claude Code 的 prompt 工程不是“写一段厉害的话”，而是“把不同职责的提示词放到不同层，再按运行时状态拼起来”。 一张图看懂 Claude Code 的提示词体系第一层：主会话的 System PromptClaude Code 最核心的 prompt 入口在 constants/prompts.ts。 源码里最醒目的一段是： 12345678910function getSimpleIntroSection...</div></div></div></a><a class="pagination-related" href="/2026/06/08/05__%E5%A6%82%E6%9E%9C%E4%BD%A0%E6%83%B3%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%80%E4%B8%AA_Claude_Code%EF%BC%8C%E9%9C%80%E8%A6%81%E5%93%AA%E4%BA%9B%E6%A8%A1%E5%9D%97/" title="如果你想自己做一个 Claude Code，需要哪些模块"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">如果你想自己做一个 Claude Code，需要哪些模块</div></div><div class="info-2"><div class="info-item-1">如果你想自己做一个 Claude Code，需要哪些模块先说结论：别从“聊天 + 几个工具”开始想很多人研究 Claude Code 源码之后，第一反应是：“我是不是也能自己做一个类似的系统？” 可以，但前提是你要先放弃一个误区：  不要把它理解成“模型 + function calling + terminal UI”。  从源码看，一个像样的 Claude Code，至少需要一整套运行时模块。 先看最小完整架构图模块 1：入口与交互层你至少需要一个明确的运行宿主：  命令行 TUI IDE 插件 Web UI  Claude Code 选的是终端 + React Ink。这不是唯一选择，但你必须先有一个稳定的交互外壳。 模块 2：会话主循环这一层对应 Claude Code 的 QueryEngine.ts。没有它，你就只有零散 API 调用，无法形成真正任务闭环。 主循环至少要负责：  消息历史 模型调用 工具调用 结果回流 中断与预算 会话状态延续  模块 3：统一工具协议这层对应 Tool.ts。如果没有统一工具协议，系统很快会出现：  每个工具输入格式不一致 权限难统...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/07/01/24__TodoWriteTool%EF%BC%9A%E5%BE%85%E5%8A%9E%E6%B8%85%E5%8D%95/" title="TodoWriteTool：待办清单"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-01</div><div class="info-item-2">TodoWriteTool：待办清单</div></div><div class="info-2"><div class="info-item-1">TodoWriteTool：待办清单它不是普通 checklist，而是会话内任务外显TodoWriteTool 是 Claude Code 经典的轻量任务管理工具。它的作用不是替代正式任务系统，而是让模型在当前会话里把工作拆成一串可见的 todo。 你可以把它理解成：  TodoWriteTool：轻量、会话内、快速追踪 TaskCreateTool 系列：结构化、正式任务系统  关键源码tools/TodoWriteTool/TodoWriteTool.ts： 123const inputSchema = z.strictObject(&#123;  todos: TodoListSchema().describe(&#x27;The updated todo list&#x27;),&#125;)  而真正的状态写回是： 1234567context.setAppState(prev =&gt; (&#123;  ...prev,  todos: &#123;    ...prev.todos,    [todoKey]: newTodos,  &#125;,&#125;)...</div></div></div></a><a class="pagination-related" href="/2026/03/02/mcp/" title="mcp"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-02</div><div class="info-item-2">mcp</div></div><div class="info-2"><div class="info-item-1">通过 MCP 将 Claude Code 连接到工具 了解如何使用 Model Context Protocol 将 Claude Code 连接到您的工具。  Claude Code 可以通过 Model Context Protocol (MCP)（一个用于 AI 工具集成的开源标准）连接到数百个外部工具和数据源。MCP 服务器为 Claude Code 提供对您的工具、数据库和 API 的访问权限。 当您发现自己从另一个工具（如问题跟踪器或监控仪表板）复制数据到聊天中时，请连接一个服务器。连接后，Claude 可以直接读取和操作该系统，而不是从您粘贴的内容中工作。 如果您是第一次连接服务器，请从 MCP 快速入门 开始，获取分步演练。本页面是完整参考。 使用 MCP 可以做什么连接 MCP 服务器后，您可以要求 Claude Code：  从问题跟踪器实现功能：”添加 JIRA 问题 ENG-4521 中描述的功能，并在 GitHub 上创建 PR。” 分析监控数据：”检查 Sentry 和 Statsig 以检查 ENG-4521 中描述的功能的使用情况。” 查询数据库：...</div></div></div></a><a class="pagination-related" href="/2026/04/12/computer-use/" title="computer-use"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-12</div><div class="info-item-2">computer-use</div></div><div class="info-2"><div class="info-item-1">让 Claude 从 CLI 使用您的计算机 在 Claude Code CLI 中启用 computer use，使 Claude 能够在 macOS 上打开应用、点击、输入和查看您的屏幕。测试原生应用、调试视觉问题，以及自动化仅限 GUI 的工具，无需离开您的终端。     {/* plan-availability: feature=computer-use plans=pro,max */}    Computer use 是 macOS 上的研究预览版，需要 Pro 或 Max 计划。它在 Team 或 Enterprise 计划上不可用。它需要 Claude Code v2.1.85 或更高版本以及交互式会话，因此在使用 -p 标志的非交互式模式下不可用。 Computer use 让 Claude 能够打开应用、控制您的屏幕，并以您的方式在您的机器上工作。从 CLI 中，Claude 可以编译 Swift 应用、启动它、点击每个按钮，并截图结果，所有这些都在编写代码的同一对话中进行。 本页面介绍 computer use 在 CLI 中的工作原理。对于 macOS ...</div></div></div></a><a class="pagination-related" href="/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/" title="状态管理解析：AppStateStore 里到底保存了什么"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-16</div><div class="info-item-2">状态管理解析：AppStateStore 里到底保存了什么</div></div><div class="info-2"><div class="info-item-1">状态管理解析：AppStateStore 里到底保存了什么Claude Code 不是一次性脚本，而是长期运行界面只要看 state/AppStateStore.ts，你就会立刻意识到一件事：Claude Code 绝不是一个“执行一下就退出”的普通 CLI。 它内部维护了大量 UI 与会话态数据，这说明它本质上是一个终端应用。 这里保存的状态远比你想象的多AppState 里能看到很多类型的信息：  当前 settings、model、verbose、状态栏文本 工具权限上下文 任务列表与前台任务 MCP 客户端、工具、命令、资源 插件启用状态和错误 通知队列与 elicitation 队列 远程连接状态 prompt suggestion、thinking、session hooks Todo、attribution、file history Companion、tmux、browser panel 等界面状态  这已经不是简单的“页面状态”，而是完整运行时状态。 为什么终端程序会需要这么重的状态因为 Claude Code 不只是显示文本，它还要同时协调很多异步对象：  模...</div></div></div></a><a class="pagination-related" href="/2026/04/06/chrome/" title="chrome"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="info-item-2">chrome</div></div><div class="info-2"><div class="info-item-1">在 Chrome 中使用 Claude Code（测试版） 将 Claude Code 连接到 Chrome 浏览器，以测试网络应用、使用控制台日志进行调试、自动填充表单以及从网页中提取数据。  Claude Code 与 Claude in Chrome 浏览器扩展程序 集成，为您提供从 CLI 或 VS Code 扩展程序 进行浏览器自动化的功能。构建您的代码，然后在浏览器中测试和调试，无需切换上下文。 Claude 为浏览器任务打开新标签页，并共享您浏览器的登录状态，因此它可以访问您已登录的任何网站。浏览器操作在实时可见的 Chrome 窗口中运行。当 Claude 遇到登录页面或 CAPTCHA 时，它会暂停并要求您手动处理。    Chrome 集成处于测试版阶段，目前适用于 Google Chrome 和 Microsoft Edge。尚不支持 Brave、Arc 或其他基于 Chromium 的浏览器。也不支持 WSL（Windows 子系统 for Linux）。   功能连接 Chrome 后，您可以在单个工作流中链接浏览器操作和编码任务：  实时调试：直接读取...</div></div></div></a><a class="pagination-related" href="/2026/07/04/27__EnterPlanModeTool%EF%BC%9A%E8%BF%9B%E5%85%A5_Plan_Mode/" title="EnterPlanModeTool：进入 Plan Mode"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-04</div><div class="info-item-2">EnterPlanModeTool：进入 Plan Mode</div></div><div class="info-2"><div class="info-item-1">EnterPlanModeTool：进入 Plan Mode它的本质是状态切换，不是提示词切换EnterPlanModeTool 的作用不是“让模型多想一会儿”，而是把当前会话切到一种新的运行状态：plan。 这意味着系统会同时改变：  权限模式 会话目标 用户交互预期  所以它本质上是一个 运行时状态切换工具 。 关键源码tools/EnterPlanModeTool/EnterPlanModeTool.ts： 123import &#123; handlePlanModeTransition &#125; from &#x27;../../bootstrap/state.js&#x27;import &#123; applyPermissionUpdate &#125; from &#x27;../../utils/permissions/PermissionUpdate.js&#x27;import &#123; prepareContextForPlanMode &#125; from &#x27;../../utils/permissions/permissionSet...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%BE%AA%E7%8E%AF%E8%A7%A3%E6%9E%90%EF%BC%9AQueryEngine-%E5%A6%82%E4%BD%95%E9%A9%B1%E5%8A%A8%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90"><span class="toc-number">1.</span> <span class="toc-text">核心循环解析：QueryEngine 如何驱动一次任务完成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#QueryEngine-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E6%A0%B8%E5%BF%83%E4%B8%AD%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="toc-number">1.1.</span> <span class="toc-text">QueryEngine 为什么是核心中的核心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E7%AE%A1%E7%90%86%E7%9A%84%E6%98%AF%E2%80%9C%E4%BC%9A%E8%AF%9D%E2%80%9D%EF%BC%8C%E4%B8%8D%E6%98%AF%E2%80%9C%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E2%80%9D"><span class="toc-number">1.2.</span> <span class="toc-text">它管理的是“会话”，不是“一次请求”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5"><span class="toc-number">1.2.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E6%9C%80%E5%AE%B9%E6%98%93%E8%A2%AB%E5%BF%BD%E7%95%A5%E7%9A%84%E4%B8%80%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">这里最容易被忽略的一点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#submitMessage-%E6%98%AF%E7%9C%9F%E6%AD%A3%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%85%A5%E5%8F%A3"><span class="toc-number">1.4.</span> <span class="toc-text">submitMessage() 是真正的任务入口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E6%98%AF%E5%8F%AA%E7%AE%A1%E6%A8%A1%E5%9E%8B%EF%BC%8C%E8%BF%98%E8%A6%81%E7%AE%A1%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E7%BB%93%E6%9E%9C%E5%9B%9E%E6%B5%81"><span class="toc-number">1.5.</span> <span class="toc-text">它不是只管模型，还要管工具调用结果回流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E6%9D%A1%E9%97%AD%E7%8E%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81"><span class="toc-number">1.6.</span> <span class="toc-text">这条闭环为什么重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E8%A6%81%E6%8C%81%E6%9C%89%E8%BF%99%E4%B9%88%E5%A4%9A%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.7.</span> <span class="toc-text">为什么它要持有这么多上下文对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%BA%94%E6%BA%90%E7%A0%81%E7%89%87%E6%AE%B5-2"><span class="toc-number">1.7.1.</span> <span class="toc-text">对应源码片段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%9E%B6%E6%9E%84%E5%85%B3%E7%B3%BB%E4%B8%8A%E7%9C%8B%E5%AE%83%E5%A4%84%E5%9C%A8%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.8.</span> <span class="toc-text">从架构关系上看它处在什么位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%A4%84%E7%90%86%E7%9A%84%E4%B8%8D%E5%8F%AA%E6%98%AF%E6%88%90%E5%8A%9F%E8%B7%AF%E5%BE%84"><span class="toc-number">1.9.</span> <span class="toc-text">它处理的不只是成功路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9D%9F%E5%90%8E%EF%BC%8C%E5%93%AA%E4%BA%9B%E7%8A%B6%E6%80%81%E8%BF%98%E4%BC%9A%E7%95%99%E4%B8%8B%E6%9D%A5"><span class="toc-number">1.10.</span> <span class="toc-text">一次任务结束后，哪些状态还会留下来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%87%86%E7%A1%AE%E7%9A%84%E5%BF%83%E6%99%BA%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.11.</span> <span class="toc-text">一个更准确的心智模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

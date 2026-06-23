@@ -1,0 +1,211 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>状态管理解析：AppStateStore 里到底保存了什么 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="状态管理解析：AppStateStore 里到底保存了什么Claude Code 不是一次性脚本，而是长期运行界面只要看 state&#x2F;AppStateStore.ts，你就会立刻意识到一件事：Claude Code 绝不是一个“执行一下就退出”的普通 CLI。 它内部维护了大量 UI 与会话态数据，这说明它本质上是一个终端应用。 这里保存的状态远比你想象的多AppState 里能看到很多类型的信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="状态管理解析：AppStateStore 里到底保存了什么">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="状态管理解析：AppStateStore 里到底保存了什么Claude Code 不是一次性脚本，而是长期运行界面只要看 state&#x2F;AppStateStore.ts，你就会立刻意识到一件事：Claude Code 绝不是一个“执行一下就退出”的普通 CLI。 它内部维护了大量 UI 与会话态数据，这说明它本质上是一个终端应用。 这里保存的状态远比你想象的多AppState 里能看到很多类型的信息">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-07-16T01:12:24.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.388Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "状态管理解析：AppStateStore 里到底保存了什么",
+  "url": "https://hzhzxfs.github.io/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-07-16T01:12:24.000Z",
+  "dateModified": "2026-06-23T05:18:13.388Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '状态管理解析：AppStateStore 里到底保存了什么',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">状态管理解析：AppStateStore 里到底保存了什么</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">状态管理解析：AppStateStore 里到底保存了什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-16T01:12:24.000Z" title="发表于 2026-07-16 09:12:24">2026-07-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.388Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="状态管理解析：AppStateStore-里到底保存了什么"><a href="#状态管理解析：AppStateStore-里到底保存了什么" class="headerlink" title="状态管理解析：AppStateStore 里到底保存了什么"></a>状态管理解析：AppStateStore 里到底保存了什么</h1><h2 id="Claude-Code-不是一次性脚本，而是长期运行界面"><a href="#Claude-Code-不是一次性脚本，而是长期运行界面" class="headerlink" title="Claude Code 不是一次性脚本，而是长期运行界面"></a>Claude Code 不是一次性脚本，而是长期运行界面</h2><p>只要看 <code>state/AppStateStore.ts</code>，你就会立刻意识到一件事：<br>Claude Code 绝不是一个“执行一下就退出”的普通 CLI。</p>
+<p>它内部维护了大量 UI 与会话态数据，这说明它本质上是一个终端应用。</p>
+<h2 id="这里保存的状态远比你想象的多"><a href="#这里保存的状态远比你想象的多" class="headerlink" title="这里保存的状态远比你想象的多"></a>这里保存的状态远比你想象的多</h2><p><code>AppState</code> 里能看到很多类型的信息：</p>
+<ul>
+<li>当前 settings、model、verbose、状态栏文本</li>
+<li>工具权限上下文</li>
+<li>任务列表与前台任务</li>
+<li>MCP 客户端、工具、命令、资源</li>
+<li>插件启用状态和错误</li>
+<li>通知队列与 elicitation 队列</li>
+<li>远程连接状态</li>
+<li>prompt suggestion、thinking、session hooks</li>
+<li>Todo、attribution、file history</li>
+<li>Companion、tmux、browser panel 等界面状态</li>
+</ul>
+<p>这已经不是简单的“页面状态”，而是完整运行时状态。</p>
+<h2 id="为什么终端程序会需要这么重的状态"><a href="#为什么终端程序会需要这么重的状态" class="headerlink" title="为什么终端程序会需要这么重的状态"></a>为什么终端程序会需要这么重的状态</h2><p>因为 Claude Code 不只是显示文本，它还要同时协调很多异步对象：</p>
+<ul>
+<li>模型响应流</li>
+<li>工具执行</li>
+<li>背景任务</li>
+<li>权限弹窗</li>
+<li>MCP 连接</li>
+<li>插件刷新</li>
+<li>远程桥接</li>
+<li>通知与提示</li>
+</ul>
+<p>如果没有统一状态中心，这类系统会非常容易失控。</p>
+<h2 id="AppStateStore-的真正作用"><a href="#AppStateStore-的真正作用" class="headerlink" title="AppStateStore 的真正作用"></a><code>AppStateStore</code> 的真正作用</h2><p>可以把它理解为 Claude Code 交互层的总线：</p>
+<ul>
+<li>上层 UI 从这里读当前状态</li>
+<li>下层工具和服务往这里写状态变化</li>
+<li>某些跨模块能力通过它共享会话级信息</li>
+</ul>
+<p>也就是说，它不是一个被动数据容器，而是终端应用稳定运转的基础设施。</p>
+<h2 id="这也解释了-Claude-Code-为什么能做复杂交互"><a href="#这也解释了-Claude-Code-为什么能做复杂交互" class="headerlink" title="这也解释了 Claude Code 为什么能做复杂交互"></a>这也解释了 Claude Code 为什么能做复杂交互</h2><p>很多高级交互能力，本质上都依赖统一状态管理：</p>
+<ul>
+<li>同时存在多个任务和前后台切换</li>
+<li>在 REPL 里显示不同面板</li>
+<li>远程会话连接状态实时更新</li>
+<li>插件安装状态可追踪</li>
+<li>MCP 资源、工具、命令动态变化</li>
+</ul>
+<p>这些体验的背后，都离不开 <code>AppState</code> 的组织。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>AppStateStore.ts</code> 传达出的一个重要信号是：</p>
+<blockquote>
+<p>Claude Code 不是“命令行里的模型调用器”，而是一个状态复杂、交互丰富、长期驻留的终端应用。</p>
+</blockquote>
+<p>理解这一点，很多看似“为什么这里这么重”的设计就都说得通了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/">https://hzhzxfs.github.io/2026/07/16/39__%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore_%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/17/40__%E6%9D%83%E9%99%90%E4%B8%8E%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88_Claude_Code_%E4%B8%8D%E4%BC%9A%E6%97%A0%E8%84%91%E4%B9%B1%E8%B7%91/" title="权限与安全机制解析：为什么 Claude Code 不会无脑乱跑"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">权限与安全机制解析：为什么 Claude Code 不会无脑乱跑</div></div><div class="info-2"><div class="info-item-1">权限与安全机制解析：为什么 Claude Code 不会无脑乱跑真正可用的工程代理，必须先解决安全问题一旦一个 AI 系统能读写文件、执行命令、访问外部资源，安全问题就不再是附属功能，而是主功能的一部分。 Claude Code 在这件事上明显下了很大功夫。从 ToolPermissionContext、权限请求组件、规则过滤逻辑都能看出来，它不是事后补丁式安全，而是架构级安全。 权限不是单点判断，而是多层控制从源码结构看，Claude Code 的权限体系至少有几层：  当前 permission mode always allow &#x2F; deny &#x2F; ask 规则 工具级过滤 特定场景下自动拒绝或避免弹窗 对危险规则的剥离  也就是说，系统不是只有“执行前问一下”这么简单。 权限系统在架构里分布得很散，但目标很集中你会在多个位置看到权限相关代码：  ToolPermissionContext 各类 permission request 组件 工具过滤逻辑 某些自动模式与避免弹窗逻辑  虽然实现分散，但目标始终一致：  在不牺牲自动化价值的前提下，把危险动作控...</div></div></div></a><a class="pagination-related" href="/2026/07/15/38__LSPTool%EF%BC%9A%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%8E%A5%E5%85%A5/" title="LSPTool：语言服务接入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">LSPTool：语言服务接入</div></div><div class="info-2"><div class="info-item-1">LSPTool：语言服务接入它让 Claude Code 获得 IDE 级代码智能LSPTool 的意义不在于“又多了一个搜索工具”，而在于：  Claude Code 不再只依赖文本搜索，而是能调用语言服务器做语义级理解。  这让它可以做：  go to definition find references hover document symbol call hierarchy  也就是说，它已经接近 IDE 里的“代码智能”层。 关键源码tools/LSPTool/LSPTool.ts： 12345678910111213141516const inputSchema = z.strictObject(&#123;  operation: z.enum([    &#x27;goToDefinition&#x27;,    &#x27;findReferences&#x27;,    &#x27;hover&#x27;,    &#x27;documentSymbol&#x27;,    &#x27;workspaceSymbol&#x27;,    &#x27;goToI...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/07/05/28__ExitPlanModeTool%EF%BC%9A%E9%80%80%E5%87%BA_Plan_Mode/" title="ExitPlanModeTool：退出 Plan Mode"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-05</div><div class="info-item-2">ExitPlanModeTool：退出 Plan Mode</div></div><div class="info-2"><div class="info-item-1">ExitPlanModeTool：退出 Plan Mode它不是“结束规划”，而是“提交规划”ExitPlanModeTool 的名字容易让人误会。它真正做的并不是简单退出，而是：  当计划已经写好后，把计划提交给用户审批。  所以它代表的是 Plan Mode 的交付节点 ，不是随便离开规划态。 关键源码tools/ExitPlanModeTool/prompt.ts： 12Use this tool when you are in plan mode and have finished writing your planto the plan file and are ready for user approval.  这个 prompt 已经很明确了：  先写 plan file 再调用这个工具 让用户审批  调用链它和 AskUserQuestionTool 的边界这个边界 Anthropic 写得很死：  不确定需求：AskUserQuestionTool 计划写完求批准：ExitPlanModeTool  也就是说：  不要用普通提问工具去问“这个计划可以吗”  那是...</div></div></div></a><a class="pagination-related" href="/2026/04/05/channels/" title="channels"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-05</div><div class="info-item-2">channels</div></div><div class="info-2"><div class="info-item-1">使用 channels 将事件推送到运行中的会话 使用 channels 从 MCP 服务器将消息、警报和 webhooks 推送到您的 Claude Code 会话中。转发 CI 结果、聊天消息和监控事件，以便 Claude 在您离开时做出反应。     Channels 处于[研究预览](#research-preview)阶段，需要 Claude Code v2.1.80 或更高版本。它们需要通过 claude.ai 或控制台 API 密钥进行 Anthropic 身份验证，在 Amazon Bedrock、Google Vertex AI 或 Microsoft Foundry 上不可用。Team 和 Enterprise 组织必须[明确启用它们](#enterprise-controls)。   Channel 是一个 MCP 服务器，它将事件推送到您运行中的 Claude Code 会话中，以便 Claude 可以对您不在终端时发生的事情做出反应。Channels 可以是双向的：Claude 读取事件并通过同一 channel 回复，就像聊天桥接一样。事件仅在会话打开...</div></div></div></a><a class="pagination-related" href="/2026/06/20/17__FileEditTool%EF%BC%9A%E7%BC%96%E8%BE%91%E6%96%87%E4%BB%B6/" title="FileEditTool：编辑文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-20</div><div class="info-item-2">FileEditTool：编辑文件</div></div><div class="info-2"><div class="info-item-1">FileEditTool：编辑文件这个工具解决的不是“能改文件”，而是“怎么安全地改”FileEditTool 负责对已有文件做定点修改。在 Claude Code 里，它的价值从来不只是“替换一段字符串”，而是：  先确认文件读过 再确认文件没被别人改过 再确认当前编辑权限允许 最后才生成 patch 并写回  也就是说，FileEditTool 体现的是 Claude Code 的受控编辑模型 。 看源码，它的依赖明显比想象中重tools/FileEditTool/FileEditTool.ts： 12345import &#123; countLinesChanged &#125; from &#x27;../../utils/diff.js&#x27;import &#123; fetchSingleFileGitDiff &#125; from &#x27;../../utils/gitDiff.js&#x27;import &#123; checkWritePermissionForTool &#125; from &#x27;../../utils/permissi...</div></div></div></a><a class="pagination-related" href="/2026/03/21/troubleshooting/" title="troubleshooting"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-21</div><div class="info-item-2">troubleshooting</div></div><div class="info-2"><div class="info-item-1">故障排除 修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。  本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：    症状 转到    command not found、安装失败、PATH 问题、EACCES、TLS 错误 故障排除安装和登录   登录循环、OAuth 错误、403 Forbidden、”organization disabled”、Bedrock&#x2F;Vertex&#x2F;Foundry 凭据 故障排除安装和登录   设置未应用、hooks 未触发、MCP 服务器未加载 调试您的配置   API Error: 5xx、529 Overloaded、429、请求验证错误 错误参考   model not found 或 you may not have access to it 错误参考   VS Code 扩展未连接或未检测到 Claude VS Code 集成   JetBrains 插件或 IDE 未检测到 JetB...</div></div></div></a><a class="pagination-related" href="/2026/06/18/15__BashTool%EF%BC%9AShell_%E6%89%A7%E8%A1%8C%E5%99%A8/" title="BashTool：Shell 执行器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-18</div><div class="info-item-2">BashTool：Shell 执行器</div></div><div class="info-2"><div class="info-item-1">BashTool：Shell 执行器这个工具为什么是核心中的核心如果说 Read、Edit、Write 是 Claude Code 的精细手术刀，那 BashTool 就是它的重型工程机械。 它让 Claude Code 真正接入开发环境：  跑测试 跑构建 看 Git 状态 调用编译器、包管理器、脚本 启动开发服务 执行系统命令  没有 BashTool，Claude Code 顶多是一个“懂代码的文本编辑器”；有了它，Claude Code 才真正变成“能操作本地工程环境的 Agent”。 先看它依赖了多少子模块tools/BashTool/BashTool.tsx 的导入非常夸张，这本身就是一个信号：它绝不是简单 exec() 一下就结束。 123456import &#123; parseForSecurity &#125; from &#x27;../../utils/bash/ast.js&#x27;import &#123; bashToolHasPermission &#125; from &#x27;./bashPermissions.js&#x27;impor...</div></div></div></a><a class="pagination-related" href="/2026/04/07/claude-code-on-the-web/" title="claude-code-on-the-web"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-07</div><div class="info-item-2">claude-code-on-the-web</div></div><div class="info-2"><div class="info-item-1">在网络上使用 Claude Code 配置云环境、设置脚本、网络访问和 Docker，在 Anthropic 的沙箱中运行。使用 --remote 和 --teleport 在网络和终端之间移动会话。     Claude Code on the web 处于研究预览阶段，适用于 Pro、Max 和 Team 用户，以及拥有高级席位或 Chat + Claude Code 席位的 Enterprise 用户。   Claude Code on the web 在 claude.ai&#x2F;code 的 Anthropic 管理的云基础设施上运行任务。会话即使在关闭浏览器后也会持续，你可以从 Claude 移动应用监控它们。    初次使用 Claude Code on the web？从[入门](/zh-CN/web-quickstart)开始，连接你的 GitHub 账户并提交你的第一个任务。   本页涵盖：  GitHub 身份验证选项：两种连接 GitHub 的方式 云环境：哪些配置会保留、安装了哪些工具以及如何配置环境 设置脚本和依赖管理 网络访问：级别、代理和默认允...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%A7%A3%E6%9E%90%EF%BC%9AAppStateStore-%E9%87%8C%E5%88%B0%E5%BA%95%E4%BF%9D%E5%AD%98%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">状态管理解析：AppStateStore 里到底保存了什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code-%E4%B8%8D%E6%98%AF%E4%B8%80%E6%AC%A1%E6%80%A7%E8%84%9A%E6%9C%AC%EF%BC%8C%E8%80%8C%E6%98%AF%E9%95%BF%E6%9C%9F%E8%BF%90%E8%A1%8C%E7%95%8C%E9%9D%A2"><span class="toc-number">1.1.</span> <span class="toc-text">Claude Code 不是一次性脚本，而是长期运行界面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E4%BF%9D%E5%AD%98%E7%9A%84%E7%8A%B6%E6%80%81%E8%BF%9C%E6%AF%94%E4%BD%A0%E6%83%B3%E8%B1%A1%E7%9A%84%E5%A4%9A"><span class="toc-number">1.2.</span> <span class="toc-text">这里保存的状态远比你想象的多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BB%88%E7%AB%AF%E7%A8%8B%E5%BA%8F%E4%BC%9A%E9%9C%80%E8%A6%81%E8%BF%99%E4%B9%88%E9%87%8D%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">1.3.</span> <span class="toc-text">为什么终端程序会需要这么重的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AppStateStore-%E7%9A%84%E7%9C%9F%E6%AD%A3%E4%BD%9C%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">AppStateStore 的真正作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%B9%9F%E8%A7%A3%E9%87%8A%E4%BA%86-Claude-Code-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%81%9A%E5%A4%8D%E6%9D%82%E4%BA%A4%E4%BA%92"><span class="toc-number">1.5.</span> <span class="toc-text">这也解释了 Claude Code 为什么能做复杂交互</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

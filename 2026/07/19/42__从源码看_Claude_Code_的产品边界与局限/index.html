@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从源码看 Claude Code 的产品边界与局限 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="从源码看 Claude Code 的产品边界与局限看源码不只是为了赞叹，也要看边界Claude Code 很强，但研究一个系统如果只看它“做到了什么”，很容易失真。更有价值的做法，是同时看它：  为什么强 为什么要这么复杂 它的边界和代价是什么  第一条边界：它依然高度依赖工具与上下文从源码能看到，Claude Code 的很多能力来自：  工具系统 上下文注入 权限与状态管理 MCP &amp;#x2F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从源码看 Claude Code 的产品边界与局限">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="从源码看 Claude Code 的产品边界与局限看源码不只是为了赞叹，也要看边界Claude Code 很强，但研究一个系统如果只看它“做到了什么”，很容易失真。更有价值的做法，是同时看它：  为什么强 为什么要这么复杂 它的边界和代价是什么  第一条边界：它依然高度依赖工具与上下文从源码能看到，Claude Code 的很多能力来自：  工具系统 上下文注入 权限与状态管理 MCP &amp;#x2F">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-07-19T07:43:53.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.423Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从源码看 Claude Code 的产品边界与局限",
+  "url": "https://hzhzxfs.github.io/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-07-19T07:43:53.000Z",
+  "dateModified": "2026-06-23T05:18:13.423Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '从源码看 Claude Code 的产品边界与局限',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">从源码看 Claude Code 的产品边界与局限</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">从源码看 Claude Code 的产品边界与局限</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-19T07:43:53.000Z" title="发表于 2026-07-19 15:43:53">2026-07-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.423Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="从源码看-Claude-Code-的产品边界与局限"><a href="#从源码看-Claude-Code-的产品边界与局限" class="headerlink" title="从源码看 Claude Code 的产品边界与局限"></a>从源码看 Claude Code 的产品边界与局限</h1><h2 id="看源码不只是为了赞叹，也要看边界"><a href="#看源码不只是为了赞叹，也要看边界" class="headerlink" title="看源码不只是为了赞叹，也要看边界"></a>看源码不只是为了赞叹，也要看边界</h2><p>Claude Code 很强，但研究一个系统如果只看它“做到了什么”，很容易失真。<br>更有价值的做法，是同时看它：</p>
+<ul>
+<li>为什么强</li>
+<li>为什么要这么复杂</li>
+<li>它的边界和代价是什么</li>
+</ul>
+<h2 id="第一条边界：它依然高度依赖工具与上下文"><a href="#第一条边界：它依然高度依赖工具与上下文" class="headerlink" title="第一条边界：它依然高度依赖工具与上下文"></a>第一条边界：它依然高度依赖工具与上下文</h2><p>从源码能看到，Claude Code 的很多能力来自：</p>
+<ul>
+<li>工具系统</li>
+<li>上下文注入</li>
+<li>权限与状态管理</li>
+<li>MCP &#x2F; LSP &#x2F; 插件扩展</li>
+</ul>
+<p>这说明它的强，不是凭模型裸奔得来的。<br>反过来说，如果这些配套能力缺位，它的表现也会明显下降。</p>
+<p>也就是说，它不是“换个模型就能复制”。</p>
+<h2 id="第二条边界：复杂度非常高"><a href="#第二条边界：复杂度非常高" class="headerlink" title="第二条边界：复杂度非常高"></a>第二条边界：复杂度非常高</h2><p>只看几个核心文件你就能感受到：</p>
+<ul>
+<li><code>main.tsx</code> 极重</li>
+<li><code>commands.ts</code> 极长</li>
+<li><code>AppState</code> 很复杂</li>
+<li>Bash &#x2F; 权限 &#x2F; 远程能力都有大量细节</li>
+</ul>
+<p>这说明 Claude Code 的代价之一，就是系统复杂度很高。<br>高复杂度带来的问题包括：</p>
+<ul>
+<li>维护成本高</li>
+<li>心智负担重</li>
+<li>功能之间更容易相互影响</li>
+</ul>
+<h2 id="第三条边界：安全不是可选项，而是持续负担"><a href="#第三条边界：安全不是可选项，而是持续负担" class="headerlink" title="第三条边界：安全不是可选项，而是持续负担"></a>第三条边界：安全不是可选项，而是持续负担</h2><p>越强的工具，越需要强的权限治理。<br>这点在 Claude Code 上尤其明显，因为它要面对：</p>
+<ul>
+<li>文件修改</li>
+<li>Shell 执行</li>
+<li>远程控制</li>
+<li>多 Agent 任务</li>
+</ul>
+<p>也就是说，Claude Code 的一个长期成本，就是必须不断维护安全边界。</p>
+<h2 id="第四条边界：不是所有问题都值得交给它"><a href="#第四条边界：不是所有问题都值得交给它" class="headerlink" title="第四条边界：不是所有问题都值得交给它"></a>第四条边界：不是所有问题都值得交给它</h2><p>从架构上看，Claude Code 很适合：</p>
+<ul>
+<li>工程任务拆解</li>
+<li>跨文件理解和修改</li>
+<li>在项目上下文中持续推进工作</li>
+</ul>
+<p>但它未必适合：</p>
+<ul>
+<li>极简单的一次性问答</li>
+<li>完全没有可执行环境的纯讨论</li>
+<li>缺乏明确边界的开放式探索</li>
+</ul>
+<p>也就是说，Claude Code 强在“工程闭环”，不一定强在所有交互形态。</p>
+<h2 id="第五条边界：产品能力和组织能力绑定得很深"><a href="#第五条边界：产品能力和组织能力绑定得很深" class="headerlink" title="第五条边界：产品能力和组织能力绑定得很深"></a>第五条边界：产品能力和组织能力绑定得很深</h2><p>像下面这些能力都说明 Claude Code 并不轻：</p>
+<ul>
+<li>Remote Session</li>
+<li>MCP</li>
+<li>LSP</li>
+<li>Plugins</li>
+<li>Skills</li>
+<li>Plan Mode</li>
+<li>Multi-Agent</li>
+</ul>
+<p>这意味着它不只是一个技术产品，更像一个长期演化的平台。<br>平台的好处是上限高，代价是决策和维护都更重。</p>
+<h2 id="这也是为什么它很难被“快速复刻”"><a href="#这也是为什么它很难被“快速复刻”" class="headerlink" title="这也是为什么它很难被“快速复刻”"></a>这也是为什么它很难被“快速复刻”</h2><p>很多人看到 Claude Code，会觉得“无非就是模型 + tools”。<br>但从源码看，这种判断明显低估了它。</p>
+<p>真正难的不是把工具接进去，而是把下面这些同时做稳：</p>
+<ul>
+<li>工具协议统一</li>
+<li>上下文治理</li>
+<li>权限系统</li>
+<li>状态系统</li>
+<li>远程和任务能力</li>
+<li>UI 与审批流程</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>从源码看，Claude Code 的产品边界可以总结成一句话：</p>
+<blockquote>
+<p>它强在工程闭环与平台化能力，但代价是系统复杂度、安全治理负担和运行时装配成本都非常高。</p>
+</blockquote>
+<p>这也是理解它时必须同时看到的另一面。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/">https://hzhzxfs.github.io/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MCP 与 LSP 集成</div></div><div class="info-2"><div class="info-item-1">MCP 与 LSP 集成先记住一句话如果说 Claude Code 的内置工具解决的是“我自己会什么”，那 MCP 解决的就是“我还能接入谁”。 很多人第一次接触 MCP，会把它理解成“插件协议”。 这个理解不能算错，但太浅了。从 Claude Code 源码来看，MCP 更像一层 外部能力接入总线 ：  外部工具可以接进来 外部资源可以接进来 外部 prompts 可以接进来 外部 skills 也可以接进来  真正重要的不是“又多了几个工具”，而是 Claude Code 的能力边界可以在运行时被重新扩展 。 Claude Code 里的 MCP，不只是调一个 server从源码看，Claude Code 对 MCP 做的事情远比“连上一个 server”多。 services/mcp/client.ts 负责的是完整的 MCP 客户端层，里面至少覆盖了这些事：  不同传输方式的连接 OAuth 和认证刷新 tools&#x2F;list 拉取 resources&#x2F;list 拉取 prompts&#x2F;list 拉取 工具调用时的重试和交互 资源工具注入 MCP...</div></div></div></a><a class="pagination-related" href="/2026/07/18/41__Claude_Code_%E7%9A%84_Plan_Mode_%E5%9C%A8%E6%9E%B6%E6%9E%84%E9%87%8C%E5%A4%84%E4%BA%8E%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/" title="Claude Code 的 Plan Mode 在架构里处于什么位置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code 的 Plan Mode 在架构里处于什么位置</div></div><div class="info-2"><div class="info-item-1">Claude Code 的 Plan Mode 在架构里处于什么位置Plan Mode 不是一个普通“模式切换按钮”很多人会把 Plan Mode 理解成：“先写计划，不直接写代码”的产品交互。但从源码看，它远不只是一个 UI 状态，而是贯穿：  工具系统 权限系统 会话状态 审批流  的一套架构能力。 先看它在工具层的存在方式在 tools.ts 里，Plan Mode 不是神秘隐藏能力，而是明确的工具： 123456789export function getAllBaseTools(): Tools &#123;  return [    ...    ExitPlanModeV2Tool,    ...    EnterPlanModeTool,    ...  ]&#125;  这说明 Plan Mode 的进入和退出，都是系统正式建模过的操作，而不是临时插进去的布尔开关。 先看整体关系图ExitPlanModeV2Tool 很能说明它的真正定位来看关键定义： 1234567891011121314export const ExitPlanModeV2Tool: Too...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/02/09/8.Skill%20with%20Claude%20Code%EF%BC%88%E5%9C%A8Claude%20Code%E4%BD%BF%E7%94%A8skills%EF%BC%89/" title="8.Skill with Claude Code（在Claude Code使用skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-09</div><div class="info-item-2">8.Skill with Claude Code（在Claude Code使用skills）</div></div><div class="info-2"><div class="info-item-1">Skill with Claude Code(熟练运用 Claude Code)引言Claude Code 是一个强大的智能体助手，它在您的终端中运行，擅长编码，但也能处理您可以通过命令行完成的任何任务，例如编写文档、运行构建、搜索文件、研究主题等。本教程将深入探讨 Claude Code 的工作原理、核心功能以及如何在 VS Code 中高效使用它。 Claude Code 工作原理当您给 Claude Code 一个任务时，它会经历三个阶段：收集上下文、采取行动和验证结果。这些阶段相互融合，Claude 在整个过程中使用工具，无论是搜索文件以理解您的代码，编辑文件以进行更改，还是运行测试以检查其工作。这个循环会根据您的需求进行调整。对代码库的提问可能只需要收集上下文。修复错误则会反复经历所有三个阶段。重构可能涉及广泛的验证。Claude 根据从上一步中学到的内容决定每一步需要什么，将数十个操作串联起来并在过程中进行纠正。您也是这个循环的一部分。您可以随时中断以引导 Claude 走向不同的方向，提供额外的上下文，或要求它尝试不同的方法。Claude 自主工作，但对您的输入保持...</div></div></div></a><a class="pagination-related" href="/2026/06/04/01__Claude_Code_%E6%BA%90%E7%A0%81%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B8%80%E8%A7%88/" title="Claude Code 源码核心概念一览"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-04</div><div class="info-item-2">Claude Code 源码核心概念一览</div></div><div class="info-2"><div class="info-item-1">Claude Code 源码核心概念一览为什么要先看概念很多人第一次看 Claude Code 源码时，会被一堆词反复轰炸：  QueryEngine Tool AppState Plan Mode MCP LSP Skills Agent  如果这些词没有先建立基本认知，后面看源码会非常容易迷路。 所以这篇文章的目标不是深入讲实现，而是先给你一张“核心概念地图”。 一张图先看整体关系1. QueryEngine这是 Claude Code 的核心引擎。你可以把它理解成整个任务循环的大脑调度器。 它负责：  接收用户输入 组织消息历史 调用模型 处理工具调用 把结果回流到下一轮  一句话理解：  QueryEngine 决定一项任务如何一轮一轮推进下去。  2. ToolTool 就是 Claude Code 让模型“真正动手”的方式。Claude 不只是输出文字，还可以通过 Tool：  读文件 改文件 跑命令 访问外部资源 进入 Plan Mode  一句话理解：  Tool 是 Claude Code 的执行接口层。  3. AppStateAppState 是终端界面的运...</div></div></div></a><a class="pagination-related" href="/2026/04/11/common-workflows/" title="common-workflows"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-11</div><div class="info-item-2">common-workflows</div></div><div class="info-2"><div class="info-item-1">常见工作流程 使用 Claude Code 探索代码库、修复错误、重构、测试和其他日常任务的分步指南。  本页收集了日常开发的简短工作流程。有关提示和上下文管理的更高级指导，请参阅最佳实践。 本页涵盖：  提示工作流程，用于探索代码、修复错误、重构、测试、PR 和文档 恢复以前的对话，以便任务可以跨越多个会话 使用 worktrees 运行并行会话，以便并发编辑不会冲突 编辑前规划，以在更改接触磁盘前审查更改 将研究委派给 subagents，以保持主上下文清洁 将 Claude 管道输入脚本，用于 CI 和批处理  提示工作流程这些是日常任务的提示模式，如探索陌生代码、调试、重构、编写测试和创建 PR。每个都可以在任何 Claude Code 界面中工作；根据您的项目调整措辞。 理解新的代码库有关在 monorepo 或大型代码库中配置 Claude Code 的信息，请参阅 Monorepos 和大型存储库。 快速获取代码库概览假设您刚加入一个新项目，需要快速了解其结构。         theme1cd /path/to/project             theme1...</div></div></div></a><a class="pagination-related" href="/2026/02/04/3.Why%20Use%20Skills%202%20-%20Agent%20and%20Skills%EF%BC%88%E4%BB%8EAgent%E8%A7%92%E5%BA%A6%E6%80%9D%E8%80%83Skills%EF%BC%89/" title="3.Why Use Skills 2 - Agent and Skills（从Agent角度思考Skills）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-04</div><div class="info-item-2">3.Why Use Skills 2 - Agent and Skills（从Agent角度思考Skills）</div></div><div class="info-2"><div class="info-item-1">第三节：Why Use Skills 2 - Agent and Skills（从 Agent 角度思考 Skills）Agent and Skills - 从 Agent 角度思考 Skills1 Why Agent + Skills?  结合过去对 Agents 的理解 | How we used to think about agents 编码 Agent | Coding Agent 研究 Agent | Research Agent 营销 Agent | Marketing Agent 金融 Agent | Finance Agent 通用型 Agent：代码是通用接口 | General-Purpose Agent: Code is the universal interface    2 Skills 作为 Agent 的武器我们可以把 Skills 作为 Agent 的武器，从 Agent 的功能思考 Skill 的方向 2.1 简单脚手架 bash：命令行执行能力 filesystem：文件系统操作能力  2.2 稳定可靠所需要稳定可靠地完成工作，还需要：  上...</div></div></div></a><a class="pagination-related" href="/2026/04/02/agent-view/" title="agent-view"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-02</div><div class="info-item-2">agent-view</div></div><div class="info-2"><div class="info-item-1">使用 agent view 管理多个代理 从一个屏幕调度和管理多个 Claude Code 会话。Agent view 显示每个会话正在做什么以及哪些会话需要你的输入。  Agent view 通过 claude agents 打开，是所有后台会话的一个屏幕：什么正在运行、什么需要你的输入、什么已完成。调度新会话，一目了然地查看它们的状态而不是滚动浏览记录，只在需要时才介入。每个后台会话都是一个完整的 Claude Code 对话，在没有终端连接的情况下继续运行，所以你可以随时打开它、回复并离开。     当你有多个独立任务 Claude 可以在不需要你观看每一步的情况下处理时，使用 agent view。调度一个 bug 修复、一个拉取请求审查和一个不稳定测试调查作为三行，在另一个窗口中继续工作，当一行显示它需要你或有结果时检查回来。 当你想在任何代理的会话中更直接地工作时，附加到该行以进入完整对话。 要比较 agent view 与 subagents、agent teams 和 worktrees，请参阅 并行运行代理。    Agent view 是研究预览版，需要 Cl...</div></div></div></a><a class="pagination-related" href="/2026/04/12/computer-use/" title="computer-use"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-12</div><div class="info-item-2">computer-use</div></div><div class="info-2"><div class="info-item-1">让 Claude 从 CLI 使用您的计算机 在 Claude Code CLI 中启用 computer use，使 Claude 能够在 macOS 上打开应用、点击、输入和查看您的屏幕。测试原生应用、调试视觉问题，以及自动化仅限 GUI 的工具，无需离开您的终端。     {/* plan-availability: feature=computer-use plans=pro,max */}    Computer use 是 macOS 上的研究预览版，需要 Pro 或 Max 计划。它在 Team 或 Enterprise 计划上不可用。它需要 Claude Code v2.1.85 或更高版本以及交互式会话，因此在使用 -p 标志的非交互式模式下不可用。 Computer use 让 Claude 能够打开应用、控制您的屏幕，并以您的方式在您的机器上工作。从 CLI 中，Claude 可以编译 Swift 应用、启动它、点击每个按钮，并截图结果，所有这些都在编写代码的同一对话中进行。 本页面介绍 computer use 在 CLI 中的工作原理。对于 macOS ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B-Claude-Code-%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90"><span class="toc-number">1.</span> <span class="toc-text">从源码看 Claude Code 的产品边界与局限</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%8B%E6%BA%90%E7%A0%81%E4%B8%8D%E5%8F%AA%E6%98%AF%E4%B8%BA%E4%BA%86%E8%B5%9E%E5%8F%B9%EF%BC%8C%E4%B9%9F%E8%A6%81%E7%9C%8B%E8%BE%B9%E7%95%8C"><span class="toc-number">1.1.</span> <span class="toc-text">看源码不只是为了赞叹，也要看边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%9D%A1%E8%BE%B9%E7%95%8C%EF%BC%9A%E5%AE%83%E4%BE%9D%E7%84%B6%E9%AB%98%E5%BA%A6%E4%BE%9D%E8%B5%96%E5%B7%A5%E5%85%B7%E4%B8%8E%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">1.2.</span> <span class="toc-text">第一条边界：它依然高度依赖工具与上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%9D%A1%E8%BE%B9%E7%95%8C%EF%BC%9A%E5%A4%8D%E6%9D%82%E5%BA%A6%E9%9D%9E%E5%B8%B8%E9%AB%98"><span class="toc-number">1.3.</span> <span class="toc-text">第二条边界：复杂度非常高</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%9D%A1%E8%BE%B9%E7%95%8C%EF%BC%9A%E5%AE%89%E5%85%A8%E4%B8%8D%E6%98%AF%E5%8F%AF%E9%80%89%E9%A1%B9%EF%BC%8C%E8%80%8C%E6%98%AF%E6%8C%81%E7%BB%AD%E8%B4%9F%E6%8B%85"><span class="toc-number">1.4.</span> <span class="toc-text">第三条边界：安全不是可选项，而是持续负担</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%9D%A1%E8%BE%B9%E7%95%8C%EF%BC%9A%E4%B8%8D%E6%98%AF%E6%89%80%E6%9C%89%E9%97%AE%E9%A2%98%E9%83%BD%E5%80%BC%E5%BE%97%E4%BA%A4%E7%BB%99%E5%AE%83"><span class="toc-number">1.5.</span> <span class="toc-text">第四条边界：不是所有问题都值得交给它</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E6%9D%A1%E8%BE%B9%E7%95%8C%EF%BC%9A%E4%BA%A7%E5%93%81%E8%83%BD%E5%8A%9B%E5%92%8C%E7%BB%84%E7%BB%87%E8%83%BD%E5%8A%9B%E7%BB%91%E5%AE%9A%E5%BE%97%E5%BE%88%E6%B7%B1"><span class="toc-number">1.6.</span> <span class="toc-text">第五条边界：产品能力和组织能力绑定得很深</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%B9%9F%E6%98%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E5%BE%88%E9%9A%BE%E8%A2%AB%E2%80%9C%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%BB%E2%80%9D"><span class="toc-number">1.7.</span> <span class="toc-text">这也是为什么它很难被“快速复刻”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

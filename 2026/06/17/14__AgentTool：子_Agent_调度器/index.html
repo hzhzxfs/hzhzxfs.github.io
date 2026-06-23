@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AgentTool：子 Agent 调度器 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="AgentTool：子 Agent 调度器这个工具到底解决什么问题AgentTool 是 Claude Code 最有代表性的工具之一。它解决的不是“读文件”或者“跑命令”这种单点能力，而是：  当主线程模型觉得一个任务太大、太杂、太适合并行时，如何把一部分工作拆给另一个 Agent 去做。  这也是 Claude Code 和普通代码助手的核心分水岭之一。很多 AI 工具只有一个主线程模型一直往">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AgentTool：子 Agent 调度器">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/17/14__AgentTool%EF%BC%9A%E5%AD%90_Agent_%E8%B0%83%E5%BA%A6%E5%99%A8/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="AgentTool：子 Agent 调度器这个工具到底解决什么问题AgentTool 是 Claude Code 最有代表性的工具之一。它解决的不是“读文件”或者“跑命令”这种单点能力，而是：  当主线程模型觉得一个任务太大、太杂、太适合并行时，如何把一部分工作拆给另一个 Agent 去做。  这也是 Claude Code 和普通代码助手的核心分水岭之一。很多 AI 工具只有一个主线程模型一直往">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-17T02:48:48.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.084Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AgentTool：子 Agent 调度器",
+  "url": "https://hzhzxfs.github.io/2026/06/17/14__AgentTool%EF%BC%9A%E5%AD%90_Agent_%E8%B0%83%E5%BA%A6%E5%99%A8/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-17T02:48:48.000Z",
+  "dateModified": "2026-06-23T05:18:13.084Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/17/14__AgentTool%EF%BC%9A%E5%AD%90_Agent_%E8%B0%83%E5%BA%A6%E5%99%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AgentTool：子 Agent 调度器',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">AgentTool：子 Agent 调度器</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AgentTool：子 Agent 调度器</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-17T02:48:48.000Z" title="发表于 2026-06-17 10:48:48">2026-06-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.084Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="AgentTool：子-Agent-调度器"><a href="#AgentTool：子-Agent-调度器" class="headerlink" title="AgentTool：子 Agent 调度器"></a>AgentTool：子 Agent 调度器</h1><h2 id="这个工具到底解决什么问题"><a href="#这个工具到底解决什么问题" class="headerlink" title="这个工具到底解决什么问题"></a>这个工具到底解决什么问题</h2><p><code>AgentTool</code> 是 Claude Code 最有代表性的工具之一。<br>它解决的不是“读文件”或者“跑命令”这种单点能力，而是：</p>
+<blockquote>
+<p>当主线程模型觉得一个任务太大、太杂、太适合并行时，如何把一部分工作拆给另一个 Agent 去做。</p>
+</blockquote>
+<p>这也是 Claude Code 和普通代码助手的核心分水岭之一。<br>很多 AI 工具只有一个主线程模型一直往下跑，而 Claude Code 明确支持：</p>
+<ul>
+<li>研究型子任务</li>
+<li>后台执行</li>
+<li>多 Agent 协作</li>
+<li>本地 &#x2F; 远程子 Agent</li>
+</ul>
+<h2 id="先看它的输入长什么样"><a href="#先看它的输入长什么样" class="headerlink" title="先看它的输入长什么样"></a>先看它的输入长什么样</h2><p><code>tools/AgentTool/AgentTool.tsx</code> 一上来就把核心参数暴露出来了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const baseInputSchema = z.object(&#123;</span><br><span class="line">  description: z.string().describe(&#x27;A short (3-5 word) description of the task&#x27;),</span><br><span class="line">  prompt: z.string().describe(&#x27;The task for the agent to perform&#x27;),</span><br><span class="line">  subagent_type: z.string().optional(),</span><br><span class="line">  model: z.enum([&#x27;sonnet&#x27;, &#x27;opus&#x27;, &#x27;haiku&#x27;]).optional(),</span><br><span class="line">  run_in_background: z.boolean().optional(),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这几个字段已经很说明它的定位：</p>
+<ul>
+<li><code>description</code>：给子任务一个简短标题</li>
+<li><code>prompt</code>：真正交给子 Agent 的工作内容</li>
+<li><code>subagent_type</code>：选择专门类型的 Agent</li>
+<li><code>model</code>：必要时换模型</li>
+<li><code>run_in_background</code>：放后台跑</li>
+</ul>
+<p>也就是说，<code>AgentTool</code> 本质上是一个<strong>任务派发器</strong> 。</p>
+<h2 id="它在工具池里的位置非常特殊"><a href="#它在工具池里的位置非常特殊" class="headerlink" title="它在工具池里的位置非常特殊"></a>它在工具池里的位置非常特殊</h2><p>在 Claude Code 的总工具池里，它被放在最前面：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">getAllBaseTools</span>(<span class="params"></span>): <span class="title class_">Tools</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> [</span><br><span class="line">    <span class="title class_">AgentTool</span>,</span><br><span class="line">    <span class="title class_">TaskOutputTool</span>,</span><br><span class="line">    <span class="title class_">BashTool</span>,</span><br><span class="line">    ...</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这不一定代表“最常调用”，但说明 Anthropic 把它视为第一层核心能力。<br>因为一旦有了 <code>AgentTool</code>，其他工具就不再只是“主线程自己用”，而是可以被子 Agent 继续调用。</p>
+<h2 id="一张图看它在系统里的位置"><a href="#一张图看它在系统里的位置" class="headerlink" title="一张图看它在系统里的位置"></a>一张图看它在系统里的位置</h2><h2 id="它不是“再开一个模型”这么简单"><a href="#它不是“再开一个模型”这么简单" class="headerlink" title="它不是“再开一个模型”这么简单"></a>它不是“再开一个模型”这么简单</h2><p>看 <code>AgentTool.tsx</code> 的导入就能看出来，这个工具背后其实串着很多子系统：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; enhanceSystemPromptWithEnvDetails, getSystemPrompt &#125; <span class="keyword">from</span> <span class="string">&#x27;../../constants/prompts.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; assembleToolPool &#125; <span class="keyword">from</span> <span class="string">&#x27;../../tools.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; runAgent &#125; <span class="keyword">from</span> <span class="string">&#x27;./runAgent.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; registerAsyncAgent &#125; <span class="keyword">from</span> <span class="string">&#x27;../../tasks/LocalAgentTask/LocalAgentTask.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; registerRemoteAgentTask &#125; <span class="keyword">from</span> <span class="string">&#x27;../../tasks/RemoteAgentTask/RemoteAgentTask.js&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这意味着 <code>AgentTool</code> 至少做了 4 件事：</p>
+<ol>
+<li>重新生成子 Agent 的 system prompt</li>
+<li>重新裁剪一套工具池</li>
+<li>决定是本地任务还是远程任务</li>
+<li>把子 Agent 挂到任务系统里</li>
+</ol>
+<p>所以它的真实含义更接近：</p>
+<blockquote>
+<p>用 Claude Code 的运行时框架，再启动一个受控的、带任务上下文的工作线程</p>
+</blockquote>
+<h2 id="子-Agent-为什么不会变成“失控副本”"><a href="#子-Agent-为什么不会变成“失控副本”" class="headerlink" title="子 Agent 为什么不会变成“失控副本”"></a>子 Agent 为什么不会变成“失控副本”</h2><p>这个问题很关键。<br>如果只是简单 fork 一个模型，系统很快就会失控。</p>
+<p>Claude Code 通过几层机制约束它：</p>
+<ul>
+<li>子 Agent 有自己的输入 schema</li>
+<li>子 Agent 会重新组装 prompt</li>
+<li>子 Agent 的工具池是单独过滤的</li>
+<li>子 Agent 会被挂进任务系统，支持状态、输出、停止、通知</li>
+</ul>
+<p>所以 <code>AgentTool</code> 不是一个“自由分身器”，而是一个<strong>受控派单器</strong> 。</p>
+<h2 id="调用链可以再细一点"><a href="#调用链可以再细一点" class="headerlink" title="调用链可以再细一点"></a>调用链可以再细一点</h2><h2 id="它和-Task-系统是强绑定的"><a href="#它和-Task-系统是强绑定的" class="headerlink" title="它和 Task 系统是强绑定的"></a>它和 Task 系统是强绑定的</h2><p>Claude Code 不是让子 Agent 偷偷在后台跑，而是把它们做成了正式任务：</p>
+<ul>
+<li>可查看输出</li>
+<li>可后台执行</li>
+<li>可停止</li>
+<li>可恢复</li>
+</ul>
+<p>这就是为什么 <code>AgentTool</code> 后面紧跟着就是 <code>TaskOutputTool</code>。<br>两者天然是一组：</p>
+<ul>
+<li><code>AgentTool</code> 负责派活</li>
+<li><code>TaskOutputTool</code> 负责取结果</li>
+</ul>
+<h2 id="真实使用路径是什么"><a href="#真实使用路径是什么" class="headerlink" title="真实使用路径是什么"></a>真实使用路径是什么</h2><p>你可以把一个典型路径理解成这样：</p>
+<ol>
+<li>主线程发现“这个问题需要深入查某个子系统”</li>
+<li>主线程调用 <code>AgentTool</code></li>
+<li>子 Agent 自己去搜索、读文件、推理、执行</li>
+<li>子 Agent 给出压缩后的结论</li>
+<li>主线程拿这个结论继续向前推进</li>
+</ol>
+<p>这和“主线程自己执行所有搜索”相比，最大的优势是：</p>
+<ul>
+<li>减少主上下文污染</li>
+<li>容易并行</li>
+<li>更适合做重研究、重排查类任务</li>
+</ul>
+<h2 id="最容易误解它的地方"><a href="#最容易误解它的地方" class="headerlink" title="最容易误解它的地方"></a>最容易误解它的地方</h2><h3 id="误解一：AgentTool-就是多轮聊天"><a href="#误解一：AgentTool-就是多轮聊天" class="headerlink" title="误解一：AgentTool 就是多轮聊天"></a>误解一：AgentTool 就是多轮聊天</h3><p>不是。<br>它是明确的工具调用，带 schema、任务生命周期和结果回注。</p>
+<h3 id="误解二：子-Agent-和主线程完全一样"><a href="#误解二：子-Agent-和主线程完全一样" class="headerlink" title="误解二：子 Agent 和主线程完全一样"></a>误解二：子 Agent 和主线程完全一样</h3><p>也不是。<br>子 Agent 的 prompt、工具池、运行模式都可能不同。</p>
+<h3 id="误解三：AgentTool-只是“更高级的-prompt”"><a href="#误解三：AgentTool-只是“更高级的-prompt”" class="headerlink" title="误解三：AgentTool 只是“更高级的 prompt”"></a>误解三：AgentTool 只是“更高级的 prompt”</h3><p>不够准确。<br>它更像“把另一个 Agent 作为正式运行时对象挂进系统”。</p>
+<h2 id="它和相邻工具的关系"><a href="#它和相邻工具的关系" class="headerlink" title="它和相邻工具的关系"></a>它和相邻工具的关系</h2><ul>
+<li>和 <code>TaskOutputTool</code> 配合：读取子 Agent 输出<ul>
+<li>和 <code>SendMessageTool</code> 配合：多 Agent 模式下互相通信</li>
+<li>和 <code>BashTool</code>、<code>Read</code>、<code>Edit</code> 配合：子 Agent 自己继续完成任务</li>
+<li>和 <code>SkillTool</code> 配合：某些 skill 会在独立子 Agent 中执行</li>
+</ul>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果你只能记住一句话：</p>
+<blockquote>
+<p><code>AgentTool</code> 不是单个工具能力，而是 Claude Code 把“任务拆分 + 子 Agent 执行 + 任务生命周期管理”封装成了一个正式工具。</p>
+</blockquote>
+<p>它是 Claude Code 从“会调工具的模型”升级成“多任务 Agent 系统”的关键节点。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/17/14__AgentTool%EF%BC%9A%E5%AD%90_Agent_%E8%B0%83%E5%BA%A6%E5%99%A8/">https://hzhzxfs.github.io/2026/06/17/14__AgentTool%EF%BC%9A%E5%AD%90_Agent_%E8%B0%83%E5%BA%A6%E5%99%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/18/15__BashTool%EF%BC%9AShell_%E6%89%A7%E8%A1%8C%E5%99%A8/" title="BashTool：Shell 执行器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">BashTool：Shell 执行器</div></div><div class="info-2"><div class="info-item-1">BashTool：Shell 执行器这个工具为什么是核心中的核心如果说 Read、Edit、Write 是 Claude Code 的精细手术刀，那 BashTool 就是它的重型工程机械。 它让 Claude Code 真正接入开发环境：  跑测试 跑构建 看 Git 状态 调用编译器、包管理器、脚本 启动开发服务 执行系统命令  没有 BashTool，Claude Code 顶多是一个“懂代码的文本编辑器”；有了它，Claude Code 才真正变成“能操作本地工程环境的 Agent”。 先看它依赖了多少子模块tools/BashTool/BashTool.tsx 的导入非常夸张，这本身就是一个信号：它绝不是简单 exec() 一下就结束。 123456import &#123; parseForSecurity &#125; from &#x27;../../utils/bash/ast.js&#x27;import &#123; bashToolHasPermission &#125; from &#x27;./bashPermissions.js&#x27;impor...</div></div></div></a><a class="pagination-related" href="/2026/06/16/13__Claude_Code_%E7%9A%84_Bash_%E5%B7%A5%E5%85%B7%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%85%B3%E9%94%AE/" title="Claude Code 的 Bash 工具为什么这么关键"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code 的 Bash 工具为什么这么关键</div></div><div class="info-2"><div class="info-item-1">Claude Code 的 Bash 工具为什么这么关键如果只能保留一个执行工具，很多时候就是 BashClaude Code 的工具很多，但从真实开发工作流看，BashTool 几乎是最关键的执行工具之一 。 因为它把 Claude Code 从“能改代码”推进到了“能操作开发环境”。 没有 Bash，它能做的更多是静态修改；有了 Bash，它才能：  跑测试 看构建结果 搜索系统信息 调用项目脚本 和 Git、包管理器、构建链路打通  源码里为什么这部分这么重只看 BashTool.tsx 的导入规模就能知道，这不是一个简单的 child_process.exec 包装： 1234567import &#123; backgroundExistingForegroundTask, markTaskNotified, registerForeground, spawnShellTask, unregisterForeground &#125; from &#x27;../../tasks/LocalShellTask/LocalShellTask.js&#x27;;import...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/18/jetbrains/" title="jetbrains"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">jetbrains</div></div><div class="info-2"><div class="info-item-1">JetBrains IDEs 在 JetBrains IDE（包括 IntelliJ、PyCharm、WebStorm 等）中使用 Claude Code  Claude Code 通过专用插件与 JetBrains IDE 集成，提供交互式差异查看、选择上下文共享等功能。 支持的 IDEClaude Code 插件适用于大多数 JetBrains IDE，包括：  IntelliJ IDEA PyCharm Android Studio WebStorm PhpStorm GoLand  功能 快速启动：使用 Cmd+Esc（Mac）或 Ctrl+Esc（Windows&#x2F;Linux）直接从编辑器打开 Claude Code，或点击 UI 中的 Claude Code 按钮 差异查看：代码更改可以直接在 IDE 差异查看器中显示，而不是在终端中显示 选择上下文：IDE 中的当前选择或标签页会自动与 Claude Code 共享。Read 拒绝规则会阻止对匹配文件的此共享 文件引用快捷方式：使用 Cmd+Option+K（Mac）或 Alt+Ctrl+K（Linux&#x...</div></div></div></a><a class="pagination-related" href="/2026/05/18/18-Hooks%E7%B3%BB%E7%BB%9F/" title="18-Hooks系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-18</div><div class="info-item-2">18-Hooks系统</div></div><div class="info-2"><div class="info-item-1">第 18 篇：Hooks 系统 — 用 Shell 命令扩展 AI 行为 本篇是《深入 Claude Code 源码》系列第 18 篇。我们将深入 Hooks 系统的完整实现，揭示 Claude Code 如何让用户在 AI 生命周期的关键节点注入自定义逻辑，以及这套系统在安全性、可扩展性和性能上的精巧设计。  为什么需要 Hooks？想象一个场景：你希望 Claude Code 在每次执行 Write 工具后自动运行 prettier 格式化代码，或者在 Session 启动时自动加载项目特定的环境变量，又或者在模型即将结束回答时用一个验证脚本检查代码质量。 这些需求有一个共同特征：它们不是 AI 本身的能力，而是用户希望在 AI 工作流的特定节点注入的自定义行为。 Hooks 系统正是为此而生。它是 Claude Code 的”生命周期钩子”框架 —— 类似于 Git Hooks、Webpack Plugins 或 React 的 useEffect，但面向的是 AI Agent 的执行周期。用户通过 settings.json 声明：在哪个事件（event）、匹配什么条件（...</div></div></div></a><a class="pagination-related" href="/2026/04/10/code-review/" title="code-review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-10</div><div class="info-item-2">code-review</div></div><div class="info-2"><div class="info-item-1">Code Review 设置自动化 PR 审查，通过对完整代码库的多代理分析来捕获逻辑错误、安全漏洞和回归问题     Code Review 处于研究预览阶段，仅适用于 [Team 和 Enterprise](https://claude.ai/admin-settings/claude-code) 订阅。对于启用了 [Zero Data Retention](/zh-CN/zero-data-retention) 的组织，此功能不可用。   Code Review 分析您的 GitHub pull request，并在发现问题的代码行上发布内联评论。一支由专业代理组成的团队在完整代码库的上下文中检查代码更改，寻找逻辑错误、安全漏洞、破损的边界情况和微妙的回归问题。 发现结果按严重程度标记，不会批准或阻止您的 PR，因此现有的审查工作流保持不变。您可以通过向存储库添加 CLAUDE.md 或 REVIEW.md 文件来调整 Claude 标记的内容。 要在您自己的 CI 基础设施中运行 Claude 而不是使用此托管服务，请参阅 GitHub Actions 或 GitLab ...</div></div></div></a><a class="pagination-related" href="/2026/06/13/10__%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B3%BB%E7%BB%9F%E8%A7%A3%E6%9E%90%EF%BC%9AGit%E3%80%81CLAUDE.md_%E4%B8%8E%E7%B3%BB%E7%BB%9F%E6%8F%90%E7%A4%BA%E8%AF%8D%E6%B3%A8%E5%85%A5/" title="上下文系统解析：Git、CLAUDE.md 与系统提示词注入"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-13</div><div class="info-item-2">上下文系统解析：Git、CLAUDE.md 与系统提示词注入</div></div><div class="info-2"><div class="info-item-1">上下文系统解析：Git、CLAUDE.md 与系统提示词注入Claude Code 为什么看起来“懂项目”Claude Code 给人的一个强烈印象是：它不像在面对一段孤立代码，而像是在理解整个项目。 这背后最关键的原因之一，就是上下文系统。 context.ts 让系统在对话开始前，就准备好一些高价值项目信息，再注入到后续主循环里。 getSystemContext()：补充系统级背景从源码看，getSystemContext() 至少会处理一类非常重要的信息：Git 状态 。 它会尝试收集：  当前分支 主分支 工作区状态 最近提交 Git 用户信息  这带来的好处非常直接：  模型知道当前仓库是不是脏的 模型知道你现在在哪条分支上 模型知道近期代码变化的大致方向  这对工程任务判断非常重要。 对应源码片段1234567891011121314151617const [branch, mainBranch, status, log, userName] = await Promise.all([  getBranch(),  getDefaultBranch(),  exec...</div></div></div></a><a class="pagination-related" href="/2026/05/03/03-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/" title="03-状态管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-03</div><div class="info-item-2">03-状态管理</div></div><div class="info-2"><div class="info-item-1">第 3 篇：状态管理 — React 与非 React 世界的状态桥接 本篇是《深入 Claude Code 源码》系列的第 3 篇。我们将深入分析 Claude Code 如何用一个 35 行的极简 Store 实现，桥接 React UI 与非 React 业务逻辑之间的状态管理，并理解三层状态架构的设计哲学。  为什么状态管理值得单独一篇？Claude Code 面临一个独特的状态管理难题：它既是一个 React 应用，又不完全是。 终端 UI 用 Ink（React for CLI）渲染，组件需要响应式的状态更新。但核心业务逻辑 —— API 调用、工具执行、Agent 编排 —— 运行在 React 树之外。一次工具调用的结果需要同时：  更新 React 组件（显示在终端 UI 上） 被非 React 的 query.ts 对话循环读取 被 Agent 子系统使用（可能运行在隔离的上下文中）  如果用 Redux&#x2F;Zustand 这类库？太重了。React 内置的 useState&#x2F;useReducer？无法从 React 树外部访问。模块级全局变...</div></div></div></a><a class="pagination-related" href="/2026/04/19/legal-and-compliance/" title="legal-and-compliance"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-19</div><div class="info-item-2">legal-and-compliance</div></div><div class="info-2"><div class="info-item-1">法律和合规 Claude Code 的法律协议、合规认证和安全信息。     Starting June 15, 2026, Agent SDK and `claude -p` usage on subscription plans will draw from a new monthly Agent SDK credit, separate from your interactive usage limits. See [Use the Claude Agent SDK with your Claude plan](https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan) for details.   法律协议许可证您对 Claude Code 的使用受以下条款约束：  商业条款 - 适用于 Team、Enterprise 和 Claude API 用户 消费者服务条款 - 适用于 Free、Pro 和 Max 用户  商业协议无论您是直接使用 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AgentTool%EF%BC%9A%E5%AD%90-Agent-%E8%B0%83%E5%BA%A6%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">AgentTool：子 Agent 调度器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%B8%AA%E5%B7%A5%E5%85%B7%E5%88%B0%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.</span> <span class="toc-text">这个工具到底解决什么问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%9C%8B%E5%AE%83%E7%9A%84%E8%BE%93%E5%85%A5%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">1.2.</span> <span class="toc-text">先看它的输入长什么样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%9C%A8%E5%B7%A5%E5%85%B7%E6%B1%A0%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE%E9%9D%9E%E5%B8%B8%E7%89%B9%E6%AE%8A"><span class="toc-number">1.3.</span> <span class="toc-text">它在工具池里的位置非常特殊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E5%AE%83%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">一张图看它在系统里的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E6%98%AF%E2%80%9C%E5%86%8D%E5%BC%80%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9E%8B%E2%80%9D%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95"><span class="toc-number">1.5.</span> <span class="toc-text">它不是“再开一个模型”这么简单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90-Agent-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BC%9A%E5%8F%98%E6%88%90%E2%80%9C%E5%A4%B1%E6%8E%A7%E5%89%AF%E6%9C%AC%E2%80%9D"><span class="toc-number">1.6.</span> <span class="toc-text">子 Agent 为什么不会变成“失控副本”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE%E5%8F%AF%E4%BB%A5%E5%86%8D%E7%BB%86%E4%B8%80%E7%82%B9"><span class="toc-number">1.7.</span> <span class="toc-text">调用链可以再细一点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C-Task-%E7%B3%BB%E7%BB%9F%E6%98%AF%E5%BC%BA%E7%BB%91%E5%AE%9A%E7%9A%84"><span class="toc-number">1.8.</span> <span class="toc-text">它和 Task 系统是强绑定的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E5%AE%9E%E4%BD%BF%E7%94%A8%E8%B7%AF%E5%BE%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.9.</span> <span class="toc-text">真实使用路径是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E8%AF%AF%E8%A7%A3%E5%AE%83%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.10.</span> <span class="toc-text">最容易误解它的地方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9AAgentTool-%E5%B0%B1%E6%98%AF%E5%A4%9A%E8%BD%AE%E8%81%8A%E5%A4%A9"><span class="toc-number">1.10.1.</span> <span class="toc-text">误解一：AgentTool 就是多轮聊天</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9A%E5%AD%90-Agent-%E5%92%8C%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%AE%8C%E5%85%A8%E4%B8%80%E6%A0%B7"><span class="toc-number">1.10.2.</span> <span class="toc-text">误解二：子 Agent 和主线程完全一样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%89%EF%BC%9AAgentTool-%E5%8F%AA%E6%98%AF%E2%80%9C%E6%9B%B4%E9%AB%98%E7%BA%A7%E7%9A%84-prompt%E2%80%9D"><span class="toc-number">1.10.3.</span> <span class="toc-text">误解三：AgentTool 只是“更高级的 prompt”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C%E7%9B%B8%E9%82%BB%E5%B7%A5%E5%85%B7%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.11.</span> <span class="toc-text">它和相邻工具的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

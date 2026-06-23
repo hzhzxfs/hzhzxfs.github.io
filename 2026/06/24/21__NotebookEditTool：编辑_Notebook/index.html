@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>NotebookEditTool：编辑 Notebook | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="NotebookEditTool：编辑 Notebook它为什么不是普通版 FileEditTool.ipynb 文件虽然本质上是 JSON，但语义上它不是普通文本文件，而是：  一组有顺序的 cell 混合了 code &#x2F; markdown 带输出、元数据、语言信息  如果直接把 Notebook 当普通文本改，最容易出现两类问题：  结构被破坏，文件打不开 只想改一个 cell，却误">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NotebookEditTool：编辑 Notebook">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="NotebookEditTool：编辑 Notebook它为什么不是普通版 FileEditTool.ipynb 文件虽然本质上是 JSON，但语义上它不是普通文本文件，而是：  一组有顺序的 cell 混合了 code &#x2F; markdown 带输出、元数据、语言信息  如果直接把 Notebook 当普通文本改，最容易出现两类问题：  结构被破坏，文件打不开 只想改一个 cell，却误">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-24T02:37:26.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.168Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "NotebookEditTool：编辑 Notebook",
+  "url": "https://hzhzxfs.github.io/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-24T02:37:26.000Z",
+  "dateModified": "2026-06-23T05:18:13.168Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'NotebookEditTool：编辑 Notebook',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">NotebookEditTool：编辑 Notebook</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">NotebookEditTool：编辑 Notebook</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-24T02:37:26.000Z" title="发表于 2026-06-24 10:37:26">2026-06-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.168Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="NotebookEditTool：编辑-Notebook"><a href="#NotebookEditTool：编辑-Notebook" class="headerlink" title="NotebookEditTool：编辑 Notebook"></a>NotebookEditTool：编辑 Notebook</h1><h2 id="它为什么不是普通版-FileEditTool"><a href="#它为什么不是普通版-FileEditTool" class="headerlink" title="它为什么不是普通版 FileEditTool"></a>它为什么不是普通版 <code>FileEditTool</code></h2><p><code>.ipynb</code> 文件虽然本质上是 JSON，但语义上它不是普通文本文件，而是：</p>
+<ul>
+<li>一组有顺序的 cell</li>
+<li>混合了 code &#x2F; markdown</li>
+<li>带输出、元数据、语言信息</li>
+</ul>
+<p>如果直接把 Notebook 当普通文本改，最容易出现两类问题：</p>
+<ul>
+<li>结构被破坏，文件打不开</li>
+<li>只想改一个 cell，却误伤整个 notebook</li>
+</ul>
+<p>所以 Claude Code 给它单独做了 <code>NotebookEditTool</code>。</p>
+<h2 id="关键源码"><a href="#关键源码" class="headerlink" title="关键源码"></a>关键源码</h2><p><code>tools/NotebookEditTool/NotebookEditTool.ts</code>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> inputSchema = z.<span class="title function_">strictObject</span>(&#123;</span><br><span class="line">  <span class="attr">notebook_path</span>: z.<span class="title function_">string</span>(),</span><br><span class="line">  <span class="attr">cell_id</span>: z.<span class="title function_">string</span>().<span class="title function_">optional</span>(),</span><br><span class="line">  <span class="attr">new_source</span>: z.<span class="title function_">string</span>(),</span><br><span class="line">  <span class="attr">cell_type</span>: z.<span class="title function_">enum</span>([<span class="string">&#x27;code&#x27;</span>, <span class="string">&#x27;markdown&#x27;</span>]).<span class="title function_">optional</span>(),</span><br><span class="line">  <span class="attr">edit_mode</span>: z.<span class="title function_">enum</span>([<span class="string">&#x27;replace&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>]).<span class="title function_">optional</span>(),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这几个字段说明它的操作粒度是 <strong>cell 级</strong> ，不是整文件字符串级。</p>
+<h2 id="调用链"><a href="#调用链" class="headerlink" title="调用链"></a>调用链</h2><h2 id="实现重点"><a href="#实现重点" class="headerlink" title="实现重点"></a>实现重点</h2><p>它做了几件普通文件编辑工具不会做的事：</p>
+<ul>
+<li>强制要求目标文件是 <code>.ipynb</code></li>
+<li>支持 <code>replace / insert / delete</code> 三种 cell 操作</li>
+<li><code>insert</code> 时要求明确 <code>cell_type</code></li>
+<li>校验 cell 是否存在、ID 是否有效</li>
+<li>也要求“先读再改”，和普通文件编辑链路一致</li>
+</ul>
+<p>源码里有一条很重要：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// Require Read-before-Edit (matches FileEditTool/FileWriteTool).</span><br></pre></td></tr></table></figure>
+
+<p>这说明 Anthropic 很强调一致性：<br>即使 Notebook 是特殊对象，也不能绕开“读快照 -&gt; 再编辑”的时序约束。</p>
+<h2 id="一次典型使用路径"><a href="#一次典型使用路径" class="headerlink" title="一次典型使用路径"></a>一次典型使用路径</h2><ol>
+<li>先用 <code>Read</code> 看 notebook 的 cell 结构和内容</li>
+<li>定位要改哪个 cell</li>
+<li>用 <code>NotebookEditTool</code> 做 replace &#x2F; insert &#x2F; delete</li>
+<li>再回到主线程继续验证结果</li>
+</ol>
+<h2 id="它和相邻工具的关系"><a href="#它和相邻工具的关系" class="headerlink" title="它和相邻工具的关系"></a>它和相邻工具的关系</h2><h2 id="最容易误解它的地方"><a href="#最容易误解它的地方" class="headerlink" title="最容易误解它的地方"></a>最容易误解它的地方</h2><h3 id="误解一：Notebook-反正是-JSON，直接-Edit-就行"><a href="#误解一：Notebook-反正是-JSON，直接-Edit-就行" class="headerlink" title="误解一：Notebook 反正是 JSON，直接 Edit 就行"></a>误解一：Notebook 反正是 JSON，直接 Edit 就行</h3><p>从底层格式看也许可以，但从产品行为看不应该。<br>Claude Code 明确把 Notebook 提升成了专门文档类型。</p>
+<h3 id="误解二：它只是换了个文件扩展名"><a href="#误解二：它只是换了个文件扩展名" class="headerlink" title="误解二：它只是换了个文件扩展名"></a>误解二：它只是换了个文件扩展名</h3><p>不是。<br>它的编辑对象是 cell，不是整段原始 JSON。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>NotebookEditTool</code> 的价值在于：</p>
+<blockquote>
+<p>Claude Code 没把 Notebook 降级成普通文本，而是给这种“代码 + 文档”混合格式单独做了一条受控编辑链路。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/">https://hzhzxfs.github.io/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/25/22__WebFetchTool%EF%BC%9A%E6%8A%93%E5%8F%96%E7%BD%91%E9%A1%B5/" title="WebFetchTool：抓取网页"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">WebFetchTool：抓取网页</div></div><div class="info-2"><div class="info-item-1">WebFetchTool：抓取网页这个工具到底做什么WebFetchTool 负责抓取一个已经知道 URL 的网页 ，把网页内容转成 Claude Code 更容易处理的文本，再根据传入的 prompt 提炼结果。 它和 WebSearchTool 的分工非常明确：  WebSearchTool：帮模型去网上找结果 WebFetchTool：拿着确定的 URL 去读具体页面  所以你可以把它理解成：  Claude Code 的“网页阅读器 + 小模型摘要器”  而不是“联网搜索工具”。 它的输入为什么只有两个字段tools/WebFetchTool/WebFetchTool.ts： 1234const inputSchema = z.strictObject(&#123;  url: z.string().url().describe(&#x27;The URL to fetch content from&#x27;),  prompt: z.string().describe(&#x27;The prompt to run on the fetched content&#x2...</div></div></div></a><a class="pagination-related" href="/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/" title="GrepTool：搜索内容"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">GrepTool：搜索内容</div></div><div class="info-2"><div class="info-item-1">GrepTool：搜索内容它是 Claude Code 最常用的“找线索”工具之一GrepTool 负责在文件内容里搜索文本或正则模式。在真实使用里，它常常是 Claude Code 排查问题、理解代码和定位实现的第一步。 如果你把 Claude Code 的常见动作拆开看，会发现很多轮对话其实都是：  先 Grep 再 Read 再判断要不要 Edit  所以 GrepTool 本质上是主循环里的“线索发现器”。 看它的 schema，就知道它不是简单字符串搜索tools/GrepTool/GrepTool.ts： 123456789101112131415const inputSchema = z.strictObject(&#123;  pattern: z.string(),  path: z.string().optional(),  glob: z.string().optional(),  output_mode: z.enum([&#x27;content&#x27;, &#x27;files_with_matches&#x27;, &#x27;count&#x2...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/19/third-party-integrations/" title="third-party-integrations"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-19</div><div class="info-item-2">third-party-integrations</div></div><div class="info-2"><div class="info-item-1">企业部署概览 了解 Claude Code 如何与各种第三方服务和基础设施集成，以满足企业部署需求。  export const ContactSalesCard &#x3D; ({surface}) &#x3D;&gt; {  const utm &#x3D; content &#x3D;&gt; utm_source=claude_code&amp;utm_medium=docs&amp;utm_content=${surface}_${content};  const iconArrowRight &#x3D; (size &#x3D; 13) &#x3D;&gt;                 ;  const STYLES &#x3D; .cc-cs {   --cs-slate: #141413;   --cs-clay: #d97757;   --cs-clay-deep: #c6613f;   --cs-gray-000: #ffffff;   --cs-gray-700: #3d3d3a;   --cs-border-default: rgba(31, 30,...</div></div></div></a><a class="pagination-related" href="/2026/06/10/07__Claude_Code_%E7%9A%84%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B/" title="Claude Code 的提示词工程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-10</div><div class="info-item-2">Claude Code 的提示词工程</div></div><div class="info-2"><div class="info-item-1">Claude Code 的提示词工程不要把 Claude Code 的 prompt 理解成“一大段总提示词”很多人第一次研究 Claude Code，都会先找那段“终极 system prompt”。但源码里真正存在的，不是一条 prompt，而是一整套分层装配的提示词系统 。 Claude Code 至少同时存在这几类 prompt：  会话级 system prompt 运行时动态追加的 prompt section 工具级 prompt 专项子系统 prompt 多 Agent &#x2F; teammate 模式下的附加 prompt  也就是说，Claude Code 的 prompt 工程不是“写一段厉害的话”，而是“把不同职责的提示词放到不同层，再按运行时状态拼起来”。 一张图看懂 Claude Code 的提示词体系第一层：主会话的 System PromptClaude Code 最核心的 prompt 入口在 constants/prompts.ts。 源码里最醒目的一段是： 12345678910function getSimpleIntroSection...</div></div></div></a><a class="pagination-related" href="/2026/07/01/24__TodoWriteTool%EF%BC%9A%E5%BE%85%E5%8A%9E%E6%B8%85%E5%8D%95/" title="TodoWriteTool：待办清单"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-01</div><div class="info-item-2">TodoWriteTool：待办清单</div></div><div class="info-2"><div class="info-item-1">TodoWriteTool：待办清单它不是普通 checklist，而是会话内任务外显TodoWriteTool 是 Claude Code 经典的轻量任务管理工具。它的作用不是替代正式任务系统，而是让模型在当前会话里把工作拆成一串可见的 todo。 你可以把它理解成：  TodoWriteTool：轻量、会话内、快速追踪 TaskCreateTool 系列：结构化、正式任务系统  关键源码tools/TodoWriteTool/TodoWriteTool.ts： 123const inputSchema = z.strictObject(&#123;  todos: TodoListSchema().describe(&#x27;The updated todo list&#x27;),&#125;)  而真正的状态写回是： 1234567context.setAppState(prev =&gt; (&#123;  ...prev,  todos: &#123;    ...prev.todos,    [todoKey]: newTodos,  &#125;,&#125;)...</div></div></div></a><a class="pagination-related" href="/2026/06/04/01__Claude_Code_%E6%BA%90%E7%A0%81%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B8%80%E8%A7%88/" title="Claude Code 源码核心概念一览"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-04</div><div class="info-item-2">Claude Code 源码核心概念一览</div></div><div class="info-2"><div class="info-item-1">Claude Code 源码核心概念一览为什么要先看概念很多人第一次看 Claude Code 源码时，会被一堆词反复轰炸：  QueryEngine Tool AppState Plan Mode MCP LSP Skills Agent  如果这些词没有先建立基本认知，后面看源码会非常容易迷路。 所以这篇文章的目标不是深入讲实现，而是先给你一张“核心概念地图”。 一张图先看整体关系1. QueryEngine这是 Claude Code 的核心引擎。你可以把它理解成整个任务循环的大脑调度器。 它负责：  接收用户输入 组织消息历史 调用模型 处理工具调用 把结果回流到下一轮  一句话理解：  QueryEngine 决定一项任务如何一轮一轮推进下去。  2. ToolTool 就是 Claude Code 让模型“真正动手”的方式。Claude 不只是输出文字，还可以通过 Tool：  读文件 改文件 跑命令 访问外部资源 进入 Plan Mode  一句话理解：  Tool 是 Claude Code 的执行接口层。  3. AppStateAppState 是终端界面的运...</div></div></div></a><a class="pagination-related" href="/2026/06/26/23__WebSearchTool%EF%BC%9A%E8%81%94%E7%BD%91%E6%90%9C%E7%B4%A2/" title="WebSearchTool：联网搜索"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-26</div><div class="info-item-2">WebSearchTool：联网搜索</div></div><div class="info-2"><div class="info-item-1">WebSearchTool：联网搜索这个工具到底做什么WebSearchTool 负责让 Claude Code 查询互联网的最新信息。它解决的核心问题不是“打开某个网页”，而是：  当主线程需要知道当前世界上最近发生了什么、某个产品最新文档是什么、某个问题有哪些公开资料时，如何安全地发起联网搜索。  所以它和 WebFetchTool 的区别一定要先记清：  WebSearchTool：找信息源 WebFetchTool：读指定页面  在真实使用里，这两个工具经常是一前一后配合。 它的 schema 很简单，但能力很强tools/WebSearchTool/WebSearchTool.ts： 12345const inputSchema = z.strictObject(&#123;  query: z.string().min(2).describe(&#x27;The search query to use&#x27;),  allowed_domains: z.array(z.string()).optional(),  blocked_domains: z.array(...</div></div></div></a><a class="pagination-related" href="/2026/06/05/02__%E6%A6%82%E8%BF%B0%EF%BC%9AClaude_Code_%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/" title="概述：Claude Code 到底是什么"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">概述：Claude Code 到底是什么</div></div><div class="info-2"><div class="info-item-1">概述：Claude Code 到底是什么Claude Code 是Anthropic 推出的命令行 AI 编程搭档，它直接运行在终端里，能理解你的整个项目代码，并帮你编写、修改、调试代码，甚至执行命令和 Git 操作。 一张图先建立整体感觉 类比一下：如果说 Google AI Studio 更像一个在线原型实验场，那 Claude Code 更像一个真正驻扎在你电脑项目目录里的高级工程搭档。  它最核心的能力是什么先不要急着看源码细节，先建立一个产品级认知。Claude Code 之所以强，最核心的能力可以概括成下面这几项：    能力 说明 典型问题    理解项目 读取并分析整个代码仓库 “这个项目整体架构是怎样的？”   编写和修改代码 直接创建、更新、重构文件 “给用户列表页加一个搜索功能”   调试修复 定位报错、修 bug、补验证 “这个接口为什么返回 500？”   执行命令 运行测试、构建、安装依赖、Git “帮我跑一下测试，看看哪里挂了”   遵守项目规范 结合 CLAUDE.md 和项目上下文工作 “按这个仓库现有风格改，不要乱来”   所以它强的地方，并不...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91-Notebook"><span class="toc-number">1.</span> <span class="toc-text">NotebookEditTool：编辑 Notebook</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%98%AF%E6%99%AE%E9%80%9A%E7%89%88-FileEditTool"><span class="toc-number">1.1.</span> <span class="toc-text">它为什么不是普通版 FileEditTool</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%BA%90%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text">关键源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE"><span class="toc-number">1.3.</span> <span class="toc-text">调用链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%87%8D%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">实现重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="toc-number">1.5.</span> <span class="toc-text">一次典型使用路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C%E7%9B%B8%E9%82%BB%E5%B7%A5%E5%85%B7%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.6.</span> <span class="toc-text">它和相邻工具的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E8%AF%AF%E8%A7%A3%E5%AE%83%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.7.</span> <span class="toc-text">最容易误解它的地方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9ANotebook-%E5%8F%8D%E6%AD%A3%E6%98%AF-JSON%EF%BC%8C%E7%9B%B4%E6%8E%A5-Edit-%E5%B0%B1%E8%A1%8C"><span class="toc-number">1.7.1.</span> <span class="toc-text">误解一：Notebook 反正是 JSON，直接 Edit 就行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9A%E5%AE%83%E5%8F%AA%E6%98%AF%E6%8D%A2%E4%BA%86%E4%B8%AA%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95%E5%90%8D"><span class="toc-number">1.7.2.</span> <span class="toc-text">误解二：它只是换了个文件扩展名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.8.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

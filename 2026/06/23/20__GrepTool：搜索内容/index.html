@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>GrepTool：搜索内容 | xhj的博客</title><meta name="author" content="xhj"><meta name="copyright" content="xhj"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="GrepTool：搜索内容它是 Claude Code 最常用的“找线索”工具之一GrepTool 负责在文件内容里搜索文本或正则模式。在真实使用里，它常常是 Claude Code 排查问题、理解代码和定位实现的第一步。 如果你把 Claude Code 的常见动作拆开看，会发现很多轮对话其实都是：  先 Grep 再 Read 再判断要不要 Edit  所以 GrepTool 本质上是主循环里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GrepTool：搜索内容">
+<meta property="og:url" content="https://hzhzxfs.github.io/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/index.html">
+<meta property="og:site_name" content="xhj的博客">
+<meta property="og:description" content="GrepTool：搜索内容它是 Claude Code 最常用的“找线索”工具之一GrepTool 负责在文件内容里搜索文本或正则模式。在真实使用里，它常常是 Claude Code 排查问题、理解代码和定位实现的第一步。 如果你把 Claude Code 的常见动作拆开看，会发现很多轮对话其实都是：  先 Grep 再 Read 再判断要不要 Edit  所以 GrepTool 本质上是主循环里">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hzhzxfs.github.io/images/avatar.png">
+<meta property="article:published_time" content="2026-06-23T03:26:20.000Z">
+<meta property="article:modified_time" content="2026-06-23T05:18:13.155Z">
+<meta property="article:author" content="xhj">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hzhzxfs.github.io/images/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "GrepTool：搜索内容",
+  "url": "https://hzhzxfs.github.io/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/",
+  "image": "https://hzhzxfs.github.io/images/avatar.png",
+  "datePublished": "2026-06-23T03:26:20.000Z",
+  "dateModified": "2026-06-23T05:18:13.155Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "xhj",
+      "url": "https://hzhzxfs.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/imges/favicon.ico"><link rel="canonical" href="https://hzhzxfs.github.io/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'GrepTool：搜索内容',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">xhj的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">GrepTool：搜索内容</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">GrepTool：搜索内容</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-23T03:26:20.000Z" title="发表于 2026-06-23 11:26:20">2026-06-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-23T05:18:13.155Z" title="更新于 2026-06-23 13:18:13">2026-06-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="GrepTool：搜索内容"><a href="#GrepTool：搜索内容" class="headerlink" title="GrepTool：搜索内容"></a>GrepTool：搜索内容</h1><h2 id="它是-Claude-Code-最常用的“找线索”工具之一"><a href="#它是-Claude-Code-最常用的“找线索”工具之一" class="headerlink" title="它是 Claude Code 最常用的“找线索”工具之一"></a>它是 Claude Code 最常用的“找线索”工具之一</h2><p><code>GrepTool</code> 负责在文件内容里搜索文本或正则模式。<br>在真实使用里，它常常是 Claude Code 排查问题、理解代码和定位实现的第一步。</p>
+<p>如果你把 Claude Code 的常见动作拆开看，会发现很多轮对话其实都是：</p>
+<ol>
+<li>先 <code>Grep</code></li>
+<li>再 <code>Read</code></li>
+<li>再判断要不要 <code>Edit</code></li>
+</ol>
+<p>所以 <code>GrepTool</code> 本质上是主循环里的“线索发现器”。</p>
+<h2 id="看它的-schema，就知道它不是简单字符串搜索"><a href="#看它的-schema，就知道它不是简单字符串搜索" class="headerlink" title="看它的 schema，就知道它不是简单字符串搜索"></a>看它的 schema，就知道它不是简单字符串搜索</h2><p><code>tools/GrepTool/GrepTool.ts</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">const inputSchema = z.strictObject(&#123;</span><br><span class="line">  pattern: z.string(),</span><br><span class="line">  path: z.string().optional(),</span><br><span class="line">  glob: z.string().optional(),</span><br><span class="line">  output_mode: z.enum([&#x27;content&#x27;, &#x27;files_with_matches&#x27;, &#x27;count&#x27;]).optional(),</span><br><span class="line">  &#x27;-B&#x27;: z.number().optional(),</span><br><span class="line">  &#x27;-A&#x27;: z.number().optional(),</span><br><span class="line">  &#x27;-C&#x27;: z.number().optional(),</span><br><span class="line">  &#x27;-n&#x27;: z.boolean().optional(),</span><br><span class="line">  &#x27;-i&#x27;: z.boolean().optional(),</span><br><span class="line">  type: z.string().optional(),</span><br><span class="line">  head_limit: z.number().optional(),</span><br><span class="line">  offset: z.number().optional(),</span><br><span class="line">  multiline: z.boolean().optional(),</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这说明 <code>GrepTool</code> 不只是“搜某个词”，它还支持：</p>
+<ul>
+<li>搜文件名过滤</li>
+<li>搜文件类型过滤</li>
+<li>只看命中文件</li>
+<li>看内容上下文</li>
+<li>看匹配计数</li>
+<li>分页和截断</li>
+<li>多行模式</li>
+</ul>
+<p>也就是说，它是一个被结构化封装过的 <code>ripgrep</code> 搜索器。</p>
+<h2 id="它的底层就是-ripgrep，但不是裸暴露"><a href="#它的底层就是-ripgrep，但不是裸暴露" class="headerlink" title="它的底层就是 ripgrep，但不是裸暴露"></a>它的底层就是 ripgrep，但不是裸暴露</h2><p>源码里最关键的导入是：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ripGrep &#125; <span class="keyword">from</span> <span class="string">&#x27;../../utils/ripgrep.js&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>Anthropic 没有让模型直接去 Bash 里跑 <code>rg</code>，而是把 <code>ripgrep</code> 包装成了正式工具。<br>这样做的好处很直接：</p>
+<ul>
+<li>权限系统能识别它是“内容搜索”</li>
+<li>输出模式更可控</li>
+<li>上下文结果更容易裁剪</li>
+<li>UI 能做更合理展示</li>
+</ul>
+<h2 id="一张图看它的常见链路"><a href="#一张图看它的常见链路" class="headerlink" title="一张图看它的常见链路"></a>一张图看它的常见链路</h2><h2 id="它在设计上很重视“结果控量”"><a href="#它在设计上很重视“结果控量”" class="headerlink" title="它在设计上很重视“结果控量”"></a>它在设计上很重视“结果控量”</h2><p>源码里有一个非常关键的默认值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const DEFAULT_HEAD_LIMIT = 250</span><br></pre></td></tr></table></figure>
+
+<p>注释写得很直白：<br>无上限的 grep 很容易把上下文塞爆。</p>
+<p>所以 <code>GrepTool</code> 天生就做了两件事：</p>
+<ul>
+<li>默认限制结果规模</li>
+<li>支持 <code>offset</code> 分页继续看</li>
+</ul>
+<p>这很重要，因为 Claude Code 本质上是在和有限上下文做博弈。<br>搜索工具如果不帮它控量，很快就会把对话拖垮。</p>
+<h2 id="它不只是“返回命中内容”，还区分三种模式"><a href="#它不只是“返回命中内容”，还区分三种模式" class="headerlink" title="它不只是“返回命中内容”，还区分三种模式"></a>它不只是“返回命中内容”，还区分三种模式</h2><p>源码里把输出模式拆成：</p>
+<ul>
+<li><code>content</code></li>
+<li><code>files_with_matches</code></li>
+<li><code>count</code></li>
+</ul>
+<p>这三种模式背后对应的是三种完全不同的工作目标：</p>
+<ul>
+<li><code>files_with_matches</code>：我先知道哪些文件相关</li>
+<li><code>content</code>：我要看匹配周边上下文</li>
+<li><code>count</code>：我想知道影响范围或匹配规模</li>
+</ul>
+<p>这也是 Claude Code 比“让 AI 跑 rg 然后自己读终端输出”更高级的地方。<br>因为它不是只有一个工具，而是让工具内部支持不同意图。</p>
+<h2 id="它和-GlobTool-的边界"><a href="#它和-GlobTool-的边界" class="headerlink" title="它和 GlobTool 的边界"></a>它和 <code>GlobTool</code> 的边界</h2><p>这两个工具经常放在一起比较：</p>
+<ul>
+<li><code>GlobTool</code>：按路径&#x2F;文件名找</li>
+<li><code>GrepTool</code>：按内容找</li>
+</ul>
+<p>你可以这么理解：</p>
+<p>在真实任务里，<code>GrepTool</code> 的使用频率通常会更高。<br>因为大多数时候你知道的是：</p>
+<ul>
+<li>某个函数名</li>
+<li>某个 API 路径</li>
+<li>某个报错信息</li>
+<li>某个文案</li>
+</ul>
+<p>而不是准确文件名。</p>
+<h2 id="它也是只读且可并行的"><a href="#它也是只读且可并行的" class="headerlink" title="它也是只读且可并行的"></a>它也是只读且可并行的</h2><p>和 <code>GlobTool</code> 一样，<code>GrepTool</code> 也明确声明自己是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">isConcurrencySafe() &#123;</span><br><span class="line">  return true</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">isReadOnly() &#123;</span><br><span class="line">  return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这意味着主线程可以更大胆地把多个搜索请求并行发出去。<br>这对 Claude Code 的探索效率很有帮助。</p>
+<h2 id="一次真实使用路径"><a href="#一次真实使用路径" class="headerlink" title="一次真实使用路径"></a>一次真实使用路径</h2><p>比如用户说：</p>
+<blockquote>
+<p>登录成功后，为什么还会跳回登录页？</p>
+</blockquote>
+<p>Claude Code 很典型的路径会是：</p>
+<ol>
+<li><code>GrepTool</code> 搜 <code>login</code>、<code>redirect</code>、路由保护逻辑</li>
+<li><code>FileReadTool</code> 读取命中的几个关键文件</li>
+<li>再用 <code>GrepTool</code> 搜状态来源</li>
+<li>最后定位 root cause</li>
+</ol>
+<p>你会发现，<code>GrepTool</code> 在这里不是辅助工具，而是调查主链的起点。</p>
+<h2 id="最容易误解它的地方"><a href="#最容易误解它的地方" class="headerlink" title="最容易误解它的地方"></a>最容易误解它的地方</h2><h3 id="误解一：直接-Bash-跑-rg-就够了"><a href="#误解一：直接-Bash-跑-rg-就够了" class="headerlink" title="误解一：直接 Bash 跑 rg 就够了"></a>误解一：直接 Bash 跑 <code>rg</code> 就够了</h3><p>功能上也许能凑合，但系统层面不一样。<br><code>GrepTool</code> 更可控、更节省上下文、更利于后续推理。</p>
+<h3 id="误解二：Grep-只是“搜字符串”"><a href="#误解二：Grep-只是“搜字符串”" class="headerlink" title="误解二：Grep 只是“搜字符串”"></a>误解二：Grep 只是“搜字符串”</h3><p>不对。<br>它实际上支持不同输出模式、上下文范围、分页和文件过滤。</p>
+<h3 id="误解三：Grep-只是前期探索工具"><a href="#误解三：Grep-只是前期探索工具" class="headerlink" title="误解三：Grep 只是前期探索工具"></a>误解三：Grep 只是前期探索工具</h3><p>也不完全。<br>它还经常被用于：</p>
+<ul>
+<li>确认某次改动影响了哪些地方</li>
+<li>看一个名字是否还残留在项目里</li>
+<li>确认重构是否改全</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>如果把 Claude Code 的搜索能力压缩成一句话：</p>
+<blockquote>
+<p><code>GrepTool</code> 是主循环里最常用的内容定位工具，它把 <code>ripgrep</code> 封装成了可分页、可裁剪、可结构化回注的正式搜索能力。</p>
+</blockquote>
+<p>很多源码分析任务，真正开始于 <code>GrepTool</code>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io">xhj</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hzhzxfs.github.io/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/">https://hzhzxfs.github.io/2026/06/23/20__GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hzhzxfs.github.io" target="_blank">xhj的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/24/21__NotebookEditTool%EF%BC%9A%E7%BC%96%E8%BE%91_Notebook/" title="NotebookEditTool：编辑 Notebook"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">NotebookEditTool：编辑 Notebook</div></div><div class="info-2"><div class="info-item-1">NotebookEditTool：编辑 Notebook它为什么不是普通版 FileEditTool.ipynb 文件虽然本质上是 JSON，但语义上它不是普通文本文件，而是：  一组有顺序的 cell 混合了 code &#x2F; markdown 带输出、元数据、语言信息  如果直接把 Notebook 当普通文本改，最容易出现两类问题：  结构被破坏，文件打不开 只想改一个 cell，却误伤整个 notebook  所以 Claude Code 给它单独做了 NotebookEditTool。 关键源码tools/NotebookEditTool/NotebookEditTool.ts： 1234567export const inputSchema = z.strictObject(&#123;  notebook_path: z.string(),  cell_id: z.string().optional(),  new_source: z.string(),  cell_type: z.enum([&#x27;code&#x27;, &#x27;markdown&...</div></div></div></a><a class="pagination-related" href="/2026/06/22/19__GlobTool%EF%BC%9A%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6/" title="GlobTool：查找文件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">GlobTool：查找文件</div></div><div class="info-2"><div class="info-item-1">GlobTool：查找文件这个工具看起来简单，但位置非常关键GlobTool 做的事很直接：按文件名或通配模式找文件。但在 Claude Code 的主循环里，它其实承担的是：  把“我大概知道要找什么文件”变成“我已经定位到候选路径”。  很多复杂任务的第一步，都不是直接读文件，而是先缩小范围。GlobTool 就是这一步的标准入口。 先看它的输入定义tools/GlobTool/GlobTool.ts： 1234const inputSchema = z.strictObject(&#123;  pattern: z.string().describe(&#x27;The glob pattern to match files against&#x27;),  path: z.string().optional().describe(&#x27;The directory to search in&#x27;),&#125;)  这个 schema 很简单，但设计上很清楚：  pattern：用来表达“想找什么” path：用来限制搜索范围  也就是说，Claude Code...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/06/06-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86/" title="06-上下文管理"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-06</div><div class="info-item-2">06-上下文管理</div></div><div class="info-2"><div class="info-item-1">第 6 篇：上下文管理 — 无限对话的秘密 本篇是《深入 Claude Code 源码》系列的第 6 篇。我们将深入分析 Claude Code 如何在有限的 context window 内支撑无限长度的对话——从 token 预算管理、多级压缩策略，到文件状态缓存与 compact 后恢复的设计。 范围说明：上下文的”构建”（System Prompt 组装、CLAUDE.md 注入、git status 获取）已在第 4 篇中覆盖，缓存策略的横切视角将在第 7 篇中展开。本篇聚焦于上下文构建完成后的压缩、清理与恢复——即当 context window 不够用时，Claude Code 如何在不中断对话的情况下释放空间并重建必要的工作上下文。  为什么上下文管理如此重要？LLM 的 context window 是有限的。Claude 的模型通常有 200K token 的窗口（部分模型支持 1M），看起来很大，但在实际使用中消耗极快：  一次 System Prompt 可能占 5K-15K token 用户附带的 CLAUDE.md 文件可能占 3K-10K token...</div></div></div></a><a class="pagination-related" href="/2026/07/01/24__TodoWriteTool%EF%BC%9A%E5%BE%85%E5%8A%9E%E6%B8%85%E5%8D%95/" title="TodoWriteTool：待办清单"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-01</div><div class="info-item-2">TodoWriteTool：待办清单</div></div><div class="info-2"><div class="info-item-1">TodoWriteTool：待办清单它不是普通 checklist，而是会话内任务外显TodoWriteTool 是 Claude Code 经典的轻量任务管理工具。它的作用不是替代正式任务系统，而是让模型在当前会话里把工作拆成一串可见的 todo。 你可以把它理解成：  TodoWriteTool：轻量、会话内、快速追踪 TaskCreateTool 系列：结构化、正式任务系统  关键源码tools/TodoWriteTool/TodoWriteTool.ts： 123const inputSchema = z.strictObject(&#123;  todos: TodoListSchema().describe(&#x27;The updated todo list&#x27;),&#125;)  而真正的状态写回是： 1234567context.setAppState(prev =&gt; (&#123;  ...prev,  todos: &#123;    ...prev.todos,    [todoKey]: newTodos,  &#125;,&#125;)...</div></div></div></a><a class="pagination-related" href="/2026/06/07/04__%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90%EF%BC%9Amain.tsx_%E5%88%B0_REPL_%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%B2%E8%B5%B7%E6%9D%A5%E7%9A%84/" title="启动流程解析：main.tsx 到 REPL 是怎么串起来的"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-07</div><div class="info-item-2">启动流程解析：main.tsx 到 REPL 是怎么串起来的</div></div><div class="info-2"><div class="info-item-1">启动流程解析：main.tsx 到 REPL 是怎么串起来的为什么 main.tsx 值得重点看很多项目的入口文件只是薄薄一层，但 Claude Code 的 main.tsx 明显不是。从导入规模和初始化动作就能看出来，它承担的是“系统装配器”的角色。 它做的事情至少包括：  启动早期性能预热 解析命令行参数 加载设置、策略和环境变量 初始化认证与实验开关 收集命令与工具 启动交互式 REPL 或其他运行模式  一开头就在抢启动时间文件最前面的几个 side effect 很有代表性：  profileCheckpoint startMdmRawRead() startKeychainPrefetch()  这说明 Claude Code 团队已经把启动性能当成正式问题来优化。也就是说，入口文件不只是“能跑起来”，而是在尽量把一些 I&#x2F;O 提前并行化。 对应源码片段12345profileCheckpoint(&#x27;main_tsx_entry&#x27;);import &#123; startMdmRawRead &#125; from &#x27;./ut...</div></div></div></a><a class="pagination-related" href="/2026/07/19/42__%E4%BB%8E%E6%BA%90%E7%A0%81%E7%9C%8B_Claude_Code_%E7%9A%84%E4%BA%A7%E5%93%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%B1%80%E9%99%90/" title="从源码看 Claude Code 的产品边界与局限"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-19</div><div class="info-item-2">从源码看 Claude Code 的产品边界与局限</div></div><div class="info-2"><div class="info-item-1">从源码看 Claude Code 的产品边界与局限看源码不只是为了赞叹，也要看边界Claude Code 很强，但研究一个系统如果只看它“做到了什么”，很容易失真。更有价值的做法，是同时看它：  为什么强 为什么要这么复杂 它的边界和代价是什么  第一条边界：它依然高度依赖工具与上下文从源码能看到，Claude Code 的很多能力来自：  工具系统 上下文注入 权限与状态管理 MCP &#x2F; LSP &#x2F; 插件扩展  这说明它的强，不是凭模型裸奔得来的。反过来说，如果这些配套能力缺位，它的表现也会明显下降。 也就是说，它不是“换个模型就能复制”。 第二条边界：复杂度非常高只看几个核心文件你就能感受到：  main.tsx 极重 commands.ts 极长 AppState 很复杂 Bash &#x2F; 权限 &#x2F; 远程能力都有大量细节  这说明 Claude Code 的代价之一，就是系统复杂度很高。高复杂度带来的问题包括：  维护成本高 心智负担重 功能之间更容易相互影响  第三条边界：安全不是可选项，而是持续负担越强的工具，越需要强的权限治理。这点...</div></div></div></a><a class="pagination-related" href="/2026/03/03/memory_1/" title="memory"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-03</div><div class="info-item-2">memory</div></div><div class="info-2"><div class="info-item-1">Claude 如何记住你的项目 使用 CLAUDE.md 文件为 Claude 提供持久指令，并让 Claude 通过自动记忆功能自动积累学习内容。  每个 Claude Code 会话都从一个全新的上下文窗口开始。两种机制可以跨会话传递知识：  CLAUDE.md 文件：你编写的指令，为 Claude 提供持久上下文 自动记忆：Claude 根据你的更正和偏好自己编写的笔记  本页面涵盖以下内容：  编写和组织 CLAUDE.md 文件 使用 .claude/rules/ 将规则范围限定到特定文件类型 配置自动记忆，使 Claude 自动记笔记 故障排除，当指令未被遵循时  CLAUDE.md 与自动记忆Claude Code 有两个互补的记忆系统。两者都在每次对话开始时加载。Claude 将它们视为上下文，而不是强制配置。要阻止某个操作，无论 Claude 决定什么，请改用 PreToolUse hook。你的指令越具体和简洁，Claude 遵循它们的一致性就越高。     CLAUDE.md 文件 自动记忆    谁编写 你 Claude   包含内容 指令和规则 学习和模...</div></div></div></a><a class="pagination-related" href="/2026/03/21/troubleshooting/" title="troubleshooting"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-21</div><div class="info-item-2">troubleshooting</div></div><div class="info-2"><div class="info-item-1">故障排除 修复 Claude Code 中的高 CPU 或内存使用、挂起、自动压缩抖动和搜索问题，并找到其他问题的正确页面。  本页涵盖 Claude Code 运行后的性能、稳定性和搜索问题。对于其他问题，请从与您遇到的问题相匹配的页面开始：    症状 转到    command not found、安装失败、PATH 问题、EACCES、TLS 错误 故障排除安装和登录   登录循环、OAuth 错误、403 Forbidden、”organization disabled”、Bedrock&#x2F;Vertex&#x2F;Foundry 凭据 故障排除安装和登录   设置未应用、hooks 未触发、MCP 服务器未加载 调试您的配置   API Error: 5xx、529 Overloaded、429、请求验证错误 错误参考   model not found 或 you may not have access to it 错误参考   VS Code 扩展未连接或未检测到 Claude VS Code 集成   JetBrains 插件或 IDE 未检测到 JetB...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">xhj</div><div class="author-info-description">相关学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">538</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">109</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hzhzxfs"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GrepTool%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9"><span class="toc-number">1.</span> <span class="toc-text">GrepTool：搜索内容</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E6%98%AF-Claude-Code-%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E2%80%9C%E6%89%BE%E7%BA%BF%E7%B4%A2%E2%80%9D%E5%B7%A5%E5%85%B7%E4%B9%8B%E4%B8%80"><span class="toc-number">1.1.</span> <span class="toc-text">它是 Claude Code 最常用的“找线索”工具之一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%8B%E5%AE%83%E7%9A%84-schema%EF%BC%8C%E5%B0%B1%E7%9F%A5%E9%81%93%E5%AE%83%E4%B8%8D%E6%98%AF%E7%AE%80%E5%8D%95%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%90%9C%E7%B4%A2"><span class="toc-number">1.2.</span> <span class="toc-text">看它的 schema，就知道它不是简单字符串搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E7%9A%84%E5%BA%95%E5%B1%82%E5%B0%B1%E6%98%AF-ripgrep%EF%BC%8C%E4%BD%86%E4%B8%8D%E6%98%AF%E8%A3%B8%E6%9A%B4%E9%9C%B2"><span class="toc-number">1.3.</span> <span class="toc-text">它的底层就是 ripgrep，但不是裸暴露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%9C%8B%E5%AE%83%E7%9A%84%E5%B8%B8%E8%A7%81%E9%93%BE%E8%B7%AF"><span class="toc-number">1.4.</span> <span class="toc-text">一张图看它的常见链路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%9C%A8%E8%AE%BE%E8%AE%A1%E4%B8%8A%E5%BE%88%E9%87%8D%E8%A7%86%E2%80%9C%E7%BB%93%E6%9E%9C%E6%8E%A7%E9%87%8F%E2%80%9D"><span class="toc-number">1.5.</span> <span class="toc-text">它在设计上很重视“结果控量”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E5%8F%AA%E6%98%AF%E2%80%9C%E8%BF%94%E5%9B%9E%E5%91%BD%E4%B8%AD%E5%86%85%E5%AE%B9%E2%80%9D%EF%BC%8C%E8%BF%98%E5%8C%BA%E5%88%86%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">它不只是“返回命中内容”，还区分三种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C-GlobTool-%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-number">1.7.</span> <span class="toc-text">它和 GlobTool 的边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B9%9F%E6%98%AF%E5%8F%AA%E8%AF%BB%E4%B8%94%E5%8F%AF%E5%B9%B6%E8%A1%8C%E7%9A%84"><span class="toc-number">1.8.</span> <span class="toc-text">它也是只读且可并行的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E7%9C%9F%E5%AE%9E%E4%BD%BF%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="toc-number">1.9.</span> <span class="toc-text">一次真实使用路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E8%AF%AF%E8%A7%A3%E5%AE%83%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.10.</span> <span class="toc-text">最容易误解它的地方</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%80%EF%BC%9A%E7%9B%B4%E6%8E%A5-Bash-%E8%B7%91-rg-%E5%B0%B1%E5%A4%9F%E4%BA%86"><span class="toc-number">1.10.1.</span> <span class="toc-text">误解一：直接 Bash 跑 rg 就够了</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%BA%8C%EF%BC%9AGrep-%E5%8F%AA%E6%98%AF%E2%80%9C%E6%90%9C%E5%AD%97%E7%AC%A6%E4%B8%B2%E2%80%9D"><span class="toc-number">1.10.2.</span> <span class="toc-text">误解二：Grep 只是“搜字符串”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E8%A7%A3%E4%B8%89%EF%BC%9AGrep-%E5%8F%AA%E6%98%AF%E5%89%8D%E6%9C%9F%E6%8E%A2%E7%B4%A2%E5%B7%A5%E5%85%B7"><span class="toc-number">1.10.3.</span> <span class="toc-text">误解三：Grep 只是前期探索工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.11.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/24/47__Claude_Code_%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BC%9A%E8%AF%9D%E4%B8%8E%E6%A1%A5%E6%8E%A5%E8%83%BD%E5%8A%9B/" title="Claude Code 的远程会话与桥接能力">Claude Code 的远程会话与桥接能力</a><time datetime="2026-07-24T08:57:37.000Z" title="发表于 2026-07-24 16:57:37">2026-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/46__Claude_Code_%E7%9A%84%E5%A4%9A_Agent_%E4%B8%8E%E5%AD%90%E4%BB%BB%E5%8A%A1%E6%9C%BA%E5%88%B6/" title="Claude Code 的多 Agent 与子任务机制">Claude Code 的多 Agent 与子任务机制</a><time datetime="2026-07-23T04:21:07.000Z" title="发表于 2026-07-23 12:21:07">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/22/45__Claude_Code_%E7%9A%84_Skills_%E7%B3%BB%E7%BB%9F/" title="Claude Code 的 Skills 系统">Claude Code 的 Skills 系统</a><time datetime="2026-07-22T12:51:27.000Z" title="发表于 2026-07-22 20:51:27">2026-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/21/44__%E6%8F%92%E4%BB%B6%E3%80%81Skills_%E4%B8%8E_Agent_%E6%B4%BE%E7%94%9F%EF%BC%9AClaude_Code_%E5%A6%82%E4%BD%95%E8%B5%B0%E5%90%91%E5%B9%B3%E5%8F%B0%E5%8C%96/" title="插件、Skills 与 Agent 派生：Claude Code 如何走向平台化">插件、Skills 与 Agent 派生：Claude Code 如何走向平台化</a><time datetime="2026-07-21T01:57:38.000Z" title="发表于 2026-07-21 09:57:38">2026-07-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/20/43__MCP_%E4%B8%8E_LSP_%E9%9B%86%E6%88%90/" title="MCP 与 LSP 集成">MCP 与 LSP 集成</a><time datetime="2026-07-20T06:25:51.000Z" title="发表于 2026-07-20 14:25:51">2026-07-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By xhj</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
